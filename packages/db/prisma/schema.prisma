@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── 사용자 ───
+model User {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  name           String?
+  password       String // bcrypt hash
+  role           Role          @default(STUDENT)
+  phone          String?
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  enrollments    Enrollment[]
+  progresses     Progress[]
+  orders         Order[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  ORG_ADMIN
+}
+
+// ─── 기관 (B2B) ───
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  bizNo     String? // 사업자등록번호
+  contact   String? // 담당자 연락처
+  users     User[]
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+// ─── 강의 ───
+model Course {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  description String?      @db.Text
+  thumbnail   String? // URL
+  price       Int          @default(0) // 원 단위
+  status      CourseStatus @default(DRAFT)
+  categoryId  String?
+  category    Category?    @relation(fields: [categoryId], references: [id])
+  sections    Section[]
+  enrollments Enrollment[]
+  orderItems  OrderItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Category {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  slug    String   @unique
+  courses Course[]
+}
+
+// ─── 섹션 & 레슨 ───
+model Section {
+  id       String    @id @default(cuid())
+  title    String
+  order    Int
+  courseId  String
+  course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lectures Lecture[]
+}
+
+model Lecture {
+  id         String      @id @default(cuid())
+  title      String
+  order      Int
+  type       LectureType @default(VIDEO)
+  videoUrl   String? // 영상 URL (S3/R2)
+  duration   Int? // 초 단위
+  isFree     Boolean     @default(false) // 무료 미리보기
+  sectionId  String
+  section    Section     @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  progresses Progress[]
+}
+
+enum LectureType {
+  VIDEO
+  TEXT
+}
+
+// ─── 수강 ───
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId   String
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model Progress {
+  id         String   @id @default(cuid())
+  userId     String
+  lectureId  String
+  completed  Boolean  @default(false)
+  watchedSec Int      @default(0) // 시청 초
+  user       User     @relation(fields: [userId], references: [id])
+  lecture    Lecture   @relation(fields: [lectureId], references: [id])
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, lectureId])
+}
+
+// ─── 주문 & 빌링 ───
+model Order {
+  id             String        @id @default(cuid())
+  orderNo        String        @unique // ORD-20250301-001
+  userId         String
+  organizationId String?
+  user           User          @relation(fields: [userId], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  type           OrderType     @default(B2C)
+  status         OrderStatus   @default(PENDING)
+  totalAmount    Int           @default(0)
+  items          OrderItem[]
+  invoice        Invoice?
+  createdAt      DateTime      @default(now())
+}
+
+enum OrderType {
+  B2C
+  B2B
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  orderId  String
+  courseId  String
+  quantity Int    @default(1) // B2B: 수강생 수
+  price    Int
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id])
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  invoiceNo   String        @unique // INV-20250301-001
+  orderId     String        @unique
+  order       Order         @relation(fields: [orderId], references: [id])
+  status      InvoiceStatus @default(DRAFT)
+  issueDate   DateTime      @default(now())
+  dueDate     DateTime
+  totalAmount Int
+  taxAmount   Int           @default(0) // 부가세
+  pdfUrl      String? // 생성된 PDF URL
+  createdAt   DateTime      @default(now())
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}

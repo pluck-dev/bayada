@@ -1,0 +1,39 @@
+/* BAYADA 브랜드 컬러 시스템 */
+:root {
+  --bg: #ffffff;
+  --fg: rgba(0, 0, 0, 0.87);
+  --muted: #6b7280;
+  --surface: #f8f9fa;
+  --surface-2: #ffffff;
+  --surface-3: #dfe6eb;
+  --border: #d2d2d7;
+
+  /* BAYADA Red */
+  --brand: #ce0e2d;
+  --brand-hover: #980019;
+  --brand-foreground: #ffffff;
+  --brand-light: #f0b6c0;
+  --brand-bg: #fae6ea;
+
+  /* 보조 컬러 */
+  --accent: #1a1a1a;
+  --accent-foreground: #ffffff;
+  --secondary: #dfe6eb;
+  --secondary-hover: #d6dee5;
+  --secondary-foreground: rgba(0, 0, 0, 0.87);
+
+  /* 상태 컬러 */
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --warning: #d97706;
+  --warning-bg: #fef3c7;
+  --error: #dc2626;
+  --error-bg: #fee2e2;
+  --info: #2563eb;
+  --info-bg: #dbeafe;
+
+  /* 포커스/그림자 */
+  --ring: rgba(206, 14, 45, 0.4);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}

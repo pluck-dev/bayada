@@ -1,0 +1,14 @@
+node_modules
+.turbo
+.next
+dist
+.env
+.env.*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+
+# 프로젝트 로컬 자료 (Git 제외)
+search/
+LM/
+docs/
