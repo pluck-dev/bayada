@@ -12,6 +12,7 @@ import { formatPrice } from "@bayada/shared";
 import { organizationService } from "@/lib/services";
 
 interface OrgRow {
+  [key: string]: unknown;
   id: string;
   name: string;
   contactName: string;

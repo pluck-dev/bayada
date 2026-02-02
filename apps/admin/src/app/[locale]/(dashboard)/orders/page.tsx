@@ -9,6 +9,7 @@ import type { OrderStatusValue, OrderTypeValue } from "@bayada/shared";
 import { orderService } from "@/lib/services";
 
 interface OrderRow {
+  [key: string]: unknown;
   id: string;
   orderNo: string;
   customer: string;

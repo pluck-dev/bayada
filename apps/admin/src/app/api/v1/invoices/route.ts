@@ -1,6 +1,6 @@
 import { invoiceService } from "@/lib/services";
 import { requireAdmin, successResponse, errorResponse, parseSearchParams } from "@/lib/api-utils";
-import type { InvoiceStatus } from "@prisma/client";
+import type { InvoiceStatus } from "@bayada/db";
 
 export async function GET(request: Request) {
   try {

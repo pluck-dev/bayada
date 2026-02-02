@@ -16,6 +16,7 @@
     "@bayada/db": "workspace:*"
   },
   "devDependencies": {
+    "@prisma/client": "^6.19.2",
     "typescript": "^5"
   }
 }

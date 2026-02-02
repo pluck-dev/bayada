@@ -1,6 +1,6 @@
 import { courseService } from "@/lib/services";
 import { requireAdmin, successResponse, errorResponse, parseSearchParams } from "@/lib/api-utils";
-import type { CourseStatus } from "@prisma/client";
+import type { CourseStatus } from "@bayada/db";
 
 export async function GET(request: Request) {
   try {

@@ -1,6 +1,6 @@
 import { userService } from "@/lib/services";
 import { requireAdmin, successResponse, errorResponse, parseSearchParams } from "@/lib/api-utils";
-import type { Role } from "@prisma/client";
+import type { Role } from "@bayada/db";
 
 export async function GET(request: Request) {
   try {

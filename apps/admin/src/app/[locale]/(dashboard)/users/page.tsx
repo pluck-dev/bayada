@@ -5,6 +5,7 @@ import type { UserRole } from "@bayada/shared";
 import { userService } from "@/lib/services";
 
 interface UserRow {
+  [key: string]: unknown;
   id: string;
   name: string;
   email: string;

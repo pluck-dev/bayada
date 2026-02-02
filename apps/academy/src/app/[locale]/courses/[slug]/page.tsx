@@ -23,7 +23,7 @@ export default async function CourseDetailPage({
 }) {
   const { locale, slug } = await params;
 
-  let course;
+  let course: Awaited<ReturnType<typeof courseService.getBySlug>>;
   try {
     course = await courseService.getBySlug(slug);
   } catch {
@@ -31,12 +31,12 @@ export default async function CourseDetailPage({
   }
 
   const totalLectures = course.sections.reduce(
-    (sum, s) => sum + s.lectures.length,
+    (sum: number, s: { lectures: unknown[] }) => sum + s.lectures.length,
     0
   );
   const totalDuration = course.sections.reduce(
-    (sum, s) =>
-      sum + s.lectures.reduce((ls, l) => ls + (l.duration ?? 0), 0),
+    (sum: number, s: { lectures: Array<{ duration: number | null }> }) =>
+      sum + s.lectures.reduce((ls: number, l: { duration: number | null }) => ls + (l.duration ?? 0), 0),
     0
   );
 
@@ -178,7 +178,7 @@ export default async function CourseDetailPage({
                           {section.lectures.length}강 |{" "}
                           {formatDuration(
                             section.lectures.reduce(
-                              (sum, l) => sum + (l.duration ?? 0),
+                              (sum: number, l: { duration: number | null }) => sum + (l.duration ?? 0),
                               0
                             )
                           )}

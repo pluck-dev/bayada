@@ -6,6 +6,7 @@ import type { CourseStatusType } from "@bayada/shared";
 import { courseService } from "@/lib/services";
 
 interface CourseRow {
+  [key: string]: unknown;
   id: string;
   title: string;
   slug: string;

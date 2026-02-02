@@ -22,6 +22,7 @@ const statusBadgeVariant: Record<InvoiceStatus, "secondary" | "info" | "success"
 };
 
 interface InvoiceRow {
+  [key: string]: unknown;
   id: string;
   invoiceNo: string;
   organization: string;
