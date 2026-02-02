@@ -1,4 +1,5 @@
 import type { Locale } from "./config";
+import { i18nConfig } from "./config";
 
 // 딕셔너리 타입 (ko.json 기준)
 import type ko from "./dictionaries/ko.json";
@@ -12,5 +13,6 @@ const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
 };
 
 export async function getDictionary(locale: Locale): Promise<Dictionary> {
-  return dictionaries[locale]();
+  const loader = dictionaries[locale] ?? dictionaries[i18nConfig.defaultLocale];
+  return loader();
 }

@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const dict = useDictionary();
@@ -28,8 +29,61 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: 실제 회원가입 로직 구현
-    setTimeout(() => setIsLoading(false), 1000);
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = (formData.get("phone") as string) || undefined;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    if (password !== confirmPassword) {
+      setError("비밀번호가 일치하지 않습니다.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("비밀번호는 6자 이상이어야 합니다.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // 1. 회원가입 API 호출
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, phone }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "회원가입에 실패했습니다.");
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. 가입 성공 → 자동 로그인
+      const { signIn } = await import("next-auth/react");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        // 가입은 됐지만 자동 로그인 실패 → 로그인 페이지로
+        window.location.href = `/${locale}/auth/login`;
+      } else {
+        window.location.href = `/${locale}`;
+      }
+    } catch {
+      setError("회원가입 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -57,6 +111,11 @@ export default function RegisterPage() {
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                  {error}
+                </div>
+              )}
               {/* 이름 */}
               <div>
                 <label

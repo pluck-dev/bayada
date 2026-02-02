@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   ArrowLeft,
   Plus,
@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronRight,
   Loader2,
+  X,
 } from "lucide-react";
 import {
   Button,
@@ -27,6 +28,11 @@ import {
   CardFooter,
   Badge,
   Skeleton,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalFooter,
 } from "@bayada/ui";
 import { COURSE_STATUS_LABELS } from "@bayada/shared";
 
@@ -34,6 +40,11 @@ const statusOptions = [
   { value: "DRAFT", label: "초안" },
   { value: "PUBLISHED", label: "공개" },
   { value: "ARCHIVED", label: "보관" },
+];
+
+const lectureTypeOptions = [
+  { value: "VIDEO", label: "영상" },
+  { value: "TEXT", label: "텍스트" },
 ];
 
 interface CategoryOption {
@@ -47,6 +58,7 @@ interface Lecture {
   type: "VIDEO" | "TEXT";
   duration: number | null;
   isFree: boolean;
+  videoUrl?: string | null;
 }
 
 interface Section {
@@ -74,6 +86,34 @@ interface CourseData {
   }>;
 }
 
+// 모달 상태 타입
+interface SectionModalState {
+  open: boolean;
+  mode: "create" | "edit";
+  sectionId?: string;
+  title: string;
+}
+
+interface LectureModalState {
+  open: boolean;
+  mode: "create" | "edit";
+  sectionId: string;
+  lectureId?: string;
+  title: string;
+  type: "VIDEO" | "TEXT";
+  videoUrl: string;
+  duration: string;
+  isFree: boolean;
+}
+
+interface DeleteConfirmState {
+  open: boolean;
+  type: "section" | "lecture";
+  id: string;
+  sectionId?: string;
+  name: string;
+}
+
 function formatDuration(seconds: number | null): string {
   if (!seconds) return "-";
   const m = Math.floor(seconds / 60);
@@ -81,30 +121,50 @@ function formatDuration(seconds: number | null): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+const initialSectionModal: SectionModalState = {
+  open: false,
+  mode: "create",
+  title: "",
+};
+
+const initialLectureModal: LectureModalState = {
+  open: false,
+  mode: "create",
+  sectionId: "",
+  title: "",
+  type: "VIDEO",
+  videoUrl: "",
+  duration: "",
+  isFree: false,
+};
+
+const initialDeleteConfirm: DeleteConfirmState = {
+  open: false,
+  type: "section",
+  id: "",
+  name: "",
+};
+
 export default function EditCoursePage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // 모달 상태
+  const [sectionModal, setSectionModal] = useState<SectionModalState>(initialSectionModal);
+  const [lectureModal, setLectureModal] = useState<LectureModalState>(initialLectureModal);
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmState>(initialDeleteConfirm);
+  const [modalSaving, setModalSaving] = useState(false);
+
+  // 데이터 로드
   useEffect(() => {
-    Promise.all([
-      fetch(`/api/v1/courses/${id}`).then((r) => r.json()),
-      fetch("/api/v1/categories").then((r) => r.json()),
-    ])
-      .then(([courseData, cats]) => {
-        setCourse(courseData);
-        setSections(
-          (courseData.sections ?? []).map(
-            (s: CourseData["sections"][number], i: number) => ({
-              ...s,
-              expanded: i === 0,
-            })
-          )
-        );
+    loadCourse();
+    fetch("/api/v1/categories")
+      .then((r) => r.json())
+      .then((cats) => {
         setCategories(
           (cats ?? []).map((c: { id: string; name: string }) => ({
             value: c.id,
@@ -112,9 +172,28 @@ export default function EditCoursePage() {
           }))
         );
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, [id]);
+
+  const loadCourse = async () => {
+    try {
+      const res = await fetch(`/api/v1/courses/${id}`);
+      const courseData = await res.json();
+      setCourse(courseData);
+      setSections(
+        (courseData.sections ?? []).map(
+          (s: CourseData["sections"][number], i: number) => ({
+            ...s,
+            expanded: i === 0,
+          })
+        )
+      );
+    } catch {
+      // 무시
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleSection = (sectionId: string) => {
     setSections((prev) =>
@@ -124,6 +203,7 @@ export default function EditCoursePage() {
     );
   };
 
+  // ─── 강의 기본 정보 저장 ───
   const handleSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -160,6 +240,218 @@ export default function EditCoursePage() {
     }
   };
 
+  // ─── 섹션 CRUD ───
+  const openAddSection = () => {
+    setSectionModal({ open: true, mode: "create", title: "" });
+  };
+
+  const openEditSection = (sectionId: string, title: string) => {
+    setSectionModal({ open: true, mode: "edit", sectionId, title });
+  };
+
+  const handleSaveSection = async () => {
+    if (!sectionModal.title.trim()) return;
+    setModalSaving(true);
+
+    try {
+      if (sectionModal.mode === "create") {
+        const res = await fetch(`/api/v1/courses/${id}/sections`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: sectionModal.title.trim() }),
+        });
+        if (!res.ok) throw new Error();
+        const newSection = await res.json();
+        setSections((prev) => [
+          ...prev,
+          { ...newSection, expanded: true },
+        ]);
+      } else {
+        const res = await fetch(
+          `/api/v1/courses/${id}/sections/${sectionModal.sectionId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: sectionModal.title.trim() }),
+          }
+        );
+        if (!res.ok) throw new Error();
+        const updated = await res.json();
+        setSections((prev) =>
+          prev.map((s) =>
+            s.id === sectionModal.sectionId
+              ? { ...s, title: updated.title, lectures: updated.lectures ?? s.lectures }
+              : s
+          )
+        );
+      }
+      setSectionModal(initialSectionModal);
+    } catch {
+      alert("섹션 저장에 실패했습니다");
+    } finally {
+      setModalSaving(false);
+    }
+  };
+
+  const confirmDeleteSection = (sectionId: string, name: string) => {
+    setDeleteConfirm({ open: true, type: "section", id: sectionId, name });
+  };
+
+  const handleDeleteSection = async () => {
+    setModalSaving(true);
+    try {
+      const res = await fetch(
+        `/api/v1/courses/${id}/sections/${deleteConfirm.id}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) throw new Error();
+      setSections((prev) => prev.filter((s) => s.id !== deleteConfirm.id));
+      setDeleteConfirm(initialDeleteConfirm);
+    } catch {
+      alert("섹션 삭제에 실패했습니다");
+    } finally {
+      setModalSaving(false);
+    }
+  };
+
+  // ─── 레슨 CRUD ───
+  const openAddLecture = (sectionId: string) => {
+    setLectureModal({
+      open: true,
+      mode: "create",
+      sectionId,
+      title: "",
+      type: "VIDEO",
+      videoUrl: "",
+      duration: "",
+      isFree: false,
+    });
+  };
+
+  const openEditLecture = (sectionId: string, lecture: Lecture) => {
+    setLectureModal({
+      open: true,
+      mode: "edit",
+      sectionId,
+      lectureId: lecture.id,
+      title: lecture.title,
+      type: lecture.type,
+      videoUrl: lecture.videoUrl ?? "",
+      duration: lecture.duration ? String(lecture.duration) : "",
+      isFree: lecture.isFree,
+    });
+  };
+
+  const handleSaveLecture = async () => {
+    if (!lectureModal.title.trim()) return;
+    setModalSaving(true);
+
+    const body = {
+      title: lectureModal.title.trim(),
+      type: lectureModal.type,
+      videoUrl: lectureModal.videoUrl || null,
+      duration: lectureModal.duration ? Number(lectureModal.duration) : null,
+      isFree: lectureModal.isFree,
+    };
+
+    try {
+      if (lectureModal.mode === "create") {
+        const res = await fetch(
+          `/api/v1/courses/${id}/sections/${lectureModal.sectionId}/lectures`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          }
+        );
+        if (!res.ok) throw new Error();
+        const newLecture = await res.json();
+        setSections((prev) =>
+          prev.map((s) =>
+            s.id === lectureModal.sectionId
+              ? { ...s, lectures: [...s.lectures, newLecture] }
+              : s
+          )
+        );
+      } else {
+        const res = await fetch(
+          `/api/v1/courses/${id}/sections/${lectureModal.sectionId}/lectures/${lectureModal.lectureId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          }
+        );
+        if (!res.ok) throw new Error();
+        const updated = await res.json();
+        setSections((prev) =>
+          prev.map((s) =>
+            s.id === lectureModal.sectionId
+              ? {
+                  ...s,
+                  lectures: s.lectures.map((l) =>
+                    l.id === lectureModal.lectureId ? { ...l, ...updated } : l
+                  ),
+                }
+              : s
+          )
+        );
+      }
+      setLectureModal(initialLectureModal);
+    } catch {
+      alert("레슨 저장에 실패했습니다");
+    } finally {
+      setModalSaving(false);
+    }
+  };
+
+  const confirmDeleteLecture = (
+    sectionId: string,
+    lectureId: string,
+    name: string
+  ) => {
+    setDeleteConfirm({
+      open: true,
+      type: "lecture",
+      id: lectureId,
+      sectionId,
+      name,
+    });
+  };
+
+  const handleDeleteLecture = async () => {
+    setModalSaving(true);
+    try {
+      const res = await fetch(
+        `/api/v1/courses/${id}/sections/${deleteConfirm.sectionId}/lectures/${deleteConfirm.id}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) throw new Error();
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === deleteConfirm.sectionId
+            ? { ...s, lectures: s.lectures.filter((l) => l.id !== deleteConfirm.id) }
+            : s
+        )
+      );
+      setDeleteConfirm(initialDeleteConfirm);
+    } catch {
+      alert("레슨 삭제에 실패했습니다");
+    } finally {
+      setModalSaving(false);
+    }
+  };
+
+  // ─── 삭제 확인 핸들러 ───
+  const handleConfirmDelete = () => {
+    if (deleteConfirm.type === "section") {
+      handleDeleteSection();
+    } else {
+      handleDeleteLecture();
+    }
+  };
+
+  // ─── 렌더링 ───
   if (loading) {
     return (
       <div className="mx-auto max-w-4xl space-y-6">
@@ -224,14 +516,12 @@ export default function EditCoursePage() {
               label="강의 제목"
               defaultValue={course.title}
             />
-
             <Input
               id="slug"
               name="slug"
               label="URL 슬러그"
               defaultValue={course.slug}
             />
-
             <Textarea
               id="description"
               name="description"
@@ -239,7 +529,6 @@ export default function EditCoursePage() {
               defaultValue={course.description ?? ""}
               rows={3}
             />
-
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
               <Input
                 id="price"
@@ -263,7 +552,6 @@ export default function EditCoursePage() {
                 defaultValue={course.status}
               />
             </div>
-
             <Input
               id="thumbnail"
               name="thumbnail"
@@ -285,7 +573,7 @@ export default function EditCoursePage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>커리큘럼</CardTitle>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={openAddSection}>
               <Plus className="mr-1.5 h-4 w-4" />
               섹션 추가
             </Button>
@@ -298,31 +586,48 @@ export default function EditCoursePage() {
               className="rounded-lg border border-[color:var(--border)] bg-white"
             >
               {/* 섹션 헤더 */}
-              <div
-                className="flex cursor-pointer items-center gap-3 px-4 py-3"
-                onClick={() => toggleSection(section.id)}
-              >
-                <GripVertical className="h-4 w-4 shrink-0 text-[color:var(--muted)]" />
-                {section.expanded ? (
-                  <ChevronDown className="h-4 w-4 shrink-0 text-[color:var(--muted)]" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 shrink-0 text-[color:var(--muted)]" />
-                )}
-                <span className="flex-1 text-sm font-medium text-[color:var(--fg)]">
-                  {section.title}
-                </span>
-                <span className="text-xs text-[color:var(--muted)]">
-                  {section.lectures.length}개 강의
-                </span>
-                <button className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--fg)]">
+              <div className="flex items-center gap-3 px-4 py-3">
+                <GripVertical className="h-4 w-4 shrink-0 text-[color:var(--muted)] cursor-grab" />
+                <button
+                  type="button"
+                  className="flex flex-1 items-center gap-2 text-left"
+                  onClick={() => toggleSection(section.id)}
+                >
+                  {section.expanded ? (
+                    <ChevronDown className="h-4 w-4 shrink-0 text-[color:var(--muted)]" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[color:var(--muted)]" />
+                  )}
+                  <span className="flex-1 text-sm font-medium text-[color:var(--fg)]">
+                    {section.title}
+                  </span>
+                  <span className="text-xs text-[color:var(--muted)]">
+                    {section.lectures.length}개 강의
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--fg)]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openEditSection(section.id, section.title);
+                  }}
+                >
                   <Edit3 className="h-3.5 w-3.5" />
                 </button>
-                <button className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--error-bg)] hover:text-[color:var(--error)]">
+                <button
+                  type="button"
+                  className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--error-bg)] hover:text-[color:var(--error)]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    confirmDeleteSection(section.id, section.title);
+                  }}
+                >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
 
-              {/* 강의 목록 */}
+              {/* 레슨 목록 */}
               {section.expanded && (
                 <div className="border-t border-[color:var(--border)]">
                   {section.lectures.map((lecture) => (
@@ -330,7 +635,7 @@ export default function EditCoursePage() {
                       key={lecture.id}
                       className="flex items-center gap-3 border-b border-[color:var(--border)] px-4 py-2.5 pl-14 last:border-0"
                     >
-                      <GripVertical className="h-3.5 w-3.5 shrink-0 text-[color:var(--muted)]" />
+                      <GripVertical className="h-3.5 w-3.5 shrink-0 text-[color:var(--muted)] cursor-grab" />
                       {lecture.type === "VIDEO" ? (
                         <Video className="h-4 w-4 shrink-0 text-[color:var(--info)]" />
                       ) : (
@@ -345,17 +650,31 @@ export default function EditCoursePage() {
                       <span className="text-xs text-[color:var(--muted)]">
                         {formatDuration(lecture.duration)}
                       </span>
-                      <button className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--fg)]">
+                      <button
+                        type="button"
+                        className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--fg)]"
+                        onClick={() => openEditLecture(section.id, lecture)}
+                      >
                         <Edit3 className="h-3.5 w-3.5" />
                       </button>
-                      <button className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--error-bg)] hover:text-[color:var(--error)]">
+                      <button
+                        type="button"
+                        className="rounded p-1 text-[color:var(--muted)] hover:bg-[color:var(--error-bg)] hover:text-[color:var(--error)]"
+                        onClick={() =>
+                          confirmDeleteLecture(section.id, lecture.id, lecture.title)
+                        }
+                      >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   ))}
-                  {/* 강의 추가 버튼 */}
+                  {/* 레슨 추가 버튼 */}
                   <div className="px-4 py-2.5 pl-14">
-                    <button className="inline-flex items-center gap-1.5 text-xs font-medium text-[#ce0e2d] hover:underline">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#ce0e2d] hover:underline"
+                      onClick={() => openAddLecture(section.id)}
+                    >
                       <Plus className="h-3.5 w-3.5" />
                       강의 추가
                     </button>
@@ -371,6 +690,191 @@ export default function EditCoursePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* ─── 섹션 추가/편집 모달 ─── */}
+      <Modal
+        open={sectionModal.open}
+        onClose={() => setSectionModal(initialSectionModal)}
+      >
+        <ModalContent>
+          <ModalHeader>
+            <ModalTitle>
+              {sectionModal.mode === "create" ? "새 섹션 추가" : "섹션 편집"}
+            </ModalTitle>
+            <button
+              onClick={() => setSectionModal(initialSectionModal)}
+              className="rounded p-1 text-[color:var(--muted)] hover:text-[color:var(--fg)]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </ModalHeader>
+          <div className="space-y-4">
+            <Input
+              id="section-title"
+              label="섹션 제목"
+              placeholder="예: 1장. 기본 개념"
+              value={sectionModal.title}
+              onChange={(e) =>
+                setSectionModal((prev) => ({ ...prev, title: e.target.value }))
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSaveSection();
+                }
+              }}
+            />
+          </div>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              onClick={() => setSectionModal(initialSectionModal)}
+            >
+              취소
+            </Button>
+            <Button
+              onClick={handleSaveSection}
+              disabled={modalSaving || !sectionModal.title.trim()}
+            >
+              {modalSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {sectionModal.mode === "create" ? "추가" : "저장"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* ─── 레슨 추가/편집 모달 ─── */}
+      <Modal
+        open={lectureModal.open}
+        onClose={() => setLectureModal(initialLectureModal)}
+      >
+        <ModalContent>
+          <ModalHeader>
+            <ModalTitle>
+              {lectureModal.mode === "create" ? "새 강의 추가" : "강의 편집"}
+            </ModalTitle>
+            <button
+              onClick={() => setLectureModal(initialLectureModal)}
+              className="rounded p-1 text-[color:var(--muted)] hover:text-[color:var(--fg)]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </ModalHeader>
+          <div className="space-y-4">
+            <Input
+              id="lecture-title"
+              label="강의 제목"
+              placeholder="예: 1-1. 소개 영상"
+              value={lectureModal.title}
+              onChange={(e) =>
+                setLectureModal((prev) => ({ ...prev, title: e.target.value }))
+              }
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                id="lecture-type"
+                label="유형"
+                options={lectureTypeOptions}
+                value={lectureModal.type}
+                onChange={(e) =>
+                  setLectureModal((prev) => ({
+                    ...prev,
+                    type: e.target.value as "VIDEO" | "TEXT",
+                  }))
+                }
+              />
+              <Input
+                id="lecture-duration"
+                label="길이 (초)"
+                type="number"
+                placeholder="예: 360"
+                value={lectureModal.duration}
+                onChange={(e) =>
+                  setLectureModal((prev) => ({ ...prev, duration: e.target.value }))
+                }
+              />
+            </div>
+            <Input
+              id="lecture-video-url"
+              label="영상 URL"
+              placeholder="https://..."
+              value={lectureModal.videoUrl}
+              onChange={(e) =>
+                setLectureModal((prev) => ({ ...prev, videoUrl: e.target.value }))
+              }
+            />
+            <label className="flex items-center gap-2 text-sm text-[color:var(--fg)]">
+              <input
+                type="checkbox"
+                checked={lectureModal.isFree}
+                onChange={(e) =>
+                  setLectureModal((prev) => ({
+                    ...prev,
+                    isFree: e.target.checked,
+                  }))
+                }
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              무료 공개 강의
+            </label>
+          </div>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              onClick={() => setLectureModal(initialLectureModal)}
+            >
+              취소
+            </Button>
+            <Button
+              onClick={handleSaveLecture}
+              disabled={modalSaving || !lectureModal.title.trim()}
+            >
+              {modalSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {lectureModal.mode === "create" ? "추가" : "저장"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* ─── 삭제 확인 모달 ─── */}
+      <Modal
+        open={deleteConfirm.open}
+        onClose={() => setDeleteConfirm(initialDeleteConfirm)}
+      >
+        <ModalContent>
+          <ModalHeader>
+            <ModalTitle>
+              {deleteConfirm.type === "section" ? "섹션 삭제" : "강의 삭제"}
+            </ModalTitle>
+          </ModalHeader>
+          <p className="text-sm text-[color:var(--muted)]">
+            <span className="font-medium text-[color:var(--fg)]">
+              &ldquo;{deleteConfirm.name}&rdquo;
+            </span>
+            {deleteConfirm.type === "section"
+              ? "을(를) 삭제하면 포함된 모든 강의도 함께 삭제됩니다."
+              : "을(를) 삭제하시겠습니까?"}
+            <br />
+            이 작업은 되돌릴 수 없습니다.
+          </p>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirm(initialDeleteConfirm)}
+            >
+              취소
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleConfirmDelete}
+              disabled={modalSaving}
+            >
+              {modalSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              삭제
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

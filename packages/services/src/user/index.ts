@@ -1,5 +1,6 @@
 import type { PrismaClient, Role } from "@prisma/client";
-import { NotFoundError } from "../errors";
+import { hash } from "bcryptjs";
+import { NotFoundError, ConflictError, ValidationError } from "../errors";
 import { paginationParams, paginatedResult } from "../utils";
 
 export class UserService {
@@ -83,6 +84,46 @@ export class UserService {
         organizationId: true,
       },
     });
+  }
+
+  async create(data: {
+    email: string;
+    password: string;
+    name: string;
+    phone?: string;
+  }) {
+    if (!data.email || !data.password || !data.name) {
+      throw new ValidationError("이메일, 비밀번호, 이름은 필수입니다.");
+    }
+
+    const existing = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (existing) {
+      throw new ConflictError("이미 가입된 이메일입니다.");
+    }
+
+    const hashedPassword = await hash(data.password, 12);
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: data.email,
+        password: hashedPassword,
+        name: data.name,
+        phone: data.phone,
+        role: "STUDENT",
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        phone: true,
+        createdAt: true,
+      },
+    });
+
+    return user;
   }
 
   async getStats() {

@@ -1,8 +1,11 @@
-import { Search, Download } from "lucide-react";
-import { Button, Badge, DataTable, type Column, Input } from "@bayada/ui";
+import { Download } from "lucide-react";
+import { Button, Badge, DataTable, type Column } from "@bayada/ui";
 import { ROLE_LABELS } from "@bayada/shared";
 import type { UserRole } from "@bayada/shared";
 import { userService } from "@/lib/services";
+import { SearchFilter } from "@/components/SearchFilter";
+import { Pagination } from "@/components/Pagination";
+import Link from "next/link";
 
 interface UserRow {
   [key: string]: unknown;
@@ -21,6 +24,12 @@ const roleBadgeVariant: Record<UserRole, "default" | "info" | "warning"> = {
   STUDENT: "info",
   ORG_ADMIN: "warning",
 };
+
+const roleFilters = [
+  { label: "수강생", value: "STUDENT" },
+  { label: "기관 관리자", value: "ORG_ADMIN" },
+  { label: "관리자", value: "ADMIN" },
+];
 
 const columns: Column<UserRow>[] = [
   {
@@ -72,16 +81,27 @@ const columns: Column<UserRow>[] = [
   {
     key: "actions",
     header: "",
-    render: () => (
-      <Button variant="ghost" size="sm">
-        상세
-      </Button>
+    render: (row) => (
+      <Link href={`/users/${row.id}`}>
+        <Button variant="ghost" size="sm">
+          상세
+        </Button>
+      </Link>
     ),
   },
 ];
 
-export default async function UsersPage() {
-  const result = await userService.list({});
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; role?: string; page?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const search = params.search ?? "";
+  const role = params.role as UserRole | undefined;
+
+  const result = await userService.list({ page, limit: 20, search: search || undefined, role });
 
   const users: UserRow[] = result.items.map((u) => {
     const user = u as Record<string, unknown>;
@@ -119,47 +139,23 @@ export default async function UsersPage() {
       </div>
 
       {/* 필터/검색 */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-          <Input
-            placeholder="이름 또는 이메일로 검색..."
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            전체
-          </Button>
-          <Button variant="ghost" size="sm">
-            수강생
-          </Button>
-          <Button variant="ghost" size="sm">
-            기관 관리자
-          </Button>
-          <Button variant="ghost" size="sm">
-            관리자
-          </Button>
-        </div>
-      </div>
+      <SearchFilter
+        searchPlaceholder="이름 또는 이메일로 검색..."
+        filterKey="role"
+        filters={roleFilters}
+      />
 
       {/* 데이터 테이블 */}
       <DataTable<UserRow> columns={columns} data={users} keyField="id" />
 
       {/* 페이지네이션 */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[color:var(--muted)]">
-          전체 {users.length}명
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled>
-            이전
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            다음
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        total={result.total}
+        page={result.page}
+        limit={result.pageSize}
+        totalPages={result.totalPages}
+        unit="명"
+      />
     </div>
   );
 }

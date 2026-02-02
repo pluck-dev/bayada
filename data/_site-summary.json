@@ -1,0 +1,569 @@
+{
+  "site": "https://www.bayadakorea.com",
+  "crawledAt": "2026-02-02T07:57:43.103Z",
+  "totalPages": 53,
+  "successful": 53,
+  "failed": 0,
+  "navigation": {
+    "바야다홈헬스케어": [
+      {
+        "name": "회사소개",
+        "url": "/aboutus/"
+      },
+      {
+        "name": "대표인사말",
+        "url": "/ceo/"
+      },
+      {
+        "name": "The BAYADA Way",
+        "url": "/the-bayada-way/"
+      },
+      {
+        "name": "바야다 재가센터 소개",
+        "url": "/centerus/"
+      },
+      {
+        "name": "채용안내",
+        "url": "/jab/"
+      }
+    ],
+    "방문요양": "/visit-medical-care/",
+    "방문간호": "/방문간호2/",
+    "맞춤프로그램": [
+      {
+        "name": "치매케어",
+        "url": "/치메케어/"
+      },
+      {
+        "name": "맞춤운동",
+        "url": "/맞춤운동/"
+      },
+      {
+        "name": "음악요법",
+        "url": "/음악요법/"
+      },
+      {
+        "name": "통합인지요법",
+        "url": "/통합인지요법/"
+      }
+    ],
+    "케어코디": "/케어코디/",
+    "알림/자료실": [
+      {
+        "name": "공지사항",
+        "url": "/공지사항2/"
+      },
+      {
+        "name": "보도자료/뉴스룸",
+        "url": "/보도자료-뉴스룸/"
+      },
+      {
+        "name": "영상자료실",
+        "url": "/영상자료실/"
+      }
+    ],
+    "고객센터": [
+      {
+        "name": "이용안내",
+        "url": "/이용안내/"
+      },
+      {
+        "name": "서비스상담",
+        "url": "/서비스상담/"
+      },
+      {
+        "name": "FAQ",
+        "url": "/faq-2/"
+      }
+    ]
+  },
+  "companyInfo": {
+    "name": "(주)바야다홈헬스케어",
+    "ceo": "김영민",
+    "businessNo": "696-81-00440",
+    "address": "서울시 강남구 테헤란로 431, 7층 7005호",
+    "tel": "02-508-1379",
+    "fax": "02-6499-1386",
+    "email": "K-hhc@bayadakorea.com",
+    "serviceHotline": "1670-1379"
+  },
+  "pages": [
+    {
+      "name": "홈페이지",
+      "url": "https://www.bayadakorea.com/",
+      "file": "00-homepage",
+      "status": 200,
+      "error": null,
+      "textLength": 1517,
+      "imageCount": 49
+    },
+    {
+      "name": "회사소개",
+      "url": "https://www.bayadakorea.com/aboutus/",
+      "file": "01-aboutus",
+      "status": 200,
+      "error": null,
+      "textLength": 1440,
+      "imageCount": 19
+    },
+    {
+      "name": "대표인사말",
+      "url": "https://www.bayadakorea.com/ceo/",
+      "file": "02-ceo",
+      "status": 200,
+      "error": null,
+      "textLength": 1784,
+      "imageCount": 20
+    },
+    {
+      "name": "The BAYADA Way",
+      "url": "https://www.bayadakorea.com/the-bayada-way/",
+      "file": "03-the-bayada-way",
+      "status": 200,
+      "error": null,
+      "textLength": 2919,
+      "imageCount": 19
+    },
+    {
+      "name": "바야다 재가센터 소개",
+      "url": "https://www.bayadakorea.com/centerus/",
+      "file": "04-centerus",
+      "status": 200,
+      "error": null,
+      "textLength": 1107,
+      "imageCount": 18
+    },
+    {
+      "name": "채용안내",
+      "url": "https://www.bayadakorea.com/jab/",
+      "file": "05-jab",
+      "status": 200,
+      "error": null,
+      "textLength": 1198,
+      "imageCount": 19
+    },
+    {
+      "name": "방문요양",
+      "url": "https://www.bayadakorea.com/visit-medical-care/",
+      "file": "06-visit-medical-care",
+      "status": 200,
+      "error": null,
+      "textLength": 2071,
+      "imageCount": 19
+    },
+    {
+      "name": "방문간호",
+      "url": "https://www.bayadakorea.com/%EB%B0%A9%EB%AC%B8%EA%B0%84%ED%98%B82/",
+      "file": "07-visiting-nursing",
+      "status": 200,
+      "error": null,
+      "textLength": 2010,
+      "imageCount": 19
+    },
+    {
+      "name": "치매케어",
+      "url": "https://www.bayadakorea.com/%EC%B9%98%EB%A9%94%EC%BC%80%EC%96%B4/",
+      "file": "08-dementia-care",
+      "status": 200,
+      "error": null,
+      "textLength": 4059,
+      "imageCount": 19
+    },
+    {
+      "name": "맞춤운동",
+      "url": "https://www.bayadakorea.com/%EB%A7%9E%EC%B6%A4%EC%9A%B4%EB%8F%99/",
+      "file": "09-custom-exercise",
+      "status": 200,
+      "error": null,
+      "textLength": 1442,
+      "imageCount": 21
+    },
+    {
+      "name": "음악요법",
+      "url": "https://www.bayadakorea.com/%EC%9D%8C%EC%95%85%EC%9A%94%EB%B2%95/",
+      "file": "10-music-therapy",
+      "status": 200,
+      "error": null,
+      "textLength": 1251,
+      "imageCount": 19
+    },
+    {
+      "name": "통합인지요법",
+      "url": "https://www.bayadakorea.com/%ED%86%B5%ED%95%A9%EC%9D%B8%EC%A7%80%EC%9A%94%EB%B2%95/",
+      "file": "11-cognitive-therapy",
+      "status": 200,
+      "error": null,
+      "textLength": 1559,
+      "imageCount": 19
+    },
+    {
+      "name": "케어코디",
+      "url": "https://www.bayadakorea.com/%EC%BC%80%EC%96%B4%EC%BD%94%EB%94%94/",
+      "file": "12-care-coordinator",
+      "status": 200,
+      "error": null,
+      "textLength": 1402,
+      "imageCount": 19
+    },
+    {
+      "name": "공지사항",
+      "url": "https://www.bayadakorea.com/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD2/",
+      "file": "13-notices",
+      "status": 200,
+      "error": null,
+      "textLength": 1679,
+      "imageCount": 39
+    },
+    {
+      "name": "보도자료/뉴스룸",
+      "url": "https://www.bayadakorea.com/%EB%B3%B4%EB%8F%84%EC%9E%90%EB%A3%8C-%EB%89%B4%EC%8A%A4%EB%A3%B8/",
+      "file": "14-press-newsroom",
+      "status": 200,
+      "error": null,
+      "textLength": 2497,
+      "imageCount": 52
+    },
+    {
+      "name": "영상자료실",
+      "url": "https://www.bayadakorea.com/%EC%98%81%EC%83%81%EC%9E%90%EB%A3%8C%EC%8B%A4/",
+      "file": "15-video-archive",
+      "status": 200,
+      "error": null,
+      "textLength": 1347,
+      "imageCount": 27
+    },
+    {
+      "name": "이용안내",
+      "url": "https://www.bayadakorea.com/%EC%9D%B4%EC%9A%A9%EC%95%88%EB%82%B4/",
+      "file": "16-usage-guide",
+      "status": 200,
+      "error": null,
+      "textLength": 1297,
+      "imageCount": 24
+    },
+    {
+      "name": "서비스상담",
+      "url": "https://www.bayadakorea.com/%EC%84%9C%EB%B9%84%EC%8A%A4%EC%83%81%EB%8B%B4/",
+      "file": "17-service-consultation",
+      "status": 200,
+      "error": null,
+      "textLength": 1135,
+      "imageCount": 18
+    },
+    {
+      "name": "FAQ",
+      "url": "https://www.bayadakorea.com/faq-2/",
+      "file": "18-faq",
+      "status": 200,
+      "error": null,
+      "textLength": 2659,
+      "imageCount": 18
+    },
+    {
+      "name": "개인정보취급방침",
+      "url": "https://www.bayadakorea.com/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B7%A8%EA%B8%89%EB%B0%A9%EC%B9%A8/",
+      "file": "19-privacy-policy",
+      "status": 200,
+      "error": null,
+      "textLength": 5021,
+      "imageCount": 18
+    },
+    {
+      "name": "케이닥",
+      "url": "https://www.bayadakorea.com/%EC%BC%80%EC%9D%B4%EB%8B%A5/",
+      "file": "partner-케이닥",
+      "status": 200,
+      "error": null,
+      "textLength": 1091,
+      "imageCount": 19
+    },
+    {
+      "name": "고려대학병원",
+      "url": "https://www.bayadakorea.com/%EA%B3%A0%EB%A0%A4%EB%8C%80%ED%95%99%EB%B3%91%EC%9B%90/",
+      "file": "partner-고려대학병원",
+      "status": 200,
+      "error": null,
+      "textLength": 1164,
+      "imageCount": 19
+    },
+    {
+      "name": "서울대학교병원",
+      "url": "https://www.bayadakorea.com/%EC%84%9C%EC%9A%B8%EB%8C%80%ED%95%99%EA%B5%90%EB%B3%91%EC%9B%90/",
+      "file": "partner-서울대학교병원",
+      "status": 200,
+      "error": null,
+      "textLength": 1103,
+      "imageCount": 19
+    },
+    {
+      "name": "강남조은눈안과",
+      "url": "https://www.bayadakorea.com/%EA%B0%95%EB%82%A8%EC%A1%B0%EC%9D%80%EB%88%88%EC%95%88%EA%B3%BC/",
+      "file": "partner-강남조은눈안과",
+      "status": 200,
+      "error": null,
+      "textLength": 1101,
+      "imageCount": 19
+    },
+    {
+      "name": "서울36의원",
+      "url": "https://www.bayadakorea.com/%EC%84%9C%EC%9A%B836%EC%9D%98%EC%9B%90/",
+      "file": "partner-서울36의원",
+      "status": 200,
+      "error": null,
+      "textLength": 1103,
+      "imageCount": 19
+    },
+    {
+      "name": "양산부산대학교병원",
+      "url": "https://www.bayadakorea.com/%EC%96%91%EC%82%B0%EB%B6%80%EC%82%B0%EB%8C%80%ED%95%99%EA%B5%90%EB%B3%91%EC%9B%90/",
+      "file": "partner-양산부산대학교병원",
+      "status": 200,
+      "error": null,
+      "textLength": 1101,
+      "imageCount": 19
+    },
+    {
+      "name": "로슈",
+      "url": "https://www.bayadakorea.com/%EB%A1%9C%EC%8A%88/",
+      "file": "partner-로슈",
+      "status": 200,
+      "error": null,
+      "textLength": 1101,
+      "imageCount": 19
+    },
+    {
+      "name": "애브이",
+      "url": "https://www.bayadakorea.com/%EC%95%A0%EB%B8%8C%EC%9D%B4/",
+      "file": "partner-애브이",
+      "status": 200,
+      "error": null,
+      "textLength": 1100,
+      "imageCount": 19
+    },
+    {
+      "name": "알보젠",
+      "url": "https://www.bayadakorea.com/%EC%95%8C%EB%B3%B4%EC%A0%A0/",
+      "file": "partner-알보젠",
+      "status": 200,
+      "error": null,
+      "textLength": 1106,
+      "imageCount": 19
+    },
+    {
+      "name": "노보노디스크",
+      "url": "https://www.bayadakorea.com/%EB%85%B8%EB%B3%B4%EB%85%B8%EB%94%94%EC%8A%A4%ED%81%AC/",
+      "file": "partner-노보노디스크",
+      "status": 200,
+      "error": null,
+      "textLength": 1105,
+      "imageCount": 19
+    },
+    {
+      "name": "에자이",
+      "url": "https://www.bayadakorea.com/%EC%97%90%EC%9E%90%EC%9D%B4/",
+      "file": "partner-에자이",
+      "status": 200,
+      "error": null,
+      "textLength": 1113,
+      "imageCount": 19
+    },
+    {
+      "name": "코아스템캠온",
+      "url": "https://www.bayadakorea.com/%EC%BD%94%EC%95%84%EC%8A%A4%ED%85%9C%EC%BA%A0%EC%98%A8/",
+      "file": "partner-코아스템캠온",
+      "status": 200,
+      "error": null,
+      "textLength": 1108,
+      "imageCount": 19
+    },
+    {
+      "name": "Labcorp",
+      "url": "https://www.bayadakorea.com/labcorp/",
+      "file": "partner-labcorp",
+      "status": 200,
+      "error": null,
+      "textLength": 1110,
+      "imageCount": 19
+    },
+    {
+      "name": "화이자",
+      "url": "https://www.bayadakorea.com/%ED%99%94%EC%9D%B4%EC%9E%90/",
+      "file": "partner-화이자",
+      "status": 200,
+      "error": null,
+      "textLength": 1104,
+      "imageCount": 19
+    },
+    {
+      "name": "MS환우회",
+      "url": "https://www.bayadakorea.com/ms-%ED%99%98%EC%9A%B0%ED%9A%8C/",
+      "file": "partner-ms-환우회",
+      "status": 200,
+      "error": null,
+      "textLength": 1102,
+      "imageCount": 19
+    },
+    {
+      "name": "한양대학교",
+      "url": "https://www.bayadakorea.com/%ED%95%9C%EC%96%91%EB%8C%80%ED%95%99%EA%B5%90/",
+      "file": "partner-한양대학교",
+      "status": 200,
+      "error": null,
+      "textLength": 1110,
+      "imageCount": 19
+    },
+    {
+      "name": "CRPS환우회",
+      "url": "https://www.bayadakorea.com/crps-%ED%99%98%EC%9A%B0%ED%9A%8C/",
+      "file": "partner-crps-환우회",
+      "status": 200,
+      "error": null,
+      "textLength": 1107,
+      "imageCount": 19
+    },
+    {
+      "name": "Fortrea",
+      "url": "https://www.bayadakorea.com/fortea/",
+      "file": "partner-fortrea",
+      "status": 200,
+      "error": null,
+      "textLength": 1113,
+      "imageCount": 19
+    },
+    {
+      "name": "Accellacare",
+      "url": "https://www.bayadakorea.com/accellacare2/",
+      "file": "partner-accellacare",
+      "status": 200,
+      "error": null,
+      "textLength": 1105,
+      "imageCount": 19
+    },
+    {
+      "name": "EverEx",
+      "url": "https://www.bayadakorea.com/everex/",
+      "file": "partner-everex",
+      "status": 200,
+      "error": null,
+      "textLength": 1114,
+      "imageCount": 19
+    },
+    {
+      "name": "Kakao Healthcare",
+      "url": "https://www.bayadakorea.com/kakao-healthcare/",
+      "file": "partner-kakao-healthcare",
+      "status": 200,
+      "error": null,
+      "textLength": 1112,
+      "imageCount": 19
+    },
+    {
+      "name": "당뇨병학연구재단",
+      "url": "https://www.bayadakorea.com/%EB%8B%B9%EB%87%A8%EB%B3%91%ED%95%99%EC%97%B0%EA%B5%AC%EC%9E%AC%EB%8B%A8/",
+      "file": "partner-당뇨병학연구재단",
+      "status": 200,
+      "error": null,
+      "textLength": 1111,
+      "imageCount": 19
+    },
+    {
+      "name": "세브란스병원",
+      "url": "https://www.bayadakorea.com/%EC%84%B8%EB%B8%8C%EB%9E%80%EC%8A%A4%EB%B3%91%EC%9B%90/",
+      "file": "partner-세브란스병원",
+      "status": 200,
+      "error": null,
+      "textLength": 1108,
+      "imageCount": 19
+    },
+    {
+      "name": "가톨릭대학교 서울성모병원",
+      "url": "https://www.bayadakorea.com/%EA%B0%80%ED%86%A8%EB%A6%AD%EB%8C%80%ED%95%99%EA%B5%90-%EC%84%9C%EC%9A%B8%EC%84%B1%EB%AA%A8%EB%B3%91%EC%9B%90/",
+      "file": "partner-가톨릭대-서울성모병원",
+      "status": 200,
+      "error": null,
+      "textLength": 1103,
+      "imageCount": 19
+    },
+    {
+      "name": "일몰증후군이란",
+      "url": "https://www.bayadakorea.com/%EC%9D%BC%EB%AA%B0%EC%A6%9D%ED%9B%84%EA%B5%B0sundowning%EC%9D%B4%EB%9E%80-%EB%AD%94%EA%B0%80%EC%9A%94/",
+      "file": "post-일몰증후군",
+      "status": 200,
+      "error": null,
+      "textLength": 1422,
+      "imageCount": 18
+    },
+    {
+      "name": "공지사항 테스트 1",
+      "url": "https://www.bayadakorea.com/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD-%ED%85%8C%EC%8A%A4%ED%8A%B8/",
+      "file": "post-공지사항-테스트-1",
+      "status": 200,
+      "error": null,
+      "textLength": 1116,
+      "imageCount": 19
+    },
+    {
+      "name": "공지사항 테스트 2",
+      "url": "https://www.bayadakorea.com/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD-%ED%85%8C%EC%8A%A4%ED%8A%B8-2/",
+      "file": "post-공지사항-테스트-2",
+      "status": 200,
+      "error": null,
+      "textLength": 1116,
+      "imageCount": 19
+    },
+    {
+      "name": "공지사항 테스트 3",
+      "url": "https://www.bayadakorea.com/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD-%ED%85%8C%EC%8A%A4%ED%8A%B8-3/",
+      "file": "post-공지사항-테스트-3",
+      "status": 200,
+      "error": null,
+      "textLength": 1116,
+      "imageCount": 19
+    },
+    {
+      "name": "공지사항 테스트 4",
+      "url": "https://www.bayadakorea.com/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD-%ED%85%8C%EC%8A%A4%ED%8A%B8-4/",
+      "file": "post-공지사항-테스트-4",
+      "status": 200,
+      "error": null,
+      "textLength": 1212,
+      "imageCount": 19
+    },
+    {
+      "name": "보도자료 테스트 1",
+      "url": "https://www.bayadakorea.com/%EB%B3%B4%EB%8F%84%EC%9E%90%EB%A3%8C-%ED%85%8C%EC%8A%A4%ED%8A%B8/",
+      "file": "post-보도자료-테스트-1",
+      "status": 200,
+      "error": null,
+      "textLength": 1090,
+      "imageCount": 19
+    },
+    {
+      "name": "보도자료 테스트 2",
+      "url": "https://www.bayadakorea.com/%EB%B3%B4%EB%8F%84%EC%9E%90%EB%A3%8C-%ED%85%8C%EC%8A%A4%ED%8A%B8-2/",
+      "file": "post-보도자료-테스트-2",
+      "status": 200,
+      "error": null,
+      "textLength": 1109,
+      "imageCount": 19
+    },
+    {
+      "name": "보도자료 테스트 3",
+      "url": "https://www.bayadakorea.com/%EB%B3%B4%EB%8F%84%EC%9E%90%EB%A3%8C-%ED%85%8C%EC%8A%A4%ED%8A%B8-3/",
+      "file": "post-보도자료-테스트-3",
+      "status": 200,
+      "error": null,
+      "textLength": 1109,
+      "imageCount": 19
+    },
+    {
+      "name": "보도자료 테스트 4",
+      "url": "https://www.bayadakorea.com/%EB%B3%B4%EB%8F%84%EC%9E%90%EB%A3%8C-%ED%85%8C%EC%8A%A4%ED%8A%B8-4/",
+      "file": "post-보도자료-테스트-4",
+      "status": 200,
+      "error": null,
+      "textLength": 1109,
+      "imageCount": 19
+    }
+  ]
+}

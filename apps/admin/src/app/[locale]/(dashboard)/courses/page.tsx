@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { Plus, Search } from "lucide-react";
-import { Button, Badge, DataTable, type Column, Input } from "@bayada/ui";
+import { Plus } from "lucide-react";
+import { Button, Badge, DataTable, type Column } from "@bayada/ui";
 import { COURSE_STATUS_LABELS, formatPrice } from "@bayada/shared";
 import type { CourseStatusType } from "@bayada/shared";
 import { courseService } from "@/lib/services";
+import { SearchFilter } from "@/components/SearchFilter";
+import { Pagination } from "@/components/Pagination";
 
 interface CourseRow {
   [key: string]: unknown;
@@ -22,6 +24,12 @@ const statusBadgeVariant: Record<string, "default" | "success" | "secondary"> = 
   PUBLISHED: "success",
   ARCHIVED: "default",
 };
+
+const statusFilters = [
+  { label: "공개", value: "PUBLISHED" },
+  { label: "초안", value: "DRAFT" },
+  { label: "보관", value: "ARCHIVED" },
+];
 
 const columns: Column<CourseRow>[] = [
   {
@@ -79,8 +87,27 @@ const columns: Column<CourseRow>[] = [
   },
 ];
 
-export default async function CoursesPage() {
-  const result = await courseService.list({});
+export default async function CoursesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    search?: string;
+    status?: string;
+    page?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const search = params.search ?? "";
+  const status = params.status || undefined;
+
+  const result = await courseService.list({
+    page,
+    limit: 20,
+    search: search || undefined,
+    status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" | undefined,
+  });
+
   const courses: CourseRow[] = result.items.map((c) => ({
     id: c.id,
     title: c.title,
@@ -117,47 +144,23 @@ export default async function CoursesPage() {
       </div>
 
       {/* 필터/검색 */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-          <Input
-            placeholder="강의명으로 검색..."
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            전체
-          </Button>
-          <Button variant="ghost" size="sm">
-            공개
-          </Button>
-          <Button variant="ghost" size="sm">
-            초안
-          </Button>
-          <Button variant="ghost" size="sm">
-            보관
-          </Button>
-        </div>
-      </div>
+      <SearchFilter
+        searchPlaceholder="강의명으로 검색..."
+        filterKey="status"
+        filters={statusFilters}
+      />
 
       {/* 데이터 테이블 */}
       <DataTable<CourseRow> columns={columns} data={courses} keyField="id" />
 
       {/* 페이지네이션 */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[color:var(--muted)]">
-          전체 {courses.length}개 강의
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled>
-            이전
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            다음
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        total={result.total}
+        page={result.page}
+        limit={result.pageSize}
+        totalPages={result.totalPages}
+        unit="개 강의"
+      />
     </div>
   );
 }

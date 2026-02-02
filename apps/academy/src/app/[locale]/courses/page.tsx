@@ -68,7 +68,6 @@ export default function CoursesPage() {
             thumbnail: course.thumbnail as string | null,
             price: course.price as number,
             category: category?.name ?? "",
-            instructor: "",
             totalDuration,
             studentCount: count?.enrollments ?? 0,
           };

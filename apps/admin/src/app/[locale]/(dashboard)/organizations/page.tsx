@@ -1,15 +1,17 @@
-import { Search, Plus, Building2, Users, BookOpen } from "lucide-react";
+import { Plus, Building2, Users, BookOpen } from "lucide-react";
 import {
   Button,
   Badge,
   DataTable,
   type Column,
-  Input,
   Card,
   CardContent,
 } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
 import { organizationService } from "@/lib/services";
+import { SearchFilter } from "@/components/SearchFilter";
+import { Pagination } from "@/components/Pagination";
+import Link from "next/link";
 
 interface OrgRow {
   [key: string]: unknown;
@@ -69,30 +71,43 @@ const columns: Column<OrgRow>[] = [
   {
     key: "actions",
     header: "",
-    render: () => (
-      <Button variant="ghost" size="sm">
-        상세
-      </Button>
+    render: (row) => (
+      <Link href={`/organizations/${row.id}`}>
+        <Button variant="ghost" size="sm">
+          상세
+        </Button>
+      </Link>
     ),
   },
 ];
 
-export default async function OrganizationsPage() {
-  const result = await organizationService.list({});
+export default async function OrganizationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; page?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const search = params.search ?? "";
+
+  const result = await organizationService.list({
+    page,
+    limit: 20,
+    search: search || undefined,
+  });
 
   const organizations: OrgRow[] = result.items.map((o) => {
     const org = o as Record<string, unknown>;
-    const _count = org._count as { members?: number; orders?: number } | undefined;
-    const stats = org as { totalSpent?: number };
+    const _count = org._count as { users?: number; orders?: number } | undefined;
 
     return {
       id: org.id as string,
       name: org.name as string,
       contactName: (org.contactName as string) ?? "-",
       contactEmail: (org.contactEmail as string) ?? "-",
-      members: _count?.members ?? 0,
+      members: _count?.users ?? 0,
       enrollments: _count?.orders ?? 0,
-      totalSpent: stats.totalSpent ?? 0,
+      totalSpent: 0,
       status: (org.isActive as boolean) !== false ? "활성" : "만료",
       contractEnd: org.contractEnd
         ? new Date(org.contractEnd as string).toLocaleDateString("ko-KR")
@@ -102,7 +117,7 @@ export default async function OrganizationsPage() {
   });
 
   const orgStats = {
-    total: organizations.length,
+    total: result.total,
     active: organizations.filter((o) => o.status === "활성").length,
     totalMembers: organizations.reduce((sum, o) => sum + o.members, 0),
     totalRevenue: organizations.reduce((sum, o) => sum + o.totalSpent, 0),
@@ -183,44 +198,19 @@ export default async function OrganizationsPage() {
       </div>
 
       {/* 검색 */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-          <Input
-            placeholder="기관명으로 검색..."
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            전체
-          </Button>
-          <Button variant="ghost" size="sm">
-            활성
-          </Button>
-          <Button variant="ghost" size="sm">
-            만료
-          </Button>
-        </div>
-      </div>
+      <SearchFilter searchPlaceholder="기관명으로 검색..." />
 
       {/* 데이터 테이블 */}
       <DataTable<OrgRow> columns={columns} data={organizations} keyField="id" />
 
       {/* 페이지네이션 */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[color:var(--muted)]">
-          전체 {organizations.length}개 기관
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled>
-            이전
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            다음
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        total={result.total}
+        page={result.page}
+        limit={result.pageSize}
+        totalPages={result.totalPages}
+        unit="개 기관"
+      />
     </div>
   );
 }

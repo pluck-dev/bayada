@@ -2,21 +2,71 @@
 @import "@bayada/ui/styles.css";
 
 /* 아카데미 전역 스타일 */
+:root {
+  --brand-primary: #e31b34;
+  --brand-secondary: #a30b24;
+  --brand-gradient: linear-gradient(135deg, #e31b34 0%, #a30b24 100%);
+
+  --bg-primary: #f5f5f7; /* Apple light gray background */
+  --bg-secondary: #ffffff;
+  --text-primary: #1d1d1f;
+  --text-secondary: #86868b;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
+}
+
 body {
   font-family:
+    "SF Pro Display",
+    "SF Pro Text",
     "Pretendard Variable",
     Pretendard,
     -apple-system,
     BlinkMacSystemFont,
     system-ui,
-    Roboto,
-    "Helvetica Neue",
-    "Segoe UI",
-    "Apple SD Gothic Neo",
-    "Noto Sans KR",
-    "Malgun Gothic",
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
     sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/70 border border-white/40 shadow-sm;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#e31b34] to-[#a30b24];
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] hover:scale-[1.02];
+  }
+
+  .apple-card {
+    @apply rounded-[24px] bg-white text-[#1d1d1f] transition-all duration-500 hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.05)];
+  }
+
+  .container-padding {
+    @apply px-6 md:px-12 lg:px-20 max-w-[1440px] mx-auto;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

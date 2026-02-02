@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description:
     "BAYADA 홈헬스케어 - 가정에서 받는 최고의 간호 및 돌봄 서비스. 방문간호, 방문요양, 교육 프로그램을 제공합니다.",
   keywords: ["홈헬스케어", "방문간호", "방문요양", "BAYADA", "바야다", "홈케어"],
+  icons: {
+    icon: "/images/brand/logo.png",
+  },
 };
 
 export default function RootLayout({

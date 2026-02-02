@@ -1,5 +1,5 @@
-import { Search, Download } from "lucide-react";
-import { Button, Badge, DataTable, type Column, Input } from "@bayada/ui";
+import { Download } from "lucide-react";
+import { Button, Badge, DataTable, type Column } from "@bayada/ui";
 import {
   ORDER_STATUS_LABELS,
   ORDER_TYPE_LABELS,
@@ -7,6 +7,9 @@ import {
 } from "@bayada/shared";
 import type { OrderStatusValue, OrderTypeValue } from "@bayada/shared";
 import { orderService } from "@/lib/services";
+import { SearchFilter } from "@/components/SearchFilter";
+import { Pagination } from "@/components/Pagination";
+import Link from "next/link";
 
 interface OrderRow {
   [key: string]: unknown;
@@ -32,6 +35,17 @@ const typeBadgeVariant: Record<OrderTypeValue, "info" | "default"> = {
   B2C: "info",
   B2B: "default",
 };
+
+const statusFilters = [
+  { label: "대기", value: "PENDING" },
+  { label: "확정", value: "CONFIRMED" },
+  { label: "취소", value: "CANCELLED" },
+];
+
+const typeFilters = [
+  { label: "개인(B2C)", value: "B2C" },
+  { label: "기관(B2B)", value: "B2B" },
+];
 
 const columns: Column<OrderRow>[] = [
   {
@@ -95,16 +109,39 @@ const columns: Column<OrderRow>[] = [
   {
     key: "actions",
     header: "",
-    render: () => (
-      <Button variant="ghost" size="sm">
-        상세
-      </Button>
+    render: (row) => (
+      <Link href={`/orders/${row.id}`}>
+        <Button variant="ghost" size="sm">
+          상세
+        </Button>
+      </Link>
     ),
   },
 ];
 
-export default async function OrdersPage() {
-  const result = await orderService.list({});
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    search?: string;
+    status?: string;
+    type?: string;
+    page?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const search = params.search ?? "";
+  const status = params.status || undefined;
+  const type = params.type as OrderTypeValue | undefined;
+
+  const result = await orderService.list({
+    page,
+    limit: 20,
+    search: search || undefined,
+    status,
+    type,
+  });
 
   const orders: OrderRow[] = result.items.map((o) => {
     const order = o as Record<string, unknown>;
@@ -147,55 +184,24 @@ export default async function OrdersPage() {
       </div>
 
       {/* 필터/검색 */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-          <Input
-            placeholder="주문번호 또는 고객명으로 검색..."
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            전체
-          </Button>
-          <Button variant="ghost" size="sm">
-            대기
-          </Button>
-          <Button variant="ghost" size="sm">
-            확정
-          </Button>
-          <Button variant="ghost" size="sm">
-            취소
-          </Button>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm">
-            개인(B2C)
-          </Button>
-          <Button variant="ghost" size="sm">
-            기관(B2B)
-          </Button>
-        </div>
-      </div>
+      <SearchFilter
+        searchPlaceholder="주문번호 또는 고객명으로 검색..."
+        filterKey="status"
+        filters={statusFilters}
+        secondFilterKey="type"
+        secondFilters={typeFilters}
+      />
 
       {/* 데이터 테이블 */}
       <DataTable<OrderRow> columns={columns} data={orders} keyField="id" />
 
       {/* 페이지네이션 */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[color:var(--muted)]">
-          전체 {orders.length}건
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled>
-            이전
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            다음
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        total={result.total}
+        page={result.page}
+        limit={result.pageSize}
+        totalPages={result.totalPages}
+      />
     </div>
   );
 }

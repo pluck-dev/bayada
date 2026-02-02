@@ -10,7 +10,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@bayada/shared": "workspace:*"
+    "@bayada/shared": "workspace:*",
+    "bcryptjs": "^3.0.2"
   },
   "peerDependencies": {
     "@bayada/db": "workspace:*"

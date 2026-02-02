@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@bayada/ui";
-import { Menu, X, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import type { Dictionary } from "@bayada/shared/i18n";
+import { mainNavigation } from "@/data/navigation";
+import { MegaMenu } from "./header/MegaMenu";
+import { MobileMenu } from "./header/MobileMenu";
 
 interface HeaderProps {
   dict: Dictionary;
   locale: string;
 }
 
-export function Header({ dict, locale }: HeaderProps) {
+export function Header({ locale }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMega, setOpenMega] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function onScroll() {
@@ -25,112 +28,109 @@ export function Header({ dict, locale }: HeaderProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const t = dict.web;
+  // 외부 클릭 시 메가 메뉴 닫기
+  useEffect(() => {
+    function handleClickOutside() {
+      setOpenMega(null);
+    }
+    if (openMega) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [openMega]);
 
-  const megaMenus = [
-    {
-      key: "company",
-      label: t.nav.company,
-      items: [
-        { label: t.nav.about, href: `/${locale}/about` },
-        { label: t.nav.ceo, href: `/${locale}/ceo` },
-        { label: t.nav.bayadaWay, href: `/${locale}/bayada-way` },
-        { label: t.nav.center, href: `/${locale}/center` },
-      ],
-    },
-    {
-      key: "services",
-      label: t.nav.services,
-      items: [
-        { label: t.nav.homeCare, href: `/${locale}/services/home-care` },
-        { label: t.nav.visitingNursing, href: `/${locale}/services/visiting-nursing` },
-        { label: t.nav.dementiaCare, href: `/${locale}/services/dementia-care` },
-        { label: t.nav.careCoordinator, href: `/${locale}/services/care-coordinator` },
-        { label: t.nav.customExercise, href: `/${locale}/services/custom-exercise` },
-        { label: t.nav.musicTherapy, href: `/${locale}/services/music-therapy` },
-        { label: t.nav.cognitiveTherapy, href: `/${locale}/services/cognitive-therapy` },
-      ],
-    },
-    {
-      key: "support",
-      label: t.nav.support,
-      items: [
-        { label: t.nav.guide, href: `/${locale}/guide` },
-        { label: t.nav.consultation, href: `/${locale}/consultation` },
-        { label: t.nav.faq, href: `/${locale}/faq` },
-      ],
-    },
-  ];
+  function handleMouseEnter(label: string) {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    setOpenMega(label);
+  }
+
+  function handleMouseLeave() {
+    closeTimerRef.current = setTimeout(() => setOpenMega(null), 150);
+  }
 
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-[color:var(--border)] bg-white/80 backdrop-blur-xl shadow-[var(--shadow-subtle)]"
-          : "bg-transparent"
+          ? "border-b border-[color:var(--border)] bg-white/95 shadow-[var(--shadow-subtle)] backdrop-blur-xl"
+          : "bg-white/80 backdrop-blur-sm"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* 로고 */}
-        <Link href={`/${locale}`} className="flex items-center gap-2.5">
+        <Link href={`/${locale}`} className="flex shrink-0 items-center gap-2.5">
           <Image
             src="/images/brand/logo.png"
             alt="BAYADA"
             width={120}
             height={36}
-            className="h-9 w-auto"
+            className="h-8 w-auto"
             priority
           />
         </Link>
 
-        {/* 데스크톱 메가 메뉴 */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {megaMenus.map((menu) => (
+        {/* 데스크톱 네비게이션 */}
+        <nav className="hidden items-center gap-0.5 lg:flex">
+          {mainNavigation.map((item) => (
             <div
-              key={menu.key}
+              key={item.label}
               className="relative"
-              onMouseEnter={() => setOpenMega(menu.key)}
-              onMouseLeave={() => setOpenMega(null)}
+              onMouseEnter={() => item.children ? handleMouseEnter(item.label) : undefined}
+              onMouseLeave={item.children ? handleMouseLeave : undefined}
             >
-              <button
-                className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-[color:var(--fg)] transition-colors hover:text-[#ce0e2d]"
-              >
-                {menu.label}
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openMega === menu.key ? "rotate-180" : ""}`} />
-              </button>
+              {item.children ? (
+                <button
+                  className={`flex items-center gap-1 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors hover:text-[#ce0e2d] ${
+                    openMega === item.label
+                      ? "text-[#ce0e2d]"
+                      : "text-[color:var(--fg)]"
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMega((prev) => (prev === item.label ? null : item.label));
+                  }}
+                >
+                  {item.label}
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform ${
+                      openMega === item.label ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              ) : (
+                <Link
+                  href={`/${locale}${item.href}`}
+                  className="rounded-lg px-3 py-2 text-[13px] font-medium text-[color:var(--fg)] transition-colors hover:text-[#ce0e2d]"
+                >
+                  {item.label}
+                </Link>
+              )}
 
-              {openMega === menu.key && (
-                <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-2">
-                  <div className="min-w-[200px] rounded-xl border border-[color:var(--border)] bg-white p-2 shadow-[var(--shadow-medium)]">
-                    {menu.items.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="block rounded-lg px-4 py-2.5 text-sm text-[color:var(--fg)] transition-colors hover:bg-[color:var(--surface)] hover:text-[#ce0e2d]"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+              {/* 메가 메뉴 패널 */}
+              {openMega === item.label && item.children && (
+                <MegaMenu
+                  item={item}
+                  locale={locale}
+                  onClose={() => setOpenMega(null)}
+                />
               )}
             </div>
           ))}
         </nav>
 
-        {/* 데스크톱 CTA */}
+        {/* 데스크톱 우측 CTA */}
         <div className="hidden items-center gap-3 lg:flex">
-          <a
-            href="tel:1670-1379"
-            className="flex items-center gap-1.5 text-sm font-medium text-[color:var(--muted)] transition-colors hover:text-[#ce0e2d]"
+          <Link
+            href={`/${locale}/contact`}
+            className="rounded-lg px-3 py-2 text-[13px] font-medium text-[color:var(--muted)] transition-colors hover:text-[color:var(--fg)]"
           >
-            <Phone className="h-4 w-4" />
-            {t.common.phone}
-          </a>
-          <Link href={`/${locale}/consultation`}>
-            <Button size="md" variant="brand">
-              {t.common.freeConsult}
-            </Button>
+            Login
+          </Link>
+          <Link
+            href={`/${locale}/membership`}
+            className="rounded-full bg-[#ce0e2d] px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#b00c27]"
+          >
+            Get Started
           </Link>
         </div>
 
@@ -146,43 +146,7 @@ export function Header({ dict, locale }: HeaderProps) {
 
       {/* 모바일 메뉴 */}
       {isMobileMenuOpen && (
-        <div className="border-t border-[color:var(--border)] bg-white lg:hidden">
-          <nav className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
-            {megaMenus.map((menu) => (
-              <div key={menu.key} className="mb-4">
-                <p className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">
-                  {menu.label}
-                </p>
-                <div className="flex flex-col gap-0.5">
-                  {menu.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="rounded-lg px-4 py-2.5 text-sm font-medium text-[color:var(--fg)] transition-colors hover:bg-[color:var(--surface)]"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="mt-4 flex flex-col gap-3 border-t border-[color:var(--border)] pt-4">
-              <a
-                href="tel:1670-1379"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[color:var(--muted)]"
-              >
-                <Phone className="h-4 w-4" />
-                {t.common.phone}
-              </a>
-              <Link href={`/${locale}/consultation`} className="block" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button size="md" variant="brand" className="w-full">
-                  {t.common.freeConsult}
-                </Button>
-              </Link>
-            </div>
-          </nav>
-        </div>
+        <MobileMenu locale={locale} onClose={() => setIsMobileMenuOpen(false)} />
       )}
     </header>
   );
