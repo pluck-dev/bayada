@@ -114,22 +114,137 @@
     "archived": "アーカイブ"
   },
   "web": {
-    "heroTitle": "最高のホームヘルスケアサービス",
-    "heroDescription": "BAYADAと共に自宅で受ける専門ヘルスケア",
-    "heroButton": "相談を申し込む",
-    "services": "サービス",
-    "visitingNurse": "訪問看護",
-    "visitingNurseDesc": "専門看護師がご自宅を訪問し、医療サービスを提供します。",
-    "homeCare": "訪問介護",
-    "homeCareDesc": "日常生活の支援と心のケアを提供します。",
-    "education": "教育プログラム",
-    "educationDesc": "50年のノウハウによるヘルスケア専門教育を提供します。",
-    "aboutTitle": "BAYADAについて",
-    "aboutDescription": "1975年に設立されたBAYADAは、50年間ホームヘルスケア分野をリードしてきたグローバル企業です。思いやり、卓越性、信頼性を基に最高の在宅ヘルスケアサービスを提供しています。",
-    "ctaTitle": "今すぐご相談ください",
-    "ctaDescription": "専門コンサルタントがオーダーメイドのケアプランを設計いたします。",
-    "ctaButton": "無料相談申込",
-    "learnMore": "詳しく見る",
-    "footer": "BAYADAホームヘルスケアコリア"
+    "nav": {
+      "company": "BAYADAホームヘルスケア",
+      "about": "会社紹介",
+      "ceo": "代表挨拶",
+      "bayadaWay": "The BAYADA Way",
+      "center": "ケアセンター",
+      "recruit": "採用情報",
+      "services": "サービス",
+      "homeCare": "訪問介護",
+      "visitingNursing": "訪問看護",
+      "dementiaCare": "認知症ケア",
+      "careCoordinator": "ケアコーディネーター",
+      "customExercise": "カスタム運動",
+      "musicTherapy": "音楽療法",
+      "cognitiveTherapy": "統合認知療法",
+      "support": "サポート",
+      "guide": "ご利用案内",
+      "consultation": "相談",
+      "faq": "FAQ",
+      "partners": "パートナー",
+      "privacy": "プライバシーポリシー"
+    },
+    "home": {
+      "heroTitle": "訪問する専門看護",
+      "heroSubtitle": "心のこもったオーダーメイドケア",
+      "heroTagline": "日常の仲間",
+      "heroDescription": "ケアが必要な方が自宅で快適に安全に過ごせるようサポートします。",
+      "heroCta": "無料相談申込",
+      "heroCtaSecondary": "サービスを見る",
+      "statsYears": "50年+",
+      "statsYearsLabel": "グローバル経験",
+      "statsCountries": "23",
+      "statsCountriesLabel": "カ国に展開",
+      "statsEmployees": "30,000+",
+      "statsEmployeesLabel": "専門ケアスタッフ",
+      "stats365": "365",
+      "stats365Label": "日休まないケア",
+      "servicesTitle": "BAYADAサービス",
+      "servicesSubtitle": "専門的なケアをご自宅でお受けください",
+      "viewAll": "すべてのサービスを見る",
+      "bayadaWayTitle": "The BAYADA Way",
+      "bayadaWaySubtitle": "私たちが最も大切にする価値",
+      "compassion": "Compassion",
+      "compassionLabel": "思いやり",
+      "excellence": "Excellence",
+      "excellenceLabel": "卓越性",
+      "reliability": "Reliability",
+      "reliabilityLabel": "信頼性",
+      "usageTitle": "ご利用案内",
+      "usageSubtitle": "簡単6ステップでサービスを開始",
+      "partnersTitle": "信頼できるパートナー",
+      "partnersSubtitle": "国内外の主要医療機関やグローバル企業と連携しています",
+      "faqTitle": "よくある質問",
+      "faqSubtitle": "ご質問をお確かめください",
+      "faqViewAll": "すべてのFAQを見る",
+      "ctaTitle": "今すぐご相談ください",
+      "ctaDescription": "専門コンサルタントがお客様の状況に最適なケアプログラムを設計いたします。",
+      "ctaCalling": "電話相談",
+      "ctaOnline": "オンライン相談",
+      "ctaVisit": "訪問相談"
+    },
+    "about": {
+      "title": "会社紹介",
+      "heading": "WE LOVE WHAT WE DO"
+    },
+    "ceo": {
+      "title": "代表挨拶"
+    },
+    "bayadaWay": {
+      "title": "The BAYADA Way",
+      "mission": "使命",
+      "vision": "ビジョン",
+      "beliefs": "信念",
+      "coreValues": "コアバリュー"
+    },
+    "center": {
+      "title": "ケアセンター",
+      "address": "住所",
+      "subway": "地下鉄",
+      "bus": "バス",
+      "contact": "お問い合わせ"
+    },
+    "services": {
+      "title": "サービス",
+      "allServices": "すべてのサービス",
+      "target": "対象",
+      "mainServices": "主なサービス",
+      "pricing": "料金",
+      "duration": "時間",
+      "selfPay": "自己負担(15%)",
+      "nhis": "公団負担(85%)",
+      "total": "総費用",
+      "monthlyLimit": "等級別月限度額",
+      "grade": "等級",
+      "limit": "月限度額",
+      "programs": "プログラム",
+      "activities": "活動",
+      "viewDetail": "詳しく見る"
+    },
+    "guide": {
+      "title": "ご利用案内"
+    },
+    "consultation": {
+      "title": "相談",
+      "name": "氏名",
+      "contact": "連絡先（メールまたは電話）",
+      "subject": "件名",
+      "service": "相談サービス選択",
+      "region": "希望地域",
+      "message": "お問い合わせ内容",
+      "submit": "相談を申し込む",
+      "responseTime": "24時間以内にご連絡いたします。"
+    },
+    "faq": {
+      "title": "FAQ"
+    },
+    "partners": {
+      "title": "パートナー"
+    },
+    "privacy": {
+      "title": "プライバシーポリシー"
+    },
+    "common": {
+      "phone": "1670-1379",
+      "freeConsult": "無料相談申込",
+      "learnMore": "詳しく見る",
+      "viewAll": "すべて見る",
+      "contactUs": "お問い合わせ",
+      "scrollDown": "下にスクロール",
+      "companyName": "BAYADAホームヘルスケア",
+      "copyright": "BAYADAホームヘルスケアコリア"
+    }
   }
 }

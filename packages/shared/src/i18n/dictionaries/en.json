@@ -114,22 +114,137 @@
     "archived": "Archived"
   },
   "web": {
-    "heroTitle": "Best Home Healthcare",
-    "heroDescription": "Professional healthcare at home with BAYADA",
-    "heroButton": "Request Consultation",
-    "services": "Services",
-    "visitingNurse": "Visiting Nurse",
-    "visitingNurseDesc": "Professional nurses provide medical services at your home.",
-    "homeCare": "Home Care",
-    "homeCareDesc": "Daily living support and emotional care services.",
-    "education": "Education Programs",
-    "educationDesc": "50 years of healthcare expertise in professional education.",
-    "aboutTitle": "About BAYADA",
-    "aboutDescription": "Founded in 1975, BAYADA has been a global leader in home healthcare for 50 years. We provide the best home healthcare services based on compassion, excellence, and reliability.",
-    "ctaTitle": "Get a Consultation Now",
-    "ctaDescription": "Our expert consultants will design a personalized care plan for you.",
-    "ctaButton": "Free Consultation",
-    "learnMore": "Learn More",
-    "footer": "BAYADA Home Health Care Korea"
+    "nav": {
+      "company": "BAYADA Home Health Care",
+      "about": "About Us",
+      "ceo": "CEO Message",
+      "bayadaWay": "The BAYADA Way",
+      "center": "Care Center",
+      "recruit": "Careers",
+      "services": "Services",
+      "homeCare": "Home Care",
+      "visitingNursing": "Visiting Nursing",
+      "dementiaCare": "Dementia Care",
+      "careCoordinator": "Care Coordinator",
+      "customExercise": "Custom Exercise",
+      "musicTherapy": "Music Therapy",
+      "cognitiveTherapy": "Cognitive Therapy",
+      "support": "Support",
+      "guide": "Usage Guide",
+      "consultation": "Consultation",
+      "faq": "FAQ",
+      "partners": "Partners",
+      "privacy": "Privacy Policy"
+    },
+    "home": {
+      "heroTitle": "Expert Nursing at Home",
+      "heroSubtitle": "Personalized Care You Can Trust",
+      "heroTagline": "Your Daily Companion",
+      "heroDescription": "Helping those in need stay comfortable and safe at home.",
+      "heroCta": "Free Consultation",
+      "heroCtaSecondary": "Explore Services",
+      "statsYears": "50+",
+      "statsYearsLabel": "Years of Global Experience",
+      "statsCountries": "23",
+      "statsCountriesLabel": "Countries",
+      "statsEmployees": "30,000+",
+      "statsEmployeesLabel": "Care Professionals",
+      "stats365": "365",
+      "stats365Label": "Days of Non-stop Care",
+      "servicesTitle": "BAYADA Services",
+      "servicesSubtitle": "Receive professional care at home",
+      "viewAll": "View All Services",
+      "bayadaWayTitle": "The BAYADA Way",
+      "bayadaWaySubtitle": "The values we believe in and cherish most",
+      "compassion": "Compassion",
+      "compassionLabel": "Compassion",
+      "excellence": "Excellence",
+      "excellenceLabel": "Excellence",
+      "reliability": "Reliability",
+      "reliabilityLabel": "Reliability",
+      "usageTitle": "How It Works",
+      "usageSubtitle": "Start your service in 6 simple steps",
+      "partnersTitle": "Trusted Partners",
+      "partnersSubtitle": "Collaborating with leading medical institutions and global companies",
+      "faqTitle": "Frequently Asked Questions",
+      "faqSubtitle": "Find answers to your questions",
+      "faqViewAll": "View All FAQs",
+      "ctaTitle": "Get a Consultation Now",
+      "ctaDescription": "Our expert consultants will design the optimal care program for your situation.",
+      "ctaCalling": "Call Us",
+      "ctaOnline": "Online Consultation",
+      "ctaVisit": "Home Visit"
+    },
+    "about": {
+      "title": "About Us",
+      "heading": "WE LOVE WHAT WE DO"
+    },
+    "ceo": {
+      "title": "CEO Message"
+    },
+    "bayadaWay": {
+      "title": "The BAYADA Way",
+      "mission": "Mission",
+      "vision": "Vision",
+      "beliefs": "Beliefs",
+      "coreValues": "Core Values"
+    },
+    "center": {
+      "title": "Care Center",
+      "address": "Address",
+      "subway": "Subway",
+      "bus": "Bus",
+      "contact": "Contact"
+    },
+    "services": {
+      "title": "Services",
+      "allServices": "All Services",
+      "target": "Target",
+      "mainServices": "Main Services",
+      "pricing": "Pricing",
+      "duration": "Duration",
+      "selfPay": "Self-pay (15%)",
+      "nhis": "NHIS (85%)",
+      "total": "Total Cost",
+      "monthlyLimit": "Monthly Limit by Grade",
+      "grade": "Grade",
+      "limit": "Monthly Limit",
+      "programs": "Programs",
+      "activities": "Activities",
+      "viewDetail": "View Details"
+    },
+    "guide": {
+      "title": "Usage Guide"
+    },
+    "consultation": {
+      "title": "Consultation",
+      "name": "Name",
+      "contact": "Contact (Email or Phone)",
+      "subject": "Subject",
+      "service": "Select Service",
+      "region": "Preferred Region",
+      "message": "Message",
+      "submit": "Request Consultation",
+      "responseTime": "We will contact you within 24 hours."
+    },
+    "faq": {
+      "title": "FAQ"
+    },
+    "partners": {
+      "title": "Partners"
+    },
+    "privacy": {
+      "title": "Privacy Policy"
+    },
+    "common": {
+      "phone": "1670-1379",
+      "freeConsult": "Free Consultation",
+      "learnMore": "Learn More",
+      "viewAll": "View All",
+      "contactUs": "Contact Us",
+      "scrollDown": "Scroll Down",
+      "companyName": "BAYADA Home Health Care",
+      "copyright": "BAYADA Home Health Care Korea"
+    }
   }
 }

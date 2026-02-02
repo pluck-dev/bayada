@@ -114,22 +114,137 @@
     "archived": "보관"
   },
   "web": {
-    "heroTitle": "최고의 홈헬스케어 서비스",
-    "heroDescription": "BAYADA와 함께 집에서 받는 전문 헬스케어",
-    "heroButton": "상담 신청하기",
-    "services": "서비스",
-    "visitingNurse": "방문간호",
-    "visitingNurseDesc": "전문 간호사가 가정을 방문하여 의료 서비스를 제공합니다.",
-    "homeCare": "방문요양",
-    "homeCareDesc": "일상생활 지원과 정서적 돌봄을 제공합니다.",
-    "education": "교육 프로그램",
-    "educationDesc": "50년 노하우의 헬스케어 전문 교육을 제공합니다.",
-    "aboutTitle": "BAYADA 소개",
-    "aboutDescription": "1975년 설립된 BAYADA는 50년간 홈헬스케어 분야를 선도해 온 글로벌 기업입니다. 동정심, 탁월함, 신뢰성을 바탕으로 최고의 가정 내 헬스케어 서비스를 제공합니다.",
-    "ctaTitle": "지금 바로 상담받으세요",
-    "ctaDescription": "전문 상담사가 맞춤형 케어 플랜을 설계해 드립니다.",
-    "ctaButton": "무료 상담 신청",
-    "learnMore": "자세히 보기",
-    "footer": "바야다홈헬스케어코리아"
+    "nav": {
+      "company": "바야다홈헬스케어",
+      "about": "회사소개",
+      "ceo": "대표인사말",
+      "bayadaWay": "The BAYADA Way",
+      "center": "바야다 재가센터",
+      "recruit": "채용안내",
+      "services": "서비스",
+      "homeCare": "방문요양",
+      "visitingNursing": "방문간호",
+      "dementiaCare": "치매케어",
+      "careCoordinator": "케어코디",
+      "customExercise": "맞춤운동",
+      "musicTherapy": "음악요법",
+      "cognitiveTherapy": "통합인지요법",
+      "support": "고객센터",
+      "guide": "이용안내",
+      "consultation": "서비스상담",
+      "faq": "FAQ",
+      "partners": "파트너",
+      "privacy": "개인정보처리방침"
+    },
+    "home": {
+      "heroTitle": "찾아가는 전문 간호",
+      "heroSubtitle": "내맘같은 맞춤 요양",
+      "heroTagline": "일상친구",
+      "heroDescription": "보살핌이 필요한 분들이 집에서 편안하고 안전하게 지낼 수 있도록 돕습니다.",
+      "heroCta": "무료 상담 신청",
+      "heroCtaSecondary": "서비스 알아보기",
+      "statsYears": "50년+",
+      "statsYearsLabel": "글로벌 경험",
+      "statsCountries": "23",
+      "statsCountriesLabel": "개국 진출",
+      "statsEmployees": "30,000+",
+      "statsEmployeesLabel": "전문 케어 인력",
+      "stats365": "365",
+      "stats365Label": "일 쉬지 않는 돌봄",
+      "servicesTitle": "BAYADA 서비스",
+      "servicesSubtitle": "전문적인 케어를 가정에서 받으세요",
+      "viewAll": "전체 서비스 보기",
+      "bayadaWayTitle": "The BAYADA Way",
+      "bayadaWaySubtitle": "우리가 믿고 가장 소중히 여기는 가치",
+      "compassion": "Compassion",
+      "compassionLabel": "공감",
+      "excellence": "Excellence",
+      "excellenceLabel": "탁월함",
+      "reliability": "Reliability",
+      "reliabilityLabel": "신뢰",
+      "usageTitle": "이용 안내",
+      "usageSubtitle": "간편한 6단계로 서비스를 시작하세요",
+      "partnersTitle": "신뢰할 수 있는 파트너",
+      "partnersSubtitle": "국내외 주요 의료기관 및 글로벌 기업과 협력합니다",
+      "faqTitle": "자주 묻는 질문",
+      "faqSubtitle": "궁금한 점을 확인하세요",
+      "faqViewAll": "전체 FAQ 보기",
+      "ctaTitle": "지금 바로 상담받으세요",
+      "ctaDescription": "전문 상담사가 고객님의 상황에 맞는 최적의 케어 프로그램을 설계해 드립니다.",
+      "ctaCalling": "전화 상담",
+      "ctaOnline": "온라인 상담",
+      "ctaVisit": "방문 상담"
+    },
+    "about": {
+      "title": "회사소개",
+      "heading": "WE LOVE WHAT WE DO"
+    },
+    "ceo": {
+      "title": "대표인사말"
+    },
+    "bayadaWay": {
+      "title": "The BAYADA Way",
+      "mission": "사명",
+      "vision": "비전",
+      "beliefs": "신념",
+      "coreValues": "핵심 가치"
+    },
+    "center": {
+      "title": "바야다 재가센터 소개",
+      "address": "주소",
+      "subway": "지하철",
+      "bus": "버스",
+      "contact": "연락처"
+    },
+    "services": {
+      "title": "서비스",
+      "allServices": "전체 서비스",
+      "target": "대상",
+      "mainServices": "주요 서비스",
+      "pricing": "이용 요금",
+      "duration": "시간",
+      "selfPay": "본인부담금(15%)",
+      "nhis": "공단부담금(85%)",
+      "total": "총 급여비용",
+      "monthlyLimit": "등급별 월 한도액",
+      "grade": "등급",
+      "limit": "월 한도액",
+      "programs": "프로그램",
+      "activities": "활동",
+      "viewDetail": "자세히 보기"
+    },
+    "guide": {
+      "title": "이용안내"
+    },
+    "consultation": {
+      "title": "서비스상담",
+      "name": "이름",
+      "contact": "연락처(이메일 또는 전화번호)",
+      "subject": "제목",
+      "service": "상담 서비스 선택",
+      "region": "서비스 희망 지역",
+      "message": "문의사항",
+      "submit": "상담 신청하기",
+      "responseTime": "제출하신 내용과 관련하여 24시간 내로 연락드리겠습니다."
+    },
+    "faq": {
+      "title": "FAQ"
+    },
+    "partners": {
+      "title": "파트너"
+    },
+    "privacy": {
+      "title": "개인정보처리방침"
+    },
+    "common": {
+      "phone": "1670-1379",
+      "freeConsult": "무료 상담 신청",
+      "learnMore": "자세히 보기",
+      "viewAll": "전체 보기",
+      "contactUs": "문의하기",
+      "scrollDown": "아래로 스크롤",
+      "companyName": "(주)바야다홈헬스케어",
+      "copyright": "바야다홈헬스케어코리아"
+    }
   }
 }

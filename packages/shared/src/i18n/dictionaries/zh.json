@@ -114,22 +114,137 @@
     "archived": "归档"
   },
   "web": {
-    "heroTitle": "最优质的家庭医疗服务",
-    "heroDescription": "与BAYADA一起在家享受专业医疗服务",
-    "heroButton": "申请咨询",
-    "services": "服务",
-    "visitingNurse": "上门护理",
-    "visitingNurseDesc": "专业护士上门提供医疗服务。",
-    "homeCare": "居家照护",
-    "homeCareDesc": "提供日常生活支持和情感关怀。",
-    "education": "教育项目",
-    "educationDesc": "50年经验的医疗健康专业教育。",
-    "aboutTitle": "关于BAYADA",
-    "aboutDescription": "BAYADA成立于1975年，是一家在家庭医疗领域拥有50年领导地位的全球企业。我们以同情心、卓越和可靠性为基础，提供最优质的家庭医疗服务。",
-    "ctaTitle": "立即咨询",
-    "ctaDescription": "专业顾问将为您设计个性化护理方案。",
-    "ctaButton": "免费咨询",
-    "learnMore": "了解更多",
-    "footer": "BAYADA家庭医疗韩国"
+    "nav": {
+      "company": "BAYADA家庭医疗",
+      "about": "公司介绍",
+      "ceo": "CEO致辞",
+      "bayadaWay": "The BAYADA Way",
+      "center": "护理中心",
+      "recruit": "招聘信息",
+      "services": "服务",
+      "homeCare": "居家照护",
+      "visitingNursing": "上门护理",
+      "dementiaCare": "痴呆护理",
+      "careCoordinator": "护理协调员",
+      "customExercise": "定制运动",
+      "musicTherapy": "音乐疗法",
+      "cognitiveTherapy": "综合认知疗法",
+      "support": "客服中心",
+      "guide": "使用指南",
+      "consultation": "咨询",
+      "faq": "FAQ",
+      "partners": "合作伙伴",
+      "privacy": "隐私政策"
+    },
+    "home": {
+      "heroTitle": "上门专业护理",
+      "heroSubtitle": "贴心定制照护",
+      "heroTagline": "日常伙伴",
+      "heroDescription": "帮助需要照护的人在家中舒适安全地生活。",
+      "heroCta": "免费咨询",
+      "heroCtaSecondary": "了解服务",
+      "statsYears": "50年+",
+      "statsYearsLabel": "全球经验",
+      "statsCountries": "23",
+      "statsCountriesLabel": "个国家",
+      "statsEmployees": "30,000+",
+      "statsEmployeesLabel": "专业护理人员",
+      "stats365": "365",
+      "stats365Label": "天不间断护理",
+      "servicesTitle": "BAYADA服务",
+      "servicesSubtitle": "在家享受专业护理",
+      "viewAll": "查看全部服务",
+      "bayadaWayTitle": "The BAYADA Way",
+      "bayadaWaySubtitle": "我们最珍视的价值观",
+      "compassion": "Compassion",
+      "compassionLabel": "同理心",
+      "excellence": "Excellence",
+      "excellenceLabel": "卓越",
+      "reliability": "Reliability",
+      "reliabilityLabel": "可靠",
+      "usageTitle": "使用指南",
+      "usageSubtitle": "简单6步开始服务",
+      "partnersTitle": "值得信赖的合作伙伴",
+      "partnersSubtitle": "与国内外主要医疗机构和全球企业合作",
+      "faqTitle": "常见问题",
+      "faqSubtitle": "查看您的疑问",
+      "faqViewAll": "查看全部FAQ",
+      "ctaTitle": "立即咨询",
+      "ctaDescription": "专业顾问将为您设计最适合的护理方案。",
+      "ctaCalling": "电话咨询",
+      "ctaOnline": "在线咨询",
+      "ctaVisit": "上门咨询"
+    },
+    "about": {
+      "title": "公司介绍",
+      "heading": "WE LOVE WHAT WE DO"
+    },
+    "ceo": {
+      "title": "CEO致辞"
+    },
+    "bayadaWay": {
+      "title": "The BAYADA Way",
+      "mission": "使命",
+      "vision": "愿景",
+      "beliefs": "信念",
+      "coreValues": "核心价值"
+    },
+    "center": {
+      "title": "护理中心",
+      "address": "地址",
+      "subway": "地铁",
+      "bus": "公交",
+      "contact": "联系方式"
+    },
+    "services": {
+      "title": "服务",
+      "allServices": "全部服务",
+      "target": "对象",
+      "mainServices": "主要服务",
+      "pricing": "费用",
+      "duration": "时长",
+      "selfPay": "自付(15%)",
+      "nhis": "公团负担(85%)",
+      "total": "总费用",
+      "monthlyLimit": "等级月限额",
+      "grade": "等级",
+      "limit": "月限额",
+      "programs": "项目",
+      "activities": "活动",
+      "viewDetail": "查看详情"
+    },
+    "guide": {
+      "title": "使用指南"
+    },
+    "consultation": {
+      "title": "咨询",
+      "name": "姓名",
+      "contact": "联系方式（邮箱或电话）",
+      "subject": "标题",
+      "service": "选择咨询服务",
+      "region": "期望地区",
+      "message": "咨询内容",
+      "submit": "提交咨询",
+      "responseTime": "我们将在24小时内联系您。"
+    },
+    "faq": {
+      "title": "FAQ"
+    },
+    "partners": {
+      "title": "合作伙伴"
+    },
+    "privacy": {
+      "title": "隐私政策"
+    },
+    "common": {
+      "phone": "1670-1379",
+      "freeConsult": "免费咨询",
+      "learnMore": "了解更多",
+      "viewAll": "查看全部",
+      "contactUs": "联系我们",
+      "scrollDown": "向下滚动",
+      "companyName": "BAYADA家庭医疗",
+      "copyright": "BAYADA家庭医疗韩国"
+    }
   }
 }

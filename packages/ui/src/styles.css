@@ -36,4 +36,22 @@
   --ring: rgba(206, 14, 45, 0.4);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* 글래스모피즘 */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+
+  /* 추가 그림자 */
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-large: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 40px rgba(206, 14, 45, 0.15);
+
+  /* 섹션 간격 */
+  --section-gap: clamp(5rem, 10vw, 10rem);
+  --section-gap-sm: clamp(3rem, 6vw, 6rem);
+
+  /* 이징 함수 */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
