@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Plus,
@@ -12,6 +13,7 @@ import {
   Edit3,
   ChevronDown,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import {
   Button,
@@ -24,16 +26,9 @@ import {
   CardContent,
   CardFooter,
   Badge,
+  Skeleton,
 } from "@bayada/ui";
-
-const categoryOptions = [
-  { value: "nursing", label: "간호" },
-  { value: "infection-control", label: "감염관리" },
-  { value: "safety", label: "안전" },
-  { value: "rehab", label: "재활" },
-  { value: "leadership", label: "리더십" },
-  { value: "communication", label: "소통" },
-];
+import { COURSE_STATUS_LABELS } from "@bayada/shared";
 
 const statusOptions = [
   { value: "DRAFT", label: "초안" },
@@ -41,89 +36,43 @@ const statusOptions = [
   { value: "ARCHIVED", label: "보관" },
 ];
 
-// 플레이스홀더 섹션/강의 데이터
-const initialSections = [
-  {
-    id: "s1",
-    title: "1장. 간호의 기본 원칙",
-    order: 1,
-    expanded: true,
-    lectures: [
-      {
-        id: "l1",
-        title: "간호 윤리와 전문직 소양",
-        type: "VIDEO" as const,
-        duration: 1200,
-        isFree: true,
-      },
-      {
-        id: "l2",
-        title: "환자 권리와 의무",
-        type: "VIDEO" as const,
-        duration: 900,
-        isFree: false,
-      },
-      {
-        id: "l3",
-        title: "1장 핵심 정리",
-        type: "TEXT" as const,
-        duration: null,
-        isFree: false,
-      },
-    ],
-  },
-  {
-    id: "s2",
-    title: "2장. 감염 예방과 관리",
-    order: 2,
-    expanded: false,
-    lectures: [
-      {
-        id: "l4",
-        title: "표준 주의 지침",
-        type: "VIDEO" as const,
-        duration: 1500,
-        isFree: false,
-      },
-      {
-        id: "l5",
-        title: "손 위생의 중요성",
-        type: "VIDEO" as const,
-        duration: 600,
-        isFree: false,
-      },
-    ],
-  },
-  {
-    id: "s3",
-    title: "3장. 투약 관리",
-    order: 3,
-    expanded: false,
-    lectures: [
-      {
-        id: "l6",
-        title: "투약의 5 Rights",
-        type: "VIDEO" as const,
-        duration: 1800,
-        isFree: false,
-      },
-      {
-        id: "l7",
-        title: "정맥 주사 관리",
-        type: "VIDEO" as const,
-        duration: 2100,
-        isFree: false,
-      },
-      {
-        id: "l8",
-        title: "투약 오류 예방",
-        type: "TEXT" as const,
-        duration: null,
-        isFree: false,
-      },
-    ],
-  },
-];
+interface CategoryOption {
+  value: string;
+  label: string;
+}
+
+interface Lecture {
+  id: string;
+  title: string;
+  type: "VIDEO" | "TEXT";
+  duration: number | null;
+  isFree: boolean;
+}
+
+interface Section {
+  id: string;
+  title: string;
+  order: number;
+  expanded: boolean;
+  lectures: Lecture[];
+}
+
+interface CourseData {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  price: number;
+  status: string;
+  thumbnail: string | null;
+  categoryId: string | null;
+  sections: Array<{
+    id: string;
+    title: string;
+    order: number;
+    lectures: Lecture[];
+  }>;
+}
 
 function formatDuration(seconds: number | null): string {
   if (!seconds) return "-";
@@ -133,7 +82,39 @@ function formatDuration(seconds: number | null): string {
 }
 
 export default function EditCoursePage() {
-  const [sections, setSections] = useState(initialSections);
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const [course, setCourse] = useState<CourseData | null>(null);
+  const [sections, setSections] = useState<Section[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      fetch(`/api/v1/courses/${id}`).then((r) => r.json()),
+      fetch("/api/v1/categories").then((r) => r.json()),
+    ])
+      .then(([courseData, cats]) => {
+        setCourse(courseData);
+        setSections(
+          (courseData.sections ?? []).map(
+            (s: CourseData["sections"][number], i: number) => ({
+              ...s,
+              expanded: i === 0,
+            })
+          )
+        );
+        setCategories(
+          (cats ?? []).map((c: { id: string; name: string }) => ({
+            value: c.id,
+            label: c.name,
+          }))
+        );
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const toggleSection = (sectionId: string) => {
     setSections((prev) =>
@@ -142,6 +123,67 @@ export default function EditCoursePage() {
       )
     );
   };
+
+  const handleSave = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+
+    const form = new FormData(e.currentTarget);
+    const body = {
+      title: form.get("title") as string,
+      slug: form.get("slug") as string,
+      description: form.get("description") as string,
+      price: Number(form.get("price")) || 0,
+      categoryId: (form.get("category") as string) || null,
+      status: (form.get("status") as string) || "DRAFT",
+      thumbnail: (form.get("thumbnail") as string) || null,
+    };
+
+    try {
+      const res = await fetch(`/api/v1/courses/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "저장에 실패했습니다");
+        return;
+      }
+      const updated = await res.json();
+      setCourse(updated);
+      alert("변경사항이 저장되었습니다");
+    } catch {
+      alert("네트워크 오류가 발생했습니다");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-4xl space-y-6">
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96 rounded-xl" />
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="py-16 text-center text-[color:var(--muted)]">
+        강의를 찾을 수 없습니다
+      </div>
+    );
+  }
+
+  const statusVariant =
+    course.status === "PUBLISHED"
+      ? "success"
+      : course.status === "ARCHIVED"
+        ? "default"
+        : "secondary";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -164,59 +206,79 @@ export default function EditCoursePage() {
             강의 정보와 커리큘럼을 수정합니다.
           </p>
         </div>
-        <Badge variant="success">공개</Badge>
+        <Badge variant={statusVariant as "success" | "default" | "secondary"}>
+          {COURSE_STATUS_LABELS[course.status as keyof typeof COURSE_STATUS_LABELS] ?? course.status}
+        </Badge>
       </div>
 
       {/* 기본 정보 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>기본 정보</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <Input
-            id="title"
-            label="강의 제목"
-            defaultValue="간호 실무 기초 과정"
-          />
-
-          <Input
-            id="slug"
-            label="URL 슬러그"
-            defaultValue="nursing-basics"
-          />
-
-          <Textarea
-            id="description"
-            label="강의 설명"
-            defaultValue="간호의 기본 원칙부터 실무에 필요한 핵심 역량까지, 체계적으로 학습할 수 있는 과정입니다."
-            rows={3}
-          />
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <form onSubmit={handleSave}>
+        <Card>
+          <CardHeader>
+            <CardTitle>기본 정보</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
             <Input
-              id="price"
-              label="가격 (원)"
-              type="number"
-              defaultValue={150000}
+              id="title"
+              name="title"
+              label="강의 제목"
+              defaultValue={course.title}
             />
-            <Select
-              id="category"
-              label="카테고리"
-              options={categoryOptions}
-              defaultValue="nursing"
+
+            <Input
+              id="slug"
+              name="slug"
+              label="URL 슬러그"
+              defaultValue={course.slug}
             />
-            <Select
-              id="status"
-              label="상태"
-              options={statusOptions}
-              defaultValue="PUBLISHED"
+
+            <Textarea
+              id="description"
+              name="description"
+              label="강의 설명"
+              defaultValue={course.description ?? ""}
+              rows={3}
             />
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button>변경사항 저장</Button>
-        </CardFooter>
-      </Card>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <Input
+                id="price"
+                name="price"
+                label="가격 (원)"
+                type="number"
+                defaultValue={course.price}
+              />
+              <Select
+                id="category"
+                name="category"
+                label="카테고리"
+                options={categories}
+                defaultValue={course.categoryId ?? undefined}
+              />
+              <Select
+                id="status"
+                name="status"
+                label="상태"
+                options={statusOptions}
+                defaultValue={course.status}
+              />
+            </div>
+
+            <Input
+              id="thumbnail"
+              name="thumbnail"
+              label="썸네일 URL"
+              defaultValue={course.thumbnail ?? ""}
+            />
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button type="submit" disabled={saving}>
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {saving ? "저장 중..." : "변경사항 저장"}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
 
       {/* 커리큘럼 관리 */}
       <Card>
@@ -302,6 +364,11 @@ export default function EditCoursePage() {
               )}
             </div>
           ))}
+          {sections.length === 0 && (
+            <p className="py-8 text-center text-sm text-[color:var(--muted)]">
+              아직 커리큘럼이 없습니다. 섹션을 추가해 주세요.
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

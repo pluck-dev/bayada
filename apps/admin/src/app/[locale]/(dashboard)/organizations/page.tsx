@@ -9,79 +9,20 @@ import {
   CardContent,
 } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
+import { organizationService } from "@/lib/services";
 
-// 플레이스홀더 데이터
-const organizations = [
-  {
-    id: "1",
-    name: "(주)헬스케어코리아",
-    contactName: "정하은",
-    contactEmail: "jung@healthcorp.kr",
-    members: 45,
-    enrollments: 128,
-    totalSpent: 15_200_000,
-    status: "활성",
-    contractEnd: "2025-12-31",
-    createdAt: "2024-03-15",
-  },
-  {
-    id: "2",
-    name: "(주)메디랩",
-    contactName: "장현우",
-    contactEmail: "jang@medilab.kr",
-    members: 120,
-    enrollments: 340,
-    totalSpent: 42_000_000,
-    status: "활성",
-    contractEnd: "2025-09-30",
-    createdAt: "2024-01-20",
-  },
-  {
-    id: "3",
-    name: "서울대병원",
-    contactName: "김대표",
-    contactEmail: "kim@snuh.org",
-    members: 230,
-    enrollments: 580,
-    totalSpent: 68_500_000,
-    status: "활성",
-    contractEnd: "2026-06-30",
-    createdAt: "2023-11-01",
-  },
-  {
-    id: "4",
-    name: "(주)케어플러스",
-    contactName: "박담당",
-    contactEmail: "park@careplus.kr",
-    members: 18,
-    enrollments: 36,
-    totalSpent: 5_400_000,
-    status: "만료",
-    contractEnd: "2025-01-31",
-    createdAt: "2024-06-10",
-  },
-  {
-    id: "5",
-    name: "연세의료원",
-    contactName: "이담당",
-    contactEmail: "lee@yonsei.ac.kr",
-    members: 85,
-    enrollments: 210,
-    totalSpent: 28_000_000,
-    status: "활성",
-    contractEnd: "2025-08-15",
-    createdAt: "2024-02-28",
-  },
-];
-
-type OrgRow = (typeof organizations)[number];
-
-const orgStats = {
-  total: organizations.length,
-  active: organizations.filter((o) => o.status === "활성").length,
-  totalMembers: organizations.reduce((sum, o) => sum + o.members, 0),
-  totalRevenue: organizations.reduce((sum, o) => sum + o.totalSpent, 0),
-};
+interface OrgRow {
+  id: string;
+  name: string;
+  contactName: string;
+  contactEmail: string;
+  members: number;
+  enrollments: number;
+  totalSpent: number;
+  status: string;
+  contractEnd: string;
+  createdAt: string;
+}
 
 const columns: Column<OrgRow>[] = [
   {
@@ -135,7 +76,37 @@ const columns: Column<OrgRow>[] = [
   },
 ];
 
-export default function OrganizationsPage() {
+export default async function OrganizationsPage() {
+  const result = await organizationService.list({});
+
+  const organizations: OrgRow[] = result.items.map((o) => {
+    const org = o as Record<string, unknown>;
+    const _count = org._count as { members?: number; orders?: number } | undefined;
+    const stats = org as { totalSpent?: number };
+
+    return {
+      id: org.id as string,
+      name: org.name as string,
+      contactName: (org.contactName as string) ?? "-",
+      contactEmail: (org.contactEmail as string) ?? "-",
+      members: _count?.members ?? 0,
+      enrollments: _count?.orders ?? 0,
+      totalSpent: stats.totalSpent ?? 0,
+      status: (org.isActive as boolean) !== false ? "활성" : "만료",
+      contractEnd: org.contractEnd
+        ? new Date(org.contractEnd as string).toLocaleDateString("ko-KR")
+        : "-",
+      createdAt: new Date(org.createdAt as string).toLocaleDateString("ko-KR"),
+    };
+  });
+
+  const orgStats = {
+    total: organizations.length,
+    active: organizations.filter((o) => o.status === "활성").length,
+    totalMembers: organizations.reduce((sum, o) => sum + o.members, 0),
+    totalRevenue: organizations.reduce((sum, o) => sum + o.totalSpent, 0),
+  };
+
   return (
     <div className="space-y-6">
       {/* 페이지 헤더 */}

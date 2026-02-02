@@ -3,82 +3,18 @@ import { Plus, Search } from "lucide-react";
 import { Button, Badge, DataTable, type Column, Input } from "@bayada/ui";
 import { COURSE_STATUS_LABELS, formatPrice } from "@bayada/shared";
 import type { CourseStatusType } from "@bayada/shared";
+import { courseService } from "@/lib/services";
 
-// 플레이스홀더 데이터
-const courses = [
-  {
-    id: "1",
-    title: "간호 실무 기초 과정",
-    slug: "nursing-basics",
-    status: "PUBLISHED" as CourseStatusType,
-    price: 150000,
-    category: "간호",
-    students: 324,
-    createdAt: "2024-12-15",
-  },
-  {
-    id: "2",
-    title: "감염관리 전문가 과정",
-    slug: "infection-control",
-    status: "PUBLISHED" as CourseStatusType,
-    price: 200000,
-    category: "감염관리",
-    students: 186,
-    createdAt: "2024-11-20",
-  },
-  {
-    id: "3",
-    title: "환자 안전 관리",
-    slug: "patient-safety",
-    status: "PUBLISHED" as CourseStatusType,
-    price: 89000,
-    category: "안전",
-    students: 412,
-    createdAt: "2024-10-05",
-  },
-  {
-    id: "4",
-    title: "재활간호 입문",
-    slug: "rehab-nursing-intro",
-    status: "DRAFT" as CourseStatusType,
-    price: 120000,
-    category: "재활",
-    students: 0,
-    createdAt: "2025-01-28",
-  },
-  {
-    id: "5",
-    title: "간호 리더십 과정",
-    slug: "nursing-leadership",
-    status: "PUBLISHED" as CourseStatusType,
-    price: 180000,
-    category: "리더십",
-    students: 97,
-    createdAt: "2024-09-12",
-  },
-  {
-    id: "6",
-    title: "노인간호 전문 과정",
-    slug: "geriatric-nursing",
-    status: "ARCHIVED" as CourseStatusType,
-    price: 160000,
-    category: "간호",
-    students: 251,
-    createdAt: "2024-06-01",
-  },
-  {
-    id: "7",
-    title: "의료 커뮤니케이션",
-    slug: "medical-communication",
-    status: "DRAFT" as CourseStatusType,
-    price: 75000,
-    category: "소통",
-    students: 0,
-    createdAt: "2025-02-01",
-  },
-];
-
-type CourseRow = (typeof courses)[number];
+interface CourseRow {
+  id: string;
+  title: string;
+  slug: string;
+  status: CourseStatusType;
+  price: number;
+  category: string;
+  students: number;
+  createdAt: string;
+}
 
 const statusBadgeVariant: Record<string, "default" | "success" | "secondary"> = {
   DRAFT: "secondary",
@@ -142,7 +78,23 @@ const columns: Column<CourseRow>[] = [
   },
 ];
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  const result = await courseService.list({});
+  const courses: CourseRow[] = result.items.map((c) => ({
+    id: c.id,
+    title: c.title,
+    slug: c.slug,
+    status: c.status as CourseStatusType,
+    price: c.price,
+    category: (c as Record<string, unknown>).category
+      ? ((c as Record<string, unknown>).category as { name: string }).name
+      : "-",
+    students: (c as Record<string, unknown>)._count
+      ? ((c as Record<string, unknown>)._count as { enrollments: number }).enrollments
+      : 0,
+    createdAt: new Date(c.createdAt).toLocaleDateString("ko-KR"),
+  }));
+
   return (
     <div className="space-y-6">
       {/* 페이지 헤더 */}
@@ -191,7 +143,7 @@ export default function CoursesPage() {
       {/* 데이터 테이블 */}
       <DataTable<CourseRow> columns={columns} data={courses} keyField="id" />
 
-      {/* 페이지네이션 플레이스홀더 */}
+      {/* 페이지네이션 */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-[color:var(--muted)]">
           전체 {courses.length}개 강의

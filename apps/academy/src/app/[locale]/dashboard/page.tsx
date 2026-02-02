@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -12,97 +13,80 @@ import {
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Badge,
   Button,
   ProgressBar,
+  Skeleton,
 } from "@bayada/ui";
-import { formatDuration, formatPrice } from "@bayada/shared";
+import { formatDuration } from "@bayada/shared";
 import { useDictionary } from "@/components/DictionaryProvider";
 import { useParams } from "next/navigation";
 
-// 플레이스홀더 데이터 - 수강 중인 강의
-const enrolledCourses = [
-  {
-    slug: "home-care-basics",
-    title: "재가 돌봄 서비스 기초 과정",
-    thumbnail: null,
-    category: "간호 교육",
-    instructor: "김영희 강사",
-    totalLectures: 24,
-    completedLectures: 8,
-    progressPercent: 33,
-    lastLectureId: "l9",
-    lastLectureName: "상처 관리",
-    totalDuration: 18000,
-  },
-  {
-    slug: "infection-control",
-    title: "감염 관리 및 예방 교육",
-    thumbnail: null,
-    category: "법정 필수 교육",
-    instructor: "이정은 강사",
-    totalLectures: 16,
-    completedLectures: 16,
-    progressPercent: 100,
-    lastLectureId: "l16",
-    lastLectureName: "최종 평가",
-    totalDuration: 10800,
-  },
-  {
-    slug: "patient-safety-essentials",
-    title: "환자 안전 관리 필수 과정",
-    thumbnail: null,
-    category: "안전 교육",
-    instructor: "박민수 강사",
-    totalLectures: 20,
-    completedLectures: 3,
-    progressPercent: 15,
-    lastLectureId: "l3",
-    lastLectureName: "안전사고 유형 분류",
-    totalDuration: 14400,
-  },
-];
+interface EnrolledCourse {
+  course: {
+    id: string;
+    title: string;
+    slug: string;
+    thumbnail: string | null;
+    category: { name: string } | null;
+  };
+  enrolledAt: string;
+  totalLectures: number;
+  completedLectures: number;
+  progressPercent: number;
+}
 
-// 최근 학습 활동
-const recentActivities = [
-  {
-    courseName: "재가 돌봄 서비스 기초 과정",
-    lectureName: "상처 관리",
-    date: "2024.12.28",
-    duration: "25분",
-  },
-  {
-    courseName: "환자 안전 관리 필수 과정",
-    lectureName: "안전사고 유형 분류",
-    date: "2024.12.27",
-    duration: "18분",
-  },
-  {
-    courseName: "재가 돌봄 서비스 기초 과정",
-    lectureName: "투약 관리 기초",
-    date: "2024.12.26",
-    duration: "32분",
-  },
-  {
-    courseName: "감염 관리 및 예방 교육",
-    lectureName: "최종 평가",
-    date: "2024.12.25",
-    duration: "45분",
-  },
-];
+interface DashboardData {
+  enrolledCourses: EnrolledCourse[];
+  recentActivity: Array<{
+    lecture: {
+      title: string;
+      section: { course: { title: string; slug: string } };
+    };
+    updatedAt: string;
+    watchedSec: number;
+  }>;
+  stats: {
+    totalEnrollments: number;
+    inProgress: number;
+    completed: number;
+    totalWatchedSec: number;
+  };
+}
 
 export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
   const dict = useDictionary();
   const { locale } = useParams<{ locale: string }>();
 
-  const inProgressCount = enrolledCourses.filter(
-    (c) => c.progressPercent > 0 && c.progressPercent < 100
-  ).length;
-  const completedCount = enrolledCourses.filter(
-    (c) => c.progressPercent === 100
-  ).length;
+  useEffect(() => {
+    fetch("/api/v1/dashboard")
+      .then((res) => res.json())
+      .then((d) => setData(d))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+        <Skeleton className="h-64 rounded-xl" />
+      </div>
+    );
+  }
+
+  const stats = data?.stats ?? { totalEnrollments: 0, inProgress: 0, completed: 0, totalWatchedSec: 0 };
+  const enrolledCourses = data?.enrolledCourses ?? [];
+  const recentActivity = data?.recentActivity ?? [];
+
+  const watchedHours = (stats.totalWatchedSec / 3600).toFixed(1);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -125,7 +109,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[color:var(--fg)]">
-                {enrolledCourses.length}
+                {stats.totalEnrollments}
               </p>
               <p className="text-xs text-[color:var(--muted)]">전체 수강</p>
             </div>
@@ -138,7 +122,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[color:var(--fg)]">
-                {inProgressCount}
+                {stats.inProgress}
               </p>
               <p className="text-xs text-[color:var(--muted)]">{dict.academy.inProgressCourses}</p>
             </div>
@@ -151,7 +135,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[color:var(--fg)]">
-                {completedCount}
+                {stats.completed}
               </p>
               <p className="text-xs text-[color:var(--muted)]">{dict.academy.completed}</p>
             </div>
@@ -164,7 +148,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[color:var(--fg)]">
-                12.5h
+                {watchedHours}h
               </p>
               <p className="text-xs text-[color:var(--muted)]">{dict.academy.duration}</p>
             </div>
@@ -179,54 +163,44 @@ export default function DashboardPage() {
             {dict.academy.inProgressCourses}
           </h2>
           <div className="space-y-4">
-            {enrolledCourses.map((course) => (
-              <Card key={course.slug}>
+            {enrolledCourses.map((item) => (
+              <Card key={item.course.id}>
                 <CardContent>
                   <div className="flex flex-col gap-4 sm:flex-row">
-                    {/* 썸네일 */}
                     <div className="aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-[color:var(--surface-3)] sm:w-40">
                       <div className="flex h-full items-center justify-center text-[color:var(--muted)]">
                         <PlayCircle className="h-8 w-8" />
                       </div>
                     </div>
-
-                    {/* 정보 */}
                     <div className="flex flex-1 flex-col">
                       <div className="mb-1 flex items-center gap-2">
-                        <Badge variant="secondary">{course.category}</Badge>
-                        {course.progressPercent === 100 && (
+                        {item.course.category && (
+                          <Badge variant="secondary">{item.course.category.name}</Badge>
+                        )}
+                        {item.progressPercent === 100 && (
                           <Badge variant="success">{dict.academy.completed}</Badge>
                         )}
                       </div>
-                      <h3 className="mb-1 font-semibold text-[color:var(--fg)]">
-                        {course.title}
+                      <h3 className="mb-3 font-semibold text-[color:var(--fg)]">
+                        {item.course.title}
                       </h3>
-                      <p className="mb-3 text-xs text-[color:var(--muted)]">
-                        {course.instructor}
-                      </p>
-
-                      {/* 진도율 */}
                       <div className="mb-3">
                         <ProgressBar
-                          value={course.progressPercent}
-                          label={`${course.completedLectures}/${course.totalLectures}강`}
+                          value={item.progressPercent}
+                          label={`${item.completedLectures}/${item.totalLectures}강`}
                         />
                       </div>
-
-                      {/* 이어 듣기 */}
-                      {course.progressPercent < 100 && (
+                      {item.progressPercent < 100 && (
                         <div className="mt-auto">
-                          <Link
-                            href={`/${locale}/courses/${course.slug}/lectures/${course.lastLectureId}`}
-                          >
+                          <Link href={`/${locale}/courses/${item.course.slug}`}>
                             <Button size="sm">
                               <PlayCircle className="mr-1.5 h-4 w-4" />
-                              {dict.academy.continueLearning}: {course.lastLectureName}
+                              {dict.academy.continueLearning}
                             </Button>
                           </Link>
                         </div>
                       )}
-                      {course.progressPercent === 100 && (
+                      {item.progressPercent === 100 && (
                         <div className="mt-auto">
                           <Button variant="outline" size="sm">
                             <Award className="mr-1.5 h-4 w-4" />
@@ -239,9 +213,13 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             ))}
+            {enrolledCourses.length === 0 && (
+              <p className="py-8 text-center text-[color:var(--muted)]">
+                아직 수강 중인 강의가 없습니다
+              </p>
+            )}
           </div>
 
-          {/* 더 많은 강의 수강 안내 */}
           <div className="mt-6 text-center">
             <Link href={`/${locale}/courses`}>
               <Button variant="outline">
@@ -260,7 +238,7 @@ export default function DashboardPage() {
           <Card>
             <CardContent>
               <ul className="space-y-4">
-                {recentActivities.map((activity, i) => (
+                {recentActivity.map((activity, i) => (
                   <li
                     key={i}
                     className="flex items-start gap-3 border-b border-[color:var(--border)] pb-4 last:border-b-0 last:pb-0"
@@ -270,19 +248,22 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[color:var(--fg)]">
-                        {activity.lectureName}
+                        {activity.lecture.title}
                       </p>
                       <p className="text-xs text-[color:var(--muted)]">
-                        {activity.courseName}
+                        {activity.lecture.section.course.title}
                       </p>
-                      <div className="mt-1 flex items-center gap-2 text-xs text-[color:var(--muted)]">
-                        <span>{activity.date}</span>
-                        <span>|</span>
-                        <span>{activity.duration}</span>
+                      <div className="mt-1 text-xs text-[color:var(--muted)]">
+                        {formatDuration(activity.watchedSec)}
                       </div>
                     </div>
                   </li>
                 ))}
+                {recentActivity.length === 0 && (
+                  <li className="py-4 text-center text-sm text-[color:var(--muted)]">
+                    최근 활동이 없습니다
+                  </li>
+                )}
               </ul>
             </CardContent>
           </Card>

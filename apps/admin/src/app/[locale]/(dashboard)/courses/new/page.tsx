@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import {
   Button,
   Input,
@@ -14,21 +16,70 @@ import {
   CardFooter,
 } from "@bayada/ui";
 
-const categoryOptions = [
-  { value: "nursing", label: "간호" },
-  { value: "infection-control", label: "감염관리" },
-  { value: "safety", label: "안전" },
-  { value: "rehab", label: "재활" },
-  { value: "leadership", label: "리더십" },
-  { value: "communication", label: "소통" },
-];
-
 const statusOptions = [
   { value: "DRAFT", label: "초안" },
   { value: "PUBLISHED", label: "공개" },
 ];
 
+interface CategoryOption {
+  value: string;
+  label: string;
+}
+
 export default function NewCoursePage() {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/categories")
+      .then((res) => res.json())
+      .then((data) =>
+        setCategories(
+          (data ?? []).map((c: { id: string; name: string }) => ({
+            value: c.id,
+            label: c.name,
+          }))
+        )
+      )
+      .catch(() => {});
+  }, []);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+
+    const form = new FormData(e.currentTarget);
+    const body = {
+      title: form.get("title") as string,
+      slug: form.get("slug") as string,
+      description: form.get("description") as string,
+      price: Number(form.get("price")) || 0,
+      categoryId: (form.get("category") as string) || undefined,
+      status: (form.get("status") as string) || "DRAFT",
+      thumbnail: (form.get("thumbnail") as string) || undefined,
+    };
+
+    try {
+      const res = await fetch("/api/v1/courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "강의 생성에 실패했습니다");
+        return;
+      }
+      const created = await res.json();
+      router.push(`/courses/${created.id}/edit`);
+    } catch {
+      alert("네트워크 오류가 발생했습니다");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       {/* 뒤로가기 */}
@@ -51,7 +102,7 @@ export default function NewCoursePage() {
       </div>
 
       {/* 폼 */}
-      <form>
+      <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader>
             <CardTitle>기본 정보</CardTitle>
@@ -59,6 +110,7 @@ export default function NewCoursePage() {
           <CardContent className="space-y-5">
             <Input
               id="title"
+              name="title"
               label="강의 제목"
               placeholder="예: 간호 실무 기초 과정"
               required
@@ -66,6 +118,7 @@ export default function NewCoursePage() {
 
             <Input
               id="slug"
+              name="slug"
               label="URL 슬러그"
               placeholder="예: nursing-basics"
               required
@@ -73,6 +126,7 @@ export default function NewCoursePage() {
 
             <Textarea
               id="description"
+              name="description"
               label="강의 설명"
               placeholder="강의에 대한 상세 설명을 입력하세요..."
               rows={4}
@@ -81,6 +135,7 @@ export default function NewCoursePage() {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <Input
                 id="price"
+                name="price"
                 label="가격 (원)"
                 type="number"
                 placeholder="150000"
@@ -90,15 +145,16 @@ export default function NewCoursePage() {
 
               <Select
                 id="category"
+                name="category"
                 label="카테고리"
-                options={categoryOptions}
+                options={categories}
                 placeholder="카테고리 선택"
-                required
               />
             </div>
 
             <Select
               id="status"
+              name="status"
               label="상태"
               options={statusOptions}
               defaultValue="DRAFT"
@@ -106,6 +162,7 @@ export default function NewCoursePage() {
 
             <Input
               id="thumbnail"
+              name="thumbnail"
               label="썸네일 URL"
               placeholder="https://example.com/image.jpg"
             />
@@ -116,7 +173,10 @@ export default function NewCoursePage() {
                 취소
               </Button>
             </Link>
-            <Button type="submit">강의 생성</Button>
+            <Button type="submit" disabled={saving}>
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {saving ? "생성 중..." : "강의 생성"}
+            </Button>
           </CardFooter>
         </Card>
       </form>

@@ -1,62 +1,85 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Trash2, ShoppingCart, ArrowRight, Tag } from "lucide-react";
+import { Trash2, ShoppingCart, ArrowRight, Tag, Loader2 } from "lucide-react";
 import { Card, CardContent, Button, Badge } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
 import { useDictionary } from "@/components/DictionaryProvider";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-// 플레이스홀더 장바구니 데이터
-const initialCartItems = [
-  {
-    courseId: "c1",
-    slug: "home-care-basics",
-    title: "재가 돌봄 서비스 기초 과정",
-    instructor: "김영희 강사",
-    thumbnail: null,
-    price: 89000,
-    originalPrice: 120000,
-    category: "간호 교육",
-  },
-  {
-    courseId: "c2",
-    slug: "emergency-response-2024",
-    title: "응급 상황 대응 매뉴얼 (2024)",
-    instructor: "강도현 강사",
-    thumbnail: null,
-    price: 75000,
-    originalPrice: 75000,
-    category: "안전 교육",
-  },
-  {
-    courseId: "c3",
-    slug: "dementia-care-advanced",
-    title: "치매 환자 돌봄 심화 과정",
-    instructor: "정미경 강사",
-    thumbnail: null,
-    price: 120000,
-    originalPrice: 150000,
-    category: "간호 교육",
-  },
-];
+interface CartItem {
+  courseId: string;
+  slug: string;
+  title: string;
+  thumbnail: string | null;
+  price: number;
+  category: string;
+}
+
+const CART_STORAGE_KEY = "bayada_cart";
+
+function getCartFromStorage(): CartItem[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCartToStorage(items: CartItem[]) {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+}
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [ordering, setOrdering] = useState(false);
   const dict = useDictionary();
   const { locale } = useParams<{ locale: string }>();
+  const router = useRouter();
 
-  const removeItem = (courseId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.courseId !== courseId));
+  useEffect(() => {
+    setCartItems(getCartFromStorage());
+  }, []);
+
+  const removeItem = useCallback((courseId: string) => {
+    setCartItems((prev) => {
+      const next = prev.filter((item) => item.courseId !== courseId);
+      saveCartToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+    setOrdering(true);
+    try {
+      const res = await fetch("/api/v1/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseIds: cartItems.map((item) => item.courseId),
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "주문 생성에 실패했습니다");
+        return;
+      }
+      // 주문 성공: 장바구니 비우고 주문 목록으로 이동
+      saveCartToStorage([]);
+      setCartItems([]);
+      router.push(`/${locale}/orders`);
+    } catch {
+      alert("네트워크 오류가 발생했습니다");
+    } finally {
+      setOrdering(false);
+    }
   };
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
-  const totalOriginalPrice = cartItems.reduce(
-    (sum, item) => sum + item.originalPrice,
-    0
-  );
-  const totalDiscount = totalOriginalPrice - totalPrice;
 
   if (cartItems.length === 0) {
     return (
@@ -86,7 +109,7 @@ export default function CartPage() {
           {dict.cart.title}
         </h1>
         <p className="mt-2 text-[color:var(--muted)]">
-          {cartItems.length}개의 강의가 담겨있습니다
+          {cartItems.length}개의 강의가 담겨 있습니다
         </p>
       </div>
 
@@ -131,20 +154,11 @@ export default function CartPage() {
                       >
                         {item.title}
                       </Link>
-                      <p className="text-xs text-[color:var(--muted)]">
-                        {item.instructor}
-                      </p>
-
                       <div className="mt-auto flex items-center justify-between pt-3">
                         <div className="flex items-baseline gap-2">
                           <span className="text-lg font-bold text-[color:var(--fg)]">
                             {formatPrice(item.price)}
                           </span>
-                          {item.originalPrice > item.price && (
-                            <span className="text-sm text-[color:var(--muted)] line-through">
-                              {formatPrice(item.originalPrice)}
-                            </span>
-                          )}
                         </div>
                         <button
                           onClick={() => removeItem(item.courseId)}
@@ -172,19 +186,6 @@ export default function CartPage() {
                 </h2>
 
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between text-[color:var(--muted)]">
-                    <span>정가</span>
-                    <span>{formatPrice(totalOriginalPrice)}</span>
-                  </div>
-                  {totalDiscount > 0 && (
-                    <div className="flex justify-between text-[color:var(--error)]">
-                      <span className="flex items-center gap-1">
-                        <Tag className="h-3 w-3" />
-                        할인
-                      </span>
-                      <span>-{formatPrice(totalDiscount)}</span>
-                    </div>
-                  )}
                   <div className="border-t border-[color:var(--border)] pt-2">
                     <div className="flex justify-between">
                       <span className="font-semibold text-[color:var(--fg)]">
@@ -197,9 +198,18 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <Button className="w-full" size="lg">
-                  {dict.cart.checkout}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleCheckout}
+                  disabled={ordering}
+                >
+                  {ordering ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  )}
+                  {ordering ? "처리 중..." : dict.cart.checkout}
                 </Button>
 
                 <p className="text-center text-xs text-[color:var(--muted)]">

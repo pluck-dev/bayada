@@ -6,96 +6,20 @@ import {
   formatPrice,
 } from "@bayada/shared";
 import type { OrderStatusValue, OrderTypeValue } from "@bayada/shared";
+import { orderService } from "@/lib/services";
 
-// 플레이스홀더 데이터
-const orders = [
-  {
-    id: "1",
-    orderNo: "ORD-20250201-001",
-    customer: "김영희",
-    email: "kim.yh@example.com",
-    type: "B2C" as OrderTypeValue,
-    items: "간호 실무 기초 과정",
-    quantity: 1,
-    amount: 150_000,
-    status: "CONFIRMED" as OrderStatusValue,
-    createdAt: "2025-02-01",
-  },
-  {
-    id: "2",
-    orderNo: "ORD-20250201-002",
-    customer: "(주)헬스케어코리아",
-    email: "jung@healthcorp.kr",
-    type: "B2B" as OrderTypeValue,
-    items: "감염관리 전문가 과정",
-    quantity: 15,
-    amount: 3_000_000,
-    status: "PENDING" as OrderStatusValue,
-    createdAt: "2025-02-01",
-  },
-  {
-    id: "3",
-    orderNo: "ORD-20250131-003",
-    customer: "박민수",
-    email: "park.ms@example.com",
-    type: "B2C" as OrderTypeValue,
-    items: "환자 안전 관리",
-    quantity: 1,
-    amount: 89_000,
-    status: "CONFIRMED" as OrderStatusValue,
-    createdAt: "2025-01-31",
-  },
-  {
-    id: "4",
-    orderNo: "ORD-20250131-004",
-    customer: "이수진",
-    email: "lee.sj@example.com",
-    type: "B2C" as OrderTypeValue,
-    items: "재활간호 입문",
-    quantity: 1,
-    amount: 120_000,
-    status: "CONFIRMED" as OrderStatusValue,
-    createdAt: "2025-01-31",
-  },
-  {
-    id: "5",
-    orderNo: "ORD-20250130-005",
-    customer: "(주)메디랩",
-    email: "jang@medilab.kr",
-    type: "B2B" as OrderTypeValue,
-    items: "간호 리더십 과정",
-    quantity: 30,
-    amount: 5_400_000,
-    status: "PENDING" as OrderStatusValue,
-    createdAt: "2025-01-30",
-  },
-  {
-    id: "6",
-    orderNo: "ORD-20250129-006",
-    customer: "최서연",
-    email: "choi.sy@example.com",
-    type: "B2C" as OrderTypeValue,
-    items: "간호 실무 기초 과정",
-    quantity: 1,
-    amount: 150_000,
-    status: "CANCELLED" as OrderStatusValue,
-    createdAt: "2025-01-29",
-  },
-  {
-    id: "7",
-    orderNo: "ORD-20250128-007",
-    customer: "서울대병원",
-    email: "kim@snuh.org",
-    type: "B2B" as OrderTypeValue,
-    items: "환자 안전 관리 외 2건",
-    quantity: 50,
-    amount: 12_500_000,
-    status: "CONFIRMED" as OrderStatusValue,
-    createdAt: "2025-01-28",
-  },
-];
-
-type OrderRow = (typeof orders)[number];
+interface OrderRow {
+  id: string;
+  orderNo: string;
+  customer: string;
+  email: string;
+  type: OrderTypeValue;
+  items: string;
+  quantity: number;
+  amount: number;
+  status: OrderStatusValue;
+  createdAt: string;
+}
 
 const statusBadgeVariant: Record<OrderStatusValue, "success" | "warning" | "error"> = {
   CONFIRMED: "success",
@@ -178,7 +102,31 @@ const columns: Column<OrderRow>[] = [
   },
 ];
 
-export default function OrdersPage() {
+export default async function OrdersPage() {
+  const result = await orderService.list({});
+
+  const orders: OrderRow[] = result.items.map((o) => {
+    const order = o as Record<string, unknown>;
+    const user = order.user as { name: string | null; email: string } | null;
+    const org = order.organization as { name: string } | null;
+    const items = (order.items as Array<{ course?: { title: string } }>) ?? [];
+    const firstItem = items[0]?.course?.title ?? "-";
+    const itemLabel = items.length > 1 ? `${firstItem} 외 ${items.length - 1}건` : firstItem;
+
+    return {
+      id: order.id as string,
+      orderNo: order.orderNo as string,
+      customer: org?.name ?? user?.name ?? "-",
+      email: user?.email ?? "-",
+      type: (order.type as OrderTypeValue) ?? "B2C",
+      items: itemLabel,
+      quantity: (order.quantity as number) ?? 1,
+      amount: order.totalAmount as number,
+      status: order.status as OrderStatusValue,
+      createdAt: new Date(order.createdAt as string).toLocaleDateString("ko-KR"),
+    };
+  });
+
   return (
     <div className="space-y-6">
       {/* 페이지 헤더 */}

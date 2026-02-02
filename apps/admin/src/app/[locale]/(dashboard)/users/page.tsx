@@ -2,92 +2,18 @@ import { Search, Download } from "lucide-react";
 import { Button, Badge, DataTable, type Column, Input } from "@bayada/ui";
 import { ROLE_LABELS } from "@bayada/shared";
 import type { UserRole } from "@bayada/shared";
+import { userService } from "@/lib/services";
 
-// 플레이스홀더 데이터
-const users = [
-  {
-    id: "1",
-    name: "김영희",
-    email: "kim.yh@example.com",
-    role: "STUDENT" as UserRole,
-    organization: null,
-    enrollments: 3,
-    status: "활성",
-    createdAt: "2024-08-15",
-  },
-  {
-    id: "2",
-    name: "박민수",
-    email: "park.ms@example.com",
-    role: "STUDENT" as UserRole,
-    organization: null,
-    enrollments: 5,
-    status: "활성",
-    createdAt: "2024-07-22",
-  },
-  {
-    id: "3",
-    name: "이수진",
-    email: "lee.sj@example.com",
-    role: "STUDENT" as UserRole,
-    organization: null,
-    enrollments: 2,
-    status: "활성",
-    createdAt: "2024-11-05",
-  },
-  {
-    id: "4",
-    name: "최관리",
-    email: "choi.admin@bayada.co.kr",
-    role: "ADMIN" as UserRole,
-    organization: null,
-    enrollments: 0,
-    status: "활성",
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "5",
-    name: "정하은",
-    email: "jung.he@healthcorp.kr",
-    role: "ORG_ADMIN" as UserRole,
-    organization: "(주)헬스케어코리아",
-    enrollments: 0,
-    status: "활성",
-    createdAt: "2024-09-01",
-  },
-  {
-    id: "6",
-    name: "한도윤",
-    email: "han.dy@example.com",
-    role: "STUDENT" as UserRole,
-    organization: null,
-    enrollments: 1,
-    status: "비활성",
-    createdAt: "2024-05-18",
-  },
-  {
-    id: "7",
-    name: "장현우",
-    email: "jang.hw@medilab.kr",
-    role: "ORG_ADMIN" as UserRole,
-    organization: "(주)메디랩",
-    enrollments: 0,
-    status: "활성",
-    createdAt: "2024-10-12",
-  },
-  {
-    id: "8",
-    name: "윤지민",
-    email: "yoon.jm@example.com",
-    role: "STUDENT" as UserRole,
-    organization: "(주)헬스케어코리아",
-    enrollments: 4,
-    status: "활성",
-    createdAt: "2024-12-03",
-  },
-];
-
-type UserRow = (typeof users)[number];
+interface UserRow {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  organization: string | null;
+  enrollments: number;
+  status: string;
+  createdAt: string;
+}
 
 const roleBadgeVariant: Record<UserRole, "default" | "info" | "warning"> = {
   ADMIN: "default",
@@ -153,7 +79,26 @@ const columns: Column<UserRow>[] = [
   },
 ];
 
-export default function UsersPage() {
+export default async function UsersPage() {
+  const result = await userService.list({});
+
+  const users: UserRow[] = result.items.map((u) => {
+    const user = u as Record<string, unknown>;
+    const org = user.organization as { name: string } | null;
+    const _count = user._count as { enrollments?: number } | undefined;
+
+    return {
+      id: user.id as string,
+      name: (user.name as string) ?? "-",
+      email: user.email as string,
+      role: user.role as UserRole,
+      organization: org?.name ?? null,
+      enrollments: _count?.enrollments ?? 0,
+      status: "활성",
+      createdAt: new Date(user.createdAt as string).toLocaleDateString("ko-KR"),
+    };
+  });
+
   return (
     <div className="space-y-6">
       {/* 페이지 헤더 */}

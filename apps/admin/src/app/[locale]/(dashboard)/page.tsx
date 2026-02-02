@@ -1,68 +1,23 @@
+import Link from "next/link";
 import { Users, BookOpen, ShoppingCart, DollarSign, TrendingUp, UserPlus } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
 import { StatsCard } from "@/components/StatsCard";
+import { dashboardService, orderService, userService } from "@/lib/services";
 
-// 대시보드 플레이스홀더 데이터
-const stats = {
-  totalStudents: 1_247,
-  totalCourses: 38,
-  totalOrders: 856,
-  totalRevenue: 128_450_000,
-};
+export default async function DashboardPage() {
+  const [stats, recentOrders, recentStudents] = await Promise.all([
+    dashboardService.getAdminStats(),
+    dashboardService.getRecentOrders(5),
+    dashboardService.getRecentStudents(5),
+  ]);
 
-const recentOrders = [
-  {
-    id: "ORD-20250201-001",
-    customer: "김영희",
-    course: "간호 실무 기초 과정",
-    amount: 150_000,
-    status: "확정",
-    date: "2025-02-01",
-  },
-  {
-    id: "ORD-20250201-002",
-    customer: "(주)헬스케어코리아",
-    course: "감염관리 전문가 과정",
-    amount: 3_000_000,
-    status: "대기",
-    date: "2025-02-01",
-  },
-  {
-    id: "ORD-20250131-003",
-    customer: "박민수",
-    course: "환자 안전 관리",
-    amount: 89_000,
-    status: "확정",
-    date: "2025-01-31",
-  },
-  {
-    id: "ORD-20250131-004",
-    customer: "이수진",
-    course: "재활간호 입문",
-    amount: 120_000,
-    status: "확정",
-    date: "2025-01-31",
-  },
-  {
-    id: "ORD-20250130-005",
-    customer: "(주)메디랩",
-    course: "간호 리더십 과정",
-    amount: 5_400_000,
-    status: "대기",
-    date: "2025-01-30",
-  },
-];
+  const statusLabel: Record<string, string> = {
+    PENDING: "대기",
+    CONFIRMED: "확정",
+    CANCELLED: "취소",
+  };
 
-const recentStudents = [
-  { name: "최서연", email: "choi@example.com", joinedAt: "2025-02-01" },
-  { name: "장현우", email: "jang@example.com", joinedAt: "2025-02-01" },
-  { name: "윤지민", email: "yoon@example.com", joinedAt: "2025-01-31" },
-  { name: "한도윤", email: "han@example.com", joinedAt: "2025-01-31" },
-  { name: "정하은", email: "jung@example.com", joinedAt: "2025-01-30" },
-];
-
-export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* 페이지 제목 */}
@@ -79,25 +34,21 @@ export default function DashboardPage() {
           title="전체 수강생"
           value={stats.totalStudents.toLocaleString("ko-KR")}
           icon={Users}
-          trend={{ value: 12.5, isPositive: true }}
         />
         <StatsCard
           title="전체 강의"
           value={stats.totalCourses}
           icon={BookOpen}
-          trend={{ value: 3, isPositive: true }}
         />
         <StatsCard
           title="전체 주문"
           value={stats.totalOrders.toLocaleString("ko-KR")}
           icon={ShoppingCart}
-          trend={{ value: 8.2, isPositive: true }}
         />
         <StatsCard
           title="총 매출"
           value={formatPrice(stats.totalRevenue)}
           icon={DollarSign}
-          trend={{ value: 15.3, isPositive: true }}
         />
       </div>
 
@@ -111,12 +62,12 @@ export default function DashboardPage() {
                 <TrendingUp className="h-5 w-5 text-[#ce0e2d]" />
                 최근 주문
               </CardTitle>
-              <a
+              <Link
                 href="/orders"
                 className="text-sm font-medium text-[#ce0e2d] hover:underline"
               >
                 전체 보기
-              </a>
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
@@ -129,9 +80,6 @@ export default function DashboardPage() {
                     </th>
                     <th className="pb-3 text-left font-medium text-[color:var(--muted)]">
                       고객
-                    </th>
-                    <th className="pb-3 text-left font-medium text-[color:var(--muted)]">
-                      강의
                     </th>
                     <th className="pb-3 text-right font-medium text-[color:var(--muted)]">
                       금액
@@ -147,23 +95,22 @@ export default function DashboardPage() {
                       key={order.id}
                       className="border-b border-[color:var(--border)] last:border-0"
                     >
-                      <td className="py-3 font-mono text-xs">{order.id}</td>
-                      <td className="py-3">{order.customer}</td>
-                      <td className="py-3 text-[color:var(--muted)]">
-                        {order.course}
-                      </td>
+                      <td className="py-3 font-mono text-xs">{order.orderNo}</td>
+                      <td className="py-3">{order.user?.name ?? "-"}</td>
                       <td className="py-3 text-right">
-                        {formatPrice(order.amount)}
+                        {formatPrice(order.totalAmount)}
                       </td>
                       <td className="py-3 text-center">
                         <span
                           className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            order.status === "확정"
+                            order.status === "CONFIRMED"
                               ? "bg-[color:var(--success-bg)] text-[color:var(--success)]"
-                              : "bg-[color:var(--warning-bg)] text-[color:var(--warning)]"
+                              : order.status === "CANCELLED"
+                                ? "bg-[color:var(--error-bg)] text-[color:var(--error)]"
+                                : "bg-[color:var(--warning-bg)] text-[color:var(--warning)]"
                           }`}
                         >
-                          {order.status}
+                          {statusLabel[order.status] ?? order.status}
                         </span>
                       </td>
                     </tr>
@@ -182,31 +129,31 @@ export default function DashboardPage() {
                 <UserPlus className="h-5 w-5 text-[#ce0e2d]" />
                 최근 가입
               </CardTitle>
-              <a
+              <Link
                 href="/users"
                 className="text-sm font-medium text-[#ce0e2d] hover:underline"
               >
                 전체 보기
-              </a>
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
               {recentStudents.map((student) => (
-                <li key={student.email} className="flex items-center gap-3">
+                <li key={student.id} className="flex items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--surface-3)] text-sm font-medium text-[color:var(--muted)]">
-                    {student.name.charAt(0)}
+                    {(student.name ?? "?").charAt(0)}
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <p className="truncate text-sm font-medium text-[color:var(--fg)]">
-                      {student.name}
+                      {student.name ?? "-"}
                     </p>
                     <p className="truncate text-xs text-[color:var(--muted)]">
                       {student.email}
                     </p>
                   </div>
                   <span className="text-xs text-[color:var(--muted)]">
-                    {student.joinedAt}
+                    {new Date(student.createdAt).toLocaleDateString("ko-KR")}
                   </span>
                 </li>
               ))}

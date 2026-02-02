@@ -1,8 +1,8 @@
 import { Search, Download, Plus, Send } from "lucide-react";
 import { Button, Badge, DataTable, type Column, Input } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
+import { invoiceService } from "@/lib/services";
 
-// 청구서 상태
 type InvoiceStatus = "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "CANCELLED";
 
 const invoiceStatusLabels: Record<InvoiceStatus, string> = {
@@ -21,89 +21,19 @@ const statusBadgeVariant: Record<InvoiceStatus, "secondary" | "info" | "success"
   CANCELLED: "warning",
 };
 
-// 플레이스홀더 데이터
-const invoices = [
-  {
-    id: "1",
-    invoiceNo: "INV-20250201-001",
-    organization: "(주)헬스케어코리아",
-    contactEmail: "jung@healthcorp.kr",
-    items: "감염관리 전문가 과정 x 15명",
-    amount: 3_000_000,
-    tax: 300_000,
-    total: 3_300_000,
-    status: "SENT" as InvoiceStatus,
-    dueDate: "2025-02-28",
-    issuedAt: "2025-02-01",
-  },
-  {
-    id: "2",
-    invoiceNo: "INV-20250130-002",
-    organization: "(주)메디랩",
-    contactEmail: "jang@medilab.kr",
-    items: "간호 리더십 과정 x 30명",
-    amount: 5_400_000,
-    tax: 540_000,
-    total: 5_940_000,
-    status: "DRAFT" as InvoiceStatus,
-    dueDate: "2025-03-01",
-    issuedAt: "2025-01-30",
-  },
-  {
-    id: "3",
-    invoiceNo: "INV-20250128-003",
-    organization: "서울대병원",
-    contactEmail: "kim@snuh.org",
-    items: "환자 안전 관리 외 2건 x 50명",
-    amount: 12_500_000,
-    tax: 1_250_000,
-    total: 13_750_000,
-    status: "PAID" as InvoiceStatus,
-    dueDate: "2025-02-28",
-    issuedAt: "2025-01-28",
-  },
-  {
-    id: "4",
-    invoiceNo: "INV-20250115-004",
-    organization: "(주)케어플러스",
-    contactEmail: "park@careplus.kr",
-    items: "간호 실무 기초 과정 x 18명",
-    amount: 2_700_000,
-    tax: 270_000,
-    total: 2_970_000,
-    status: "OVERDUE" as InvoiceStatus,
-    dueDate: "2025-01-31",
-    issuedAt: "2025-01-15",
-  },
-  {
-    id: "5",
-    invoiceNo: "INV-20250110-005",
-    organization: "연세의료원",
-    contactEmail: "lee@yonsei.ac.kr",
-    items: "감염관리 전문가 과정 x 40명",
-    amount: 8_000_000,
-    tax: 800_000,
-    total: 8_800_000,
-    status: "PAID" as InvoiceStatus,
-    dueDate: "2025-02-10",
-    issuedAt: "2025-01-10",
-  },
-  {
-    id: "6",
-    invoiceNo: "INV-20241220-006",
-    organization: "(주)헬스케어코리아",
-    contactEmail: "jung@healthcorp.kr",
-    items: "간호 리더십 과정 x 20명",
-    amount: 3_600_000,
-    tax: 360_000,
-    total: 3_960_000,
-    status: "CANCELLED" as InvoiceStatus,
-    dueDate: "2025-01-20",
-    issuedAt: "2024-12-20",
-  },
-];
-
-type InvoiceRow = (typeof invoices)[number];
+interface InvoiceRow {
+  id: string;
+  invoiceNo: string;
+  organization: string;
+  contactEmail: string;
+  items: string;
+  amount: number;
+  tax: number;
+  total: number;
+  status: InvoiceStatus;
+  dueDate: string;
+  issuedAt: string;
+}
 
 const columns: Column<InvoiceRow>[] = [
   {
@@ -175,7 +105,30 @@ const columns: Column<InvoiceRow>[] = [
   },
 ];
 
-export default function InvoicesPage() {
+export default async function InvoicesPage() {
+  const result = await invoiceService.list({});
+
+  const invoices: InvoiceRow[] = result.items.map((inv) => {
+    const i = inv as Record<string, unknown>;
+    const order = i.order as Record<string, unknown> | null;
+    const org = order?.organization as { name: string } | null;
+    const user = order?.user as { email: string } | null;
+
+    return {
+      id: i.id as string,
+      invoiceNo: (i.invoiceNo as string) ?? `INV-${(i.id as string).slice(0, 8)}`,
+      organization: org?.name ?? "-",
+      contactEmail: user?.email ?? "-",
+      items: "-",
+      amount: i.totalAmount as number,
+      tax: (i.taxAmount as number) ?? 0,
+      total: (i.totalAmount as number) + ((i.taxAmount as number) ?? 0),
+      status: (i.status as InvoiceStatus) ?? "DRAFT",
+      dueDate: i.dueDate ? new Date(i.dueDate as string).toLocaleDateString("ko-KR") : "-",
+      issuedAt: new Date(i.createdAt as string).toLocaleDateString("ko-KR"),
+    };
+  });
+
   return (
     <div className="space-y-6">
       {/* 페이지 헤더 */}
