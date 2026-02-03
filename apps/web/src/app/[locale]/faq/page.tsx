@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { faqCategories } from "@/data/faq-data";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { FAQAccordion } from "@/components/FAQAccordion";
 
-export const metadata: Metadata = {
-  title: "FAQ | BAYADA 홈헬스케어",
-  description: "바야다홈헬스케어 자주 묻는 질문",
-};
+export const metadata = createMetadata({
+  title: "자주 묻는 질문",
+  description:
+    "바야다홈헬스케어 자주 묻는 질문 - 서비스 이용, 비용, 장기요양보험, 멤버십 등 궁금한 점을 확인하세요.",
+  path: "/ko/faq",
+});
 
 export default async function FAQPage({
   params,

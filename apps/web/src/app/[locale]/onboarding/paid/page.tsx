@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "유료 멤버십 온보딩 | BAYADA", description: "맞춤 서비스 설계를 시작합니다" };
+export const metadata = createMetadata({ title: "유료 멤버십 온보딩", description: "BAYADA 유료 멤버십 맞춤 서비스 설계. 전문 상담을 통해 최적의 케어 플랜을 수립합니다.", path: "/ko/onboarding/paid", noIndex: true });
 
 export default async function PaidOnboardingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

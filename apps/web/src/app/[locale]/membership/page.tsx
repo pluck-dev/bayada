@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { membershipFeatures, membershipBenefits } from "@/data/membership";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "Membership | BAYADA 홈헬스케어",
-  description: "나에게 맞는 BAYADA 멤버십을 선택하세요",
-};
+export const metadata = createMetadata({
+  title: "멤버십",
+  description:
+    "나에게 맞는 BAYADA 멤버십을 선택하세요. 무료/유료 멤버십으로 맞춤 홈헬스케어 서비스를 이용할 수 있습니다.",
+  path: "/ko/membership",
+});
 
 export default async function MembershipPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

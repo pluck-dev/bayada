@@ -1,15 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { providerSegments } from "@/data/audiences";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "서비스 제공자 | BAYADA 홈헬스케어",
-  description: "BAYADA 네트워크와 함께 성장하세요. 50년 글로벌 경험 기반 파트너십",
-};
+export const metadata = createMetadata({ title: "서비스 제공자", description: "BAYADA 네트워크와 함께 성장하세요. 50년 글로벌 경험 기반 전략적 파트너십을 제공합니다.", path: "/ko/who-we-serve/providers" });
 
 export default async function ProvidersPage({
   params,

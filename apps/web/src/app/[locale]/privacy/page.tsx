@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { getPrivacyContent } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "개인정보처리방침 | BAYADA 홈헬스케어",
+export const metadata = createMetadata({
+  title: "개인정보처리방침",
   description: "바야다홈헬스케어 개인정보처리방침",
-};
+  path: "/ko/privacy",
+  noIndex: true,
+});
 
 export default async function PrivacyPage({
   params,

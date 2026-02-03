@@ -9,7 +9,60 @@ import {
     PlayCircle,
     Users
 } from "lucide-react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const course = await courseService.getBySlug(slug);
+    const description =
+      course.description ?? `${course.title} - BAYADA Academy에서 수강하세요`;
+    const totalLectures = course.sections.reduce(
+      (sum: number, s: { lectures: unknown[] }) => sum + s.lectures.length,
+      0,
+    );
+
+    return {
+      title: course.title,
+      description,
+      openGraph: {
+        title: course.title,
+        description,
+        type: "article",
+        ...(course.thumbnail
+          ? {
+              images: [
+                {
+                  url: course.thumbnail,
+                  width: 1200,
+                  height: 630,
+                  alt: course.title,
+                },
+              ],
+            }
+          : {}),
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: course.title,
+        description,
+        ...(course.thumbnail ? { images: [course.thumbnail] } : {}),
+      },
+      other: {
+        "course:lectures": String(totalLectures),
+        "course:students": String(course._count.enrollments),
+        "course:price": course.price === 0 ? "무료" : formatPrice(course.price),
+      },
+    };
+  } catch {
+    return {};
+  }
+}
 
 export default async function CourseDetailPage({
   params,

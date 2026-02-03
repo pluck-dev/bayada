@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { services } from "@/data/services";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Vendor Qualification | BAYADA", description: "제공자 기관 자격 검증 양식" };
+export const metadata = createMetadata({ title: "제공자 자격요건", description: "BAYADA 서비스 제공자 자격요건 안내. 필요한 자격과 지원 절차를 확인하세요.", path: "/ko/providers/qualification" });
 
 export default async function VQFormPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

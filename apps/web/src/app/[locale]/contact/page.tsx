@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { getCompanyInfo } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "Contact Us | BAYADA 홈헬스케어",
-  description: "바야다홈헬스케어에 문의하세요",
-};
+export const metadata = createMetadata({
+  title: "문의하기",
+  description:
+    "바야다홈헬스케어에 문의하세요. 전화, 이메일, 방문 상담으로 맞춤 홈헬스케어 서비스를 안내드립니다.",
+  path: "/ko/contact",
+});
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { services } from "@/data/services";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "무료 멤버십 | BAYADA", description: "기본 정보를 입력하고 무료 멤버십을 시작하세요" };
+export const metadata = createMetadata({ title: "무료 멤버십 가입", description: "BAYADA 무료 멤버십 가입. 기본 정보를 입력하고 무료 홈헬스케어 서비스를 시작하세요.", path: "/ko/onboarding/free", noIndex: true });
 
 export default async function FreeOnboardingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

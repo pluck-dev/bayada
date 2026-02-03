@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { services } from "@/data/services";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "What We Do | BAYADA 홈헬스케어",
-  description: "바야다가 제공하는 12가지 홈헬스케어 서비스를 소개합니다.",
-};
+export const metadata = createMetadata({
+  title: "서비스 소개",
+  description:
+    "바야다가 제공하는 12가지 홈헬스케어 서비스 - 방문간호, 방문요양, 호스피스, 전환의료, 임상시험, 교육 등을 소개합니다.",
+  path: "/ko/what-we-do",
+});
 
 export default async function WhatWeDoPage({
   params,

@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { platforms } from "@/data/platforms";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "Platform | BAYADA 홈헬스케어",
-  description: "BAYADA의 4가지 디지털 플랫폼 - DeiBud, DeiCloud, DeiEdu, Dtx",
-};
+export const metadata = createMetadata({
+  title: "디지털 플랫폼",
+  description:
+    "BAYADA의 4가지 디지털 플랫폼 - DeiBud AI 케어 가이드, DeiCloud 운영 SaaS, DeiEdu 교육 플랫폼, Dtx 디지털 치료제",
+  path: "/ko/platform",
+});
 
 export default async function PlatformPage({
   params,

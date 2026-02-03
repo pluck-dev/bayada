@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { getUsageGuideContent } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { Phone, Home, ClipboardList, HeartHandshake, Activity, Stethoscope } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "이용안내 | BAYADA 홈헬스케어",
-  description: "바야다홈헬스케어 서비스 이용 안내 - 6단계로 간편하게 시작하세요.",
-};
+export const metadata = createMetadata({
+  title: "이용안내",
+  description:
+    "바야다홈헬스케어 서비스 이용 안내 - 상담 신청부터 서비스 시작까지 6단계로 간편하게 시작하세요.",
+  path: "/ko/guide",
+});
 
 const stepIcons = [Phone, Home, ClipboardList, HeartHandshake, Activity, Stethoscope];
 const stepColors = ["#ce0e2d", "#2563eb", "#16a34a", "#d97706", "#7c3aed", "#0891b2"];

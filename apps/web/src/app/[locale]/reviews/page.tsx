@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { reviews, getAverageRating } from "@/data/reviews";
 import { services } from "@/data/services";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "이용자 후기 | BAYADA 홈헬스케어",
-  description: "바야다홈헬스케어 이용자 후기",
-};
+export const metadata = createMetadata({
+  title: "이용자 후기",
+  description:
+    "바야다홈헬스케어 이용자 후기 - 실제 서비스를 경험한 분들의 생생한 후기를 확인하세요.",
+  path: "/ko/reviews",
+});
 
 export default async function ReviewsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { DeiBudProvider } from "@/components/deibud/DeiBudProvider";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 
 export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
@@ -26,6 +27,8 @@ export default async function LocaleLayout({
 
   return (
     <>
+      <OrganizationJsonLd />
+      <WebSiteJsonLd />
       <Header dict={dict} locale={locale} />
       <main>{children}</main>
       <Footer dict={dict} locale={locale} />

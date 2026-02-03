@@ -1,17 +1,18 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { getAboutContent } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "회사소개 | BAYADA 홈헬스케어",
+export const metadata = createMetadata({
+  title: "회사소개",
   description:
-    "바야다홈헬스케어는 미국 최대 홈헬스케어 기업과 손잡고 최고의 방문 간호·돌봄 서비스를 제공합니다.",
-};
+    "바야다홈헬스케어는 미국 최대 홈헬스케어 기업 BAYADA와 손잡고 최고의 방문 간호·돌봄 서비스를 제공합니다. 50년 글로벌 경험, The BAYADA Way 철학.",
+  path: "/ko/about",
+});
 
 export default async function AboutPage({
   params,

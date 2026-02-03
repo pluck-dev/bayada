@@ -3,10 +3,32 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@bayada/db";
 import { Badge } from "@bayada/ui";
 import { BookOpen } from "lucide-react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { LectureSidebar } from "@/components/LectureSidebar";
 import { LectureActions } from "@/components/LectureActions";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string; lectureId: string }>;
+}): Promise<Metadata> {
+  const { slug, lectureId } = await params;
+  try {
+    const [lecture, course] = await Promise.all([
+      lectureService.getById(lectureId),
+      courseService.getBySlug(slug),
+    ]);
+    return {
+      title: `${lecture.title} - ${course.title}`,
+      description: `${course.title}의 강의: ${lecture.title}`,
+      robots: { index: false, follow: false },
+    };
+  } catch {
+    return { robots: { index: false, follow: false } };
+  }
+}
 
 export default async function LecturePage({
   params,

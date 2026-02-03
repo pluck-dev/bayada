@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { userSegments } from "@/data/audiences";
 import { services } from "@/data/services";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "서비스 이용자 | BAYADA 홈헬스케어",
-  description: "나에게 맞는 홈헬스케어 서비스를 찾아보세요",
-};
+export const metadata = createMetadata({
+  title: "서비스 이용자",
+  description:
+    "나에게 맞는 홈헬스케어 서비스를 찾아보세요. 시니어, 만성질환 환자, 장애인을 위한 맞춤 서비스를 제공합니다.",
+  path: "/ko/who-we-serve/users",
+});
 
 export default async function UsersPage({
   params,

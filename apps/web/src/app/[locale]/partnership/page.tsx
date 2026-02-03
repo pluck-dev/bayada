@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { getPartnerLogos } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { CTABanner } from "@/components/shared/CTABanner";
 
-export const metadata: Metadata = {
-  title: "Partnership | BAYADA 홈헬스케어",
-  description: "50년 글로벌 헬스케어 경험과 함께 성장하세요",
-};
+export const metadata = createMetadata({
+  title: "파트너십",
+  description:
+    "50년 글로벌 헬스케어 경험과 함께 성장하세요. 병원, 클리닉, 제약사, 지자체와의 전략적 파트너십을 제안합니다.",
+  path: "/ko/partnership",
+});
 
 export default async function PartnershipPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

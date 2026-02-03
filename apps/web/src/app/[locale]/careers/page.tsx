@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
+import { createMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 
-export const metadata: Metadata = {
-  title: "채용 정보 | BAYADA 홈헬스케어",
-  description: "바야다홈헬스케어 채용 정보",
-};
+export const metadata = createMetadata({
+  title: "채용 정보",
+  description:
+    "바야다홈헬스케어 채용 정보 - 간호사, 요양보호사, 물리치료사 등 홈헬스케어 전문가를 모집합니다.",
+  path: "/ko/careers",
+});
 
 const careers = [
   { id: "1", title: "전문 간호사 (Skilled Nursing)", dept: "케어서비스팀", location: "서울", type: "정규직", deadline: "2026-03-31", active: true },
