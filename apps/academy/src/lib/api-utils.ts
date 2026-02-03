@@ -36,8 +36,7 @@ export function errorResponse(error: unknown) {
     );
   }
   console.error("Unhandled error:", error);
-  const detail = error instanceof Error ? error.message : String(error);
-  return NextResponse.json({ error: "서버 오류가 발생했습니다", detail }, { status: 500 });
+  return NextResponse.json({ error: "서버 오류가 발생했습니다" }, { status: 500 });
 }
 
 /** URL 쿼리 파라미터를 객체로 파싱 */
