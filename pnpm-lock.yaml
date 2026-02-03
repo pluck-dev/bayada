@@ -41,6 +41,9 @@ importers:
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.3
+      framer-motion:
+        specifier: ^11.18.2
+        version: 11.18.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       lucide-react:
         specifier: ^0.563.0
         version: 0.563.0(react@19.2.3)
