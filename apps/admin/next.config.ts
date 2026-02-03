@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@bayada/ui", "@bayada/db", "@bayada/shared"],
-  serverExternalPackages: ["@prisma/client", ".prisma"],
+  output: "standalone",
+  outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
+  transpilePackages: ["@bayada/ui", "@bayada/shared"],
+  serverExternalPackages: ["@bayada/db"],
 };
 
 export default nextConfig;
