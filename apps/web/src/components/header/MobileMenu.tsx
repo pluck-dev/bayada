@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { mainNavigation } from "@/data/navigation";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface MobileMenuProps {
   locale: string;
@@ -68,6 +69,11 @@ export function MobileMenu({ locale, onClose }: MobileMenuProps) {
             )}
           </div>
         ))}
+
+        {/* 언어 선택 */}
+        <div className="mt-4 border-t border-[color:var(--border)] pt-4">
+          <LanguageSwitcher />
+        </div>
 
         {/* CTA */}
         <div className="mt-4 flex flex-col gap-3 pt-2">

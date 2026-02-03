@@ -8,6 +8,7 @@ import type { Dictionary } from "@bayada/shared/i18n";
 import { mainNavigation } from "@/data/navigation";
 import { MegaMenu } from "./header/MegaMenu";
 import { MobileMenu } from "./header/MobileMenu";
+import { LanguageSwitcher } from "./header/LanguageSwitcher";
 
 interface HeaderProps {
   dict: Dictionary;
@@ -120,6 +121,7 @@ export function Header({ locale }: HeaderProps) {
 
         {/* 데스크톱 우측 CTA */}
         <div className="hidden items-center gap-3 lg:flex">
+          <LanguageSwitcher />
           <Link
             href={`/${locale}/contact`}
             className="rounded-lg px-3 py-2 text-[13px] font-medium text-[color:var(--muted)] transition-colors hover:text-[color:var(--fg)]"

@@ -1,15 +1,10 @@
 "use client";
 
 import { CourseCard, type CourseCardProps } from "@/components/CourseCard";
+import { HeroBanner } from "@/components/HeroBanner";
 import { useDictionary } from "@/components/DictionaryProvider";
-import { Badge, Button, Skeleton } from "@bayada/ui";
-import {
-    ArrowRight,
-    CheckCircle2,
-    ChevronDown,
-    PlayCircle
-} from "lucide-react";
-import { motion } from "framer-motion";
+import { Button, Skeleton } from "@bayada/ui";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -120,123 +115,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen pb-32">
-      {/* Apple-style Full-Screen Hero */}
-      <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#0a0a0a]">
-        {/* 배경 그라디언트 메시 */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#e31b34] opacity-[0.15] blur-[120px]" />
-          <div className="absolute bottom-0 left-0 h-[600px] w-[600px] -translate-x-1/3 translate-y-1/4 rounded-full bg-[#a30b24] opacity-[0.10] blur-[100px]" />
-          <div className="absolute bottom-1/4 right-0 h-[500px] w-[500px] translate-x-1/4 rounded-full bg-[#ff6b81] opacity-[0.07] blur-[100px]" />
-        </div>
-
-        {/* 노이즈 텍스처 오버레이 */}
-        <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")" }} />
-
-        {/* 콘텐츠 */}
-        <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mb-6"
-          >
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-white/70 backdrop-blur-md">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#e31b34] animate-pulse" />
-              2025년 최신 커리큘럼 업데이트
-            </span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-5xl font-bold tracking-tight text-white sm:text-7xl lg:text-8xl"
-          >
-            성장을 위한
-            <br />
-            <span className="bg-gradient-to-r from-[#ff6b81] via-[#e31b34] to-[#a30b24] bg-clip-text text-transparent">
-              가장 확실한 시작
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-white/60 sm:text-xl"
-          >
-            BAYADA Academy는 검증된 전문가들과 함께하는 프리미엄 교육 플랫폼입니다.
-            <br className="hidden sm:inline" />
-            지금 바로 당신의 커리어를 한 단계 높여보세요.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6"
-          >
-            <Link href={`/${locale}/courses`}>
-              <Button
-                size="lg"
-                className="rounded-full bg-white px-10 py-6 text-lg font-semibold text-black shadow-2xl shadow-white/10 transition-all hover:scale-105 hover:bg-white/90"
-              >
-                {dict.common.courses}
-                <PlayCircle className="ml-2 h-5 w-5 fill-black text-white" />
-              </Button>
-            </Link>
-            <Link href={`/${locale}/auth/register`}>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="rounded-full border border-white/20 px-10 py-6 text-lg font-semibold text-white transition-all hover:bg-white/10"
-              >
-                {dict.common.register} <span aria-hidden="true">→</span>
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Stats - 히어로 내부 하단 */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mx-auto mt-20 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl sm:grid-cols-4"
-          >
-            <div className="p-6 text-center transition-colors hover:bg-white/5 sm:p-8">
-              <p className="text-2xl font-bold tracking-tight text-white sm:text-3xl">{stats.total}+</p>
-              <p className="mt-1 text-xs font-medium text-white/40 sm:text-sm">{dict.academy.allCourses}</p>
-            </div>
-            <div className="p-6 text-center transition-colors hover:bg-white/5 sm:p-8">
-              <p className="text-2xl font-bold tracking-tight text-white sm:text-3xl">{stats.enrollments.toLocaleString()}+</p>
-              <p className="mt-1 text-xs font-medium text-white/40 sm:text-sm">{dict.academy.students}</p>
-            </div>
-            <div className="p-6 text-center transition-colors hover:bg-white/5 sm:p-8">
-              <p className="text-2xl font-bold tracking-tight text-white sm:text-3xl">98%</p>
-              <p className="mt-1 text-xs font-medium text-white/40 sm:text-sm">{dict.academy.completed}</p>
-            </div>
-            <div className="p-6 text-center transition-colors hover:bg-white/5 sm:p-8">
-              <p className="text-2xl font-bold tracking-tight text-white sm:text-3xl">4.9</p>
-              <p className="mt-1 text-xs font-medium text-white/40 sm:text-sm">평균 만족도</p>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* 스크롤 인디케이터 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          >
-            <ChevronDown className="h-6 w-6 text-white/30" />
-          </motion.div>
-        </motion.div>
-      </section>
+      {/* Full-Screen Hero — 웹사이트와 동일한 스타일 */}
+      <HeroBanner
+        locale={locale}
+        dict={dict}
+        stats={stats}
+      />
 
       {/* Recommended Courses Horizontal Scroll */}
       <section className="py-12">
