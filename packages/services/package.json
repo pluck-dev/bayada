@@ -10,14 +10,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@bayada/db": "workspace:*",
     "@bayada/shared": "workspace:*",
     "bcryptjs": "^3.0.2"
   },
-  "peerDependencies": {
-    "@bayada/db": "workspace:*"
-  },
   "devDependencies": {
-    "@prisma/client": "^6.19.2",
     "typescript": "^5"
   }
 }

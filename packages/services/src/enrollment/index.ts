@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@bayada/db";
 import { ConflictError, NotFoundError } from "../errors";
 
 export class EnrollmentService {

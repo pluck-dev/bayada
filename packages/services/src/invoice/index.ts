@@ -1,4 +1,4 @@
-import type { PrismaClient, InvoiceStatus } from "@prisma/client";
+import type { PrismaClient, InvoiceStatus } from "@bayada/db";
 import { generateInvoiceNo } from "@bayada/shared/constants";
 import { NotFoundError } from "../errors";
 import { paginationParams, paginatedResult } from "../utils";

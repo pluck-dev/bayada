@@ -7,6 +7,7 @@ dist
 !.env.example
 .DS_Store
 *.tsbuildinfo
+packages/db/src/generated
 
 # 프로젝트 로컬 자료 (Git 제외)
 search/

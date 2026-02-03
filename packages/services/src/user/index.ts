@@ -1,4 +1,4 @@
-import type { PrismaClient, Role } from "@prisma/client";
+import type { PrismaClient, Role } from "@bayada/db";
 import { hash } from "bcryptjs";
 import { NotFoundError, ConflictError, ValidationError } from "../errors";
 import { paginationParams, paginatedResult } from "../utils";

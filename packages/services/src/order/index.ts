@@ -1,4 +1,4 @@
-import type { PrismaClient, OrderType } from "@prisma/client";
+import type { PrismaClient, OrderType } from "@bayada/db";
 import { generateOrderNo } from "@bayada/shared/constants";
 import { NotFoundError, ValidationError, ConflictError } from "../errors";
 import { paginationParams, paginatedResult } from "../utils";

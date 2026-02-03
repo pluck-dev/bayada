@@ -1,4 +1,4 @@
-import type { PrismaClient, CourseStatus } from "@prisma/client";
+import type { PrismaClient, CourseStatus } from "@bayada/db";
 import { paginationParams, paginatedResult } from "../utils";
 import { NotFoundError } from "../errors";
 

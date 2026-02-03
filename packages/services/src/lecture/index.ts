@@ -1,4 +1,4 @@
-import type { PrismaClient, LectureType } from "@prisma/client";
+import type { PrismaClient, LectureType } from "@bayada/db";
 import { NotFoundError } from "../errors";
 
 export class LectureService {
