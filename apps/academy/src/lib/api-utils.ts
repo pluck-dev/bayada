@@ -36,7 +36,9 @@ export function errorResponse(error: unknown) {
     );
   }
   console.error("Unhandled error:", error);
-  return NextResponse.json({ error: "서버 오류가 발생했습니다" }, { status: 500 });
+  const msg = error instanceof Error ? error.message : String(error);
+  const stack = error instanceof Error ? error.stack?.split("\n").slice(0, 3).join(" | ") : undefined;
+  return NextResponse.json({ error: "서버 오류가 발생했습니다", debug: { msg, stack } }, { status: 500 });
 }
 
 /** URL 쿼리 파라미터를 객체로 파싱 */
