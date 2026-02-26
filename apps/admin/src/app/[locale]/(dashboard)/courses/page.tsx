@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { Button, Badge, DataTable, type Column } from "@bayada/ui";
-import { COURSE_STATUS_LABELS, formatPrice } from "@bayada/shared";
+import { Button, DataTable, type Column } from "@bayada/ui";
+import { formatPrice } from "@bayada/shared";
 import type { CourseStatusType } from "@bayada/shared";
 import { courseService } from "@/lib/services";
 import { SearchFilter } from "@/components/SearchFilter";
 import { Pagination } from "@/components/Pagination";
+import { CourseStatusToggle } from "@/components/CourseStatusToggle";
 
 interface CourseRow {
   [key: string]: unknown;
@@ -18,12 +19,6 @@ interface CourseRow {
   students: number;
   createdAt: string;
 }
-
-const statusBadgeVariant: Record<string, "default" | "success" | "secondary"> = {
-  DRAFT: "secondary",
-  PUBLISHED: "success",
-  ARCHIVED: "default",
-};
 
 const statusFilters = [
   { label: "공개", value: "PUBLISHED" },
@@ -65,9 +60,7 @@ const columns: Column<CourseRow>[] = [
     key: "status",
     header: "상태",
     render: (row) => (
-      <Badge variant={statusBadgeVariant[row.status] ?? "secondary"}>
-        {COURSE_STATUS_LABELS[row.status]}
-      </Badge>
+      <CourseStatusToggle courseId={row.id} currentStatus={row.status} />
     ),
   },
   {

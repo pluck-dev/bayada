@@ -51,27 +51,25 @@ export function Header({ locale }: HeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "border-b border-[color:var(--border)] bg-white/95 shadow-[var(--shadow-subtle)] backdrop-blur-xl"
-          : "bg-white/80 backdrop-blur-sm"
+      className={`sticky top-0 z-50 bg-white transition-all duration-300 ${
+        scrolled ? "border-b border-gray-200 shadow-sm" : ""
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-[1512px] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* 로고 */}
         <Link href={`/${locale}`} className="flex shrink-0 items-center gap-2.5">
           <Image
             src="/images/brand/logo.png"
             alt="BAYADA"
-            width={120}
-            height={36}
-            className="h-8 w-auto"
+            width={130}
+            height={40}
+            className="h-9 w-auto"
             priority
           />
         </Link>
 
         {/* 데스크톱 네비게이션 */}
-        <nav className="hidden items-center gap-0.5 lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {mainNavigation.map((item) => (
             <div
               key={item.label}
@@ -81,10 +79,10 @@ export function Header({ locale }: HeaderProps) {
             >
               {item.children ? (
                 <button
-                  className={`flex items-center gap-1 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors hover:text-[#ce0e2d] ${
+                  className={`flex items-center gap-1 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-[#ce0e2d] ${
                     openMega === item.label
                       ? "text-[#ce0e2d]"
-                      : "text-[color:var(--fg)]"
+                      : "text-black/[0.87]"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -101,7 +99,7 @@ export function Header({ locale }: HeaderProps) {
               ) : (
                 <Link
                   href={`/${locale}${item.href}`}
-                  className="rounded-lg px-3 py-2 text-[13px] font-medium text-[color:var(--fg)] transition-colors hover:text-[#ce0e2d]"
+                  className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-black/[0.87] transition-colors hover:text-[#ce0e2d]"
                 >
                   {item.label}
                 </Link>
@@ -123,22 +121,22 @@ export function Header({ locale }: HeaderProps) {
         <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitcher />
           <Link
-            href={`/${locale}/contact`}
-            className="rounded-lg px-3 py-2 text-[13px] font-medium text-[color:var(--muted)] transition-colors hover:text-[color:var(--fg)]"
+            href={`/${locale}/services`}
+            className="whitespace-nowrap rounded-lg bg-[#dfe6eb] px-5 py-2 text-sm font-medium text-black/[0.87] transition-colors duration-300 hover:bg-[#D6DEE5]"
           >
-            Login
+            서비스 찾기
           </Link>
           <Link
-            href={`/${locale}/membership`}
-            className="rounded-full bg-[#ce0e2d] px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#b00c27]"
+            href={`/${locale}/contact`}
+            className="whitespace-nowrap rounded-lg bg-[#ce0e2d] px-5 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-[#980019]"
           >
-            Get Started
+            상담 신청
           </Link>
         </div>
 
         {/* 모바일 메뉴 버튼 */}
         <button
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--fg)] transition-colors hover:bg-[color:var(--surface)] lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-black/[0.87] transition-colors hover:bg-gray-100 lg:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
         >

@@ -1,86 +1,100 @@
 "use client";
 
-import { Zap, ShieldCheck, Heart, TrendingUp } from "lucide-react";
-import { Container } from "@/components/layout/Container";
-import { FadeIn } from "@/components/animations/FadeIn";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
-const pillars = [
+const features = [
   {
-    icon: Zap,
-    title: "Efficiency",
-    titleKo: "효율성",
-    description: "디지털 기술과 50년 운영 노하우를 결합하여 최적화된 케어 전달 시스템을 구축합니다.",
-    color: "#f59e0b",
-    bg: "#fef3c7",
+    icon: "/images/care-team/icons/book.svg",
+    alt: "교육 아이콘",
+    text: "고도 시뮬레이션 실습과 실제 시나리오 기반 교육",
   },
   {
-    icon: ShieldCheck,
-    title: "Quality",
-    titleKo: "품질",
-    description: "표준화된 교육과 품질 관리 시스템으로 어디서나 일관된 최고 수준의 서비스를 보장합니다.",
-    color: "#2563eb",
-    bg: "#dbeafe",
+    icon: "/images/care-team/icons/clipboard.svg",
+    alt: "클립보드 아이콘",
+    text: "체계적인 간호 레지던시 프로그램과 멘토링",
   },
   {
-    icon: Heart,
-    title: "Trust",
-    titleKo: "신뢰",
-    description: "투명한 운영, 전문 인력 검증, 실시간 모니터링으로 환자와 가족의 신뢰를 지킵니다.",
-    color: "#ce0e2d",
-    bg: "#fae6ea",
+    icon: "/images/care-team/icons/community.svg",
+    alt: "커뮤니티 아이콘",
+    text: "가족 중심 교육으로 보호자의 안도감 향상",
   },
   {
-    icon: TrendingUp,
-    title: "Scalability",
-    titleKo: "확장성",
-    description: "글로벌 네트워크와 기술 플랫폼을 기반으로 다양한 지역과 서비스로 확장 가능합니다.",
-    color: "#16a34a",
-    bg: "#dcfce7",
+    icon: "/images/care-team/icons/home-health.svg",
+    alt: "홈헬스 아이콘",
+    text: "응급 대응 및 안전 프로토콜",
   },
 ];
 
 export function WhyBayada() {
   return (
-    <section className="py-[var(--section-gap)] bg-[color:var(--surface)]">
-      <Container>
-        <FadeIn>
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#ce0e2d]">
-              Why BAYADA
-            </p>
-            <h2 className="mt-4 text-3xl font-bold text-[color:var(--fg)] sm:text-4xl">
-              BAYADA를 선택해야 하는 이유
-            </h2>
-            <p className="mt-4 text-[color:var(--muted)]">
-              4가지 핵심 역량으로 차별화된 홈헬스케어를 제공합니다
-            </p>
-          </div>
-        </FadeIn>
+    <section className="bg-white py-16 lg:py-24">
+      <div className="mx-auto max-w-[1512px] grid grid-cols-1 items-center gap-10 px-4 sm:px-6 md:grid-cols-[450px_1fr] md:gap-16 lg:grid-cols-[600px_1fr] lg:gap-20 lg:px-12">
 
-        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {pillars.map((pillar, i) => (
-            <FadeIn key={pillar.title} delay={i * 0.1}>
-              <div className="group rounded-2xl bg-white p-8 transition-all hover:shadow-[var(--shadow-medium)]">
-                <div
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: pillar.bg }}
-                >
-                  <pillar.icon className="h-7 w-7" style={{ color: pillar.color }} />
+        {/* 좌측: 단일 대형 간호사 사진 - 모바일 order-2, 데스크탑 order-1 */}
+        <motion.div
+          className="order-2 md:order-1 relative overflow-hidden rounded-2xl min-h-[400px] md:min-h-[520px] lg:min-h-[600px]"
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          {/* 메인 간호사 사진 */}
+          <Image
+            src="/images/care-team/1.webp"
+            alt="BAYADA 케어 전문가"
+            fill
+            className="object-cover object-top"
+            sizes="(max-width: 768px) 100vw, 600px"
+            priority
+          />
+        </motion.div>
+
+        {/* 우측: 텍스트 + 아이콘 그리드 - 모바일 order-1, 데스크탑 order-2 */}
+        <motion.div
+          className="order-1 flex flex-col justify-center md:order-2"
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
+        >
+          <h2
+            className="font-bold leading-[1.15] text-black/[0.87]"
+            style={{ fontSize: "clamp(1.75rem, 3vw, 2.625rem)" }}
+          >
+            가장 잘 훈련된 케어팀이
+            <br />
+            소중한 분 곁에 있습니다
+          </h2>
+          <p className="mt-3 text-base leading-relaxed text-black/60">
+            마음에서 시작해, 전문성으로 완성하는 케어
+          </p>
+
+          {/* 아이콘 그리드: 모바일 2×2, sm 이상 4×1 */}
+          <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4">
+            {features.map((feature) => (
+              <div
+                key={feature.text}
+                className="flex flex-col items-center text-center"
+              >
+                <div className="flex h-[50px] w-[60px] items-center justify-center">
+                  <img
+                    src={feature.icon}
+                    alt={feature.alt}
+                    width={60}
+                    height={50}
+                    className="object-contain"
+                  />
                 </div>
-                <h3 className="mt-6 text-xl font-bold text-[color:var(--fg)]">
-                  {pillar.title}
-                </h3>
-                <p className="text-sm font-medium text-[color:var(--muted)]">
-                  {pillar.titleKo}
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-[color:var(--muted)]">
-                  {pillar.description}
+                <p className="mt-2 text-[12px] font-medium leading-snug text-black/[0.87]">
+                  {feature.text}
                 </p>
               </div>
-            </FadeIn>
-          ))}
-        </div>
-      </Container>
+            ))}
+          </div>
+        </motion.div>
+
+      </div>
     </section>
   );
 }

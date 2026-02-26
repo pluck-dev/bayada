@@ -1,72 +1,38 @@
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
-import { services } from "@/data/services";
-import { PageHero } from "@/components/layout/PageHero";
-import { Container } from "@/components/layout/Container";
 import { createMetadata } from "@/lib/seo";
+import { PageHero } from "@/components/layout/PageHero";
+import { QualificationClient } from "./QualificationClient";
 
-export const metadata = createMetadata({ title: "제공자 자격요건", description: "BAYADA 서비스 제공자 자격요건 안내. 필요한 자격과 지원 절차를 확인하세요.", path: "/ko/providers/qualification" });
+export const metadata = createMetadata({
+  title: "파트너 자격 심사",
+  description:
+    "BAYADA 홈헬스케어 공식 파트너가 되세요. 의료기관, 전문 인력, 교육기관을 위한 자격 심사 절차와 혜택을 안내합니다.",
+  path: "/ko/providers/qualification",
+  keywords: [
+    "BAYADA 파트너",
+    "홈헬스케어 파트너십",
+    "의료기관 파트너",
+    "요양보호사 파트너",
+    "파트너 자격 심사",
+  ],
+});
 
-export default async function VQFormPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function QualificationPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
+  await getDictionary(locale as Locale);
 
   return (
     <>
-      <PageHero title="Vendor Qualification" subtitle="제공자(기관) 자격 검증 양식" />
-      <section className="py-[var(--section-gap)]">
-        <Container narrow>
-          <div className="rounded-2xl border border-[color:var(--border)] p-8">
-            <div className="space-y-4">
-              {["기관명 *", "대표자명 *", "사업자등록번호 *", "담당자명 *", "연락처 *", "이메일 *"].map((label) => (
-                <div key={label}>
-                  <label className="block text-sm font-medium text-[color:var(--fg)]">{label}</label>
-                  <input type="text" className="mt-1 w-full rounded-lg border border-[color:var(--border)] px-4 py-2.5 text-sm focus:border-[#ce0e2d] focus:outline-none" placeholder={label.replace(" *", "")} />
-                </div>
-              ))}
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--fg)]">기관 유형 *</label>
-                <select className="mt-1 w-full rounded-lg border border-[color:var(--border)] px-4 py-2.5 text-sm focus:border-[#ce0e2d] focus:outline-none">
-                  <option>선택하세요</option>
-                  <option>의료기관 - 병원</option>
-                  <option>의료기관 - 클리닉</option>
-                  <option>장기요양센터</option>
-                  <option>방문간호센터</option>
-                  <option>데이케어센터</option>
-                  <option>벤더</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--fg)]">서비스 영역 * (복수 선택)</label>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-                  {services.map((s) => (
-                    <label key={s.slug} className="flex items-center gap-1.5"><input type="checkbox" className="accent-[#ce0e2d]" /> {s.nameKo}</label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--fg)]">인력 현황</label>
-                <input type="text" className="mt-1 w-full rounded-lg border border-[color:var(--border)] px-4 py-2.5 text-sm focus:border-[#ce0e2d] focus:outline-none" placeholder="전체 인력 수" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--fg)]">보유 인증</label>
-                <div className="mt-2 flex flex-wrap gap-3 text-sm">
-                  {["노인장기요양 지정", "의료기관 인증", "ISO 인증", "기타"].map((c) => (
-                    <label key={c} className="flex items-center gap-1.5"><input type="checkbox" className="accent-[#ce0e2d]" /> {c}</label>
-                  ))}
-                </div>
-              </div>
-              <label className="flex items-center gap-2 text-sm text-[color:var(--muted)]">
-                <input type="checkbox" className="accent-[#ce0e2d]" />
-                개인정보 수집 및 이용에 동의합니다 *
-              </label>
-            </div>
-            <div className="mt-8">
-              <button className="w-full rounded-full bg-[#ce0e2d] px-8 py-3 text-sm font-semibold text-white hover:bg-[#b00c27]">제출하기</button>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <PageHero
+        title="Partner Qualification"
+        subtitle="BAYADA 파트너 자격 심사 — 함께 최고의 홈헬스케어를 만들어 갑니다"
+      />
+      <QualificationClient locale={locale} />
     </>
   );
 }

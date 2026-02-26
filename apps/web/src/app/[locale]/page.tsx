@@ -2,14 +2,15 @@ import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
 import { HeroSection } from "@/components/home/HeroSection";
+import { ServicesByAge } from "@/components/home/ServicesByAge";
 import { BayadaWaySection } from "@/components/home/BayadaWaySection";
-import { TimelineSection } from "@/components/home/TimelineSection";
 import { ServiceAreaMap } from "@/components/home/ServiceAreaMap";
-import { KeyNumbers } from "@/components/home/KeyNumbers";
 import { WhyBayada } from "@/components/home/WhyBayada";
+import { KeyNumbers } from "@/components/home/KeyNumbers";
 import { ReviewsCarousel } from "@/components/home/ReviewsCarousel";
-import { LatestBlog } from "@/components/home/LatestBlog";
 import { AcademyCTA } from "@/components/home/AcademyCTA";
+import { Certifications } from "@/components/home/Certifications";
+import { LatestBlog } from "@/components/home/LatestBlog";
 
 export const metadata = createMetadata({
   title: "BAYADA 홈헬스케어 - 가정에서 받는 최고의 간호 및 돌봄 서비스",
@@ -41,14 +42,15 @@ export default async function HomePage({
   return (
     <>
       <HeroSection locale={locale} />
+      <ServicesByAge locale={locale} />
       <BayadaWaySection />
-      <TimelineSection />
       <ServiceAreaMap />
-      <KeyNumbers />
       <WhyBayada />
+      <KeyNumbers />
       <ReviewsCarousel />
-      <LatestBlog locale={locale} />
       <AcademyCTA locale={locale} />
+      <Certifications />
+      <LatestBlog locale={locale} />
     </>
   );
 }

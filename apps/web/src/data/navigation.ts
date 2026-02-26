@@ -143,6 +143,48 @@ export const mainNavigation: MegaMenuItem[] = [
     label: "About Us",
     labelKo: "회사소개",
     href: "/about",
+    children: [
+      {
+        title: "회사소개",
+        items: [
+          {
+            label: "About BAYADA",
+            href: "/about",
+            description: "바야다홈헬스케어 소개",
+          },
+          {
+            label: "The BAYADA Way",
+            href: "/bayada-way",
+            description: "열정, 탁월함, 신뢰 — 우리의 핵심 가치",
+          },
+          {
+            label: "Senior Living Solutions",
+            href: "/senior-living",
+            description: "시니어 주거시설 파트너십",
+          },
+        ],
+      },
+      {
+        title: "고객 리소스",
+        items: [
+          {
+            label: "이용안내",
+            href: "/guide",
+            description: "서비스 이용 절차 안내",
+          },
+          {
+            label: "홈케어 비용 안내",
+            href: "/how-to-pay",
+            description: "비용 지원 제도 및 결제 안내",
+          },
+          {
+            label: "FAQ",
+            href: "/faq",
+            description: "자주 묻는 질문",
+          },
+        ],
+      },
+    ],
   },
   {
     label: "Contact",
@@ -190,11 +232,23 @@ export const footerNavigation = {
     title: "Company",
     links: [
       { label: "About Us", href: "/about" },
+      { label: "The BAYADA Way", href: "/bayada-way" },
       { label: "Partnership", href: "/partnership" },
+      { label: "Senior Living", href: "/senior-living" },
       { label: "Membership", href: "/membership" },
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
       { label: "Careers", href: "/careers" },
+    ],
+  },
+  resources: {
+    title: "Resources",
+    links: [
+      { label: "이용안내", href: "/guide" },
+      { label: "홈케어 비용 안내", href: "/how-to-pay" },
+      { label: "FAQ", href: "/faq" },
+      { label: "고객 후기", href: "/reviews" },
+      { label: "개인정보처리방침", href: "/privacy" },
     ],
   },
   legal: [

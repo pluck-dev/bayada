@@ -38,11 +38,11 @@ export function ReviewsCarousel() {
   };
 
   return (
-    <section className="py-[var(--section-gap)] bg-white">
+    <section className="py-[var(--section-gap)] bg-[color:var(--surface)]">
       <Container>
         <FadeIn>
           <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#ce0e2d]">
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#ce0e2d]">
               Reviews
             </p>
             <h2 className="mt-4 text-3xl font-bold text-[color:var(--fg)] sm:text-4xl">
@@ -73,7 +73,7 @@ export function ReviewsCarousel() {
 
         {/* 캐러셀 */}
         <div className="relative mt-12 mx-auto max-w-2xl">
-          <div className="overflow-hidden rounded-2xl bg-[color:var(--surface)] p-8 sm:p-12 min-h-[200px]">
+          <div className="overflow-hidden rounded-lg border border-[color:var(--border)] bg-white p-6 sm:p-10 min-h-[200px]">
             <AnimatePresence custom={direction} mode="wait">
               <motion.div
                 key={current}
@@ -113,7 +113,7 @@ export function ReviewsCarousel() {
           <div className="mt-6 flex items-center justify-center gap-4">
             <button
               onClick={prev}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--border)] transition-colors hover:bg-[color:var(--surface)]"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#dfe6eb] transition-colors hover:bg-[#dfe6eb]"
               aria-label="이전 리뷰"
             >
               <ChevronLeft className="h-5 w-5 text-[color:var(--fg)]" />
@@ -128,8 +128,8 @@ export function ReviewsCarousel() {
                   }}
                   className={`h-2 rounded-full transition-all ${
                     i === current
-                      ? "w-6 bg-[#ce0e2d]"
-                      : "w-2 bg-[color:var(--border)]"
+                      ? "w-5 bg-[#ce0e2d]"
+                      : "w-2 bg-[#dfe6eb]"
                   }`}
                   aria-label={`리뷰 ${i + 1}`}
                 />
@@ -137,7 +137,7 @@ export function ReviewsCarousel() {
             </div>
             <button
               onClick={next}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--border)] transition-colors hover:bg-[color:var(--surface)]"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#dfe6eb] transition-colors hover:bg-[#dfe6eb]"
               aria-label="다음 리뷰"
             >
               <ChevronRight className="h-5 w-5 text-[color:var(--fg)]" />

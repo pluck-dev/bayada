@@ -1,151 +1,119 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, ExternalLink } from "lucide-react";
+
+const SLIDES = [
+  { src: "/images/hero/hero-1.webp", alt: "BAYADA 홈헬스케어 서비스 1" },
+  { src: "/images/hero/hero-2.webp", alt: "BAYADA 홈헬스케어 서비스 2" },
+  { src: "/images/hero/hero-3.webp", alt: "BAYADA 홈헬스케어 서비스 3" },
+];
 
 interface HeroSectionProps {
   locale: string;
 }
 
 export function HeroSection({ locale }: HeroSectionProps) {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const [current, setCurrent] = useState(0);
 
-  // 플로팅 요소 패럴랙스
-  const float1X = useTransform(mouseX, [0, 1], [-15, 15]);
-  const float1Y = useTransform(mouseY, [0, 1], [-15, 15]);
-  const float2X = useTransform(mouseX, [0, 1], [10, -10]);
-  const float2Y = useTransform(mouseY, [0, 1], [10, -10]);
-  const float3X = useTransform(mouseX, [0, 1], [-8, 8]);
-  const float3Y = useTransform(mouseY, [0, 1], [8, -8]);
+  const next = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % SLIDES.length);
+  }, []);
 
-  function handleMouseMove(e: React.MouseEvent<HTMLElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
-  }
+  useEffect(() => {
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, [next]);
 
   return (
-    <section
-      onMouseMove={handleMouseMove}
-      className="relative min-h-[92vh] overflow-hidden bg-[color:var(--fg)]"
-    >
-      {/* 배경 그라데이션 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a0008] via-[#0a0a0a] to-[#0d0d1a]" />
+    <section className="relative h-[620px] w-full overflow-hidden bg-white">
+      {/* 배경 이미지 슬라이더 */}
+      <div className="absolute inset-0">
+        {SLIDES.map((slide, i) => (
+          <div
+            key={slide.src}
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: i === current ? 1 : 0 }}
+          >
+            <Image
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              className="object-cover object-center"
+              priority={i === 0}
+              sizes="100vw"
+            />
+          </div>
+        ))}
+      </div>
 
-      {/* 플로팅 장식 요소 */}
-      <motion.div
-        style={{ x: float1X, y: float1Y }}
-        className="absolute left-[10%] top-[20%] h-72 w-72 rounded-full bg-[#ce0e2d]/8 blur-[100px]"
-      />
-      <motion.div
-        style={{ x: float2X, y: float2Y }}
-        className="absolute right-[15%] top-[30%] h-56 w-56 rounded-full bg-blue-500/6 blur-[80px]"
-      />
-      <motion.div
-        style={{ x: float3X, y: float3Y }}
-        className="absolute bottom-[20%] left-[40%] h-64 w-64 rounded-full bg-[#ce0e2d]/5 blur-[90px]"
-      />
-
-      {/* 격자 패턴 */}
+      {/* 좌측 그라데이션 오버레이 - bayada.com 동일 */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 z-[2]"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          background:
+            "linear-gradient(91deg, rgb(255, 255, 255) 35%, rgba(255, 255, 255, 0.85) 45%, rgba(242, 248, 251, 0) 65%)",
         }}
       />
 
-      <div className="relative mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
+      {/* 텍스트 콘텐츠 */}
+      <div className="relative z-[3] mx-auto flex h-full max-w-screen-xl items-center px-4 sm:px-6 lg:px-12">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-4xl"
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-[560px]"
         >
-          {/* 태그라인 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 backdrop-blur-sm"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-[#ce0e2d] animate-pulse" />
-            <span className="text-sm font-medium text-white/70">
-              50 Years of Home Health Care Excellence
-            </span>
-          </motion.div>
-
-          {/* 메인 헤드라인 */}
-          <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-7xl">
-            Better Health,
+          <h1 className="font-bold leading-[1.1] text-black/[0.87]" style={{ fontSize: "clamp(2.5rem, 4vw, 3.5rem)" }}>
+            Care Beyond Compare—
             <br />
-            <span className="bg-gradient-to-r from-[#ce0e2d] to-[#ff6b81] bg-clip-text text-transparent">
-              Better Life
-            </span>
+            가족이 소중한 순간에
             <br />
-            at Home.
+            집중할 수 있도록.
           </h1>
 
-          {/* 설명 */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-8 max-w-xl text-lg leading-relaxed text-white/50"
-          >
+          <p className="mt-6 text-base leading-relaxed text-black/60 sm:text-lg">
             전 세계 360개 이상의 사무소, 33,000명의 전문 인력.
-            <br />
             BAYADA가 만드는 홈헬스케어의 새로운 기준.
-          </motion.p>
+          </p>
 
-          {/* 3개 CTA 버튼 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 flex flex-col gap-4 sm:flex-row"
-          >
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               href={`/${locale}/who-we-serve/users`}
-              className="group inline-flex items-center gap-2 rounded-full bg-[#ce0e2d] px-8 py-4 text-sm font-semibold text-white transition-all hover:bg-[#b00c27] hover:shadow-lg hover:shadow-[#ce0e2d]/25"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ce0e2d] px-6 py-[13px] text-base font-medium text-white transition-all duration-300 hover:bg-[#980019] hover:outline hover:outline-4 hover:outline-[rgb(250,230,234)]"
             >
-              서비스 이용하기
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Heart className="h-[18px] w-[18px]" />
+              서비스 알아보기
             </Link>
+
             <Link
               href={`/${locale}/who-we-serve/providers`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-medium text-white transition-all hover:border-white/40 hover:bg-white/5"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#dfe6eb] px-6 py-[13px] text-base font-medium text-black/[0.87] transition-all duration-300 hover:bg-[#D6DEE5] hover:outline hover:outline-4 hover:outline-[rgb(244,246,247)]"
             >
-              서비스 제공하기
+              함께 일하기
+              <ExternalLink className="h-[18px] w-[18px]" />
             </Link>
-            <Link
-              href={`/${locale}/who-we-serve/providers/local-government`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-8 py-4 text-sm font-medium text-white/70 transition-all hover:border-white/30 hover:text-white"
-            >
-              지자체 협력
-            </Link>
-          </motion.div>
+          </div>
         </motion.div>
+      </div>
 
-        {/* 스크롤 인디케이터 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="flex flex-col items-center gap-2"
-          >
-            <span className="text-xs text-white/30">Scroll</span>
-            <ChevronDown className="h-4 w-4 text-white/30" />
-          </motion.div>
-        </motion.div>
+      {/* 슬라이드 인디케이터 */}
+      <div className="absolute bottom-6 left-1/2 z-[4] flex -translate-x-1/2 gap-2">
+        {SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === current
+                ? "w-6 bg-[#ce0e2d]"
+                : "w-2 bg-black/20 hover:bg-black/40"
+            }`}
+            aria-label={`슬라이드 ${i + 1}`}
+          />
+        ))}
       </div>
     </section>
   );

@@ -14,13 +14,13 @@ export function CourseGrid({
   if (courses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <p className="text-[color:var(--muted)]">{emptyMessage}</p>
+        <p className="text-gray-400">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
       {courses.map((course) => (
         <CourseCard key={course.slug} {...course} locale={locale} />
       ))}

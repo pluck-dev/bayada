@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Plus,
@@ -147,6 +147,7 @@ const initialDeleteConfirm: DeleteConfirmState = {
 
 export default function EditCoursePage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -451,6 +452,29 @@ export default function EditCoursePage() {
     }
   };
 
+  // ─── 강의 삭제 ───
+  const [deletingCourse, setDeletingCourse] = useState(false);
+
+  const handleDeleteCourse = async () => {
+    if (!confirm("이 강의를 완전히 삭제하시겠습니까?\n포함된 모든 섹션과 강의가 함께 삭제되며, 되돌릴 수 없습니다.")) {
+      return;
+    }
+    setDeletingCourse(true);
+    try {
+      const res = await fetch(`/api/v1/courses/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "강의 삭제에 실패했습니다");
+        return;
+      }
+      router.push("/courses");
+    } catch {
+      alert("네트워크 오류가 발생했습니다");
+    } finally {
+      setDeletingCourse(false);
+    }
+  };
+
   // ─── 렌더링 ───
   if (loading) {
     return (
@@ -688,6 +712,32 @@ export default function EditCoursePage() {
               아직 커리큘럼이 없습니다. 섹션을 추가해 주세요.
             </p>
           )}
+        </CardContent>
+      </Card>
+
+      {/* ─── 강의 삭제 ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-[color:var(--error)]">위험 영역</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-[color:var(--fg)]">강의 삭제</p>
+              <p className="text-xs text-[color:var(--muted)]">
+                이 강의와 모든 섹션, 강의 콘텐츠가 영구적으로 삭제됩니다.
+              </p>
+            </div>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={handleDeleteCourse}
+              disabled={deletingCourse}
+            >
+              {deletingCourse && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {deletingCourse ? "삭제 중..." : "강의 삭제"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

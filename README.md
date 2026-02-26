@@ -73,7 +73,17 @@
   URL:
   http://localhost:3200
   설명: 관리자 시스템
-  5. 유용한 명령어
+  5. 테스트 계정 정보
+
+  시드 데이터(pnpm db:seed)를
+  실행하면 아래 계정이 생성됩니다.
+
+  | 역할 | 이메일 | 비밀번호 | 용도 |
+  |------|--------|----------|------|
+  | ADMIN | admin@bayada.com | password123 | 관리자 시스템 (localhost:3200) |
+  | STUDENT | student@bayada.com | password123 | 강의 플랫폼 (localhost:3100) |
+
+  6. 유용한 명령어
 
   # DB GUI로 데이터
   확인/편집

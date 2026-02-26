@@ -1,4 +1,5 @@
 import { courseService } from "@/lib/services";
+import { CurriculumAccordion } from "@/components/CurriculumAccordion";
 import { formatDuration, formatPrice } from "@bayada/shared";
 import { Badge, Button } from "@bayada/ui";
 import {
@@ -6,7 +7,9 @@ import {
     Clock,
     FileText,
     Globe,
+    MessageSquare,
     PlayCircle,
+    TrendingUp,
     Users
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -108,7 +111,7 @@ export default async function CourseDetailPage({
                   {course.category.name}
                 </Badge>
               )}
-              <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6 leading-tight">
+              <h1 className="typo-display text-white mb-6 leading-tight">
                 {course.title}
               </h1>
               <p className="text-lg text-gray-200 leading-relaxed mb-8 max-w-2xl">
@@ -139,7 +142,7 @@ export default async function CourseDetailPage({
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
 
-            {/* Curriculum */}
+            {/* Curriculum — 아코디언 토글 */}
             <div className="apple-card p-8 border border-gray-200/50">
                <div className="flex items-end justify-between mb-6">
                  <h2 className="text-2xl font-bold text-gray-900">커리큘럼</h2>
@@ -148,37 +151,7 @@ export default async function CourseDetailPage({
                  </span>
                </div>
 
-               <div className="space-y-4">
-                 {course.sections.map((section, idx) => (
-                   <div key={section.id} className="border border-gray-100 rounded-2xl overflow-hidden">
-                      <div className="bg-gray-50/50 px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-                         <h3 className="font-semibold text-gray-900 flex items-center gap-3">
-                           <span className="text-gray-400 font-normal">Section {idx + 1}</span>
-                           {section.title}
-                         </h3>
-                         <span className="text-xs text-gray-500">{section.lectures.length}개 강의</span>
-                      </div>
-                      <div className="divide-y divide-gray-50">
-                        {section.lectures.map((lecture) => (
-                          <div key={lecture.id} className="px-6 py-3 flex items-center justify-between hover:bg-gray-50/30 transition-colors group">
-                             <div className="flex items-center gap-3">
-                                {lecture.type === "VIDEO" ? (
-                                  <PlayCircle className="h-4 w-4 text-gray-400 group-hover:text-[var(--brand-primary)] transition-colors" />
-                                ) : (
-                                  <FileText className="h-4 w-4 text-gray-400" />
-                                )}
-                                <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">{lecture.title}</span>
-                             </div>
-                             <div className="flex items-center gap-3">
-                                {lecture.isFree && <span className="text-xs font-semibold text-[var(--brand-secondary)] bg-red-50 px-2 py-0.5 rounded-full">미리보기</span>}
-                                <span className="text-xs text-gray-400">{formatDuration(lecture.duration ?? 0)}</span>
-                             </div>
-                          </div>
-                        ))}
-                      </div>
-                   </div>
-                 ))}
-               </div>
+               <CurriculumAccordion sections={course.sections} />
             </div>
 
             {/* Description */}
@@ -189,6 +162,24 @@ export default async function CourseDetailPage({
                 </div>
              </div>
 
+            {/* 리뷰 섹션 placeholder */}
+            <div className="apple-card p-8 border border-gray-200/50">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">수강 후기</h2>
+                <span className="text-sm text-gray-500">곧 제공됩니다</span>
+              </div>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                  <MessageSquare className="h-7 w-7 text-gray-300" />
+                </div>
+                <p className="text-gray-500 text-sm">
+                  아직 등록된 수강 후기가 없습니다.
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  이 강의를 수강한 후 첫번째 후기를 남겨주세요!
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Sidebar (Purchase Card) */}
@@ -212,11 +203,30 @@ export default async function CourseDetailPage({
                       </div>
                    </div>
 
+                   {/* 인기 배지 + 수강생 수 */}
+                   {course._count.enrollments > 0 && (
+                     <div className="mb-4 flex items-center gap-2">
+                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                         <TrendingUp className="h-3.5 w-3.5" />
+                         인기 강의
+                       </span>
+                       <span className="text-xs text-gray-500">
+                         {course._count.enrollments.toLocaleString()}명 수강중
+                       </span>
+                     </div>
+                   )}
+
                    <div className="mb-6">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-3xl font-bold text-gray-900">
-                           {course.price === 0 ? "무료" : formatPrice(course.price)}
-                        </span>
+                        {course.price === 0 ? (
+                          <span className="inline-flex items-center rounded-full bg-[var(--color-success-light)] px-4 py-1 text-lg font-bold text-[var(--color-success)]">
+                            무료
+                          </span>
+                        ) : (
+                          <span className="text-3xl font-bold text-gray-900">
+                            {formatPrice(course.price)}
+                          </span>
+                        )}
                       </div>
                    </div>
 

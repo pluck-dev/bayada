@@ -1,13 +1,11 @@
-import { Plus, Building2, Users, BookOpen } from "lucide-react";
+import { Plus, Building2, Users } from "lucide-react";
 import {
   Button,
-  Badge,
   DataTable,
   type Column,
   Card,
   CardContent,
 } from "@bayada/ui";
-import { formatPrice } from "@bayada/shared";
 import { organizationService } from "@/lib/services";
 import { SearchFilter } from "@/components/SearchFilter";
 import { Pagination } from "@/components/Pagination";
@@ -17,13 +15,10 @@ interface OrgRow {
   [key: string]: unknown;
   id: string;
   name: string;
-  contactName: string;
-  contactEmail: string;
+  bizNo: string;
+  contact: string;
   members: number;
-  enrollments: number;
-  totalSpent: number;
-  status: string;
-  contractEnd: string;
+  orders: number;
   createdAt: string;
 }
 
@@ -34,11 +29,17 @@ const columns: Column<OrgRow>[] = [
     render: (row) => (
       <div>
         <p className="font-medium text-[color:var(--fg)]">{row.name}</p>
-        <p className="text-xs text-[color:var(--muted)]">
-          {row.contactName} ({row.contactEmail})
-        </p>
+        {row.bizNo !== "-" && (
+          <p className="text-xs text-[color:var(--muted)]">
+            사업자번호: {row.bizNo}
+          </p>
+        )}
       </div>
     ),
+  },
+  {
+    key: "contact",
+    header: "담당자 연락처",
   },
   {
     key: "members",
@@ -46,27 +47,13 @@ const columns: Column<OrgRow>[] = [
     render: (row) => `${row.members}명`,
   },
   {
-    key: "enrollments",
-    header: "수강 등록",
-    render: (row) => `${row.enrollments}건`,
+    key: "orders",
+    header: "주문 수",
+    render: (row) => `${row.orders}건`,
   },
   {
-    key: "totalSpent",
-    header: "누적 거래액",
-    render: (row) => formatPrice(row.totalSpent),
-  },
-  {
-    key: "contractEnd",
-    header: "계약 만료일",
-  },
-  {
-    key: "status",
-    header: "상태",
-    render: (row) => (
-      <Badge variant={row.status === "활성" ? "success" : "error"}>
-        {row.status}
-      </Badge>
-    ),
+    key: "createdAt",
+    header: "등록일",
   },
   {
     key: "actions",
@@ -103,24 +90,17 @@ export default async function OrganizationsPage({
     return {
       id: org.id as string,
       name: org.name as string,
-      contactName: (org.contactName as string) ?? "-",
-      contactEmail: (org.contactEmail as string) ?? "-",
+      bizNo: (org.bizNo as string) ?? "-",
+      contact: (org.contact as string) ?? "-",
       members: _count?.users ?? 0,
-      enrollments: _count?.orders ?? 0,
-      totalSpent: 0,
-      status: (org.isActive as boolean) !== false ? "활성" : "만료",
-      contractEnd: org.contractEnd
-        ? new Date(org.contractEnd as string).toLocaleDateString("ko-KR")
-        : "-",
+      orders: _count?.orders ?? 0,
       createdAt: new Date(org.createdAt as string).toLocaleDateString("ko-KR"),
     };
   });
 
   const orgStats = {
     total: result.total,
-    active: organizations.filter((o) => o.status === "활성").length,
     totalMembers: organizations.reduce((sum, o) => sum + o.members, 0),
-    totalRevenue: organizations.reduce((sum, o) => sum + o.totalSpent, 0),
   };
 
   return (
@@ -142,7 +122,7 @@ export default async function OrganizationsPage({
       </div>
 
       {/* 통계 카드 */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card>
           <CardContent className="flex items-center gap-4 p-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fae6ea]">
@@ -158,19 +138,6 @@ export default async function OrganizationsPage({
         </Card>
         <Card>
           <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--success-bg)]">
-              <Building2 className="h-5 w-5 text-[color:var(--success)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[color:var(--muted)]">활성 기관</p>
-              <p className="text-lg font-bold text-[color:var(--fg)]">
-                {orgStats.active}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--info-bg)]">
               <Users className="h-5 w-5 text-[color:var(--info)]" />
             </div>
@@ -178,19 +145,6 @@ export default async function OrganizationsPage({
               <p className="text-xs text-[color:var(--muted)]">전체 소속 인원</p>
               <p className="text-lg font-bold text-[color:var(--fg)]">
                 {orgStats.totalMembers}명
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--warning-bg)]">
-              <BookOpen className="h-5 w-5 text-[color:var(--warning)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[color:var(--muted)]">B2B 누적 매출</p>
-              <p className="text-lg font-bold text-[color:var(--fg)]">
-                {formatPrice(orgStats.totalRevenue)}
               </p>
             </div>
           </CardContent>

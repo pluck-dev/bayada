@@ -5,27 +5,29 @@ import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/animations/FadeIn";
 
 const numbers = [
-  { value: 50, suffix: "+", label: "Years of Excellence", labelKo: "년 역사" },
-  { value: 33000, suffix: "+", label: "Healthcare Professionals", labelKo: "명 전문 인력" },
-  { value: 360, suffix: "+", label: "Service Offices", labelKo: "개 사무소" },
-  { value: 24, suffix: "/7", label: "Care Available", labelKo: "시간 케어" },
+  { value: 50, suffix: "+", label: "홈헬스케어 역사", labelKo: "년" },
+  { value: 33000, suffix: "+", label: "글로벌 전문 인력", labelKo: "명" },
+  { value: 360, suffix: "+", label: "글로벌 사무소", labelKo: "개" },
+  { value: 24, suffix: "/7", label: "24시간 케어", labelKo: "" },
 ];
 
 export function KeyNumbers() {
   return (
-    <section className="bg-[#ce0e2d] py-20">
+    <section className="border-y border-gray-200 bg-[#f0f4f7] py-16">
       <Container>
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4">
           {numbers.map((num, i) => (
             <FadeIn key={num.label} delay={i * 0.1}>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
+              <div
+                className={`px-6 py-8 text-center lg:border-r lg:border-gray-200 lg:last:border-r-0`}
+              >
+                <p className="text-4xl font-bold text-[#ce0e2d] sm:text-5xl lg:text-6xl">
                   <CountUp end={num.value} suffix={num.suffix} />
                 </p>
-                <p className="mt-2 text-sm font-semibold text-white/90">
+                <p className="mt-2 text-sm font-medium text-black/[0.87]">
                   {num.label}
                 </p>
-                <p className="text-xs text-white/60">{num.labelKo}</p>
+                <p className="text-xs text-black/60">{num.labelKo}</p>
               </div>
             </FadeIn>
           ))}

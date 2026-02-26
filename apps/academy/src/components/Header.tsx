@@ -11,11 +11,11 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 export function Header({ locale }: { locale: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const { data: session } = useSession();
   const dict = useDictionary();
   const isLoggedIn = !!session?.user;
 
-  // Handle scroll effect for glassmorphism
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -23,6 +23,16 @@ export function Header({ locale }: { locale: string }) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // 모바일 메뉴 열릴 때 스크롤 방지
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
 
   return (
     <header
@@ -63,12 +73,17 @@ export function Header({ locale }: { locale: string }) {
 
         {/* Desktop Actions */}
         <div className="hidden items-center gap-4 md:flex">
+          {/* 검색 인풋 — 포커스 시 확장 */}
           <div className="relative hidden lg:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <input
               type="text"
               placeholder="강의 검색..."
-              className="h-10 w-64 rounded-full border border-gray-200 bg-gray-50/50 pl-9 pr-4 text-sm outline-none transition-all focus:border-[#e31b34] focus:bg-white focus:ring-2 focus:ring-[#e31b34]/10"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              className={`h-10 rounded-full border border-gray-200 bg-gray-50/50 pl-9 pr-4 text-sm outline-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-[#e31b34] focus:bg-white focus:ring-2 focus:ring-[#e31b34]/10 ${
+                searchFocused ? "w-80" : "w-64"
+              }`}
             />
           </div>
 
@@ -125,11 +140,30 @@ export function Header({ locale }: { locale: string }) {
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="absolute left-0 top-full w-full border-t border-gray-100 bg-white/95 px-4 py-6 shadow-xl backdrop-blur-xl md:hidden">
-          <nav className="flex flex-col gap-4">
-             <div className="relative mb-2">
+      {/* Mobile Menu — 슬라이드 인 애니메이션 */}
+      <div
+        className={`fixed inset-0 top-16 z-50 md:hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          mobileMenuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      >
+        {/* 백드롭 */}
+        <div
+          className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${
+            mobileMenuOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* 메뉴 패널 */}
+        <div
+          className={`absolute left-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <nav className="flex flex-col gap-4 p-6">
+            <div className="relative mb-2">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -194,7 +228,7 @@ export function Header({ locale }: { locale: string }) {
             )}
           </nav>
         </div>
-      )}
+      </div>
     </header>
   );
 }

@@ -8,6 +8,7 @@ html {
 
 body {
   font-family:
+    "Inter",
     "Pretendard Variable",
     Pretendard,
     -apple-system,
@@ -53,6 +54,21 @@ body {
   line-height: 1.75;
 }
 
+/* bayada.com 반응형 패딩 시스템 */
+.container-bayada {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+@media (min-width: 600px) {
+  .container-bayada { padding-left: 24px; padding-right: 24px; }
+}
+@media (min-width: 900px) {
+  .container-bayada { padding-left: 32px; padding-right: 32px; }
+}
+@media (min-width: 1200px) {
+  .container-bayada { padding-left: 48px; padding-right: 48px; }
+}
+
 /* 파트너 마키 애니메이션 */
 @keyframes marquee {
   0% { transform: translateX(0); }
@@ -66,3 +82,56 @@ body {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* 스크롤바 숨김 유틸리티 */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* bayada.com 디자인 토큰 */
+:root {
+  --bayada-red: #ce0e2d;
+  --bayada-red-hover: #980019;
+  --bayada-secondary: #dfe6eb;
+  --bayada-secondary-hover: #D6DEE5;
+  --bayada-text: rgba(0, 0, 0, 0.87);
+  --bayada-muted: rgba(0, 0, 0, 0.6);
+  --bayada-surface: #f0f4f7;
+  --btn-radius: 8px;
+}
+
+/* 버튼 유틸리티 클래스 */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.813rem 1.5rem;
+  border-radius: var(--btn-radius);
+  background: var(--bayada-red);
+  color: white;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.3s ease-in-out;
+}
+.btn-primary:hover { background: var(--bayada-red-hover); }
+.btn-primary:focus { outline: 4px solid rgb(250, 230, 234); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.813rem 1.5rem;
+  border-radius: var(--btn-radius);
+  background: var(--bayada-secondary);
+  color: var(--bayada-text);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.3s ease-in-out;
+}
+.btn-secondary:hover { background: var(--bayada-secondary-hover); }

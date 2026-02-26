@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GraduationCap, ArrowRight } from "lucide-react";
-import { Container } from "@/components/layout/Container";
-import { FadeIn } from "@/components/animations/FadeIn";
+import { ExternalLink } from "lucide-react";
 
 interface AcademyCTAProps {
   locale: string;
@@ -11,57 +9,33 @@ interface AcademyCTAProps {
 
 export function AcademyCTA({ locale }: AcademyCTAProps) {
   return (
-    <section className="py-[var(--section-gap)] bg-white">
-      <Container>
-        <FadeIn>
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-8 py-16 sm:px-16">
-            {/* 장식 */}
-            <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#ce0e2d]/10 blur-[100px]" />
-            <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-blue-500/10 blur-[80px]" />
-
-            <div className="relative flex flex-col items-center gap-8 md:flex-row md:justify-between">
-              <div className="flex-1">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
-                  <GraduationCap className="h-4 w-4 text-white" />
-                  <span className="text-sm font-medium text-white/80">DeiEdu Academy</span>
-                </div>
-                <h2 className="mt-6 text-3xl font-bold text-white sm:text-4xl">
-                  BAYADA 교육 플랫폼
-                </h2>
-                <p className="mt-4 max-w-lg text-lg leading-relaxed text-white/60">
-                  50년 글로벌 홈헬스케어 노하우를 담은 전문 교육 프로그램.
-                  요양보호사, 간호사, 의료 전문가를 위한 체계적인 온라인 교육을 만나보세요.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {["방문간호", "요양보호", "치매케어", "재활운동", "호스피스"].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/50"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex shrink-0 flex-col gap-3">
-                <Link
-                  href={`/${locale}/platform/deiedu`}
-                  className="group inline-flex items-center gap-2 rounded-full bg-[#ce0e2d] px-8 py-4 text-sm font-semibold text-white transition-all hover:bg-[#b00c27]"
-                >
-                  교육 시작하기
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  href={`/${locale}/platform`}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-medium text-white/70 transition-all hover:border-white/40 hover:text-white"
-                >
-                  플랫폼 더보기
-                </Link>
-              </div>
-            </div>
+    <section
+      className="py-16 lg:py-24 px-4 sm:px-6 lg:px-12"
+      style={{
+        background:
+          "linear-gradient(134deg, rgb(220, 237, 249) 21.29%, rgb(221, 238, 236) 92.92%)",
+      }}
+    >
+      <div className="max-w-screen-xl mx-auto space-y-10">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-black/[0.87] sm:text-4xl">
+            함께 더 나은 세상을 만들어요!
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-black/[0.7] max-w-[685px] mx-auto">
+            매일 의미 있는 변화를 만들고 싶으신가요? BAYADA와 함께 보람 있는
+            커리어를 시작하고, 가족들이 가장 신뢰하는 팀의 일원이 되어보세요.
+          </p>
+          <div className="mt-8 flex justify-center">
+            <Link
+              href={`/${locale}/careers`}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#ce0e2d] py-[13px] px-6 text-base font-medium text-white transition-colors duration-300 hover:bg-[#980019]"
+            >
+              채용 정보 보기
+              <ExternalLink className="h-4 w-4" />
+            </Link>
           </div>
-        </FadeIn>
-      </Container>
+        </div>
+      </div>
     </section>
   );
 }

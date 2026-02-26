@@ -33,10 +33,23 @@ export interface PlatformProduct {
   ctaLabel: string;
   ctaHref: string;
   status: "active" | "coming-soon" | "partnership";
+
+  // 리치 콘텐츠 추가 필드
+  heroImageUrl?: string;
+  contentHeadline?: string;
+  contentDescription?: string;
+  contentImageUrl?: string;
+  keyFeatures?: { icon: string; title: string; description: string }[];
+  useCases?: { title: string; description: string }[];
+  techSpecs?: { label: string; value: string }[];
+  stats?: { value: string; label: string; suffix?: string }[];
+  faqs?: { question: string; answer: string }[];
+  integrations?: string[];
 }
 
 // --- 대상 세그먼트 (Who We Serve) ---
 export interface AudienceSegment {
+  // 기본 필드
   slug: string;
   type: "provider" | "user";
   nameEn: string;
@@ -49,6 +62,41 @@ export interface AudienceSegment {
   ctaLabel: string;
   ctaHref: string;
   children?: AudienceSegment[];
+
+  // 히어로 섹션
+  heroSubtitle?: string;
+  heroImageUrl?: string;
+
+  // 메인 콘텐츠 섹션
+  contentHeadline?: string;
+  contentDescription?: string;
+  contentImageUrl?: string;
+
+  // 기능/특징 (아이콘 + 제목 + 설명)
+  features?: { icon: string; title: string; description: string }[];
+
+  // 프로세스/단계
+  processTitle?: string;
+  processSteps?: { title: string; description: string }[];
+
+  // 통계 수치
+  stats?: { value: string; label: string; suffix?: string }[];
+
+  // FAQ
+  faqs?: { question: string; answer: string }[];
+
+  // 후기
+  testimonials?: { quote: string; author: string; role?: string }[];
+
+  // 더 알아보기 아코디언 항목
+  learnMoreItems?: { title: string; content: string }[];
+
+  // 커리어 CTA
+  careerTitle?: string;
+  careerDescription?: string;
+
+  // 관련 서비스 슬러그
+  relatedServices?: string[];
 }
 
 // --- 블로그 ---
