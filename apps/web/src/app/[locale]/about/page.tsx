@@ -1,11 +1,10 @@
-import Image from "next/image";
-import Link from "next/link";
-import { getDictionary } from "@bayada/shared/i18n";
-import type { Locale } from "@bayada/shared/i18n";
-import { createMetadata } from "@/lib/seo";
-import { getAboutContent } from "@/data/content";
-import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { PageHero } from "@/components/layout/PageHero";
+import { getAboutContent } from "@/data/content";
+import { createMetadata } from "@/lib/seo";
+import type { Locale } from "@bayada/shared/i18n";
+import { getDictionary } from "@bayada/shared/i18n";
+import Link from "next/link";
 
 export const metadata = createMetadata({
   title: "회사소개",
@@ -96,7 +95,7 @@ export default async function AboutPage({
               </div>
             </div>
             <div className="space-y-6">
-              <div className="overflow-hidden rounded-2xl">
+              {/* <div className="overflow-hidden rounded-2xl">
                 <Image
                   src="/images/about/bayada001.png"
                   alt="BAYADA"
@@ -104,7 +103,7 @@ export default async function AboutPage({
                   height={400}
                   className="h-auto w-full object-cover"
                 />
-              </div>
+              </div> */}
               <div className="rounded-2xl bg-[color:var(--surface)] p-8">
                 <h3 className="text-lg font-semibold text-[color:var(--fg)]">
                   홈헬스케어란?
@@ -121,56 +120,6 @@ export default async function AboutPage({
             <h2 className="text-xl font-bold text-[color:var(--fg)]">
               BI/CI (Brand Identity / Corporate Identity)
             </h2>
-
-            {/* 로고 가이드라인 */}
-            <div className="mt-8 rounded-2xl border border-[color:var(--border)] p-8">
-              <h3 className="text-lg font-semibold text-[color:var(--fg)]">
-                로고 가이드라인
-              </h3>
-              <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div className="flex items-center justify-center rounded-xl bg-white p-8">
-                  <Image
-                    src="/images/about/bayada001.png"
-                    alt="BAYADA 로고"
-                    width={240}
-                    height={80}
-                    className="h-auto"
-                  />
-                </div>
-                <div className="flex items-center justify-center rounded-xl bg-[#1B2A4A] p-8">
-                  <Image
-                    src="/images/about/bayada001.png"
-                    alt="BAYADA 로고 (다크)"
-                    width={240}
-                    height={80}
-                    className="h-auto brightness-0 invert"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 브랜드 컬러 */}
-            <div className="mt-6 rounded-2xl border border-[color:var(--border)] p-8">
-              <h3 className="text-lg font-semibold text-[color:var(--fg)]">
-                브랜드 컬러
-              </h3>
-              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                {brandColors.map((c) => (
-                  <div key={c.hex}>
-                    <div
-                      className="h-20 rounded-xl border border-[color:var(--border)]"
-                      style={{ backgroundColor: c.hex }}
-                    />
-                    <p className="mt-2 text-sm font-medium text-[color:var(--fg)]">
-                      {c.name}
-                    </p>
-                    <p className="text-xs text-[color:var(--muted)]">{c.hex}</p>
-                    <p className="text-xs text-[color:var(--muted)]">{c.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* 브랜드 메시지 & The BAYADA Way */}
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="rounded-2xl border border-[color:var(--border)] p-8">
