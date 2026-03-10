@@ -108,12 +108,12 @@ export function ServiceAreaMap() {
     <section className="bg-[#edf2f7] py-16 px-4 sm:px-6 lg:px-12 lg:py-24">
       <div className="mx-auto max-w-6xl">
         <h2 className="text-3xl font-bold text-center text-black/[0.87] sm:text-4xl lg:text-5xl leading-tight">
-          우리가 사는 지역사회에서
+          우리가 &lsquo;집&rsquo;이라 부르는
           <br />
-          전문 케어를 제공합니다
+          전세계 지역사회에서 전문적인 돌봄을 제공합니다
         </h2>
         <p className="mt-4 text-center text-base text-black/50">
-          현재 서울 및 수도권 지역에서 서비스를 제공하고 있으며, 전국으로 확대하고 있습니다
+          인도, 호주, 뉴질랜드, 독일, 아일랜드, 캐나다, 미국, 한국, 일본 — 글로벌 네트워크로 연결됩니다
         </p>
 
         <div className="relative mt-12 flex flex-col items-center lg:flex-row lg:items-start lg:gap-10">

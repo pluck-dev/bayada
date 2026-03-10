@@ -22,7 +22,7 @@ const socialLinks = [
 export function Footer({ dict, locale }: FooterProps) {
   const company = getCompanyInfo();
   const sections = [
-    footerNavigation.whatWeDo,
+    footerNavigation.services,
     footerNavigation.company,
     footerNavigation.resources,
     footerNavigation.platform,

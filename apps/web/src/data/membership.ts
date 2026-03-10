@@ -56,6 +56,22 @@ export const providerMembershipPlans: MembershipPlan[] = [
   },
 ];
 
+// 프리미엄 파트너
+export const premiumPartners = [
+  { name: "현대백화점 VIP", url: "https://www.ehyundai.com/newPortal/CS/TB000012_V.do" },
+  { name: "신세계 백화점 VIP", url: "https://www.shinsegae.com/service/vipclub/benefits-trinity_2026.do" },
+  { name: "롯데백화점 VIP", url: "https://www.lotteshopping.com/membership/infoAvenuel" },
+  { name: "신라호텔 멤버십", url: "https://www.shillahotels.com/membership/offers/benefits/memBenefitsIndex.do" },
+  { name: "롯데호텔 멤버십", url: "https://www.lottehotel.com/global/ko/membership" },
+  { name: "조선호텔 멤버십", url: "https://josunhotel.com/membership/ed2_product.do" },
+  { name: "반얀트리 멤버십", url: "https://www.banyantreeclub.com/mobile/btwin/btwin.asp?btwin=membership" },
+  { name: "파르나스 멤버십", url: "https://seoul.intercontinental.com/ko/membership/the-parnas-membership" },
+  { name: "워커힐 멤버십", url: "https://www.walkerhill.com/membership/Overview" },
+  { name: "클럽메리어트", url: "https://www.myclubmarriott.com/home/homepage/ko" },
+  { name: "안나티 멤버십", url: "https://ananti.kr/ko/board/membership/PA0301" },
+  { name: "파라다이스 멤버십", url: "https://www.p-city.com/front/memnotice/membership" },
+];
+
 // 멤버십 혜택
 export const membershipBenefits = [
   "50년 BAYADA 글로벌 네트워크 접근",

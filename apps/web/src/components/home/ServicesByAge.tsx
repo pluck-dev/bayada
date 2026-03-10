@@ -109,6 +109,16 @@ const allServices = [
     href: "/what-we-do/private-duty-nursing",
     groups: ["seniors", "adults"],
   },
+  {
+    id: "veterans",
+    title: "국가유공자 돌봄",
+    titleEn: "Veterans Care",
+    description:
+      "국가를 위해 헌신하신 분들께 최고 수준의 전문 돌봄과 깊은 존중, 실질적인 지원을 제공합니다.",
+    image: "/images/services/cards/private-duty-nursing.webp",
+    href: "/what-we-do/veterans",
+    groups: ["seniors", "adults"],
+  },
 ];
 
 interface ServicesByAgeProps {
@@ -147,15 +157,15 @@ export function ServicesByAge({ locale }: ServicesByAgeProps) {
   }
 
   return (
-    <section className="bg-white py-16 lg:py-24 overflow-hidden">
+    <section id="services-by-age" className="bg-white py-16 lg:py-24 overflow-hidden">
       {/* 상단 헤더 */}
       <div className="px-5 md:px-[6.25rem] mb-10 lg:mb-14">
         <h2 className="text-3xl font-bold text-black/[0.87] sm:text-4xl lg:text-[2.625rem] leading-tight">
-          BAYADA&apos;s Services by Age
+          BAYADA 생애주기 맞춤형 서비스
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-black/60">
-          삶의 모든 단계에서, BAYADA는 어르신과 성인, 아이들이 가정에서
-          안전하고 편안하게 생활할 수 있도록 함께합니다.
+          BAYADA는 삶의 모든 연령과 단계에 맞춘 폭넓은 홈 케어 서비스를 제공합니다.
+          각 개인의 고유한 필요와 선호, 목표에 맞추어 세심하게 설계된 서비스를 만나보세요.
         </p>
       </div>
 

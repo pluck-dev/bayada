@@ -2,9 +2,10 @@ import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
-import { membershipFeatures, membershipBenefits } from "@/data/membership";
+import { membershipFeatures, membershipBenefits, premiumPartners } from "@/data/membership";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { NeedsReview } from "@/components/shared/NeedsReview";
 
 export const metadata = createMetadata({
   title: "멤버십",
@@ -74,6 +75,32 @@ export default async function MembershipPage({ params }: { params: Promise<{ loc
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* 프리미엄 파트너 */}
+          <div className="mt-12">
+            <h2 className="text-xl font-bold text-[color:var(--fg)]">프리미엄 파트너</h2>
+            <p className="mt-2 text-sm text-[color:var(--muted)]">유료 멤버십 회원에게 제공되는 제휴 파트너 혜택입니다.</p>
+            <NeedsReview label="수정필요" note="파트너 로고 이미지 필요">
+              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {premiumPartners.map((partner) => (
+                  <a
+                    key={partner.name}
+                    href={partner.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-3 rounded-xl border border-[color:var(--border)] p-5 transition hover:border-[#ce0e2d]/40 hover:shadow-sm"
+                  >
+                    {/* 로고 placeholder */}
+                    <div className="flex h-14 w-full items-center justify-center rounded-lg bg-[color:var(--surface)] text-xs text-[color:var(--muted)]">
+                      로고
+                    </div>
+                    <span className="text-center text-xs font-medium text-[color:var(--fg)]">{partner.name}</span>
+                    <span className="text-[10px] text-[#ce0e2d]">바로가기 →</span>
+                  </a>
+                ))}
+              </div>
+            </NeedsReview>
           </div>
 
           {/* CTA */}

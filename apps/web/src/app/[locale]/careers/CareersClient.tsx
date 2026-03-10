@@ -18,7 +18,16 @@ import {
   Building2,
   CheckCircle2,
   ChevronDown,
+  Share2,
+  Download,
+  Stethoscope,
+  PersonStanding,
+  ActivitySquare,
+  BrainCircuit,
+  ClipboardList,
+  Landmark,
 } from "lucide-react";
+import { NeedsReview } from "@/components/shared/NeedsReview";
 
 const careers = [
   { id: "1", title: "전문 간호사 (Skilled Nursing)", dept: "케어서비스팀", location: "서울", type: "정규직", deadline: "2026-03-31", active: true },
@@ -86,9 +95,9 @@ export function CareersClient({ locale }: Props) {
               className="font-bold leading-[1.08] text-black/[0.87]"
               style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", letterSpacing: "-0.02em" }}
             >
-              당신의 열정이
+              BAYADA와 함께하는
               <br />
-              <span className="text-[#ce0e2d]">누군가의 삶을 바꿉니다</span>
+              <span className="text-[#ce0e2d]">의미 있는 커리어</span>
             </motion.h1>
 
             {/* 서브텍스트 */}
@@ -98,9 +107,9 @@ export function CareersClient({ locale }: Props) {
               transition={{ duration: 0.7, ease: "easeOut", delay: 0.22 }}
               className="mt-6 max-w-xl text-lg leading-relaxed text-black/60"
             >
-              BAYADA와 함께 성장하세요.{" "}
+              매일 누군가의 삶에 긍정적인 변화를 만드는 일,{" "}
               <br className="sm:hidden" />
-              50년 경험이 만드는 홈헬스케어의 새로운 가능성.
+              BAYADA에서 시작하세요.
             </motion.p>
 
             {/* CTA 버튼 */}
@@ -149,6 +158,7 @@ export function CareersClient({ locale }: Props) {
       </section>
 
       {/* ── 2. Why BAYADA - 가치 카드 2×2 ───────────────── */}
+      <NeedsReview label="수정필요" note="바야다 공홈 참고 / 문구 필요">
       <section className="bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-[1512px] px-4 sm:px-6 lg:px-12">
           <motion.div
@@ -246,6 +256,7 @@ export function CareersClient({ locale }: Props) {
           </motion.div>
         </div>
       </section>
+      </NeedsReview>
 
       {/* ── 3. The BAYADA Way 문화 섹션 ────────────────── */}
       <section className="bg-[#f5f7f9] py-16 lg:py-24">
@@ -406,7 +417,121 @@ export function CareersClient({ locale }: Props) {
         </div>
       </section>
 
-      {/* ── 5. 채용 절차 타임라인 ────────────────────────── */}
+      {/* ── 5. 채용 직종 카테고리 ────────────────────────── */}
+      <NeedsReview label="수정필요" note="바야다 공홈 참고 / 실제 채용 직종 확인 필요">
+      <section className="bg-white py-16 lg:py-24">
+        <div className="mx-auto max-w-[1512px] px-4 sm:px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            variants={stagger}
+            viewport={{ once: true, margin: "-80px" }}
+            className="text-center"
+          >
+            <motion.span variants={fadeUp} className="text-sm font-semibold uppercase tracking-wide text-[#ce0e2d]">
+              채용 직종
+            </motion.span>
+            <motion.h2
+              variants={fadeUp}
+              className="mt-4 font-bold text-black/[0.87]"
+              style={{ fontSize: "clamp(1.75rem, 3vw, 2.625rem)" }}
+            >
+              어떤 분야에서 함께하실 건가요?
+            </motion.h2>
+            <motion.p variants={fadeUp} className="mt-3 text-base text-black/50 max-w-xl mx-auto">
+              다양한 전문 직종에서 BAYADA 가족을 기다리고 있습니다.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6"
+          >
+            {[
+              {
+                icon: Stethoscope,
+                title: "간호사",
+                subtitle: "RN / LPN",
+                color: "#ce0e2d",
+                bg: "rgba(206,14,45,0.08)",
+              },
+              {
+                icon: PersonStanding,
+                title: "요양보호사",
+                subtitle: "홈케어 전문",
+                color: "#10b981",
+                bg: "rgba(16,185,129,0.08)",
+              },
+              {
+                icon: ActivitySquare,
+                title: "치료사",
+                subtitle: "PT / OT / ST",
+                color: "#4f8ef7",
+                bg: "rgba(79,142,247,0.08)",
+              },
+              {
+                icon: BrainCircuit,
+                title: "행동치료사",
+                subtitle: "RBT / BCBA",
+                color: "#a855f7",
+                bg: "rgba(168,85,247,0.08)",
+              },
+              {
+                icon: ClipboardList,
+                title: "코디네이터",
+                subtitle: "케어 매니저",
+                color: "#f59e0b",
+                bg: "rgba(245,158,11,0.08)",
+              },
+              {
+                icon: Landmark,
+                title: "본사 직원",
+                subtitle: "기획 / 운영",
+                color: "#6b7280",
+                bg: "rgba(107,114,128,0.08)",
+              },
+            ].map((cat, i) => {
+              const Icon = cat.icon;
+              return (
+                <motion.div
+                  key={cat.title}
+                  variants={fadeUp}
+                  custom={i}
+                  className="group flex flex-col items-center gap-3 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+                  onClick={() => {
+                    const el = document.getElementById("jobs");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  <div
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
+                    style={{ background: cat.bg }}
+                  >
+                    <Icon className="h-7 w-7" style={{ color: cat.color }} />
+                  </div>
+                  <div>
+                    <div className="font-bold text-black/[0.87]">{cat.title}</div>
+                    <div className="mt-0.5 text-xs text-black/40">{cat.subtitle}</div>
+                  </div>
+                  <span
+                    className="mt-1 inline-flex items-center gap-1 text-xs font-medium"
+                    style={{ color: cat.color }}
+                  >
+                    공고 보기
+                    <ChevronRight className="h-3 w-3" />
+                  </span>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+      </NeedsReview>
+
+      {/* ── 6. 채용 절차 타임라인 ────────────────────────── */}
       <section className="bg-[#f5f7f9] py-16 lg:py-24">
         <div className="mx-auto max-w-[1512px] px-4 sm:px-6 lg:px-12">
           <motion.div
@@ -654,61 +779,193 @@ export function CareersClient({ locale }: Props) {
         </div>
       </section>
 
-      {/* ── 8. 직원 추천사 ──────────────────────────────── */}
+      {/* ── 8. 직원 후기 ──────────────────────────────── */}
+      <NeedsReview label="수정필요" note="실제 직원 후기 필요">
       <section className="bg-[#f5f7f9] py-16 lg:py-24">
+        <div className="mx-auto max-w-[1512px] px-4 sm:px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            variants={stagger}
+            viewport={{ once: true, margin: "-80px" }}
+            className="text-center"
+          >
+            <motion.span variants={fadeUp} className="text-sm font-semibold uppercase tracking-wide text-[#ce0e2d]">
+              직원 후기
+            </motion.span>
+            <motion.h2
+              variants={fadeUp}
+              className="mt-4 font-bold text-black/[0.87]"
+              style={{ fontSize: "clamp(1.75rem, 3vw, 2.625rem)" }}
+            >
+              함께 일하는 동료들의 이야기
+            </motion.h2>
+            <motion.p variants={fadeUp} className="mt-3 text-base text-black/50">
+              BAYADA에서 일한다는 것이 어떤 의미인지, 직접 들어보세요.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3"
+          >
+            {[
+              {
+                initial: "김",
+                name: "김미영",
+                role: "전문 간호사",
+                tenure: "3년차",
+                location: "서울 케어서비스팀",
+                quote:
+                  "BAYADA에 합류하기 전까지는 '의미 있는 일'이 뭔지 몰랐어요. 여기서 처음으로, 퇴근 후에도 오늘 내가 좋은 일을 했다는 확신이 생겼습니다. 교육 지원도 훌륭하고, 동료들이 정말 든든한 팀이에요.",
+                color: "#ce0e2d",
+                bg: "rgba(206,14,45,0.08)",
+              },
+              {
+                initial: "박",
+                name: "박준혁",
+                role: "물리치료사",
+                tenure: "2년차",
+                location: "경기 재활팀",
+                quote:
+                  "다른 병원에서는 느끼지 못했던 환자 중심 문화가 BAYADA에는 살아있습니다. 환자분이 직접 가정에서 회복하는 모습을 가까이서 볼 수 있어 보람이 큽니다. 유연한 스케줄 덕분에 워라밸도 잘 지켜지고 있어요.",
+                color: "#4f8ef7",
+                bg: "rgba(79,142,247,0.08)",
+              },
+              {
+                initial: "이",
+                name: "이수진",
+                role: "케어 코디네이터",
+                tenure: "1년차",
+                location: "서울 케어서비스팀",
+                quote:
+                  "처음 입사했을 때 체계적인 온보딩 교육에 놀랐어요. 선배님들이 하나하나 친절하게 알려주셔서 빠르게 적응할 수 있었습니다. BAYADA Way라는 가치가 단순한 슬로건이 아니라 실제 일하는 방식에 녹아있다는 게 느껴져요.",
+                color: "#10b981",
+                bg: "rgba(16,185,129,0.08)",
+              },
+            ].map((review, i) => (
+              <motion.div
+                key={review.name}
+                variants={fadeUp}
+                custom={i}
+                className="flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5"
+              >
+                {/* 별점 */}
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, si) => (
+                    <Star key={si} className="h-4 w-4 fill-[#f59e0b] text-[#f59e0b]" />
+                  ))}
+                </div>
+
+                {/* 인용문 */}
+                <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-black/60">
+                  "{review.quote}"
+                </blockquote>
+
+                {/* 프로필 */}
+                <div className="mt-6 flex items-center gap-3 border-t border-black/5 pt-6">
+                  <div
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
+                    style={{ background: review.bg, color: review.color }}
+                  >
+                    {review.initial}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-black/[0.87]">{review.name}</div>
+                    <div className="text-xs text-black/40">{review.role} · {review.tenure}</div>
+                  </div>
+                  <div className="ml-auto flex items-center gap-1.5 rounded-full bg-black/5 px-2.5 py-1 text-[11px] text-black/40">
+                    <Building2 className="h-3 w-3" />
+                    {review.location}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+      </NeedsReview>
+
+      {/* ── 9. 직원 추천 (Referral) ─────────────────────── */}
+      <section className="bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-[1512px] px-4 sm:px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden rounded-2xl bg-white p-10 ring-1 ring-black/5 shadow-sm lg:p-16"
+            className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#ce0e2d] to-[#980019] p-10 lg:p-14"
           >
-            <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:gap-16">
-              {/* 아바타 */}
-              <div className="shrink-0">
-                <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-[#ce0e2d]/10 text-3xl font-bold text-[#ce0e2d]">
-                  김
-                </div>
-                <div className="mt-3 text-center">
-                  <div className="font-semibold text-black/[0.87]">김미영</div>
-                  <div className="text-xs text-black/50">전문 간호사 · 3년차</div>
-                  <div className="mt-2 flex justify-center gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-3 w-3 fill-[#f59e0b] text-[#f59e0b]" />
-                    ))}
-                  </div>
-                </div>
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+              {/* 텍스트 */}
+              <div className="max-w-xl">
+                <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white">
+                  직원 추천 프로그램
+                </span>
+                <h2
+                  className="mt-4 font-bold leading-[1.15] text-white"
+                  style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)" }}
+                >
+                  좋은 동료를 소개해주세요
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-white/80">
+                  구성원 여러분이 직접 BAYADA를 홍보하고, 주변의 훌륭한 인재를 소개해주세요.
+                  간편하게 카카오톡으로 공유하거나 추천서를 다운로드해 전달할 수 있습니다.
+                </p>
+                <ul className="mt-5 space-y-2">
+                  {[
+                    "추천인이 최종 합격하면 추천 보너스 지급",
+                    "추천 인원 제한 없음 — 여러 명 소개 가능",
+                    "입사 후 3개월 근속 시 보너스 확정 지급",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-white/80">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-white" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              {/* 인용문 */}
-              <div className="flex-1">
-                <div className="mb-4 text-5xl font-black leading-none text-[#ce0e2d]/20 select-none">
-                  "
-                </div>
-                <blockquote className="text-lg font-medium leading-relaxed text-black/[0.87] lg:text-xl">
-                  BAYADA에 합류하기 전까지는 '의미 있는 일'이 뭔지 몰랐어요.
-                  여기서 처음으로, 퇴근 후에도 오늘 내가 좋은 일을 했다는 확신이 생겼습니다.
-                  교육 지원도 훌륭하고, 동료들이 정말 든든한 팀이에요.
-                  이 일을 선택한 것이 제 인생에서 가장 잘한 결정입니다.
-                </blockquote>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs text-black/50">
-                    <Building2 className="h-3 w-3" />
-                    서울 케어서비스팀
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs text-black/50">
-                    <CheckCircle2 className="h-3 w-3 text-[#10b981]" />
-                    인증된 리뷰
-                  </div>
-                </div>
+              {/* 액션 버튼들 */}
+              <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col lg:min-w-[220px]">
+                {/* 카카오톡 공유 버튼 */}
+                <button
+                  onClick={() => {
+                    const url = encodeURIComponent(window.location.href);
+                    const text = encodeURIComponent(
+                      "BAYADA홈헬스케어에서 함께 일할 동료를 찾고 있어요! 채용 공고를 확인해보세요."
+                    );
+                    window.open(
+                      `https://sharer.kakao.com/talk/friends/picker/link?app_key=KAKAO_APP_KEY&url=${url}&text=${text}`,
+                      "_blank",
+                      "width=500,height=600"
+                    );
+                  }}
+                  className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#FEE500] py-3.5 px-6 text-sm font-bold text-[#191919] transition-opacity hover:opacity-90"
+                >
+                  <Share2 className="h-4 w-4" />
+                  카카오톡으로 공유하기
+                </button>
+
+                {/* 추천서 다운로드 버튼 */}
+                <a
+                  href="/files/bayada-referral-letter.pdf"
+                  download
+                  className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-white/15 py-3.5 px-6 text-sm font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/25"
+                >
+                  <Download className="h-4 w-4" />
+                  추천서 다운로드
+                </a>
               </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── 9. 하단 CTA ─────────────────────────────────── */}
+      {/* ── 10. 하단 CTA ─────────────────────────────────── */}
       <section className="bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-[1512px] px-4 sm:px-6 lg:px-12">
           <motion.div

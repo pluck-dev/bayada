@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { PageHero } from "@/components/layout/PageHero";
+import { NeedsReview } from "@/components/shared/NeedsReview";
 import { getAboutContent } from "@/data/content";
 import { createMetadata } from "@/lib/seo";
 import type { Locale } from "@bayada/shared/i18n";
@@ -243,6 +244,235 @@ export default async function AboutPage({
               ))}
             </div>
           </div>
+
+          {/* The BAYADA Way 전용 섹션 */}
+          <div className="mt-20">
+            <h2 className="text-xl font-bold text-[color:var(--fg)]">
+              The BAYADA Way
+            </h2>
+            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+              {/* 고객이 최우선 */}
+              <div className="rounded-2xl bg-[color:var(--surface)] p-8">
+                <div className="mb-4 inline-flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ce0e2d] text-sm font-bold text-white">
+                    1
+                  </span>
+                  <h3 className="text-lg font-semibold text-[color:var(--fg)]">
+                    우리의 고객이 최우선입니다
+                  </h3>
+                </div>
+                <div className="space-y-3 text-sm leading-relaxed text-[color:var(--muted)]">
+                  <p>
+                    우리 돌봄의 중심에는 고객과 돌봄 제공자 사이의 관계가
+                    있습니다. 연민, 탁월함, 그리고 신뢰를 나침반 삼아 우리는
+                    진정한 희망을 키우고, 건강한 삶의 기반을 만들어갑니다.
+                  </p>
+                  <p>
+                    고객과 돌봄 제공자는 함께 도전을 헤쳐 나가고, 성취를 함께
+                    기뻐하며, 신뢰와 편안함, 그리고 역량 강화의 여정을 함께
+                    만들어갑니다.
+                  </p>
+                </div>
+              </div>
+              {/* 차별화 요소 */}
+              <div className="rounded-2xl bg-[color:var(--surface)] p-8">
+                <div className="mb-4 inline-flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ce0e2d] text-sm font-bold text-white">
+                    2
+                  </span>
+                  <h3 className="text-lg font-semibold text-[color:var(--fg)]">
+                    우리를 하나로 묶으면서도 차별화합니다
+                  </h3>
+                </div>
+                <div className="space-y-3 text-sm leading-relaxed text-[color:var(--muted)]">
+                  <p>
+                    The BAYADA Way는 재가·홈 헬스케어 전문가로서 우리의 일에
+                    가장 중요한 가치가 무엇인지를 담고 있습니다.
+                  </p>
+                  <p>
+                    이는 현재 세대의 BAYADA 홈 헬스케어 전문가들이 정립한
+                    철학이자 지침이며, 앞으로 이 중요한 사명을 이어갈 동료들에게
+                    전해질 신념의 체계입니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* 3대 핵심 가치 */}
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                {
+                  value: "Compassion",
+                  label: "연민",
+                  desc: "진심 어린 공감으로 고객의 곁에 함께합니다",
+                },
+                {
+                  value: "Excellence",
+                  label: "탁월함",
+                  desc: "최고 수준의 전문성으로 최선의 돌봄을 제공합니다",
+                },
+                {
+                  value: "Reliability",
+                  label: "신뢰",
+                  desc: "언제나 약속을 지키며 믿을 수 있는 파트너가 됩니다",
+                },
+              ].map((item) => (
+                <div
+                  key={item.value}
+                  className="rounded-2xl border border-[#ce0e2d]/20 p-6 text-center"
+                >
+                  <p className="text-2xl font-bold text-[#ce0e2d]">
+                    {item.value}
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-[color:var(--fg)]">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-sm text-[color:var(--muted)]">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* BAYADA 50년 히스토리 */}
+          <NeedsReview
+            label="수정필요"
+            note="바야다 공홈 참고 / 정확한 연도 확인 필요"
+          >
+            <div className="mt-20">
+              <h2 className="text-xl font-bold text-[color:var(--fg)]">
+                BAYADA 50년의 역사
+              </h2>
+              <p className="mt-2 text-sm text-[color:var(--muted)]">
+                50년간의 헌신과 혁신으로 세계 최고의 홈헬스케어 기업이
+                되었습니다
+              </p>
+              <div className="mt-8 space-y-0">
+                {[
+                  {
+                    year: "1975",
+                    title: "BAYADA 설립",
+                    desc: "미국 필라델피아에서 Mark Baiada가 설립. 단 한 명의 간호사와 함께 시작한 작은 가정 방문 간호 서비스가 오늘날 세계 최대 홈헬스케어 기업의 출발점이 되었습니다.",
+                  },
+                  {
+                    year: "2015",
+                    title: "글로벌 확장 시작",
+                    desc: "미국을 넘어 아시아·태평양, 유럽 등 글로벌 시장으로 진출을 본격화하며 국제적인 홈헬스케어 네트워크를 구축하기 시작했습니다.",
+                  },
+                  {
+                    year: "2023",
+                    title: "한국 법인 설립",
+                    desc: "바야다홈헬스케어 한국 법인을 설립하며 아시아 태평양 지역 거점을 강화했습니다. 50년의 글로벌 노하우를 한국에 이식하는 첫 걸음을 내딛었습니다.",
+                  },
+                  {
+                    year: "2024",
+                    title: "한국 서비스 런칭",
+                    desc: "방문요양·방문간호 서비스를 정식 런칭. 노인장기요양보험 지정기관으로 등록하여 국내 홈헬스케어 시장에 본격 진입했습니다.",
+                  },
+                ].map((item, i, arr) => (
+                  <div key={item.year} className="flex gap-6">
+                    {/* 타임라인 축 */}
+                    <div className="flex flex-col items-center">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ce0e2d] text-sm font-bold text-white">
+                        &#9679;
+                      </div>
+                      {i < arr.length - 1 && (
+                        <div className="mt-1 w-0.5 flex-1 bg-[color:var(--border)]" />
+                      )}
+                    </div>
+                    {/* 내용 */}
+                    <div className={i < arr.length - 1 ? "pb-8" : ""}>
+                      <span className="inline-block rounded-full bg-[#ce0e2d]/10 px-3 py-0.5 text-xs font-semibold text-[#ce0e2d]">
+                        {item.year}
+                      </span>
+                      <h3 className="mt-2 text-base font-bold text-[color:var(--fg)]">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-[color:var(--muted)]">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </NeedsReview>
+
+          {/* 글로벌 네트워크 */}
+          <NeedsReview
+            label="수정필요"
+            note="바야다 공홈 참고 / 수치 확인 필요"
+          >
+            <div className="mt-20">
+              <h2 className="text-xl font-bold text-[color:var(--fg)]">
+                글로벌 네트워크
+              </h2>
+              <p className="mt-2 text-sm text-[color:var(--muted)]">
+                전 세계에서 믿음으로 연결된 BAYADA의 네트워크
+              </p>
+              {/* 핵심 수치 */}
+              <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                {[
+                  {
+                    stat: "360+",
+                    label: "전 세계 사무소",
+                    desc: "미국, 아시아, 유럽 전역",
+                  },
+                  {
+                    stat: "33,000+",
+                    label: "전문 인력",
+                    desc: "간호사·요양사·치료사 등",
+                  },
+                  {
+                    stat: "9개국",
+                    label: "운영 국가",
+                    desc: "글로벌 홈헬스케어 리더",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl bg-[color:var(--surface)] p-8 text-center"
+                  >
+                    <p className="text-4xl font-extrabold text-[#ce0e2d]">
+                      {item.stat}
+                    </p>
+                    <p className="mt-2 text-base font-semibold text-[color:var(--fg)]">
+                      {item.label}
+                    </p>
+                    <p className="mt-1 text-sm text-[color:var(--muted)]">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {/* 운영 국가 목록 */}
+              <div className="mt-8 rounded-2xl border border-[color:var(--border)] p-8">
+                <h3 className="mb-4 text-sm font-semibold text-[color:var(--fg)]">
+                  운영 국가
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { flag: "🇺🇸", name: "미국" },
+                    { flag: "🇰🇷", name: "한국" },
+                    { flag: "🇯🇵", name: "일본" },
+                    { flag: "🇮🇳", name: "인도" },
+                    { flag: "🇦🇺", name: "호주" },
+                    { flag: "🇳🇿", name: "뉴질랜드" },
+                    { flag: "🇩🇪", name: "독일" },
+                    { flag: "🇮🇪", name: "아일랜드" },
+                    { flag: "🇨🇦", name: "캐나다" },
+                  ].map((country) => (
+                    <span
+                      key={country.name}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2 text-sm font-medium text-[color:var(--fg)]"
+                    >
+                      {country.flag} {country.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </NeedsReview>
 
           {/* CTA */}
           <div className="mt-20 flex flex-wrap items-center justify-center gap-4">

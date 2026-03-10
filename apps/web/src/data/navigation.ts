@@ -1,114 +1,85 @@
 import type { MegaMenuItem } from "@/types";
 
-// GNB 메가 메뉴 구조 (FR-W-001)
+// GNB 메가 메뉴 구조 — 미국 사이트(bayada.com) 기준 + 엑셀 추가 항목
 export const mainNavigation: MegaMenuItem[] = [
   {
-    label: "Home",
-    labelKo: "홈",
-    href: "/",
-  },
-  {
-    label: "Who We Serve",
-    labelKo: "서비스 대상",
-    href: "/who-we-serve/providers",
+    label: "Our Services",
+    labelKo: "서비스",
+    href: "/what-we-do",
     children: [
       {
-        title: "서비스 제공자",
+        title: "Our Services",
         items: [
-          {
-            label: "Healthcare Professionals",
-            href: "/who-we-serve/providers/healthcare-professionals",
-            description: "간호사, 물리치료사, 작업치료사",
-          },
-          {
-            label: "Other Professionals",
-            href: "/who-we-serve/providers/other-professionals",
-            description: "요양보호사, 사회복지사",
-          },
-          {
-            label: "Hospitals",
-            href: "/who-we-serve/providers/medical-institutes/hospitals",
-            description: "전환의료 프로그램 연계",
-          },
-          {
-            label: "Clinics",
-            href: "/who-we-serve/providers/medical-institutes/clinics",
-            description: "재택의료 서비스 연계",
-          },
-          {
-            label: "LTCI Center",
-            href: "/who-we-serve/providers/service-provision-centers/ltci",
-            description: "노인장기요양센터",
-          },
-          {
-            label: "Nursing Visit Center",
-            href: "/who-we-serve/providers/service-provision-centers/nursing-visit",
-            description: "방문간호센터",
-          },
-          {
-            label: "Daycare Center",
-            href: "/who-we-serve/providers/service-provision-centers/daycare",
-            description: "데이케어센터",
-          },
-          {
-            label: "Local Government",
-            href: "/who-we-serve/providers/local-government",
-            description: "지자체 컨설팅",
-          },
-        ],
-      },
-      {
-        title: "서비스 이용자",
-        items: [
-          {
-            label: "시니어",
-            href: "/who-we-serve/users/senior",
-            description: "65세 이상 어르신",
-          },
-          {
-            label: "만성질환관리",
-            href: "/who-we-serve/users/chronic-disease",
-            description: "당뇨, 고혈압, 치매 등",
-          },
-          {
-            label: "장애인생활관리",
-            href: "/who-we-serve/users/disability",
-            description: "장애인 생활 지원",
-          },
-          {
-            label: "BAYADA Membership",
-            href: "/membership",
-            description: "멤버십 안내",
-          },
+          { label: "Home Health", href: "/what-we-do/home-health", description: "방문 건강관리 서비스" },
+          { label: "Companion Care", href: "/what-we-do/companion-care", description: "동행 돌봄 서비스" },
+          { label: "Personal Care", href: "/what-we-do/personal-care", description: "일상생활 지원 서비스" },
+          { label: "Private Duty Nursing", href: "/what-we-do/private-duty-nursing", description: "전담 간호 서비스" },
+          { label: "Habilitation", href: "/what-we-do/habilitation", description: "기능향상 훈련 서비스" },
+          { label: "Hospice Care", href: "/what-we-do/hospice", description: "호스피스 돌봄 서비스" },
+          { label: "Autism & ABA Therapy", href: "/what-we-do/aba-therapy", description: "자폐 스펙트럼 및 ABA 치료" },
+          { label: "Pediatric Home Health", href: "/what-we-do/pediatric-home-health", description: "소아 방문 건강관리 서비스" },
+          { label: "Veterans", href: "/what-we-do/veterans", description: "국가유공자 지원" },
         ],
       },
     ],
   },
   {
-    label: "What We Do",
-    labelKo: "서비스",
-    href: "/what-we-do",
+    label: "Find Care",
+    labelKo: "센터 찾기",
+    href: "/find-care",
+  },
+  {
+    label: "Careers",
+    labelKo: "채용",
+    href: "/careers",
+  },
+  {
+    label: "Employees",
+    labelKo: "임직원",
+    href: "/employees",
+  },
+  {
+    label: "Work with Us",
+    labelKo: "파트너십",
+    href: "/partnership",
     children: [
       {
-        title: "홈헬스케어 서비스",
+        title: "Work with Us",
         items: [
-          { label: "Skilled Nursing", href: "/what-we-do/skilled-nursing", description: "전문 방문 간호" },
-          { label: "Private Assistive Care", href: "/what-we-do/private-assistive-care", description: "맞춤형 방문 요양" },
-          { label: "Hospice", href: "/what-we-do/hospice", description: "암환자 케어" },
-          { label: "LTCI Beneficiary Care", href: "/what-we-do/ltci-beneficiary-care", description: "수급자 케어" },
-          { label: "Physical Trainer", href: "/what-we-do/physical-trainer", description: "맞춤형 방문 운동" },
-          { label: "Transitional Care", href: "/what-we-do/transitional-care", description: "전환의료" },
+          { label: "Senior Living Solutions", href: "/senior-living", description: "시니어 주거시설 파트너십" },
+          { label: "Partner with BAYADA", href: "/partnership", description: "파트너십 신청" },
         ],
       },
+    ],
+  },
+  {
+    label: "About BAYADA",
+    labelKo: "회사소개",
+    href: "/about",
+    children: [
       {
-        title: "전문 서비스",
+        title: "About",
         items: [
-          { label: "Patient Support Program", href: "/what-we-do/patient-support", description: "환자지원프로그램" },
-          { label: "Decentralized Clinical Trials", href: "/what-we-do/dct", description: "분산형 임상시험" },
-          { label: "Long-term Care Services", href: "/what-we-do/long-term-care", description: "장기요양서비스" },
-          { label: "Senior Living Solutions", href: "/what-we-do/senior-living", description: "시니어 리빙 솔루션" },
-          { label: "Mobile Clinical Consulting", href: "/what-we-do/mobile-clinical", description: "모바일 클리니컬 컨설팅" },
-          { label: "Education", href: "/what-we-do/education", description: "교육" },
+          { label: "About BAYADA", href: "/about", description: "바야다홈헬스케어 소개" },
+          { label: "The BAYADA Way", href: "/bayada-way", description: "열정, 탁월함, 신뢰 — 우리의 핵심 가치" },
+          { label: "BAYADA 50 Years", href: "/about#history", description: "50년간 이어온 우리의 사명" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Resources",
+    labelKo: "리소스",
+    href: "/guide",
+    children: [
+      {
+        title: "Resources",
+        items: [
+          { label: "이용안내", href: "/guide", description: "서비스 이용 절차 안내" },
+          { label: "홈케어 비용 안내", href: "/how-to-pay", description: "비용 지원 제도 및 결제 안내" },
+          { label: "FAQ", href: "/faq", description: "자주 묻는 질문" },
+          { label: "Blog", href: "/blog", description: "블로그" },
+          { label: "고객 후기", href: "/reviews", description: "고객 후기" },
         ],
       },
     ],
@@ -130,9 +101,9 @@ export const mainNavigation: MegaMenuItem[] = [
     ],
   },
   {
-    label: "Partnership",
-    labelKo: "파트너십",
-    href: "/partnership",
+    label: "Shop",
+    labelKo: "쇼핑",
+    href: "/shop",
   },
   {
     label: "Membership",
@@ -140,105 +111,42 @@ export const mainNavigation: MegaMenuItem[] = [
     href: "/membership",
   },
   {
-    label: "About Us",
-    labelKo: "회사소개",
-    href: "/about",
-    children: [
-      {
-        title: "회사소개",
-        items: [
-          {
-            label: "About BAYADA",
-            href: "/about",
-            description: "바야다홈헬스케어 소개",
-          },
-          {
-            label: "The BAYADA Way",
-            href: "/bayada-way",
-            description: "열정, 탁월함, 신뢰 — 우리의 핵심 가치",
-          },
-          {
-            label: "Senior Living Solutions",
-            href: "/senior-living",
-            description: "시니어 주거시설 파트너십",
-          },
-        ],
-      },
-      {
-        title: "고객 리소스",
-        items: [
-          {
-            label: "이용안내",
-            href: "/guide",
-            description: "서비스 이용 절차 안내",
-          },
-          {
-            label: "홈케어 비용 안내",
-            href: "/how-to-pay",
-            description: "비용 지원 제도 및 결제 안내",
-          },
-          {
-            label: "FAQ",
-            href: "/faq",
-            description: "자주 묻는 질문",
-          },
-        ],
-      },
-    ],
+    label: "Notice of Privacy",
+    labelKo: "개인정보보호",
+    href: "/privacy",
   },
   {
-    label: "Contact",
-    labelKo: "문의",
-    href: "/contact",
-  },
-  {
-    label: "Blog",
-    labelKo: "블로그",
-    href: "/blog",
+    label: "My Page",
+    labelKo: "마이페이지",
+    href: "/my-page",
   },
 ];
 
 // Footer 네비게이션 구조
 export const footerNavigation = {
-  whoWeServe: {
-    title: "Who We Serve",
+  services: {
+    title: "Our Services",
     links: [
-      { label: "서비스 제공자", href: "/who-we-serve/providers" },
-      { label: "서비스 이용자", href: "/who-we-serve/users" },
-    ],
-  },
-  whatWeDo: {
-    title: "What We Do",
-    links: [
-      { label: "Skilled Nursing", href: "/what-we-do/skilled-nursing" },
-      { label: "Private Assistive Care", href: "/what-we-do/private-assistive-care" },
-      { label: "Hospice", href: "/what-we-do/hospice" },
-      { label: "LTCI Beneficiary Care", href: "/what-we-do/ltci-beneficiary-care" },
-      { label: "Physical Trainer", href: "/what-we-do/physical-trainer" },
-      { label: "Transitional Care", href: "/what-we-do/transitional-care" },
-      { label: "모든 서비스 보기", href: "/what-we-do" },
-    ],
-  },
-  platform: {
-    title: "Platform",
-    links: [
-      { label: "DeiBud", href: "/platform/deibud" },
-      { label: "DeiCloud", href: "/platform/deicloud" },
-      { label: "DeiEdu", href: "/platform/deiedu" },
-      { label: "Dtx", href: "/platform/dtx" },
+      { label: "Home Health", href: "/what-we-do/home-health" },
+      { label: "Companion Care", href: "/what-we-do/companion-care" },
+      { label: "Personal Care", href: "/what-we-do/personal-care" },
+      { label: "Private Duty Nursing", href: "/what-we-do/private-duty-nursing" },
+      { label: "Habilitation", href: "/what-we-do/habilitation" },
+      { label: "Hospice Care", href: "/what-we-do/hospice" },
+      { label: "Autism & ABA Therapy", href: "/what-we-do/aba-therapy" },
+      { label: "Pediatric Home Health", href: "/what-we-do/pediatric-home-health" },
+      { label: "Veterans", href: "/what-we-do/veterans" },
     ],
   },
   company: {
-    title: "Company",
+    title: "About BAYADA",
     links: [
-      { label: "About Us", href: "/about" },
+      { label: "About BAYADA", href: "/about" },
       { label: "The BAYADA Way", href: "/bayada-way" },
-      { label: "Partnership", href: "/partnership" },
-      { label: "Senior Living", href: "/senior-living" },
-      { label: "Membership", href: "/membership" },
-      { label: "Blog", href: "/blog" },
-      { label: "Contact", href: "/contact" },
+      { label: "Senior Living Solutions", href: "/senior-living" },
       { label: "Careers", href: "/careers" },
+      { label: "Employees", href: "/employees" },
+      { label: "Work with Us", href: "/partnership" },
     ],
   },
   resources: {
@@ -247,8 +155,20 @@ export const footerNavigation = {
       { label: "이용안내", href: "/guide" },
       { label: "홈케어 비용 안내", href: "/how-to-pay" },
       { label: "FAQ", href: "/faq" },
+      { label: "Find Care", href: "/find-care" },
+      { label: "Blog", href: "/blog" },
       { label: "고객 후기", href: "/reviews" },
-      { label: "개인정보처리방침", href: "/privacy" },
+    ],
+  },
+  platform: {
+    title: "Platform & Shop",
+    links: [
+      { label: "DeiBud", href: "/platform/deibud" },
+      { label: "DeiCloud", href: "/platform/deicloud" },
+      { label: "DeiEdu", href: "/platform/deiedu" },
+      { label: "Dtx", href: "/platform/dtx" },
+      { label: "Shop", href: "/shop" },
+      { label: "Membership", href: "/membership" },
     ],
   },
   legal: [

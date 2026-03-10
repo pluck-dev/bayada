@@ -7,22 +7,22 @@ const features = [
   {
     icon: "/images/care-team/icons/book.svg",
     alt: "교육 아이콘",
-    text: "고도 시뮬레이션 실습과 실제 시나리오 기반 교육",
+    text: "고난도 시뮬레이션 실습실과 실제 상황 기반 교육",
   },
   {
     icon: "/images/care-team/icons/clipboard.svg",
     alt: "클립보드 아이콘",
-    text: "체계적인 간호 레지던시 프로그램과 멘토링",
+    text: "신규 임상 인력을 위한 체계적인 간호사 레지던시 및 멘토링 프로그램",
   },
   {
     icon: "/images/care-team/icons/community.svg",
     alt: "커뮤니티 아이콘",
-    text: "가족 중심 교육으로 보호자의 안도감 향상",
+    text: "가족의 자신감과 안정을 높이는 가족 중심 교육",
   },
   {
     icon: "/images/care-team/icons/home-health.svg",
     alt: "홈헬스 아이콘",
-    text: "응급 대응 및 안전 프로토콜",
+    text: "철저한 응급 대응 준비 및 안전 프로토콜 운영",
   },
 ];
 
@@ -62,12 +62,12 @@ export function WhyBayada() {
             className="font-bold leading-[1.15] text-black/[0.87]"
             style={{ fontSize: "clamp(1.75rem, 3vw, 2.625rem)" }}
           >
-            가장 잘 훈련된 케어팀이
+            사랑하는 사람들을 위한
             <br />
-            소중한 분 곁에 있습니다
+            최고의 전문 케어 팀
           </h2>
           <p className="mt-3 text-base leading-relaxed text-black/60">
-            마음에서 시작해, 전문성으로 완성하는 케어
+            진심으로 이끌고, 임상적 탁월함으로 강화합니다
           </p>
 
           {/* 아이콘 그리드: 모바일 2×2, sm 이상 4×1 */}

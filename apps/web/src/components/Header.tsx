@@ -121,16 +121,16 @@ export function Header({ locale }: HeaderProps) {
         <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitcher />
           <Link
-            href={`/${locale}/services`}
-            className="whitespace-nowrap rounded-lg bg-[#dfe6eb] px-5 py-2 text-sm font-medium text-black/[0.87] transition-colors duration-300 hover:bg-[#D6DEE5]"
-          >
-            서비스 찾기
-          </Link>
-          <Link
-            href={`/${locale}/contact`}
+            href={`/${locale}/find-care`}
             className="whitespace-nowrap rounded-lg bg-[#ce0e2d] px-5 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-[#980019]"
           >
-            상담 신청
+            Find a Service
+          </Link>
+          <Link
+            href={`/${locale}/careers`}
+            className="whitespace-nowrap rounded-lg bg-[#dfe6eb] px-5 py-2 text-sm font-medium text-black/[0.87] transition-colors duration-300 hover:bg-[#D6DEE5]"
+          >
+            Explore Careers
           </Link>
         </div>
 
