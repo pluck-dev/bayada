@@ -5,6 +5,7 @@ import { createMetadata } from "@/lib/seo";
 import { platforms } from "@/data/platforms";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
+import { NeedsReview } from "@/components/shared/NeedsReview";
 
 export const metadata = createMetadata({
   title: "디지털 플랫폼",
@@ -30,6 +31,10 @@ export default async function PlatformPage({
 
       <section className="py-[var(--section-gap)]">
         <Container>
+          <NeedsReview
+            label="수정필요"
+            note="엑셀 Platform 시트 데이터 없음 — 플랫폼명·설명·링크 전체 확인 필요"
+          >
           <div className="space-y-8">
             {platforms.map((platform) => (
               <Link
@@ -74,6 +79,7 @@ export default async function PlatformPage({
               </Link>
             ))}
           </div>
+          </NeedsReview>
         </Container>
       </section>
     </>

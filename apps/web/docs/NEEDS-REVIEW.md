@@ -104,33 +104,41 @@
 
 ---
 
-## 11. Shop
+## 11. Platform
 
 | # | 섹션 | 라벨 | 확인 내용 | 링크 |
 |---|------|------|-----------|------|
-| 11-1 | 전체 Shop 페이지 | 수정필요 | **파트너 쇼핑몰 정보·카테고리·상품 데이터 전체 필요** | [바로가기](https://bayada-web.vercel.app/ko/shop) |
+| 11-1 | 전체 Platform 페이지 | 수정필요 | **엑셀 Platform 시트 데이터 없음. 플랫폼명·설명·링크 전체 확인 필요** | [바로가기](https://bayada-web.vercel.app/ko/platform) |
 
 ---
 
-## 12. Resources
+## 12. Shop
 
 | # | 섹션 | 라벨 | 확인 내용 | 링크 |
 |---|------|------|-----------|------|
-| 12-1 | 전체 Resources 페이지 | 수정필요 | **실제 자료 목록 및 카테고리 필요** | [바로가기](https://bayada-web.vercel.app/ko/resources) |
+| 12-1 | 전체 Shop 페이지 | 수정필요 | **파트너 쇼핑몰 정보·카테고리·상품 데이터 전체 필요** | [바로가기](https://bayada-web.vercel.app/ko/shop) |
 
 ---
 
-## 13. My Page
+## 13. Resources
 
 | # | 섹션 | 라벨 | 확인 내용 | 링크 |
 |---|------|------|-----------|------|
-| 13-1 | 전체 My Page | 수정필요 | **로그인 기반 페이지 — 백엔드 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
-| 13-2 | 로그인/회원가입 | 수정필요 | **소셜 로그인 OAuth 연동 필요** (카카오/네이버/이메일) | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
-| 13-3 | 서비스 현황 | 수정필요 | **서비스 예약 API 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
-| 13-4 | 건강 기록 대시보드 | 수정필요 | **건강 데이터 API 및 차트 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
-| 13-5 | 결제·청구 | 수정필요 | **결제 시스템(토스페이먼츠) 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
-| 13-6 | 알림 설정 | 수정필요 | **FCM 푸시 / 알리고 SMS / SES 이메일 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
-| 13-7 | 프로필 관리 | 수정필요 | **사용자 프로필 CRUD API 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 13-1 | 전체 Resources 페이지 | 수정필요 | **실제 자료 목록 및 카테고리 필요** | [바로가기](https://bayada-web.vercel.app/ko/resources) |
+
+---
+
+## 14. My Page
+
+| # | 섹션 | 라벨 | 확인 내용 | 링크 |
+|---|------|------|-----------|------|
+| 14-1 | 전체 My Page | 수정필요 | **로그인 기반 페이지 — 백엔드 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 14-2 | 로그인/회원가입 | 수정필요 | **소셜 로그인 OAuth 연동 필요** (카카오/네이버/이메일) | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 14-3 | 서비스 현황 | 수정필요 | **서비스 예약 API 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 14-4 | 건강 기록 대시보드 | 수정필요 | **건강 데이터 API 및 차트 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 14-5 | 결제·청구 | 수정필요 | **결제 시스템(토스페이먼츠) 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 14-6 | 알림 설정 | 수정필요 | **FCM 푸시 / 알리고 SMS / SES 이메일 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
+| 14-7 | 프로필 관리 | 수정필요 | **사용자 프로필 CRUD API 연동 필요** | [바로가기](https://bayada-web.vercel.app/ko/my-page) |
 
 ---
 
@@ -144,8 +152,8 @@
 | 연락처 확인 (이메일·전화번호) | 1개 |
 | 법률 검토 (의료법·서비스범위) | 2개 |
 | 백엔드 연동 (API·결제·알림) | 5개 |
-| 전체 페이지 기획 필요 (Shop·Resources) | 2개 |
-| **합계** | **29개** |
+| 전체 페이지 기획 필요 (Platform·Shop·Resources) | 3개 |
+| **합계** | **30개** |
 
 ---
 

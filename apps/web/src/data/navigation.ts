@@ -1,6 +1,6 @@
 import type { MegaMenuItem } from "@/types";
 
-// GNB 메가 메뉴 구조 — 미국 사이트(bayada.com) 기준 + 엑셀 추가 항목
+// GNB 메가 메뉴 구조 — 핵심 메뉴만 상단, 부가 메뉴는 유틸리티 영역
 export const mainNavigation: MegaMenuItem[] = [
   {
     label: "Our Services",
@@ -29,30 +29,6 @@ export const mainNavigation: MegaMenuItem[] = [
     href: "/find-care",
   },
   {
-    label: "Careers",
-    labelKo: "채용",
-    href: "/careers",
-  },
-  {
-    label: "Employees",
-    labelKo: "임직원",
-    href: "/employees",
-  },
-  {
-    label: "Work with Us",
-    labelKo: "파트너십",
-    href: "/partnership",
-    children: [
-      {
-        title: "Work with Us",
-        items: [
-          { label: "Senior Living Solutions", href: "/senior-living", description: "시니어 주거시설 파트너십" },
-          { label: "Partner with BAYADA", href: "/partnership", description: "파트너십 신청" },
-        ],
-      },
-    ],
-  },
-  {
     label: "About BAYADA",
     labelKo: "회사소개",
     href: "/about",
@@ -63,6 +39,13 @@ export const mainNavigation: MegaMenuItem[] = [
           { label: "About BAYADA", href: "/about", description: "바야다홈헬스케어 소개" },
           { label: "The BAYADA Way", href: "/bayada-way", description: "열정, 탁월함, 신뢰 — 우리의 핵심 가치" },
           { label: "BAYADA 50 Years", href: "/about#history", description: "50년간 이어온 우리의 사명" },
+        ],
+      },
+      {
+        title: "Work with Us",
+        items: [
+          { label: "Senior Living Solutions", href: "/senior-living", description: "시니어 주거시설 파트너십" },
+          { label: "Partner with BAYADA", href: "/partnership", description: "파트너십 신청" },
         ],
       },
     ],
@@ -101,26 +84,23 @@ export const mainNavigation: MegaMenuItem[] = [
     ],
   },
   {
-    label: "Shop",
-    labelKo: "쇼핑",
-    href: "/shop",
+    label: "Careers",
+    labelKo: "채용",
+    href: "/careers",
   },
   {
-    label: "Membership",
-    labelKo: "멤버십",
-    href: "/membership",
-  },
-  {
-    label: "Notice of Privacy",
-    labelKo: "개인정보보호",
-    href: "/privacy",
-  },
-  {
-    label: "My Page",
-    labelKo: "마이페이지",
-    href: "/my-page",
+    label: "Employees",
+    labelKo: "임직원",
+    href: "/employees",
   },
 ];
+
+// 우측 유틸리티 메뉴 (아이콘으로 표시)
+export const utilityNavigation = [
+  { label: "Shop", labelKo: "쇼핑", href: "/shop", icon: "shopping-bag" },
+  { label: "Membership", labelKo: "멤버십", href: "/membership", icon: "award" },
+  { label: "My Page", labelKo: "마이페이지", href: "/my-page", icon: "user" },
+] as const;
 
 // Footer 네비게이션 구조
 export const footerNavigation = {
