@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { MegaMenuItem } from "@/types";
+import { getLabel, getTitle, getDescription } from "@/data/navigation";
 
 interface MegaMenuProps {
   item: MegaMenuItem;
@@ -19,7 +20,7 @@ export function MegaMenu({ item, locale, onClose }: MegaMenuProps) {
           {item.children.map((group) => (
             <div key={group.title}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">
-                {group.title}
+                {getTitle(group, locale)}
               </p>
               <div className="flex flex-col gap-0.5">
                 {group.items.map((link) => (
@@ -30,11 +31,11 @@ export function MegaMenu({ item, locale, onClose }: MegaMenuProps) {
                     onClick={onClose}
                   >
                     <span className="text-sm font-medium text-[color:var(--fg)] transition-colors group-hover:text-[#ce0e2d]">
-                      {link.label}
+                      {getLabel(link, locale)}
                     </span>
-                    {link.description && (
+                    {getDescription(link, locale) && (
                       <p className="mt-0.5 text-xs text-[color:var(--muted)]">
-                        {link.description}
+                        {getDescription(link, locale)}
                       </p>
                     )}
                   </Link>

@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown, ShoppingBag, Award, User } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import type { Dictionary } from "@bayada/shared/i18n";
-import { mainNavigation, utilityNavigation } from "@/data/navigation";
+import { mainNavigation, utilityNavigation, getLabel } from "@/data/navigation";
 import { MegaMenu } from "./header/MegaMenu";
 import { MobileMenu } from "./header/MobileMenu";
 import { LanguageSwitcher } from "./header/LanguageSwitcher";
@@ -89,7 +89,7 @@ export function Header({ locale }: HeaderProps) {
                     setOpenMega((prev) => (prev === item.label ? null : item.label));
                   }}
                 >
-                  {item.label}
+                  {getLabel(item, locale)}
                   <ChevronDown
                     className={`h-3 w-3 transition-transform ${
                       openMega === item.label ? "rotate-180" : ""
@@ -101,7 +101,7 @@ export function Header({ locale }: HeaderProps) {
                   href={`/${locale}${item.href}`}
                   className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-black/[0.87] transition-colors hover:text-[#ce0e2d]"
                 >
-                  {item.label}
+                  {getLabel(item, locale)}
                 </Link>
               )}
 
@@ -126,25 +126,11 @@ export function Header({ locale }: HeaderProps) {
               href={`/${locale}${item.href}`}
               className="whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium text-black/60 transition-colors hover:text-[#ce0e2d]"
             >
-              {item.label}
+              {getLabel(item, locale)}
             </Link>
           ))}
           <div className="mx-1 h-5 w-px bg-gray-200" />
           <LanguageSwitcher />
-          {/* CTA 버튼 — 필요 시 주석 해제 (GNB에 Find Care / Careers 항목으로 대체됨)
-          <Link
-            href={`/${locale}/find-care`}
-            className="whitespace-nowrap rounded-lg bg-[#ce0e2d] px-5 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-[#980019]"
-          >
-            Find a Service
-          </Link>
-          <Link
-            href={`/${locale}/careers`}
-            className="whitespace-nowrap rounded-lg bg-[#dfe6eb] px-5 py-2 text-sm font-medium text-black/[0.87] transition-colors duration-300 hover:bg-[#D6DEE5]"
-          >
-            Explore Careers
-          </Link>
-          */}
         </div>
 
         {/* 모바일 메뉴 버튼 */}

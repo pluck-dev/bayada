@@ -69,7 +69,7 @@ export function DataTable<T extends Record<string, unknown>>({
                     onRowClick &&
                       "cursor-pointer hover:bg-[color:var(--surface)]"
                   )}
-                  onClick={() => onRowClick?.(row)}
+                  {...(onRowClick ? { onClick: () => onRowClick(row) } : {})}
                 >
                   {columns.map((col) => (
                     <td

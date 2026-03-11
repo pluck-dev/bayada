@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin, Youtube } from "lucide-react";
 import type { Dictionary } from "@bayada/shared/i18n";
-import { footerNavigation } from "@/data/navigation";
+import { footerNavigation, getLabel, getTitle } from "@/data/navigation";
 import { getCompanyInfo } from "@/data/content";
 
 interface FooterProps {
@@ -89,7 +89,7 @@ export function Footer({ dict, locale }: FooterProps) {
           {sections.map((section) => (
             <div key={section.title}>
               <h3 className="text-sm font-semibold text-black/[0.87]">
-                {section.title}
+                {getTitle(section, locale)}
               </h3>
               <ul className="mt-4 flex flex-col gap-2.5">
                 {section.links.map((link) => (
@@ -98,7 +98,7 @@ export function Footer({ dict, locale }: FooterProps) {
                       href={`/${locale}${link.href}`}
                       className="text-sm text-black/60 transition-colors hover:text-black"
                     >
-                      {link.label}
+                      {getLabel(link, locale)}
                     </Link>
                   </li>
                 ))}
@@ -118,7 +118,7 @@ export function Footer({ dict, locale }: FooterProps) {
                     href={`/${locale}${link.href}`}
                     className="transition-colors hover:text-black/70"
                   >
-                    {link.label}
+                    {getLabel(link, locale)}
                   </Link>
                 </span>
               ))}

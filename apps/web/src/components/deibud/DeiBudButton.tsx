@@ -15,7 +15,7 @@ export function DeiBudButton({ isOpen, onClick }: DeiBudButtonProps) {
       className="flex h-14 w-14 items-center justify-center rounded-full bg-[#ce0e2d] text-white shadow-lg shadow-[#ce0e2d]/30 transition-colors hover:bg-[#b00c27]"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label={isOpen ? "채팅 닫기" : "DeiBud AI 상담"}
+      aria-label={isOpen ? "채팅 닫기" : "바야다홈헬스케어 상담"}
     >
       <AnimatePresence mode="wait">
         {isOpen ? (

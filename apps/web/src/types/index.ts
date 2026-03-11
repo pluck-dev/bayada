@@ -170,17 +170,28 @@ export interface FAQItem {
   a: string;
 }
 
-// --- 네비게이션 ---
+// --- 네비게이션 다국어 ---
+export type NavLabels = Partial<Record<"ko" | "ja" | "zh", string>>;
+
 export interface MegaMenuItem {
-  label: string;
-  labelKo?: string;
+  label: string; // 영어 (기본값)
+  labels?: NavLabels;
   href: string;
   children?: MegaMenuGroup[];
 }
 
 export interface MegaMenuGroup {
   title: string;
-  items: { label: string; href: string; description?: string }[];
+  titles?: NavLabels;
+  items: MegaMenuLink[];
+}
+
+export interface MegaMenuLink {
+  label: string;
+  labels?: NavLabels;
+  href: string;
+  description?: string; // 영어 설명 (기본값)
+  descriptions?: NavLabels;
 }
 
 // --- 파트너십 ---

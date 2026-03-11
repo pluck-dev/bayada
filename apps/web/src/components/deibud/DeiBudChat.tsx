@@ -16,7 +16,7 @@ export function DeiBudChat() {
       id: "welcome",
       role: "assistant",
       content:
-        "안녕하세요! BAYADA DeiBud AI입니다. 홈헬스케어 서비스에 대해 궁금한 점을 물어보세요.",
+        "안녕하세요! 바야다홈헬스케어입니다. 홈헬스케어 서비스에 대해 궁금한 점을 물어보세요.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -47,7 +47,7 @@ export function DeiBudChat() {
         id: `bot-${Date.now()}`,
         role: "assistant",
         content:
-          "현재 DeiBud AI 서비스를 준비 중입니다. 빠른 시일 내에 맞춤 케어 상담 서비스를 제공할 예정입니다. 긴급 문의는 1670-1379으로 전화해 주세요.",
+          "현재 바야다홈헬스케어 AI 상담 서비스를 준비 중입니다. 빠른 시일 내에 맞춤 케어 상담 서비스를 제공할 예정입니다. 긴급 문의는 1670-1379으로 전화해 주세요.",
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
@@ -68,7 +68,7 @@ export function DeiBudChat() {
           <Bot className="h-4 w-4 text-white" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">DeiBud AI</p>
+          <p className="text-sm font-semibold text-white">바야다홈헬스케어</p>
           <p className="text-xs text-white/70">BAYADA 케어 가이드</p>
         </div>
         <div className="ml-auto flex items-center gap-1">
