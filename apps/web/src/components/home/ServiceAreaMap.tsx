@@ -23,7 +23,7 @@ interface CountryInfo {
 const BAYADA_COUNTRIES: CountryInfo[] = [
   {
     id: "840",
-    name: "United States",
+    name: "United States of America",
     nameKo: "미국",
     coordinates: [-98, 39],
     description: "1975년 설립, 360+ 사무소 운영",
@@ -95,7 +95,19 @@ const BAYADA_COUNTRIES: CountryInfo[] = [
   },
 ];
 
+/* ID + name 둘 다로 매칭 (타입 불일치 방지) */
 const HIGHLIGHTED_IDS = new Set(BAYADA_COUNTRIES.map((c) => c.id));
+const HIGHLIGHTED_NAMES = new Set(BAYADA_COUNTRIES.map((c) => c.name));
+
+function isHighlightedCountry(geo: { id: string; properties: { name: string } }): boolean {
+  return HIGHLIGHTED_IDS.has(String(geo.id)) || HIGHLIGHTED_NAMES.has(geo.properties?.name);
+}
+
+function findCountryByGeo(geo: { id: string; properties: { name: string } }): CountryInfo | undefined {
+  return BAYADA_COUNTRIES.find(
+    (c) => c.id === String(geo.id) || c.name === geo.properties?.name
+  );
+}
 
 export function ServiceAreaMap() {
   const [hoveredCountry, setHoveredCountry] = useState<CountryInfo | null>(
@@ -111,31 +123,38 @@ export function ServiceAreaMap() {
   }, []);
 
   return (
-    <section className="bg-[#1B2A4A] py-16 px-4 sm:px-6 lg:px-12 lg:py-24 overflow-hidden">
+    <section className="bg-[var(--bayada-surface)] py-16 px-4 sm:px-6 lg:px-12 lg:py-24 overflow-hidden">
       <div className="mx-auto max-w-6xl">
         {/* 헤더 */}
-        <h2 className="text-3xl font-bold text-center text-white sm:text-4xl lg:text-[2.75rem] leading-tight">
+        <h2 className="text-3xl font-bold text-center text-[var(--bayada-text)] sm:text-4xl lg:text-[2.75rem] leading-tight">
           우리가 &lsquo;집&rsquo;이라 부르는
           <br />
           전세계 지역사회에서 전문적인 돌봄을 제공합니다
         </h2>
-        <p className="mt-5 text-center text-base text-white/60 max-w-2xl mx-auto">
+        <p className="mt-5 text-center text-base text-[var(--bayada-muted)] max-w-2xl mx-auto">
           세계 최대 비영리 홈헬스케어 기업으로서, 모든 사람이 집에서 안전하고
           건강한 삶을 누릴 수 있도록 전문적인 돌봄을 제공합니다.
         </p>
 
         {/* 국가 태그 */}
         <div className="mt-8 flex flex-wrap justify-center gap-2">
-          {BAYADA_COUNTRIES.map((country) => (
-            <span
-              key={country.id}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white/90 backdrop-blur-sm transition-colors hover:bg-white/20"
-              onMouseEnter={() => setHoveredCountry(country)}
-              onMouseLeave={() => setHoveredCountry(null)}
-            >
-              {country.flag} {country.nameKo}
-            </span>
-          ))}
+          {BAYADA_COUNTRIES.map((country) => {
+            const isActive = hoveredCountry?.id === country.id;
+            return (
+              <span
+                key={country.id}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors cursor-default ${
+                  isActive
+                    ? "border-[var(--bayada-red)] bg-[var(--bayada-red)] text-white"
+                    : "border-gray-300 bg-white text-[var(--bayada-text)] hover:border-[var(--bayada-red)] hover:text-[var(--bayada-red)]"
+                }`}
+                onMouseEnter={() => setHoveredCountry(country)}
+                onMouseLeave={() => setHoveredCountry(null)}
+              >
+                {country.flag} {country.nameKo}
+              </span>
+            );
+          })}
         </div>
 
         {/* 세계 지도 */}
@@ -153,8 +172,9 @@ export function ServiceAreaMap() {
             <Geographies geography={WORLD_TOPO_URL}>
               {({ geographies }) =>
                 geographies.map((geo) => {
-                  const isHighlighted = HIGHLIGHTED_IDS.has(geo.id);
-                  const isHovered = hoveredCountry?.id === geo.id;
+                  const highlighted = isHighlightedCountry(geo);
+                  const matchedCountry = highlighted ? findCountryByGeo(geo) : null;
+                  const isHovered = matchedCountry != null && hoveredCountry?.id === matchedCountry.id;
 
                   return (
                     <Geography
@@ -163,11 +183,11 @@ export function ServiceAreaMap() {
                       fill={
                         isHovered
                           ? "#CE0E2D"
-                          : isHighlighted
+                          : highlighted
                             ? "#E8435A"
-                            : "#2D4066"
+                            : "#dfe6eb"
                       }
-                      stroke="#1B2A4A"
+                      stroke="#fff"
                       strokeWidth={0.5}
                       style={{
                         default: {
@@ -197,7 +217,7 @@ export function ServiceAreaMap() {
                   {/* 외곽 펄스 링 */}
                   <circle
                     r={isHovered ? 8 : 5}
-                    fill="rgba(206, 14, 45, 0.25)"
+                    fill="rgba(206, 14, 45, 0.2)"
                     style={{ transition: "r 0.2s ease" }}
                   />
                   {/* 중앙 도트 */}
@@ -219,7 +239,9 @@ export function ServiceAreaMap() {
                       fontFamily: "system-ui, -apple-system, sans-serif",
                       fontSize: "9px",
                       fontWeight: 600,
-                      fill: isHovered ? "#fff" : "rgba(255,255,255,0.7)",
+                      fill: isHovered
+                        ? "rgba(0,0,0,0.87)"
+                        : "rgba(0,0,0,0.5)",
                       pointerEvents: "none",
                       userSelect: "none",
                       transition: "fill 0.2s ease",
@@ -241,12 +263,12 @@ export function ServiceAreaMap() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.15 }}
-                className="pointer-events-none absolute left-1/2 bottom-4 z-10 -translate-x-1/2 rounded-xl bg-white px-5 py-4 shadow-2xl min-w-[220px]"
+                className="pointer-events-none absolute left-1/2 bottom-4 z-10 -translate-x-1/2 rounded-xl bg-white px-5 py-4 shadow-lg border border-gray-100 min-w-[220px]"
               >
                 <div className="flex items-center gap-2.5">
                   <span className="text-2xl">{hoveredCountry.flag}</span>
                   <div>
-                    <p className="text-sm font-bold text-gray-900">
+                    <p className="text-sm font-bold text-[var(--bayada-text)]">
                       {hoveredCountry.nameKo}
                     </p>
                     <p className="text-xs text-gray-400">
@@ -254,7 +276,7 @@ export function ServiceAreaMap() {
                     </p>
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-gray-500 leading-relaxed">
+                <p className="mt-2 text-xs text-[var(--bayada-muted)] leading-relaxed">
                   {hoveredCountry.description}
                 </p>
               </motion.div>
@@ -270,10 +292,10 @@ export function ServiceAreaMap() {
             { stat: "33,000+", label: "전문 인력" },
           ].map((item) => (
             <div key={item.label} className="text-center">
-              <p className="text-2xl font-extrabold text-white sm:text-3xl">
+              <p className="text-2xl font-extrabold text-[var(--bayada-red)] sm:text-3xl">
                 {item.stat}
               </p>
-              <p className="mt-1 text-xs text-white/50 sm:text-sm">
+              <p className="mt-1 text-xs text-[var(--bayada-muted)] sm:text-sm">
                 {item.label}
               </p>
             </div>
