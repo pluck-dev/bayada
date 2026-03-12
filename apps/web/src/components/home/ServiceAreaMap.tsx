@@ -106,8 +106,7 @@ function locationToAngles(lat: number, lng: number): [number, number] {
 
 export function ServiceAreaMap() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pointerInteracting = useRef<number | null>(null);
-  const pointerInteractionMovement = useRef(0);
+  const pointerInteracting = useRef<{ x: number; y: number } | null>(null);
   const phiRef = useRef(0);
   const thetaRef = useRef(0.3);
   const widthRef = useRef(0);
@@ -181,9 +180,9 @@ export function ServiceAreaMap() {
 
     globeRef.current = globe;
 
-    // 드래그 인터랙션
+    // 드래그 인터랙션 (상하좌우 모든 방향)
     const onPointerDown = (e: PointerEvent) => {
-      pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
+      pointerInteracting.current = { x: e.clientX, y: e.clientY };
       canvas.style.cursor = "grabbing";
     };
     const onPointerUp = () => {
@@ -196,11 +195,15 @@ export function ServiceAreaMap() {
     };
     const onPointerMove = (e: PointerEvent) => {
       if (pointerInteracting.current !== null) {
-        const delta = e.clientX - pointerInteracting.current;
-        pointerInteractionMovement.current = delta;
-        phiRef.current += delta * 0.003;
-        pointerInteracting.current = e.clientX;
-        focusRef.current = null; // 수동 조작 시 포커스 해제
+        const dx = e.clientX - pointerInteracting.current.x;
+        const dy = e.clientY - pointerInteracting.current.y;
+        phiRef.current += dx * 0.003;
+        thetaRef.current = Math.max(
+          -Math.PI / 2,
+          Math.min(Math.PI / 2, thetaRef.current - dy * 0.003)
+        );
+        pointerInteracting.current = { x: e.clientX, y: e.clientY };
+        focusRef.current = null;
       }
     };
 
