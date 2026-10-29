@@ -1,10 +1,31 @@
 import { ImageResponse } from "next/og";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export const alt = "BAYADA Academy - 헬스케어 교육 플랫폼";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+// 어드민 사이트 설정의 OG 이미지 URL 을 요청 때마다 반영 (빌드 시점 값으로 굳지 않게)
+export const dynamic = "force-dynamic";
+
+/** 어드민에서 OG 이미지 URL 을 지정했으면 그 이미지를 그대로 내려준다. 못 가져오면 기본 생성 이미지 */
+async function configuredImage(): Promise<Response | null> {
+  const url = (await getSiteSettings()).seo.ogImageUrl;
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const type = res.headers.get("content-type") ?? "";
+    if (!res.ok || !type.startsWith("image/")) return null;
+    return new Response(await res.arrayBuffer(), {
+      headers: { "content-type": type, "cache-control": "public, max-age=600" },
+    });
+  } catch {
+    return null;
+  }
+}
 
 export default async function Image() {
+  const custom = await configuredImage();
+  if (custom) return custom;
   return new ImageResponse(
     (
       <div

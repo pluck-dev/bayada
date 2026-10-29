@@ -11,7 +11,8 @@ import {
   EXPIRY_SOON_DAYS,
 } from "@/lib/queries/business";
 import { JOB_ROLE_LABEL, formatDate } from "@/lib/labels";
-import { INQUIRY_MAILTO } from "@/lib/site";
+import { getSiteSettings } from "@/lib/site-settings";
+import { inquiryHref } from "@bayada/shared/site-settings";
 import { BusinessActions } from "@/components/business/BusinessActions";
 import { PendingInvites } from "@/components/business/PendingInvites";
 
@@ -34,6 +35,7 @@ export default async function BusinessDashboardPage({ params }: { params: Promis
   if (!viewer) redirect(`/${locale}/auth/login?callbackUrl=${encodeURIComponent(`/${locale}/business`)}`);
 
   if (!canManageOrg(viewer)) {
+    const inquiry = inquiryHref((await getSiteSettings()).inquiry);
     return (
       <div className="container-page py-24">
         <div className="mx-auto flex max-w-md flex-col items-center text-center">
@@ -56,7 +58,7 @@ export default async function BusinessDashboardPage({ params }: { params: Promis
             </Link>
             {!viewer.organizationId && (
               <a
-                href={INQUIRY_MAILTO}
+                href={inquiry}
                 className="rounded-full border border-line px-6 py-3 text-sm font-semibold text-ink hover:border-ink"
               >
                 기관 도입 문의

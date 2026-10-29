@@ -18,11 +18,14 @@ interface Props {
   user: { name: string; email: string; canManageOrg: boolean } | null;
   /** 판매 중인 아카데미 패스 요금제가 있을 때만 메뉴 노출 */
   hasPass?: boolean;
+  /** 홈 업셀(#org)·FAQ(#faq) 섹션이 사이트 설정에서 보일 때만 바로가기 링크를 보인다 */
+  showOrg?: boolean;
+  showFaq?: boolean;
   categories: TaxItem[];
   providers: TaxItem[];
 }
 
-export function HeaderNav({ locale, user, categories, providers, hasPass = false }: Props) {
+export function HeaderNav({ locale, user, categories, providers, hasPass = false, showOrg = true, showFaq = true }: Props) {
   const pathname = usePathname();
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -101,13 +104,17 @@ export function HeaderNav({ locale, user, categories, providers, hasPass = false
             <Link href={base} className="rounded-md px-2 py-1 font-semibold text-ink">
               개인
             </Link>
-            <Link href={`${base}#org`} className="rounded-md px-2 py-1 text-muted hover:text-ink">
-              기관·센터
-            </Link>
+            {showOrg && (
+              <Link href={`${base}#org`} className="rounded-md px-2 py-1 text-muted hover:text-ink">
+                기관·센터
+              </Link>
+            )}
           </nav>
-          <Link href={`${base}#faq`} className="text-muted hover:text-ink">
-            자주 묻는 질문
-          </Link>
+          {showFaq && (
+            <Link href={`${base}#faq`} className="text-muted hover:text-ink">
+              자주 묻는 질문
+            </Link>
+          )}
         </div>
       </div>
 
@@ -335,9 +342,11 @@ export function HeaderNav({ locale, user, categories, providers, hasPass = false
                   아카데미 패스
                 </Link>
               )}
-              <Link href={`${base}#org`} className="py-2 text-base font-semibold text-ink">
-                기관·센터
-              </Link>
+              {showOrg && (
+                <Link href={`${base}#org`} className="py-2 text-base font-semibold text-ink">
+                  기관·센터
+                </Link>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-5 border-t border-line-soft pt-5">
               {columns.slice(0, 2).map((col) => (

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { prisma } from "@bayada/db";
 import { JOB_ROLES, JOB_ROLE_LABEL, PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
-import { INQUIRY_EMAIL, INQUIRY_MAILTO } from "@/lib/site";
+import { inquiryHref } from "@bayada/shared/site-settings";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export async function SiteFooter({ locale }: { locale: string }) {
   const base = `/${locale}`;
   const catalog = `${base}/courses`;
-  const [categories, refundPage] = await Promise.all([
+  const [categories, refundPage, settings] = await Promise.all([
     prisma.category.findMany({
       orderBy: { order: "asc" },
       select: { name: true, slug: true },
@@ -14,7 +15,11 @@ export async function SiteFooter({ locale }: { locale: string }) {
     }),
     // 환불 규정은 어드민 문서 관리에서 만들었을 때만 링크
     prisma.page.findUnique({ where: { slug: "refund" }, select: { id: true } }),
+    getSiteSettings(),
   ]);
+  const { footer, faq } = settings;
+  const sections = settings["home.sections"];
+  const faqVisible = !sections.hidden.includes("faq") && faq.items.length > 0;
 
   const columns: { title: string; links: { label: string; href: string }[] }[] = [
     {
@@ -36,8 +41,8 @@ export async function SiteFooter({ locale }: { locale: string }) {
     {
       title: "고객센터",
       links: [
-        { label: "자주 묻는 질문", href: `${base}#faq` },
-        { label: "기관 도입 문의", href: INQUIRY_MAILTO },
+        ...(faqVisible ? [{ label: faq.title || "자주 묻는 질문", href: `${base}#faq` }] : []),
+        { label: "기관 도입 문의", href: inquiryHref(settings.inquiry) },
         { label: "수료증 검증", href: `${base}/verify` },
       ],
     },
@@ -51,9 +56,23 @@ export async function SiteFooter({ locale }: { locale: string }) {
             <span className="text-lg font-extrabold tracking-tight text-brand">BAYADA</span>
             <span className="text-sm font-semibold text-ink">Academy</span>
           </Link>
-          <p className="mt-3 max-w-[240px] text-sm leading-relaxed text-muted">
-            돌봄 현장의 전문성을 키우는 바야다홈헬스케어의 온라인 아카데미
-          </p>
+          {footer.tagline && <p className="mt-3 max-w-[240px] text-sm leading-relaxed text-muted">{footer.tagline}</p>}
+          {footer.sns.length > 0 && (
+            <ul className="mt-5 flex flex-wrap gap-2" aria-label="SNS">
+              {footer.sns.map((l) => (
+                <li key={l.url}>
+                  <a
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-8 items-center rounded-full border border-line bg-white px-3 text-xs font-semibold text-ink-soft transition-colors hover:border-ink hover:text-ink"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         {columns.map((col) => (
           <div key={col.title}>
@@ -90,12 +109,37 @@ export async function SiteFooter({ locale }: { locale: string }) {
                 </>
               )}
             </nav>
-            <p>© {new Date().getFullYear()} BAYADA Home Health Care Korea. All rights reserved.</p>
+            <p>
+              © {new Date().getFullYear()} {footer.copyright}
+            </p>
           </div>
-          <p>
-            운영 문의 <a href={`mailto:${INQUIRY_EMAIL}`} className="hover:text-ink">{INQUIRY_EMAIL}</a>
-          </p>
+          {(footer.contactEmail || footer.contactPhone) && (
+            <p className="flex flex-wrap gap-x-1">
+              <span>운영 문의</span>
+              {footer.contactEmail && (
+                <a href={`mailto:${footer.contactEmail}`} className="hover:text-ink">
+                  {footer.contactEmail}
+                </a>
+              )}
+              {footer.contactPhone && (
+                <a href={`tel:${footer.contactPhone.replace(/[^0-9+]/g, "")}`} className="tabular-nums hover:text-ink">
+                  {footer.contactPhone}
+                </a>
+              )}
+            </p>
+          )}
         </div>
+        {(footer.companyInfo || footer.businessLine) && (
+          <div className="container-page space-y-1 pb-6 text-xs leading-relaxed text-subtle">
+            {footer.companyInfo
+              .split(/\r?\n/)
+              .filter((l) => l.trim())
+              .map((l, i) => (
+                <p key={i}>{l}</p>
+              ))}
+            {footer.businessLine && <p>{footer.businessLine}</p>}
+          </div>
+        )}
       </div>
     </footer>
   );
