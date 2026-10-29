@@ -1,8 +1,10 @@
 import NextAuth from "next-auth";
 import { createAuthConfig } from "@bayada/shared/auth";
 import { prisma } from "@bayada/db";
+import { isAdminRole } from "./rbac";
 
-// 관리자 전용 인증 설정
+// 어드민 콘솔 인증 — Super Admin·콘텐츠 운영자·임상 리뷰어만 로그인한다.
+// 페이지/액션별 권한은 lib/session.ts 의 requirePage·runAction 이 매 요청 DB 기준으로 다시 검사한다.
 const authConfig = createAuthConfig({
   findUserByEmail: async (email: string) => {
     const user = await prisma.user.findUnique({
@@ -25,17 +27,12 @@ const authConfig = createAuthConfig({
   },
 });
 
-// ADMIN 역할만 허용하도록 콜백 확장
 const adminAuthConfig = {
   ...authConfig,
   callbacks: {
     ...authConfig.callbacks,
     async signIn({ user }: { user: { role?: string } }) {
-      // ADMIN 역할만 로그인 허용
-      if (user.role !== "ADMIN") {
-        return false;
-      }
-      return true;
+      return isAdminRole(user.role);
     },
   },
 };

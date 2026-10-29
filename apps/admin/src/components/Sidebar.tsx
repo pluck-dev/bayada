@@ -1,121 +1,162 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
+  ClipboardCheck,
+  GalleryHorizontalEnd,
+  Tags,
   Users,
+  BadgeCheck,
+  Handshake,
+  ScrollText,
   Building2,
   ShoppingCart,
   FileText,
-  ChevronLeft,
-  ChevronRight,
+  LogOut,
+  type LucideIcon,
 } from "lucide-react";
-import { i18nConfig, type Locale } from "@bayada/shared";
-import { useDictionary } from "./DictionaryProvider";
+import { signOut } from "next-auth/react";
+import { can, type AdminRole, type Permission } from "@/lib/rbac";
+import { ROLE_LABEL } from "@/lib/labels";
+import { cx } from "./ui";
 
-export function Sidebar() {
+interface NavItem {
+  path: string;
+  label: string;
+  icon: LucideIcon;
+  permission?: Permission;
+  /** 2차 이후 기능 — 라우트 없이 비활성 표시 */
+  phase?: string;
+  badgeKey?: "queue" | "signups";
+}
+
+const PRIMARY: NavItem[] = [
+  { path: "", label: "대시보드", icon: LayoutDashboard, permission: "dashboard" },
+  { path: "/programs", label: "프로그램", icon: BookOpen, permission: "program.read" },
+  { path: "/approvals", label: "승인 대기", icon: ClipboardCheck, permission: "approval.queue", badgeKey: "queue" },
+  { path: "/curation", label: "배너·메인 큐레이션", icon: GalleryHorizontalEnd, permission: "curation" },
+  { path: "/taxonomy", label: "택소노미", icon: Tags, permission: "taxonomy" },
+  { path: "/members", label: "회원·수강", icon: Users, permission: "member.read", badgeKey: "signups" },
+  { path: "", label: "인증 심사", icon: BadgeCheck, phase: "2차" },
+  { path: "", label: "파트너", icon: Handshake, phase: "2차" },
+  { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit" },
+];
+
+const COMMERCE: NavItem[] = [
+  { path: "/organizations", label: "기관", icon: Building2, permission: "commerce" },
+  { path: "/orders", label: "주문", icon: ShoppingCart, permission: "commerce" },
+  { path: "/invoices", label: "청구서", icon: FileText, permission: "commerce" },
+];
+
+export function Sidebar({
+  locale,
+  role,
+  userName,
+  userEmail,
+  counts,
+}: {
+  locale: string;
+  role: AdminRole;
+  userName: string;
+  userEmail: string;
+  counts: { queue: number; signups: number };
+}) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-  const dict = useDictionary();
+  const base = `/${locale}`;
 
-  // 현재 locale 추출
-  const currentLocale =
-    (i18nConfig.locales.find(
-      (locale) =>
-        pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-    ) as Locale) ?? i18nConfig.defaultLocale;
+  const isActive = (path: string) => {
+    const href = base + path;
+    return path === "" ? pathname === base : pathname === href || pathname.startsWith(href + "/");
+  };
 
-  const navItems = [
-    { href: `/${currentLocale}`, label: dict.admin.dashboard, icon: LayoutDashboard },
-    { href: `/${currentLocale}/courses`, label: dict.admin.courseManagement, icon: BookOpen },
-    { href: `/${currentLocale}/users`, label: dict.admin.userManagement, icon: Users },
-    { href: `/${currentLocale}/organizations`, label: dict.admin.orgManagement, icon: Building2 },
-    { href: `/${currentLocale}/orders`, label: dict.admin.orderManagement, icon: ShoppingCart },
-    { href: `/${currentLocale}/invoices`, label: dict.admin.invoiceManagement, icon: FileText },
-  ];
+  const visible = (items: NavItem[]) => items.filter((i) => i.phase || (i.permission && can(role, i.permission)));
+  const primary = visible(PRIMARY);
+  const commerce = visible(COMMERCE);
 
-  const isActive = (href: string) => {
-    if (href === `/${currentLocale}`) return pathname === `/${currentLocale}`;
-    return pathname.startsWith(href);
+  const renderItem = (item: NavItem) => {
+    const Icon = item.icon;
+    if (item.phase) {
+      return (
+        <li key={item.label}>
+          <span
+            aria-disabled="true"
+            title={`${item.phase} 오픈 예정`}
+            className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-[13px] text-zinc-600"
+          >
+            <Icon className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="flex-1">{item.label}</span>
+            <span className="rounded-full bg-amber-500/90 px-1.5 py-px text-[10px] font-semibold text-white">{item.phase}</span>
+          </span>
+        </li>
+      );
+    }
+    const active = isActive(item.path);
+    const count = item.badgeKey ? counts[item.badgeKey] : 0;
+    return (
+      <li key={item.path || "home"}>
+        <Link
+          href={base + item.path}
+          aria-current={active ? "page" : undefined}
+          className={cx(
+            "relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
+            active ? "bg-side-hover font-medium text-white" : "text-side-fg hover:bg-side-hover/60 hover:text-zinc-100",
+          )}
+        >
+          {active && <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r bg-brand" aria-hidden />}
+          <Icon className="h-4 w-4 shrink-0" aria-hidden />
+          <span className="flex-1">{item.label}</span>
+          {count > 0 && (
+            <span className="tabular rounded-full bg-zinc-700 px-1.5 text-[11px] font-medium text-zinc-100">{count}</span>
+          )}
+        </Link>
+      </li>
+    );
   };
 
   return (
-    <aside
-      className={`flex h-screen flex-col border-r border-[color:var(--border)] bg-white transition-all duration-300 ${
-        collapsed ? "w-[72px]" : "w-[260px]"
-      }`}
-    >
-      {/* 로고 */}
-      <div className="flex h-16 items-center border-b border-[color:var(--border)] px-4">
-        {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ce0e2d]">
-              <span className="text-sm font-bold text-white">B</span>
-            </div>
-            <div>
-              <span className="text-base font-bold text-[color:var(--fg)]">
-                BAYADA
-              </span>
-              <span className="ml-1.5 text-xs font-medium text-[color:var(--muted)]">
-                Admin
-              </span>
-            </div>
-          </div>
-        )}
-        {collapsed && (
-          <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-[#ce0e2d]">
-            <span className="text-sm font-bold text-white">B</span>
-          </div>
-        )}
+    <aside className="flex h-screen w-[232px] shrink-0 flex-col bg-side text-side-fg">
+      <div className="flex h-14 items-center gap-2.5 px-4">
+        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-[13px] font-bold text-white">B</span>
+        <div className="leading-tight">
+          <p className="text-[13px] font-semibold text-white">Bayada Academy</p>
+          <p className="text-[11px] text-zinc-500">Admin Console</p>
+        </div>
       </div>
 
-      {/* 내비게이션 */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <ul className="flex flex-col gap-1">
-          {navItems.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    active
-                      ? "bg-[#fae6ea] text-[#ce0e2d]"
-                      : "text-[color:var(--muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--fg)]"
-                  }`}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <item.icon
-                    className={`h-5 w-5 shrink-0 ${
-                      active ? "text-[#ce0e2d]" : ""
-                    }`}
-                  />
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="주 메뉴">
+        <ul className="flex flex-col gap-0.5">{primary.map(renderItem)}</ul>
+        {commerce.length > 0 && (
+          <>
+            <p className="mb-1 mt-5 px-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-600">B2B · 결제</p>
+            <ul className="flex flex-col gap-0.5">{commerce.map(renderItem)}</ul>
+          </>
+        )}
       </nav>
 
-      {/* 접기/펼치기 버튼 */}
-      <div className="border-t border-[color:var(--border)] p-3">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex w-full items-center justify-center rounded-lg px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--fg)]"
-        >
-          {collapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <>
-              <ChevronLeft className="h-5 w-5" />
-              <span className="ml-2">{dict.common.back}</span>
-            </>
-          )}
-        </button>
+      <div className="border-t border-[color:var(--side-border)] p-3">
+        <div className="flex items-center gap-2.5 rounded-md px-1.5 py-1">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-[12px] font-semibold text-zinc-100">
+            {userName.slice(0, 1)}
+          </span>
+          <div className="min-w-0 flex-1 leading-tight">
+            <p className="truncate text-[12.5px] font-medium text-zinc-100">{userName}</p>
+            <p className="truncate text-[11px] text-zinc-500" title={userEmail}>
+              {ROLE_LABEL[role]}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: `/${locale}/auth/login` })}
+            className="rounded-md p-1.5 text-zinc-500 hover:bg-side-hover hover:text-zinc-100"
+            aria-label="로그아웃"
+            title="로그아웃"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </aside>
   );

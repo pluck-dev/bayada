@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Card, CardHeader, CardTitle, CardContent } from "@bayada/ui";
+import { useParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { buttonClass, inputClass, Field, cx } from "@/components/ui";
 
 export default function AdminLoginPage() {
+  const { locale } = useParams<{ locale: string }>();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -11,101 +14,80 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
+    const form = new FormData(e.currentTarget);
     try {
-      const { signIn } = await import("next-auth/react");
       const result = await signIn("credentials", {
-        email,
-        password,
+        email: String(form.get("email") ?? ""),
+        password: String(form.get("password") ?? ""),
         redirect: false,
       });
-
       if (result?.error) {
-        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+        // signIn 콜백 거부(AccessDenied) = 어드민 역할 아님
+        setError(
+          result.error === "AccessDenied"
+            ? "어드민 콘솔 접근 권한이 없는 계정입니다."
+            : "이메일 또는 비밀번호가 올바르지 않거나 승인되지 않은 계정입니다.",
+        );
+        setLoading(false);
       } else {
-        window.location.href = "/";
+        window.location.href = `/${locale ?? "ko"}`;
       }
     } catch {
       setError("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
-    } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[color:var(--surface)] p-4">
-      <div className="w-full max-w-md">
-        {/* 로고 */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ce0e2d]">
-            <span className="text-xl font-bold text-white">B</span>
-          </div>
-          <h1 className="text-2xl font-bold text-[color:var(--fg)]">
-            BAYADA Admin
-          </h1>
-          <p className="mt-1 text-sm text-[color:var(--muted)]">
-            관리자 계정으로 로그인해 주세요.
+    <div className="flex min-h-screen bg-white">
+      <div className="hidden w-[420px] shrink-0 flex-col justify-between bg-side p-10 text-zinc-400 lg:flex">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand text-sm font-bold text-white">B</span>
+          <span className="text-[14px] font-semibold text-white">Bayada Academy</span>
+        </div>
+        <div>
+          <p className="text-[22px] font-semibold leading-snug tracking-[-0.02em] text-white">
+            프로그램 등록부터 승인·게시까지,
+            <br />
+            아카데미 운영 콘솔
+          </p>
+          <p className="mt-3 text-[13px] leading-relaxed">
+            Super Admin · 콘텐츠 운영자 · 임상 리뷰어 계정으로 로그인합니다.
           </p>
         </div>
+        <p className="text-[12px] text-zinc-600">&copy; BAYADA Home Health Care</p>
+      </div>
 
-        {/* 로그인 폼 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>로그인</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="rounded-lg bg-[color:var(--error-bg)] px-4 py-3 text-sm text-[color:var(--error)]">
-                  {error}
-                </div>
-              )}
+      <div className="flex flex-1 items-center justify-center p-6">
+        <form onSubmit={handleSubmit} className="w-full max-w-[340px]" noValidate={false}>
+          <h1 className="text-[20px] font-semibold tracking-[-0.02em]">로그인</h1>
+          <p className="mt-1 text-[13px] text-muted">어드민 계정 이메일과 비밀번호를 입력하세요.</p>
 
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                label="이메일"
-                placeholder="admin@bayada.co.kr"
-                required
-                autoComplete="email"
-              />
+          {error && (
+            <div role="alert" className="mt-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[12.5px] text-red-800">
+              {error}
+            </div>
+          )}
 
-              <Input
+          <div className="mt-5 flex flex-col gap-4">
+            <Field label="이메일" htmlFor="email">
+              <input id="email" name="email" type="email" required autoComplete="email" className={cx(inputClass, "h-9!")} />
+            </Field>
+            <Field label="비밀번호" htmlFor="password">
+              <input
                 id="password"
                 name="password"
                 type="password"
-                label="비밀번호"
-                placeholder="비밀번호를 입력하세요"
                 required
                 autoComplete="current-password"
+                className={cx(inputClass, "h-9!")}
               />
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "로그인 중..." : "로그인"}
-              </Button>
-            </form>
-
-            <div className="mt-4 text-center">
-              <p className="text-xs text-[color:var(--muted)]">
-                관리자 권한이 있는 계정만 접근할 수 있습니다.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 푸터 */}
-        <p className="mt-6 text-center text-xs text-[color:var(--muted)]">
-          &copy; 2025 BAYADA. All rights reserved.
-        </p>
+            </Field>
+            <button type="submit" disabled={loading} className={cx(buttonClass("primary"), "h-9 w-full")}>
+              {loading ? "로그인 중…" : "로그인"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
