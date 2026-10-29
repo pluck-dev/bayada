@@ -176,3 +176,31 @@
 - 로케일은 ko/en/ja/zh (피그마 3차는 ko/en/ja/de — de 없음, /de 는 /ko/de 로 리다이렉트돼 404). 비ko 로케일은 크래시 없이 전부 한국어로 렌더.
 - 미들웨어가 Accept-Language 로 리다이렉트 → 영어 브라우저는 / → /en 으로 가서 한국어 화면을 본다. `<html lang="ko">` 고정, 메타 제목도 한국어, sitemap 은 같은 한국어 페이지를 4개 로케일로 낸다(중복 콘텐츠).
 - 사전(dictionaries)을 쓰는 화면은 cart·orders·register 3곳뿐, 나머지 학습자 UI 문자열은 하드코딩 한국어.
+
+# 결제(토스페이먼츠)·아카데미 패스: 결제위젯 결제창형, 테스트 키, 멱등 승인, 패스 수강 표시(AuditLog), 환불·회수
+
+## WHY: 토스 "결제위젯 결제창형"(widgets + renderPaymentWindow)을 쓴다
+- 공식 샘플의 API 개별 연동 테스트 키(test_ck_D5Ge…/test_sk_zXLk…)는 2026-10 기준 `UNAUTHORIZED_KEY`. 문서용 결제위젯 키 `test_gck_docs_…`/`test_gsk_docs_…` 만 살아 있어 위젯 결제창형으로 연동했다. 승인·취소 API(v1)는 같다.
+- 키는 `packages/services/src/order/toss.ts` 에서 읽는다: TOSS_CLIENT_KEY(또는 NEXT_PUBLIC_…)·TOSS_SECRET_KEY. 개발에서는 env 가 없으면 문서 테스트 키로 대체하고, production 에서는 없으면 결제·환불을 막는다. 클라이언트 키도 서버에서 런타임에 읽어 props 로 넘긴다(Docker 빌드 시점에 NEXT_PUBLIC 이 비어도 됨).
+- 운영 전환: 개발자센터 결제위젯 연동 키 live_gck_/live_gsk_ + 위젯 variantKey(DEFAULT/AGREEMENT) 확인.
+
+## 결제 흐름·멱등
+- /checkout 에서 "결제하기" → POST /api/v1/checkout 이 서버 가격으로 PENDING 주문 생성(같은 상품의 이전 PENDING 은 CANCELLED) → orderNo 가 토스 orderId.
+- successUrl 서버 페이지가 금액 검증 → 승인 API(Idempotency-Key `confirm-<orderNo>`) → 트랜잭션에서 `updateMany(status PENDING→CONFIRMED)` 가 성공한 쪽만 지급. 동시 2회 승인도 1회만 지급(확인함). 승인 뒤 주문이 이미 취소돼 있으면 결제를 자동 취소.
+- 지급 내역은 AuditLog `order.paid` detail(enrollmentsCreated/Converted, subscriptionId, receiptUrl)에 남기고, 전액 환불 때 이걸 읽어 **그 주문이 만든 Enrollment 만** 지운다(Enrollment 에 주문 연결 컬럼이 없어서).
+- 갱신: 같은 요금제가 남아 있으면 새 Subscription 의 endsAt = 기존 endsAt + 기간(startsAt 은 결제 시각).
+
+## 패스 수강 = AuditLog 로 표시 (스키마에 Enrollment.source 없음)
+- "패스로 수강" 하면 Enrollment 생성 + AuditLog `enrollment.pass`(target `Enrollment:<id>`). 패스 수강 중 구매하면 `enrollment.purchase`. 가장 최근 기록이 pass 면 패스 수강.
+- 패스 수강은 유효한 구독(canceledAt null, startsAt≤now<endsAt)의 plan.includes 에 강의 productType 이 있어야만 유효 — `PaymentService.enrollmentActive`. resolveCourseAccess(상세·강의실)·getLectureEnrollment(진도·퀴즈 API)·enrollments API 가 모두 이걸 쓴다. 만료·환불되면 잠기고 진도는 남는다(`passLapsed`).
+- 무료 강의(price 0)는 출처와 무관하게 유효. 노출 규칙(INTERNAL)은 그대로.
+
+## 환불
+- 학습자 요청 = AuditLog `order.refund_request`(반려 `order.refund_reject`). 상태는 주문별 마지막 기록으로 판정.
+- 어드민 환불 = 토스 cancel(cancelAmount, Idempotency-Key `cancel-<id>-<누적>-<금액>`) → refundAmount 누적. 누적이 총액이면 REFUNDED + 수강권 회수(Enrollment 삭제·Subscription.canceledAt), 아니면 CONFIRMED 유지(부분 환불).
+- 환불 규정 Page(slug refund)는 어드민 문서 관리로 만들었다(평생교육법 시행령 별표3 원격교육 기준 문구 — 고객사 법무 검토 필요). 아카데미 /refund·푸터·결제 동의 링크는 문서가 있을 때만 보인다.
+
+## 함정
+- 토스 샌드박스 카드사 창(KB Pay 등)·토스페이는 실제 본인 인증(휴대폰·주민번호)을 요구해 자동화로 승인까지 못 간다. 검증은 결제창 열기까지 실브라우저 + 승인/취소 API 실호출(가짜 paymentKey → NOT_FOUND 응답으로 인증·형식 확인) + 토스 응답만 스텁한 하네스로 지급·환불 로직을 실 DB 에서 돌렸다.
+- 체크아웃 동의 체크박스는 하이드레이션 전에 체크하면 풀린다 — Playwright 는 체크 상태를 확인하고 재시도할 것.
+- 결제 대기 주문은 결제창에서 이탈하면 남는다 → 다음 체크아웃이나 failUrl(orderId 있을 때)에서 CANCELLED 로 정리. 구매자가 창을 닫으면(PAY_PROCESS_CANCELED) orderId 가 안 온다.
