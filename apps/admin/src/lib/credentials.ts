@@ -8,7 +8,7 @@ export const CREDENTIAL_APP_STATUSES: CredentialAppStatus[] = ["SUBMITTED", "EVA
 export const CREDENTIAL_APP_STATUS_LABEL: Record<CredentialAppStatus, string> = {
   SUBMITTED: "평가 대기",
   EVALUATING: "평가 중",
-  EVALUATED: "승인 대기",
+  EVALUATED: "평가 완료",
   APPROVED: "발급 완료",
   REJECTED: "반려",
 };
@@ -50,9 +50,9 @@ export function validityLabel(months: number | null): string {
   return `${months}개월`;
 }
 
-/** 남은 일수 (하루 미만 남았으면 0, 이미 지났으면 음수) */
+/** 남은 일수 — 올림 (아카데미 학습자 화면의 "만료 N일 전"과 같은 값이 나오게) */
 export function daysUntil(d: Date, now = new Date()): number {
-  return Math.floor((d.getTime() - now.getTime()) / 86400_000);
+  return Math.ceil((d.getTime() - now.getTime()) / 86400_000);
 }
 
 /** 새 인증 과정 폼 기본값 — 스키마 기본값과 맞춘다 ("use client" 파일에 두면 서버에서 클라이언트 참조가 되어 못 쓴다) */

@@ -128,18 +128,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
           </Card>
         </div>
 
-        <div className="flex flex-col gap-4 lg:sticky lg:top-0">
-          <Card title="평가 기준">
-            <dl className="grid grid-cols-[84px_1fr] gap-x-3 gap-y-2 text-[13px]">
-              <dt className="text-muted">시험</dt>
-              <dd className="tabular">{p.examPassingScore}점 이상</dd>
-              <dt className="text-muted">실기</dt>
-              <dd className="tabular">{p.practicalRequired ? `${p.practicalPassingScore}점 이상` : "없음"}</dd>
-              <dt className="text-muted">유효기간</dt>
-              <dd>{validityLabel(p.validityMonths)}</dd>
-            </dl>
-            {p.criteria && <p className="mt-3 whitespace-pre-wrap border-t border-line pt-3 text-[12.5px] leading-relaxed text-zinc-600">{p.criteria}</p>}
-          </Card>
+        <div className="flex flex-col gap-4">
           <EvaluationPanel
             key={`${app.status}-${app.updatedAt.getTime()}`}
             id={app.id}
@@ -165,6 +154,17 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             issuedNumber={issued?.number ?? null}
             validity={validityLabel(p.validityMonths)}
           />
+          <Card title="평가 기준">
+            <dl className="grid grid-cols-[84px_1fr] gap-x-3 gap-y-2 text-[13px]">
+              <dt className="text-muted">시험</dt>
+              <dd className="tabular">{p.examPassingScore}점 이상</dd>
+              <dt className="text-muted">실기</dt>
+              <dd className="tabular">{p.practicalRequired ? `${p.practicalPassingScore}점 이상` : "없음"}</dd>
+              <dt className="text-muted">유효기간</dt>
+              <dd>{validityLabel(p.validityMonths)}</dd>
+            </dl>
+            {p.criteria && <p className="mt-3 whitespace-pre-wrap border-t border-line pt-3 text-[12.5px] leading-relaxed text-zinc-600">{p.criteria}</p>}
+          </Card>
         </div>
       </div>
     </>

@@ -11,6 +11,8 @@ export function CredentialTabs({ items }: { items: { href: string; label: string
   const active = items
     .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))
     .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+  // 심사위원처럼 탭이 하나뿐이면 메뉴를 그리지 않는다
+  if (items.length < 2) return null;
   return (
     <nav aria-label="바야다 인증 메뉴" className="mb-5 flex gap-5 border-b border-line">
       {items.map((i) => (
