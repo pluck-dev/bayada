@@ -1,529 +1,353 @@
-"use client";
-
-import { CourseCard, type CourseCardProps } from "@/components/CourseCard";
-import { HeroBanner } from "@/components/HeroBanner";
-import { useDictionary } from "@/components/DictionaryProvider";
-import { Button, Skeleton } from "@bayada/ui";
+import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
-  CheckCircle2,
+  Brain,
+  Building2,
   GraduationCap,
-  Heart,
-  Monitor,
-  Quote,
-  Shield,
+  HeartHandshake,
+  Lock,
+  ShieldCheck,
+  Sparkles,
   Stethoscope,
-  TrendingUp,
-  Users,
 } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { getViewer } from "@/lib/viewer";
+import { getHomeData, getTaxonomy, type CourseCardData } from "@/lib/queries/courses";
+import { JOB_ROLES, JOB_ROLE_LABEL } from "@/lib/labels";
+import { INQUIRY_MAILTO } from "@/lib/site";
+import { CourseCard } from "@/components/course/CourseCard";
+import { CourseThumb } from "@/components/course/CourseThumb";
+import { BannerCarousel } from "@/components/home/BannerCarousel";
+import { Tabs } from "@/components/ui/Tabs";
+import { Faq } from "@/components/ui/Faq";
+import { EmptyState } from "@/components/ui/EmptyState";
 
-interface ApiCourse {
-  slug: string;
-  title: string;
-  description: string | null;
-  thumbnail: string | null;
-  price: number;
-  category: { name: string } | null;
-  sections: Array<{ lectures: Array<{ duration: number | null }> }>;
-  _count: { enrollments: number };
-  createdAt: string;
+const FAQ = [
+  {
+    q: "수강은 어떻게 하나요?",
+    a: "회원 가입 후 원하는 프로그램 상세 페이지에서 ‘수강신청’을 누르면 바로 학습을 시작할 수 있어요. 수강 중인 프로그램은 마이 러닝에서 이어서 볼 수 있습니다.",
+  },
+  {
+    q: "수료증은 어떻게 받나요?",
+    a: "프로그램의 모든 영상·읽기 강의를 마치고 퀴즈를 통과하면 수료증이 자동으로 발급돼요. 마이 러닝 > 인증서에서 출력(PDF 저장)하거나 검증 링크를 공유할 수 있습니다.",
+  },
+  {
+    q: "기관(센터) 단위로 수강할 수 있나요?",
+    a: "네. 센터 직원 단체 수강을 원하시면 ‘기관 도입 문의’로 연락 주세요. 담당자가 도입 절차를 안내해 드립니다.",
+  },
+  {
+    q: "사내 전용 프로그램은 누가 볼 수 있나요?",
+    a: "바야다홈헬스케어 임직원 계정으로 로그인하면 사내 의무교육 등 사내 전용 프로그램을 함께 볼 수 있어요.",
+  },
+  {
+    q: "수료증이 진짜인지 확인할 수 있나요?",
+    a: "모든 수료증에는 고유 번호가 있어요. 수료증의 검증 링크나 ‘수료증 검증’ 페이지에서 번호를 입력하면 발급 사실을 누구나 확인할 수 있습니다.",
+  },
+];
+
+function categoryIcon(name: string) {
+  const cls = "h-6 w-6";
+  if (name.includes("간호")) return <Stethoscope className={cls} aria-hidden />;
+  if (name.includes("요양")) return <HeartHandshake className={cls} aria-hidden />;
+  if (name.includes("PSP") || name.includes("안전")) return <ShieldCheck className={cls} aria-hidden />;
+  if (name.includes("치매")) return <Brain className={cls} aria-hidden />;
+  if (name.includes("공통")) return <BookOpen className={cls} aria-hidden />;
+  if (name.includes("체험")) return <Sparkles className={cls} aria-hidden />;
+  return <GraduationCap className={cls} aria-hidden />;
 }
 
-interface CategoryItem {
-  id: string;
-  name: string;
-  slug: string;
-  _count: { courses: number };
-}
-
-function mapCourses(items: ApiCourse[]): CourseCardProps[] {
-  return items.map((course) => {
-    const totalDuration = (course.sections ?? []).reduce(
-      (sum, s) =>
-        sum + s.lectures.reduce((ls, l) => ls + (l.duration ?? 0), 0),
-      0
-    );
-    return {
-      slug: course.slug,
-      title: course.title,
-      description: course.description ?? "",
-      thumbnail: course.thumbnail,
-      price: course.price,
-      category: course.category?.name ?? "",
-      totalDuration,
-      studentCount: course._count?.enrollments ?? 0,
-    };
-  });
-}
-
-/* ----- 카테고리 아이콘 매핑 ----- */
-const categoryIcons: Record<string, React.ReactNode> = {
-  "간호교육": <Stethoscope className="h-5 w-5" />,
-  "질환교육": <Heart className="h-5 w-5" />,
-  "안전교육": <Shield className="h-5 w-5" />,
-  "PSP": <TrendingUp className="h-5 w-5" />,
-  "법정필수교육": <BookOpen className="h-5 w-5" />,
-};
-const defaultCategoryIcon = <GraduationCap className="h-5 w-5" />;
-
-/* ----- SectionHeader (Coursera 스타일) ----- */
-const SectionHeader = ({
-  title,
-  subtitle,
-  href,
-  linkText = "전체 보기",
-}: {
-  title: string;
-  subtitle?: string;
-  href?: string;
-  linkText?: string;
-}) => (
-  <div className="mb-10 flex items-end justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-    <div>
-      <h2 className="typo-h2 text-[var(--text-primary)]">{title}</h2>
-      {subtitle && (
-        <p className="mt-3 text-base text-[var(--text-secondary)] leading-relaxed">
-          {subtitle}
-        </p>
+function SectionTitle({ title, desc, href }: { title: string; desc?: string; href?: string }) {
+  return (
+    <div className="mb-8 flex items-end justify-between gap-4">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight text-ink md:text-[30px]">{title}</h2>
+        {desc && <p className="mt-2 text-[15px] text-muted">{desc}</p>}
+      </div>
+      {href && (
+        <Link href={href} className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink-soft hover:text-ink sm:flex">
+          전체 보기 <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
       )}
     </div>
-    {href && (
-      <Link
-        href={href}
-        className="group hidden items-center gap-2 rounded-full bg-gray-100 px-5 py-2 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-900 hover:text-white sm:flex"
-      >
-        {linkText}
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </Link>
-    )}
-  </div>
-);
-
-/* ----- 스크롤 감지 애니메이션 Hook ----- */
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return { ref, inView };
+  );
 }
 
-const CardSkeleton = () => (
-  <div className="w-[300px] flex-none sm:w-[340px]">
-    <div className="rounded-[24px] bg-white overflow-hidden">
-      <div className="aspect-[16/9] bg-gray-100 animate-shimmer" />
-      <div className="p-5 space-y-3">
-        <div className="h-4 w-3/4 rounded bg-gray-100 animate-shimmer" />
-        <div className="h-3 w-full rounded bg-gray-100 animate-shimmer" />
-        <div className="h-3 w-1/2 rounded bg-gray-100 animate-shimmer" />
-      </div>
+function CourseRow({ items, locale }: { items: CourseCardData[]; locale: string }) {
+  return (
+    <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-5">
+      {items.map((c) => (
+        <div key={c.id} className="w-[78%] shrink-0 snap-start sm:w-[46%] md:w-auto">
+          <CourseCard course={c} locale={locale} />
+        </div>
+      ))}
     </div>
-  </div>
-);
+  );
+}
 
-
-export default function HomePage() {
-  const dict = useDictionary();
-  const { locale } = useParams<{ locale: string }>();
-  const [courses, setCourses] = useState<CourseCardProps[]>([]);
-  const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ total: 0, enrollments: 0 });
-
-  // 섹션별 애니메이션
-  const categorySection = useInView();
-  const recommendedSection = useInView();
-  const featureSection = useInView();
-  const popularSection = useInView();
-  const newSection = useInView();
-  const ctaSection = useInView();
-
-  useEffect(() => {
-    fetch("/api/v1/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/v1/courses?limit=48")
-      .then((res) => res.json())
-      .then((data) => {
-        const items: ApiCourse[] = data.items ?? [];
-        const mapped = mapCourses(items);
-        setCourses(mapped);
-
-        const totalEnrollments = items.reduce(
-          (sum, c) => sum + (c._count?.enrollments ?? 0),
-          0
-        );
-        setStats({ total: mapped.length, enrollments: totalEnrollments });
-      })
-      .catch(() => setCourses([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const newCourses = courses.slice(0, 8);
-  const recommendedCourses = courses.slice(0, 8);
-  const popularCourses = [...courses]
-    .sort((a, b) => b.studentCount - a.studentCount)
-    .slice(0, 4);
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const base = `/${locale}`;
+  const catalog = `${base}/courses`;
+  const viewer = await getViewer();
+  const [home, taxonomy] = await Promise.all([getHomeData(viewer), getTaxonomy(viewer)]);
+  const hasCourses = home.popular.length > 0;
+  const heroCourses = home.popular.slice(0, 3);
 
   return (
-    <div className="min-h-screen pb-32">
-      {/* Hero Banner */}
-      <HeroBanner locale={locale} dict={dict} stats={stats} />
-
-      {/* 카테고리 퀵 내비게이션 */}
-      <section
-        ref={categorySection.ref as React.RefObject<HTMLElement>}
-        className={`py-8 ${categorySection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-      >
-        <div className="hide-scrollbar flex gap-3 overflow-x-auto px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-          <Link
-            href={`/${locale}/courses`}
-            className="pill pill-active flex-none gap-2"
-          >
-            <BookOpen className="h-4 w-4" />
-            전체
-          </Link>
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/${locale}/courses?categoryId=${cat.id}`}
-              className="pill pill-inactive flex-none gap-2"
-            >
-              {categoryIcons[cat.name] || defaultCategoryIcon}
-              {cat.name}
-              <span className="ml-1 text-xs text-gray-400">
-                {cat._count.courses}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 추천 강의 — 데스크탑 4열 그리드 / 모바일 스크롤 */}
-      <section
-        ref={recommendedSection.ref as React.RefObject<HTMLElement>}
-        className="py-16"
-        style={{ paddingTop: "var(--section-gap-sm)" }}
-      >
-        <SectionHeader
-          title={dict.academy.recommended}
-          subtitle="BAYADA가 추천하는 이달의 핵심 과정"
-          href={`/${locale}/courses?sort=recommended`}
-        />
-
-        {/* 모바일: 가로 스크롤 */}
-        <div className="hide-scrollbar flex gap-6 overflow-x-auto px-4 pb-4 pt-2 sm:px-6 lg:hidden max-w-7xl mx-auto w-full snap-x">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)
-            : recommendedCourses.slice(0, 4).map((course, idx) => (
-                <div
-                  key={course.slug}
-                  className={`w-[300px] flex-none snap-start ${
-                    recommendedSection.inView ? "animate-fade-in-up" : "opacity-0"
-                  }`}
-                  style={{ animationDelay: `${idx * 100}ms` }}
-                >
-                  <CourseCard {...course} locale={locale} />
-                </div>
-              ))}
-        </div>
-
-        {/* 데스크탑: 4열 그리드 */}
-        <div className="hidden lg:grid grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-[24px] bg-white overflow-hidden">
-                  <div className="aspect-[16/9] bg-gray-100 animate-shimmer" />
-                  <div className="p-5 space-y-3">
-                    <div className="h-4 w-3/4 rounded bg-gray-100" />
-                    <div className="h-3 w-full rounded bg-gray-100" />
-                  </div>
-                </div>
-              ))
-            : recommendedCourses.slice(0, 8).map((course, idx) => (
-                <div
-                  key={course.slug}
-                  className={recommendedSection.inView ? "animate-fade-in-up" : "opacity-0"}
-                  style={{ animationDelay: `${idx * 80}ms` }}
-                >
-                  <CourseCard {...course} locale={locale} />
-                </div>
-              ))}
-        </div>
-      </section>
-
-      {/* Feature Highlight — 통계 카드 + Testimonial */}
-      <section
-        ref={featureSection.ref as React.RefObject<HTMLElement>}
-        className="bg-white"
-        style={{ paddingTop: "var(--section-gap-md)", paddingBottom: "var(--section-gap-md)" }}
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-x-16 gap-y-16 lg:grid-cols-2 lg:items-center">
-            {/* 왼쪽: 텍스트 + 통계 카드 */}
-            <div className={`lg:pr-8 ${featureSection.inView ? "animate-slide-in-left" : "opacity-0"}`}>
-              <span className="inline-block rounded-full bg-red-50 px-4 py-1.5 text-sm font-semibold text-[var(--brand-primary)] mb-4">
-                Why BAYADA Academy?
-              </span>
-              <h2 className="typo-h1 text-gray-900 mb-6">
-                실무 중심의 <br />
-                체계적인 커리큘럼
-              </h2>
-              <p className="text-lg leading-8 text-gray-500 mb-8">
-                이론에만 그치지 않고 실제 현장에서 바로 적용할 수 있는 살아있는 지식을 전달합니다.
-              </p>
-
-              <ul role="list" className="space-y-4 text-base text-gray-600 mb-10">
-                <li className="flex gap-x-3 items-center">
-                  <CheckCircle2 className="h-5 w-5 flex-none text-[var(--brand-primary)]" />
-                  <span>현장 전문가의 노하우가 담긴 강의</span>
-                </li>
-                <li className="flex gap-x-3 items-center">
-                  <Monitor className="h-5 w-5 flex-none text-[var(--brand-primary)]" />
-                  <span>PC, Mobile 어디서나 자유로운 수강</span>
-                </li>
-                <li className="flex gap-x-3 items-center">
-                  <GraduationCap className="h-5 w-5 flex-none text-[var(--brand-primary)]" />
-                  <span>학습 진행도 실시간 관리 및 수료증 발급</span>
-                </li>
-              </ul>
-
-              {/* 통계 카드 3개 */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-2xl bg-gray-50 p-5 text-center">
-                  <p className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                    {stats.total > 0 ? `${stats.total}+` : "50+"}
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-gray-500">총 강의 수</p>
-                </div>
-                <div className="rounded-2xl bg-gray-50 p-5 text-center">
-                  <p className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                    {stats.enrollments > 0 ? `${stats.enrollments.toLocaleString()}+` : "1,200+"}
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-gray-500">누적 수강생</p>
-                </div>
-                <div className="rounded-2xl bg-gray-50 p-5 text-center">
-                  <p className="text-2xl font-bold text-gray-900 sm:text-3xl">94%</p>
-                  <p className="mt-1 text-xs font-medium text-gray-500">수료율</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 오른쪽: 스택형 Testimonial 카드 */}
-            <div className={`relative ${featureSection.inView ? "animate-slide-in-right delay-200" : "opacity-0"}`}>
-              <div className="space-y-5">
-                {/* Testimonial 1 */}
-                <div className="rounded-2xl bg-gray-50 p-6 shadow-sm border border-gray-100 relative">
-                  <Quote className="absolute top-4 right-4 h-8 w-8 text-gray-200" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-secondary)] flex items-center justify-center text-white text-sm font-bold">
-                      김
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">김지영 님</p>
-                      <p className="text-xs text-gray-500">방문간호사 · 3년차</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    "실무에서 겪는 어려움을 해결하는 데 큰 도움이 되었습니다.
-                    특히 질환교육 시리즈가 환자 대응에 실질적으로 도움이 됩니다."
-                  </p>
-                </div>
-
-                {/* Testimonial 2 */}
-                <div className="rounded-2xl bg-white p-6 shadow-md border border-gray-100 relative">
-                  <Quote className="absolute top-4 right-4 h-8 w-8 text-gray-200" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-bold">
-                      박
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">박서연 님</p>
-                      <p className="text-xs text-gray-500">물리치료사 · 5년차</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    "이동 시간에 모바일로 편리하게 수강할 수 있어 좋습니다.
-                    수료증도 바로 발급되어 경력 관리에 큰 도움이 됩니다."
-                  </p>
-                </div>
-
-                {/* Testimonial 3 */}
-                <div className="rounded-2xl bg-gray-50 p-6 shadow-sm border border-gray-100 relative">
-                  <Quote className="absolute top-4 right-4 h-8 w-8 text-gray-200" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-sm font-bold">
-                      이
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">이현우 님</p>
-                      <p className="text-xs text-gray-500">요양보호사 · 신입</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    "신입으로서 PSP 과정을 통해 환자 안전에 대한 이해를 높일 수 있었습니다.
-                    체계적인 커리큘럼이 인상적이에요."
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 인기 강의 — 랭킹 스타일 */}
-      <section
-        ref={popularSection.ref as React.RefObject<HTMLElement>}
-        className="bg-[#f5f5f7]"
-        style={{ paddingTop: "var(--section-gap-md)", paddingBottom: "var(--section-gap-sm)" }}
-      >
-        <SectionHeader
-          title={dict.academy.popularCourses}
-          subtitle="다른 수강생들이 선택한 검증된 강의"
-          href={`/${locale}/courses?sort=popular`}
-        />
-
-        {/* 모바일: 가로 스크롤 */}
-        <div className="hide-scrollbar flex gap-6 overflow-x-auto px-4 pb-4 pt-2 sm:px-6 lg:hidden max-w-7xl mx-auto w-full snap-x">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)
-            : popularCourses.map((course, idx) => (
-                <div
-                  key={course.slug}
-                  className={`w-[300px] flex-none snap-start ${
-                    popularSection.inView ? "animate-fade-in-up" : "opacity-0"
-                  }`}
-                  style={{ animationDelay: `${idx * 100}ms` }}
-                >
-                  <CourseCard {...course} locale={locale} rank={idx + 1} />
-                </div>
-              ))}
-        </div>
-
-        {/* 데스크탑: 4열 그리드 + 랭킹 */}
-        <div className="hidden lg:grid grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-72 rounded-xl" />
-              ))
-            : popularCourses.map((course, idx) => (
-                <div
-                  key={course.slug}
-                  className={popularSection.inView ? "animate-fade-in-up" : "opacity-0"}
-                  style={{ animationDelay: `${idx * 100}ms` }}
-                >
-                  <CourseCard {...course} locale={locale} rank={idx + 1} />
-                </div>
-              ))}
-        </div>
-      </section>
-
-      {/* 신규 강의 */}
-      <section
-        ref={newSection.ref as React.RefObject<HTMLElement>}
-        className="bg-white"
-        style={{ paddingTop: "var(--section-gap-md)", paddingBottom: "var(--section-gap-sm)" }}
-      >
-        <SectionHeader
-          title={dict.academy.newCourses}
-          subtitle="따끈따끈한 신규 개설 강의를 만나보세요"
-          href={`/${locale}/courses?sort=newest`}
-        />
-
-        {/* 모바일: 가로 스크롤 */}
-        <div className="hide-scrollbar flex gap-6 overflow-x-auto px-4 pb-4 pt-2 sm:px-6 lg:hidden max-w-7xl mx-auto w-full snap-x">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)
-            : newCourses.slice(0, 4).map((course, idx) => (
-                <div
-                  key={course.slug}
-                  className={`w-[300px] flex-none snap-start ${
-                    newSection.inView ? "animate-fade-in-up" : "opacity-0"
-                  }`}
-                  style={{ animationDelay: `${idx * 100}ms` }}
-                >
-                  <CourseCard {...course} locale={locale} isNew />
-                </div>
-              ))}
-        </div>
-
-        {/* 데스크탑: 4열 그리드 */}
-        <div className="hidden lg:grid grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-72 rounded-xl" />
-              ))
-            : newCourses.slice(0, 8).map((course, idx) => (
-                <div
-                  key={course.slug}
-                  className={newSection.inView ? "animate-fade-in-up" : "opacity-0"}
-                  style={{ animationDelay: `${idx * 80}ms` }}
-                >
-                  <CourseCard {...course} locale={locale} isNew />
-                </div>
-              ))}
-        </div>
-      </section>
-
-      {/* CTA 섹션 — Toss 스타일 그라데이션 카드 */}
-      <section
-        ref={ctaSection.ref as React.RefObject<HTMLElement>}
-        className="bg-[#f5f5f7]"
-        style={{ paddingTop: "var(--section-gap-lg)", paddingBottom: "var(--section-gap-lg)" }}
-      >
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div
-            className={`relative overflow-hidden rounded-[32px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-8 py-16 text-center shadow-2xl sm:px-16 ${
-              ctaSection.inView ? "animate-scale-in" : "opacity-0"
-            }`}
-          >
-            {/* 장식 */}
-            <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-[var(--brand-primary)] opacity-10 blur-3xl" />
-            <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-blue-500 opacity-10 blur-3xl" />
-
-            <div className="relative z-10">
-              <h2 className="typo-h1 text-white mb-4">
-                준비되셨나요?
-              </h2>
-              <p className="text-lg text-gray-400 mb-10 max-w-md mx-auto leading-relaxed">
-                BAYADA Academy는 여러분의 성장을 응원합니다.
-                회원가입 후 모든 강의를 둘러보세요.
-              </p>
-              <Link href={`/${locale}/auth/register`}>
-                <Button
-                  size="lg"
-                  className="rounded-full bg-white px-10 py-3 text-base font-semibold text-gray-900 shadow-xl transition-all hover:bg-gray-100 hover:shadow-2xl hover:-translate-y-0.5"
-                >
-                  무료로 시작하기
-                </Button>
+    <>
+      {/* ② 히어로 */}
+      <section className="border-b border-line-soft bg-gradient-to-b from-surface to-white">
+        <div className="container-page grid items-center gap-12 py-14 md:py-20 lg:grid-cols-[1.05fr_1fr]">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-ink-soft">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden />
+              BAYADA Home Health Care Academy
+            </p>
+            <h1 className="mt-6 text-[40px] font-bold leading-[1.15] tracking-[-0.03em] text-ink md:text-[54px]">
+              돌봄의 전문성,
+              <br />
+              커리어가 되다
+            </h1>
+            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-muted">
+              직군별 실무 스킬 학습부터 수료증 발급까지. 현장에서 바로 쓰는 돌봄 교육을 바야다 아카데미에서 시작하세요.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href={catalog}
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_8px_20px_-8px_rgb(227_27_52/0.6)] transition-colors hover:bg-brand-strong"
+              >
+                프로그램 둘러보기 <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+              <Link
+                href={`${base}#org`}
+                className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:border-ink"
+              >
+                기관 도입 문의
               </Link>
             </div>
           </div>
+
+          <div className="lg:h-[420px]">
+            {home.banners.length > 0 ? (
+              <BannerCarousel
+                banners={home.banners.map((b) => ({
+                  id: b.id,
+                  title: b.title,
+                  subtitle: b.subtitle,
+                  image: b.image,
+                  linkUrl: b.linkUrl,
+                }))}
+              />
+            ) : heroCourses.length > 0 ? (
+              <div className="flex h-full flex-col rounded-3xl border border-line bg-white p-3 shadow-[0_24px_48px_-24px_rgb(24_24_27/0.18)]">
+                <p className="flex items-center justify-between px-3 pb-2 pt-2 text-sm font-bold text-ink">
+                  지금 많이 듣는 프로그램
+                  <Link href={`${catalog}?sort=popular`} className="text-xs font-semibold text-muted hover:text-ink">
+                    더 보기
+                  </Link>
+                </p>
+                <ol className="flex flex-1 flex-col">
+                  {heroCourses.map((c, i) => (
+                    <li key={c.id} className="flex-1">
+                      <Link
+                        href={`${catalog}/${encodeURIComponent(c.slug)}`}
+                        className="group flex h-full items-center gap-4 rounded-2xl p-3 transition-colors hover:bg-surface"
+                      >
+                        <span className="w-4 shrink-0 text-center text-lg font-bold text-brand">{i + 1}</span>
+                        <span className="block aspect-[16/9] w-32 shrink-0 overflow-hidden rounded-xl border border-line-soft bg-line-soft sm:w-40">
+                          <CourseThumb src={c.thumbnail} title={c.title} label={c.category?.name} />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink group-hover:text-brand">
+                            {c.title}
+                          </span>
+                          <span className="mt-1 block text-xs text-muted">
+                            {[c.category?.name, c._count.enrollments > 0 ? `${c._count.enrollments.toLocaleString()}명 수강` : null]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </span>
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ) : (
+              <div className="grid h-full grid-cols-2 gap-4">
+                {taxonomy.categories.slice(0, 4).map((c, i) => (
+                  <Link
+                    key={c.slug}
+                    href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
+                    className={`flex min-h-[150px] flex-col justify-between rounded-3xl border border-line p-6 transition-colors hover:border-ink ${
+                      i === 0 ? "bg-ink text-white" : "bg-white text-ink"
+                    }`}
+                  >
+                    <span className={i === 0 ? "text-white/80" : "text-brand"}>{categoryIcon(c.name)}</span>
+                    <span className="text-lg font-bold tracking-tight">{c.name}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
-    </div>
+
+      {hasCourses ? (
+        <>
+          {/* ③ 직군 선택 */}
+          <section id="roles" className="scroll-mt-28 py-16 md:py-20">
+            <div className="container-page">
+              <SectionTitle title="어떤 일을 하시나요?" desc="직군을 고르면 꼭 맞는 프로그램을 추천해 드려요." />
+              <Tabs
+                variant="pill"
+                ariaLabel="직군 선택"
+                items={JOB_ROLES.map((role) => ({
+                  key: role,
+                  label: JOB_ROLE_LABEL[role],
+                  content: (
+                    <div>
+                      {home.byRole[role].fallback && (
+                        <p className="mb-4 text-sm text-muted">
+                          {JOB_ROLE_LABEL[role]} 대상 프로그램을 준비하고 있어요. 대신 많이 듣는 프로그램을 보여 드릴게요.
+                        </p>
+                      )}
+                      <CourseRow items={home.byRole[role].items} locale={locale} />
+                      {!home.byRole[role].fallback && (
+                        <Link
+                          href={`${catalog}?audience=${role}`}
+                          className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-ink-soft hover:text-ink"
+                        >
+                          {JOB_ROLE_LABEL[role]} 프로그램 모두 보기 <ArrowRight className="h-4 w-4" aria-hidden />
+                        </Link>
+                      )}
+                    </div>
+                  ),
+                }))}
+              />
+            </div>
+          </section>
+
+          {/* ④ 신규·인기 */}
+          <section className="border-y border-line-soft bg-surface py-16 md:py-20">
+            <div className="container-page">
+              <SectionTitle title="지금 많이 듣는 프로그램" href={catalog} />
+              <Tabs
+                ariaLabel="프로그램 정렬"
+                items={[
+                  {
+                    key: "popular",
+                    label: "인기",
+                    content: <CourseRow items={home.popular.slice(0, 4)} locale={locale} />,
+                  },
+                  {
+                    key: "newest",
+                    label: "신규",
+                    content: <CourseRow items={home.newest.slice(0, 4)} locale={locale} />,
+                  },
+                  {
+                    key: "cert",
+                    label: "인증 과정",
+                    content: home.certification.length ? (
+                      <CourseRow items={home.certification.slice(0, 4)} locale={locale} />
+                    ) : (
+                      <EmptyState
+                        icon={<ShieldCheck className="h-5 w-5" />}
+                        title="열려 있는 인증 과정이 아직 없어요"
+                        description="바야다 인증과정이 개설되면 이곳에서 가장 먼저 소개해 드릴게요."
+                        action={{ label: "전체 프로그램 보기", href: catalog }}
+                      />
+                    ),
+                  },
+                ]}
+              />
+            </div>
+          </section>
+        </>
+      ) : (
+        <section id="roles" className="scroll-mt-28 py-16 md:py-20">
+          <div className="container-page">
+            <SectionTitle title="어떤 일을 하시나요?" />
+            <EmptyState
+              icon={<Lock className="h-5 w-5" />}
+              title={viewer ? "아직 공개된 프로그램이 없어요" : "지금은 임직원 전용 프로그램을 운영하고 있어요"}
+              description={
+                viewer
+                  ? "새 프로그램이 공개되면 이곳에 바로 보여 드릴게요."
+                  : "바야다홈헬스케어 임직원이라면 로그인 후 사내 교육 프로그램을 수강할 수 있어요. 일반 공개 프로그램도 곧 이곳에 소개됩니다."
+              }
+              action={viewer ? undefined : { label: "로그인", href: `${base}/auth/login` }}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* ⑦ 주제별 찾아보기 */}
+      {taxonomy.categories.length > 0 && (
+        <section className="py-16 md:py-20">
+          <div className="container-page">
+            <SectionTitle title="주제별로 찾아보기" />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {taxonomy.categories.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
+                  className="lift group flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-5"
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface text-ink-soft transition-colors group-hover:bg-brand-soft group-hover:text-brand">
+                    {categoryIcon(c.name)}
+                  </span>
+                  <span>
+                    <span className="block text-[15px] font-semibold text-ink">{c.name}</span>
+                    {c.count > 0 && <span className="mt-0.5 block text-xs text-muted">{c.count}개 프로그램</span>}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 기관·센터 */}
+      <section id="org" className="scroll-mt-28 py-6">
+        <div className="container-page">
+          <div className="relative overflow-hidden rounded-3xl bg-ink px-8 py-12 text-white md:px-14 md:py-14">
+            <div
+              className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/30 blur-3xl"
+              aria-hidden
+            />
+            <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-xl">
+                <p className="inline-flex items-center gap-2 text-sm font-semibold text-white/70">
+                  <Building2 className="h-4 w-4" aria-hidden /> 기관·센터
+                </p>
+                <h2 className="mt-3 text-2xl font-bold leading-snug tracking-tight md:text-[30px]">
+                  우리 센터 직원 교육, 바야다 아카데미로
+                </h2>
+                <p className="mt-3 text-[15px] leading-relaxed text-white/70">
+                  직원 단체 수강과 교육 운영이 필요하신가요? 담당자가 기관 상황에 맞는 도입 방법을 안내해 드려요.
+                </p>
+              </div>
+              <a
+                href={INQUIRY_MAILTO}
+                className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-white px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-line-soft md:self-auto"
+              >
+                기관 도입 문의 <ArrowRight className="h-4 w-4" aria-hidden />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ⑪ FAQ */}
+      <section id="faq" className="scroll-mt-28 py-16 md:py-20">
+        <div className="container-page grid gap-10 lg:grid-cols-[1fr_2fr]">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight text-ink md:text-[30px]">자주 묻는 질문</h2>
+            <p className="mt-2 text-[15px] text-muted">궁금한 점이 더 있다면 언제든 문의해 주세요.</p>
+          </div>
+          <Faq items={FAQ} />
+        </div>
+      </section>
+    </>
   );
 }

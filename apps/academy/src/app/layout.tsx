@@ -65,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
+    <html lang="ko">
       <head>
         <link
           rel="stylesheet"
@@ -74,7 +74,7 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
       </head>
-      <body className="min-h-screen bg-[color:var(--bg)] text-[color:var(--fg)] antialiased">
+      <body className="min-h-screen bg-white text-ink antialiased">
         {children}
       </body>
     </html>

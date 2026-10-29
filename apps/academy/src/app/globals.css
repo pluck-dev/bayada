@@ -1,270 +1,205 @@
 @import "tailwindcss";
+/* 로그인·장바구니 등 @bayada/ui 컴포넌트가 쓰는 변수. 아래 :root 에서 아카데미 톤으로 덮어쓴다 */
 @import "@bayada/ui/styles.css";
 
 /* ============================================================
-   BAYADA Academy — 디자인 시스템
+   BAYADA Academy 디자인 토큰
+   - 중립 zinc 팔레트 + BAYADA 레드 단일 강조색
+   - Tailwind 유틸리티: bg-brand, text-ink, text-muted, border-line, bg-surface ...
    ============================================================ */
+@theme {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 
-/* ----- 색상 토큰 ----- */
+  --color-ink: #18181b;
+  --color-ink-soft: #3f3f46;
+  --color-muted: #71717a;
+  --color-subtle: #a1a1aa;
+  --color-line: #e4e4e7;
+  --color-line-soft: #f4f4f5;
+  --color-surface: #fafafa;
+  --color-brand: #e31b34;
+  --color-brand-strong: #c3112a;
+  --color-brand-soft: #fff1f2;
+  --color-success: #15803d;
+  --color-success-soft: #f0fdf4;
+
+  --shadow-card: 0 1px 2px rgb(24 24 27 / 0.04);
+  --shadow-lift: 0 12px 32px -12px rgb(24 24 27 / 0.18);
+
+  --container-content: 1200px;
+}
+
 :root {
-  --brand-primary: #e31b34;
-  --brand-secondary: #a30b24;
-  --brand-gradient: linear-gradient(135deg, #e31b34 0%, #a30b24 100%);
-
-  --bg-primary: #f5f5f7;
-  --bg-secondary: #ffffff;
-  --text-primary: #1d1d1f;
-  --text-secondary: #86868b;
-  --text-tertiary: #aeaeb2;
-
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
-
-  /* 시맨틱 컬러 */
-  --color-success: #34c759;
-  --color-success-light: #e8f8ed;
-  --color-warning: #ff9f0a;
-  --color-warning-light: #fff6e5;
-  --color-info: #007aff;
-  --color-info-light: #e5f0ff;
-
-  /* 그림자 계층 */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 48px -8px rgba(0, 0, 0, 0.12);
-
-  /* 스페이싱 시스템 */
-  --section-gap-lg: 120px;
-  --section-gap-md: 80px;
-  --section-gap-sm: 60px;
-
-  /* 카테고리 accent 색상 */
-  --accent-nursing: #e31b34;
-  --accent-safety: #007aff;
-  --accent-compliance: #34c759;
-  --accent-disease: #af52de;
-  --accent-psp: #ff9f0a;
-  --accent-general: #5ac8fa;
+  /* @bayada/ui 변수 정렬 */
+  --bg: #ffffff;
+  --fg: #18181b;
+  --muted: #71717a;
+  --surface: #fafafa;
+  --border: #e4e4e7;
+  --brand: #e31b34;
+  --brand-hover: #c3112a;
+  --brand-bg: #fff1f2;
+  --accent: #18181b;
+  --ring: rgb(227 27 52 / 0.35);
 }
 
-/* ----- 타이포그래피 스케일 ----- */
-.typo-display {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+html {
+  scroll-behavior: smooth;
 }
 
-.typo-h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-}
-
-.typo-h2 {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.typo-h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.3;
-}
-
-.typo-body {
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.6;
-}
-
-.typo-caption {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--text-secondary);
-}
-
-/* ----- 기본 스타일 ----- */
 body {
-  font-family:
-    "SF Pro Display",
-    "SF Pro Text",
-    "Pretendard Variable",
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  font-family: var(--font-sans);
+  background: #ffffff;
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  word-break: keep-all;
 }
 
-/* ----- 스크롤 트리거 애니메이션 ----- */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
+/* 카드 hover: 살짝 떠오르기 */
+@utility lift {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+}
+
+/* details/summary 아코디언 */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .accordion-icon {
+  transform: rotate(45deg);
+}
+details[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* 옮겨 온 WordPress 본문(TEXT 레슨) */
+.legacy-content {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-ink-soft);
+}
+.legacy-content h1,
+.legacy-content h2,
+.legacy-content h3,
+.legacy-content h4 {
+  color: var(--color-ink);
+  font-weight: 700;
+  margin: 1.6em 0 0.6em;
+  line-height: 1.4;
+}
+.legacy-content h2 {
+  font-size: 1.375rem;
+}
+.legacy-content h3 {
+  font-size: 1.125rem;
+}
+.legacy-content p {
+  margin: 0.8em 0;
+}
+.legacy-content ul,
+.legacy-content ol {
+  margin: 0.8em 0;
+  padding-left: 1.4em;
+}
+.legacy-content ul {
+  list-style: disc;
+}
+.legacy-content ol {
+  list-style: decimal;
+}
+.legacy-content a {
+  color: var(--color-brand);
+  text-decoration: underline;
+}
+.legacy-content img,
+.legacy-content video,
+.legacy-content iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1em 0;
+}
+.legacy-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.9375rem;
+}
+.legacy-content th,
+.legacy-content td {
+  border: 1px solid var(--color-line);
+  padding: 0.5em 0.75em;
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@utility skeleton {
+  background: linear-gradient(90deg, #f4f4f5 0%, #ececee 50%, #f4f4f5 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 0.75rem;
 }
 
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  body {
+    background: #ffffff;
+  }
 }
 
-/* ----- 유틸리티 클래스 ----- */
-@layer utilities {
-  .glass-effect {
-    @apply backdrop-blur-xl bg-white/70 border border-white/40 shadow-sm;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-  }
-
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#e31b34] to-[#a30b24];
-  }
-
-  .hover-scale {
-    @apply transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] hover:scale-[1.02];
-  }
-
-  .apple-card {
-    @apply rounded-[24px] bg-white text-[#1d1d1f] transition-all duration-500 hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.05)];
-  }
-
-  .container-padding {
-    @apply px-6 md:px-12 lg:px-20 max-w-[1440px] mx-auto;
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  /* 애니메이션 유틸리티 */
-  .animate-fade-in-up {
-    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-scale-in {
-    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-  }
-
-  .animate-slide-in-left {
-    animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-  }
-
-  .animate-slide-in-right {
-    animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-  }
-
-  .animate-shimmer {
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-  /* 딜레이 유틸리티 */
-  .delay-100 { animation-delay: 100ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .delay-400 { animation-delay: 400ms; }
-  .delay-500 { animation-delay: 500ms; }
-  .delay-600 { animation-delay: 600ms; }
-
-  /* 세그먼트 컨트롤 */
-  .segment-control {
-    @apply inline-flex items-center rounded-xl bg-gray-100 p-1;
-  }
-  .segment-control-item {
-    @apply rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-200;
-  }
-  .segment-control-item-active {
-    @apply bg-white text-gray-900 shadow-sm;
-  }
-
-  /* pill 배지 */
-  .pill {
-    @apply inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200;
-  }
-  .pill-active {
-    @apply bg-gray-900 text-white;
-  }
-  .pill-inactive {
-    @apply bg-gray-100 text-gray-600 hover:bg-gray-200;
-  }
+.legacy-content blockquote {
+  margin: 0 0 1em;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-soft);
+  white-space: pre-line;
+}
+.legacy-content blockquote strong {
+  display: block;
+  color: var(--color-ink);
+  margin-bottom: 0.25rem;
 }
