@@ -27,8 +27,21 @@ const authConfig = createAuthConfig({
   },
 });
 
+// 아카데미와 같은 호스트(로컬 localhost, 운영 시 같은 상위 도메인)에서도 세션이 섞이지 않게 쿠키 이름을 따로 쓴다.
+// 기본 이름(authjs.*)을 같이 쓰면 한쪽 로그인이 다른 쪽 세션 쿠키를 덮어쓴다.
+const secure = process.env.NODE_ENV === "production";
+const cookie = (name: string, httpOnly = true) => ({
+  name: `${secure ? "__Secure-" : ""}bayada-admin.${name}`,
+  options: { httpOnly, sameSite: "lax" as const, path: "/", secure },
+});
+
 const adminAuthConfig = {
   ...authConfig,
+  cookies: {
+    sessionToken: cookie("session-token"),
+    callbackUrl: cookie("callback-url"),
+    csrfToken: { ...cookie("csrf-token"), name: `${secure ? "__Host-" : ""}bayada-admin.csrf-token` },
+  },
   callbacks: {
     ...authConfig.callbacks,
     async signIn({ user }: { user: { role?: string } }) {

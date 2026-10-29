@@ -101,7 +101,7 @@ export function QuizRunner({
   }
 
   const inputCls =
-    "mx-1 inline-block h-9 w-36 rounded-lg border border-line bg-white px-3 align-middle text-sm text-ink focus:border-ink focus:outline-none disabled:bg-surface";
+    "mx-1 inline-block h-9 w-44 sm:w-56 rounded-lg border border-line bg-white px-3 align-middle text-sm text-ink focus:border-ink focus:outline-none disabled:bg-surface";
 
   return (
     <div>
