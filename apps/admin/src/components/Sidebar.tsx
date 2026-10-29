@@ -20,6 +20,7 @@ import {
   CalendarDays,
   FileSignature,
   LayoutGrid,
+  Route,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -48,6 +49,7 @@ const PRIMARY: NavItem[] = [
   { path: "/members", label: "회원·수강", icon: Users, permission: "member.read", badgeKey: "signups" },
   { path: "/reviews", label: "후기 관리", icon: MessageSquareWarning, permission: "review", badgeKey: "reports" },
   { path: "/sessions", label: "실습·오프라인 일정", icon: CalendarDays, permission: "session" },
+  { path: "/pathways", label: "커리어 패스웨이", icon: Route, permission: "pathway" },
   // 인증 모델·효력이 고객사 확인 대기(17_확인필요 "인증 효력")라 만들지 않는다
   { path: "", label: "인증 심사", icon: BadgeCheck, phase: "2차", note: "정책 확정 후 개발 (인증 효력·평가 기준 미정)" },
   { path: "/partners", label: "파트너", icon: Handshake, permission: "partner.manage" },

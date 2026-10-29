@@ -24,6 +24,7 @@ export type Permission =
   | "review" // 후기 숨김·다시 게시
   | "session" // 실습·오프라인 일정, 신청자 명단
   | "pages" // 정적 문서 (약관·개인정보처리방침·환불 규정)
+  | "pathway" // 커리어 패스웨이 (국가·직군별 경로, 단계)
   | "partner.manage" // 파트너 제공기관·파트너 관리자 지정
   | "partner.console"; // 파트너 콘솔 — 자기 제공기관 프로그램만
 
@@ -46,6 +47,7 @@ const MATRIX: Record<AdminRole, readonly Permission[]> = {
     "session",
     "pages",
     "partner.manage",
+    "pathway",
   ],
   // 콘텐츠 운영자 — 프로그램 CRU + 승인/게시, 배너 CRUD, 회원은 조회만
   CONTENT_MANAGER: [
@@ -59,6 +61,7 @@ const MATRIX: Record<AdminRole, readonly Permission[]> = {
     "member.read",
     "review",
     "session",
+    "pathway",
   ],
   // 임상 리뷰어 — 승인 대기 큐 중 CLINICAL_REVIEW 항목만
   CLINICAL_REVIEWER: ["approval.queue", "workflow.clinical"],
