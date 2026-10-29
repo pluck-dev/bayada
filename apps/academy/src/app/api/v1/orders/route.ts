@@ -1,6 +1,7 @@
 import { orderService } from "@/lib/services";
 import { requireSession, successResponse, errorResponse } from "@/lib/api-utils";
 
+// 주문 생성은 결제(/api/v1/checkout)로만 한다 — 결제 없이 주문을 만들던 장바구니 POST 는 제거
 export async function GET() {
   try {
     const session = await requireSession();
@@ -8,19 +9,6 @@ export async function GET() {
 
     const orders = await orderService.listByUser(session.user.id);
     return successResponse(orders);
-  } catch (error) {
-    return errorResponse(error);
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const session = await requireSession();
-    if (session.error) return session.error;
-
-    const { courseIds } = await request.json();
-    const order = await orderService.createB2COrder(session.user.id, courseIds);
-    return successResponse(order, 201);
   } catch (error) {
     return errorResponse(error);
   }

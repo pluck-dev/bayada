@@ -11,6 +11,7 @@ import { CourseCard } from "@/components/course/CourseCard";
 import { CourseThumb } from "@/components/course/CourseThumb";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Tabs } from "@/components/ui/Tabs";
+import { PassCard } from "@/components/dashboard/PassCard";
 
 export const metadata: Metadata = { title: "마이 러닝" };
 
@@ -95,6 +96,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           </div>
         ))}
       </dl>
+      <PassCard userId={viewer.id} locale={locale} />
 
       <div className="mt-8">
         <Tabs

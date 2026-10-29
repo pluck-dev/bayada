@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BookOpen, Compass, UserRound } from "lucide-react";
+import { Award, BookOpen, Compass, Receipt, UserRound } from "lucide-react";
 
 export function DashboardNav({ locale }: { locale: string }) {
   const pathname = usePathname();
@@ -11,12 +11,14 @@ export function DashboardNav({ locale }: { locale: string }) {
     { href: base, label: "마이 러닝", icon: BookOpen },
     { href: `${base}/certificates`, label: "인증서", icon: Award },
     { href: `${base}/goals`, label: "커리어 목표", icon: Compass },
+    { href: `/${locale}/orders`, label: "결제 내역", icon: Receipt },
     { href: `${base}/profile`, label: "프로필", icon: UserRound },
   ];
   return (
     <nav aria-label="마이 메뉴" className="no-scrollbar flex gap-1 overflow-x-auto lg:flex-col">
       {items.map((it) => {
-        const active = pathname === it.href;
+        // 결제 내역은 상세(/orders/[id])에서도 활성
+        const active = pathname === it.href || (it.icon === Receipt && pathname.startsWith(`${it.href}/`));
         return (
           <Link
             key={it.href}
