@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
+import { hash } from "bcryptjs";
+import { verifyPassword } from "./password";
 import type { SessionUser } from "./types";
 
 // NextAuth 공유 설정 생성 함수
@@ -14,8 +15,11 @@ export function createAuthConfig(deps: {
     name: string | null;
     password: string;
     role: string;
+    status?: string;
     organizationId: string | null;
   } | null>;
+  // 옮겨 온 WordPress 해시로 로그인에 성공하면 bcrypt 로 바꿔 저장한다
+  updatePassword?: (userId: string, bcryptHash: string) => Promise<void>;
 }): NextAuthConfig {
   return {
     providers: [
@@ -36,8 +40,13 @@ export function createAuthConfig(deps: {
           const user = await deps.findUserByEmail(email);
           if (!user) return null;
 
-          const isValid = await compare(password, user.password);
-          if (!isValid) return null;
+          const { valid, needsRehash } = await verifyPassword(password, user.password);
+          if (!valid) return null;
+          // 가입 승인 대기·거절 계정은 로그인 불가 (기존 New User Approve 정책)
+          if (user.status && user.status !== "APPROVED") return null;
+          if (needsRehash && deps.updatePassword) {
+            await deps.updatePassword(user.id, await hash(password, 10));
+          }
 
           return {
             id: user.id,

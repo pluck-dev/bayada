@@ -6,17 +6,22 @@ import { prisma } from "@bayada/db";
 const authConfig = createAuthConfig({
   findUserByEmail: async (email: string) => {
     const user = await prisma.user.findUnique({
-      where: { email },
+      // 기존 사이트 이메일은 대소문자가 섞여 있어 소문자로 저장했다
+      where: { email: email.toLowerCase() },
       select: {
         id: true,
         email: true,
         name: true,
         password: true,
         role: true,
+        status: true,
         organizationId: true,
       },
     });
     return user;
+  },
+  updatePassword: async (userId, password) => {
+    await prisma.user.update({ where: { id: userId }, data: { password } });
   },
 });
 
