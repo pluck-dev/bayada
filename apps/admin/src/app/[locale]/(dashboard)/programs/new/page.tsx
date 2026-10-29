@@ -1,7 +1,8 @@
 import { requirePage } from "@/lib/session";
 import { getFormOptions } from "@/lib/queries/programs";
 import { PageHeader } from "@/components/ui";
-import { EMPTY_PROGRAM, ProgramForm } from "@/components/programs/ProgramForm";
+import { ProgramForm } from "@/components/programs/ProgramForm";
+import { EMPTY_PROGRAM } from "@/lib/program-defaults";
 
 export default async function NewProgramPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

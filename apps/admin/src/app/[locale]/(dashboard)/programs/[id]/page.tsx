@@ -111,6 +111,7 @@ export default async function ProgramDetailPage({
                 thumbnail: program.thumbnail ?? "",
                 price: program.price,
                 productType: program.productType,
+                learningMode: program.learningMode,
                 level: program.level ?? "",
                 audiences: program.audiences,
                 categoryId: program.categoryId ?? "",

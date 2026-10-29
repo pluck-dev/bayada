@@ -8,6 +8,7 @@ import {
   COURSE_STATUS_LABEL,
   COURSE_STATUS_TONE,
   JOB_ROLE_LABEL,
+  LEARNING_MODE_LABEL,
   PRODUCT_TYPE_LABEL,
   VISIBILITY_LABEL,
   formatDate,
@@ -129,6 +130,7 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
               )}
               <th className={thClass}>프로그램명</th>
               <th className={thClass}>유형</th>
+              <th className={thClass}>학습 방식</th>
               <th className={thClass}>대상 직군</th>
               <th className={thClass}>제공기관</th>
               <th className={thClass}>상태</th>
@@ -160,6 +162,7 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
                   {r.category && <p className="mt-0.5 text-[11.5px] text-subtle">{r.category.name}</p>}
                 </td>
                 <td className={cx(tdClass, "text-zinc-600")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
+                <td className={cx(tdClass, "text-zinc-600")}>{LEARNING_MODE_LABEL[r.learningMode].split(" ")[0]}</td>
                 <td className={cx(tdClass, "text-zinc-600")}>
                   {r.audiences.length ? (
                     r.audiences.map((a) => JOB_ROLE_LABEL[a]).join(", ")

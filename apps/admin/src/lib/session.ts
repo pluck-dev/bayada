@@ -9,6 +9,8 @@ export interface AdminUser {
   name: string | null;
   email: string;
   role: AdminRole;
+  /** PARTNER_ADMIN 이 관리하는 제공기관 (그 외 역할은 null) */
+  providerId: string | null;
 }
 
 /**
@@ -21,10 +23,18 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
   if (!id) return null;
   const user = await prisma.user.findUnique({
     where: { id },
-    select: { id: true, name: true, email: true, role: true, status: true },
+    select: { id: true, name: true, email: true, role: true, status: true, providerId: true },
   });
   if (!user || user.status !== "APPROVED" || !isAdminRole(user.role)) return null;
-  return { id: user.id, name: user.name, email: user.email, role: user.role };
+  // 제공기관이 해제된 파트너 관리자는 볼 수 있는 게 없으므로 로그인 상태로 취급하지 않는다
+  if (user.role === "PARTNER_ADMIN" && !user.providerId) return null;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    providerId: user.role === "PARTNER_ADMIN" ? user.providerId : null,
+  };
 });
 
 /** 페이지 가드 — 비로그인은 로그인으로, 권한 없으면 역할별 첫 화면으로 */

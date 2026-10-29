@@ -3,7 +3,7 @@ import { createAuthConfig } from "@bayada/shared/auth";
 import { prisma } from "@bayada/db";
 import { isAdminRole } from "./rbac";
 
-// 어드민 콘솔 인증 — Super Admin·콘텐츠 운영자·임상 리뷰어만 로그인한다.
+// 어드민 콘솔 인증 — Super Admin·콘텐츠 운영자·임상 리뷰어·파트너 관리자(제공기관 지정된 경우)만 로그인한다.
 // 페이지/액션별 권한은 lib/session.ts 의 requirePage·runAction 이 매 요청 DB 기준으로 다시 검사한다.
 const authConfig = createAuthConfig({
   findUserByEmail: async (email: string) => {
@@ -44,8 +44,13 @@ const adminAuthConfig = {
   },
   callbacks: {
     ...authConfig.callbacks,
-    async signIn({ user }: { user: { role?: string } }) {
-      return isAdminRole(user.role);
+    async signIn({ user }: { user: { id?: string; role?: string } }) {
+      if (!isAdminRole(user.role)) return false;
+      if (user.role !== "PARTNER_ADMIN") return true;
+      // 파트너 관리자는 담당 제공기관이 있어야 콘솔에 들어올 수 있다
+      if (!user.id) return false;
+      const u = await prisma.user.findUnique({ where: { id: user.id }, select: { providerId: true } });
+      return !!u?.providerId;
     },
   },
 };

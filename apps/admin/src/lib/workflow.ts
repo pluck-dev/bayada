@@ -27,10 +27,12 @@ export interface Transition {
 
 const OPS: AdminRole[] = ["ADMIN", "CONTENT_MANAGER"];
 const CLINICAL: AdminRole[] = ["ADMIN", "CLINICAL_REVIEWER"];
+// 승인 요청(제출)만 파트너 관리자도 할 수 있다 — 자기 제공기관 프로그램인지는 서버 액션이 확인
+const SUBMITTERS: AdminRole[] = [...OPS, "PARTNER_ADMIN"];
 
 export const TRANSITIONS: Transition[] = [
-  { action: "submit", from: "DRAFT", to: "SUBMITTED", roles: OPS, label: "승인 요청" },
-  { action: "submit", from: "CHANGES_REQUESTED", to: "SUBMITTED", roles: OPS, label: "재제출" },
+  { action: "submit", from: "DRAFT", to: "SUBMITTED", roles: SUBMITTERS, label: "승인 요청" },
+  { action: "submit", from: "CHANGES_REQUESTED", to: "SUBMITTED", roles: SUBMITTERS, label: "재제출" },
   { action: "start_review", from: "SUBMITTED", to: "IN_REVIEW", roles: OPS, label: "검토 시작" },
   { action: "request_changes", from: "SUBMITTED", to: "CHANGES_REQUESTED", roles: OPS, label: "수정 요청", noteRequired: true },
   { action: "to_clinical", from: "IN_REVIEW", to: "CLINICAL_REVIEW", roles: OPS, label: "임상 리뷰로 넘기기" },

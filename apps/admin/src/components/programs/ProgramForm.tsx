@@ -3,31 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X, ArrowUp, ArrowDown } from "lucide-react";
-import type { JobRole, Level, ProductType, Visibility } from "@bayada/db";
-import { createProgram, updateProgram, type ProgramInput } from "@/lib/actions/programs";
-import { JOB_ROLES, JOB_ROLE_LABEL, LEVELS, LEVEL_LABEL, PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
+import type { JobRole, LearningMode, Level, ProductType, Visibility } from "@bayada/db";
+import { createProgram, updateProgram } from "@/lib/actions/programs";
+import {
+  JOB_ROLES,
+  JOB_ROLE_LABEL,
+  LEARNING_MODES,
+  LEARNING_MODE_LABEL,
+  LEVELS,
+  LEVEL_LABEL,
+  PRODUCT_TYPES,
+  PRODUCT_TYPE_LABEL,
+} from "@/lib/labels";
 import { Button, Card, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
+import type { ProgramFormValue } from "@/lib/program-defaults";
 
-export interface ProgramFormValue extends ProgramInput {}
-
-export const EMPTY_PROGRAM: ProgramFormValue = {
-  title: "",
-  slug: "",
-  summary: "",
-  description: "",
-  thumbnail: "",
-  price: 0,
-  productType: "COURSE",
-  level: "",
-  audiences: [],
-  categoryId: "",
-  providerId: "",
-  durationMin: null,
-  objectives: [""],
-  featured: false,
-  visibility: "INTERNAL",
-};
 
 function slugify(title: string): string {
   return title
@@ -46,6 +37,8 @@ export function ProgramForm({
   categories,
   providers,
   locked,
+  partner,
+  basePath,
 }: {
   locale: string;
   programId?: string;
@@ -53,6 +46,10 @@ export function ProgramForm({
   categories: { id: string; name: string }[];
   providers: { id: string; name: string; isPartner: boolean }[];
   locked?: boolean;
+  /** 파트너 콘솔 — 제공기관은 고정, 공개범위·메인 노출은 운영자 몫이라 숨긴다 */
+  partner?: boolean;
+  /** 생성 후 이동할 상세 경로의 기준 (기본 /{locale}/programs) */
+  basePath?: string;
 }) {
   const router = useRouter();
   const { run, isPending } = useAction();
@@ -70,7 +67,7 @@ export function ProgramForm({
         refresh: false,
         onSuccess: (r) => {
           const id = "data" in r && r.data ? (r.data as { id: string }).id : null;
-          if (id) router.push(`/${locale}/programs/${id}?tab=curriculum`);
+          if (id) router.push(`${basePath ?? `/${locale}/programs`}/${id}?tab=curriculum`);
         },
       });
     }
@@ -155,6 +152,20 @@ export function ProgramForm({
                 ))}
               </select>
             </Field>
+            <Field label="학습 방식" htmlFor="learningMode" hint="블렌디드·오프라인은 실습 일정과 연결됩니다.">
+              <select
+                id="learningMode"
+                className={selectClass}
+                value={v.learningMode}
+                onChange={(e) => set("learningMode", e.target.value as LearningMode)}
+              >
+                {LEARNING_MODES.map((m) => (
+                  <option key={m} value={m}>
+                    {LEARNING_MODE_LABEL[m]}
+                  </option>
+                ))}
+              </select>
+            </Field>
             <Field label="난이도" htmlFor="level">
               <select id="level" className={selectClass} value={v.level} onChange={(e) => set("level", e.target.value as Level | "")}>
                 <option value="">선택 안 함</option>
@@ -176,7 +187,13 @@ export function ProgramForm({
               </select>
             </Field>
             <Field label="제공기관" required htmlFor="providerId">
-              <select id="providerId" className={selectClass} value={v.providerId} onChange={(e) => set("providerId", e.target.value)}>
+              <select
+                id="providerId"
+                className={selectClass}
+                value={v.providerId}
+                disabled={partner}
+                onChange={(e) => set("providerId", e.target.value)}
+              >
                 <option value="">선택</option>
                 {providers.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -283,45 +300,47 @@ export function ProgramForm({
           </ol>
         </Card>
 
-        <Card title="노출">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[12.5px] font-medium text-zinc-700" id="vis-label">
-                공개범위
-              </span>
-              <div className="inline-flex w-fit rounded-md border border-line p-0.5" role="radiogroup" aria-labelledby="vis-label">
-                {(["INTERNAL", "PUBLIC"] as Visibility[]).map((vis) => (
-                  <button
-                    key={vis}
-                    type="button"
-                    role="radio"
-                    aria-checked={v.visibility === vis}
-                    onClick={() => set("visibility", vis)}
-                    className={cx(
-                      "h-7 rounded px-3 text-[12.5px] font-medium",
-                      v.visibility === vis ? "bg-zinc-900 text-white" : "text-zinc-600 hover:text-fg",
-                    )}
-                  >
-                    {vis === "INTERNAL" ? "사내 전용" : "외부 공개"}
-                  </button>
-                ))}
+        {!partner && (
+          <Card title="노출">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[12.5px] font-medium text-zinc-700" id="vis-label">
+                  공개범위
+                </span>
+                <div className="inline-flex w-fit rounded-md border border-line p-0.5" role="radiogroup" aria-labelledby="vis-label">
+                  {(["INTERNAL", "PUBLIC"] as Visibility[]).map((vis) => (
+                    <button
+                      key={vis}
+                      type="button"
+                      role="radio"
+                      aria-checked={v.visibility === vis}
+                      onClick={() => set("visibility", vis)}
+                      className={cx(
+                        "h-7 rounded px-3 text-[12.5px] font-medium",
+                        v.visibility === vis ? "bg-zinc-900 text-white" : "text-zinc-600 hover:text-fg",
+                      )}
+                    >
+                      {vis === "INTERNAL" ? "사내 전용" : "외부 공개"}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[11.5px] text-muted">사내 전용은 바야다 사내 조직 소속 회원에게만 보입니다.</p>
               </div>
-              <p className="text-[11.5px] text-muted">사내 전용은 바야다 사내 조직 소속 회원에게만 보입니다.</p>
+              <label className="flex items-start gap-2 pt-6 text-[13px]">
+                <input
+                  type="checkbox"
+                  checked={v.featured}
+                  onChange={(e) => set("featured", e.target.checked)}
+                  className="mt-0.5 h-4 w-4 accent-zinc-900"
+                />
+                <span>
+                  메인 큐레이션(신규·인기)에 노출
+                  <span className="block text-[11.5px] text-muted">게시 상태일 때만 메인에 보입니다.</span>
+                </span>
+              </label>
             </div>
-            <label className="flex items-start gap-2 pt-6 text-[13px]">
-              <input
-                type="checkbox"
-                checked={v.featured}
-                onChange={(e) => set("featured", e.target.checked)}
-                className="mt-0.5 h-4 w-4 accent-zinc-900"
-              />
-              <span>
-                메인 큐레이션(신규·인기)에 노출
-                <span className="block text-[11.5px] text-muted">게시 상태일 때만 메인에 보입니다.</span>
-              </span>
-            </label>
-          </div>
-        </Card>
+          </Card>
+        )}
       </fieldset>
 
       {!locked && (

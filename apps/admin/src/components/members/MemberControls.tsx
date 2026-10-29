@@ -57,7 +57,8 @@ export function MemberControls({ id, status, role }: { id: string; status: UserS
       >
         <Field label="역할" htmlFor="role">
           <select id="role" className={selectClass} value={nextRole} onChange={(e) => setNextRole(e.target.value as Role)}>
-            {ROLES.map((r) => (
+            {/* 파트너 관리자는 파트너 화면에서 제공기관과 함께 지정한다 */}
+            {ROLES.filter((r) => r !== "PARTNER_ADMIN" || r === role).map((r) => (
               <option key={r} value={r}>
                 {ROLE_LABEL[r]}
               </option>

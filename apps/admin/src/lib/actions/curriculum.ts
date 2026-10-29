@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma, type LectureType, type QuestionType } from "@bayada/db";
 import { ActionError, audit, runAction } from "../session";
 import { assertEditable } from "../guards";
+import { PROGRAM_EDIT } from "../rbac";
 import { QUESTION_TYPES } from "../labels";
 
 const LECTURE_TYPES: LectureType[] = ["VIDEO", "TEXT", "QUIZ"];
@@ -33,8 +34,8 @@ async function lectureCourse(lectureId: string): Promise<{ courseId: string; sec
 
 // ─── 섹션 ───
 export async function addSection(courseId: string, title: string) {
-  return runAction("program.write", async (user) => {
-    await assertEditable(courseId);
+  return runAction(PROGRAM_EDIT, async (user) => {
+    await assertEditable(courseId, user);
     const t = title.trim();
     if (!t) throw new ActionError("섹션 제목을 입력하세요.");
     const last = await prisma.section.aggregate({ where: { courseId }, _max: { order: true } });
@@ -46,9 +47,9 @@ export async function addSection(courseId: string, title: string) {
 }
 
 export async function renameSection(sectionId: string, title: string) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const courseId = await sectionCourse(sectionId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     const t = title.trim();
     if (!t) throw new ActionError("섹션 제목을 입력하세요.");
     await prisma.section.update({ where: { id: sectionId }, data: { title: t } });
@@ -59,9 +60,9 @@ export async function renameSection(sectionId: string, title: string) {
 }
 
 export async function deleteSection(sectionId: string) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const courseId = await sectionCourse(sectionId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     const lectures = await prisma.lecture.findMany({ where: { sectionId }, select: { id: true } });
     const progress = await prisma.progress.count({ where: { lectureId: { in: lectures.map((l) => l.id) } } });
     if (progress) throw new ActionError("학습 기록이 있는 레슨이 포함된 섹션은 삭제할 수 없습니다.");
@@ -74,9 +75,9 @@ export async function deleteSection(sectionId: string) {
 
 /** 위/아래 이동 — 이웃과 order 를 맞바꾼다 */
 export async function moveSection(sectionId: string, dir: -1 | 1) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const courseId = await sectionCourse(sectionId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     const list = await prisma.section.findMany({ where: { courseId }, orderBy: { order: "asc" }, select: { id: true } });
     const i = list.findIndex((s) => s.id === sectionId);
     const j = i + dir;
@@ -90,9 +91,9 @@ export async function moveSection(sectionId: string, dir: -1 | 1) {
 
 // ─── 레슨 ───
 export async function addLecture(sectionId: string, type: LectureType, title: string) {
-  return runAction<{ id: string }>("program.write", async (user) => {
+  return runAction<{ id: string }>(PROGRAM_EDIT, async (user) => {
     const courseId = await sectionCourse(sectionId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     if (!LECTURE_TYPES.includes(type)) throw new ActionError("레슨 유형이 올바르지 않습니다.");
     const t = title.trim();
     if (!t) throw new ActionError("레슨 제목을 입력하세요.");
@@ -121,9 +122,9 @@ export interface LectureInput {
 }
 
 export async function updateLecture(lectureId: string, input: LectureInput) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const { courseId } = await lectureCourse(lectureId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     const title = input.title.trim();
     if (!title) throw new ActionError("레슨 제목을 입력하세요.");
     const videoUrl = input.videoUrl.trim();
@@ -140,9 +141,9 @@ export async function updateLecture(lectureId: string, input: LectureInput) {
 }
 
 export async function deleteLecture(lectureId: string) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const { courseId } = await lectureCourse(lectureId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     if (await prisma.progress.count({ where: { lectureId } })) {
       throw new ActionError("학습 기록이 있는 레슨은 삭제할 수 없습니다.");
     }
@@ -154,9 +155,9 @@ export async function deleteLecture(lectureId: string) {
 }
 
 export async function moveLecture(lectureId: string, dir: -1 | 1) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const { courseId, sectionId } = await lectureCourse(lectureId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     const list = await prisma.lecture.findMany({ where: { sectionId }, orderBy: { order: "asc" }, select: { id: true } });
     const i = list.findIndex((l) => l.id === lectureId);
     const j = i + dir;
@@ -177,9 +178,9 @@ export interface QuestionInput {
 }
 
 export async function saveQuiz(lectureId: string, passingScore: number, questions: QuestionInput[]) {
-  return runAction("program.write", async (user) => {
+  return runAction(PROGRAM_EDIT, async (user) => {
     const { courseId } = await lectureCourse(lectureId);
-    await assertEditable(courseId);
+    await assertEditable(courseId, user);
     const score = Math.round(Number(passingScore));
     if (!(score >= 0 && score <= 100)) throw new ActionError("합격 점수는 0~100 사이여야 합니다.");
     questions.forEach((q, i) => {

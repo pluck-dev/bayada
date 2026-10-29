@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prisma, type JobRole, type Level, type ProductType, type Visibility } from "@bayada/db";
+import { prisma, type JobRole, type LearningMode, type Level, type ProductType, type Visibility } from "@bayada/db";
 import { ActionError, audit, runAction, type AdminUser } from "../session";
-import { JOB_ROLES, LEVELS, PRODUCT_TYPES } from "../labels";
+import { JOB_ROLES, LEARNING_MODES, LEVELS, PRODUCT_TYPES } from "../labels";
+import { PROGRAM_EDIT } from "../rbac";
 import { findTransition, requiredChecklist, type WorkflowAction } from "../workflow";
-import { assertEditable } from "../guards";
+import { assertEditable, assertOwnedBy } from "../guards";
 
 export interface ProgramInput {
   title: string;
@@ -15,6 +16,7 @@ export interface ProgramInput {
   thumbnail: string;
   price: number;
   productType: ProductType;
+  learningMode: LearningMode;
   level: Level | "";
   audiences: JobRole[];
   categoryId: string;
@@ -34,6 +36,7 @@ function clean(input: ProgramInput) {
   if (!slug) throw new ActionError("slug 를 입력하세요.");
   if (!SLUG_RE.test(slug)) throw new ActionError("slug 는 글자·숫자·하이픈(-)만 쓸 수 있습니다.");
   if (!PRODUCT_TYPES.includes(input.productType)) throw new ActionError("유형이 올바르지 않습니다.");
+  if (!LEARNING_MODES.includes(input.learningMode)) throw new ActionError("학습 방식이 올바르지 않습니다.");
   if (input.level && !LEVELS.includes(input.level)) throw new ActionError("난이도가 올바르지 않습니다.");
   if (input.audiences.some((a) => !JOB_ROLES.includes(a))) throw new ActionError("대상 직군이 올바르지 않습니다.");
   if (input.visibility !== "INTERNAL" && input.visibility !== "PUBLIC") throw new ActionError("공개범위가 올바르지 않습니다.");
@@ -49,6 +52,7 @@ function clean(input: ProgramInput) {
     thumbnail: thumbnail || null,
     price,
     productType: input.productType,
+    learningMode: input.learningMode,
     level: input.level || null,
     audiences: [...new Set(input.audiences)],
     categoryId: input.categoryId || null,
@@ -62,12 +66,17 @@ function clean(input: ProgramInput) {
 
 function revalidatePrograms(id?: string) {
   revalidatePath("/[locale]/(dashboard)", "layout");
-  if (id) revalidatePath(`/[locale]/(dashboard)/programs/${id}`, "page");
+  if (id) {
+    revalidatePath(`/[locale]/(dashboard)/programs/${id}`, "page");
+    revalidatePath(`/[locale]/(dashboard)/partner-console/programs/${id}`, "page");
+  }
 }
 
 export async function createProgram(input: ProgramInput) {
-  return runAction<{ id: string }>("program.write", async (user) => {
+  return runAction<{ id: string }>(PROGRAM_EDIT, async (user) => {
     const data = clean(input);
+    // 파트너는 자기 제공기관으로만 만들고, 공개범위·메인 노출은 운영자가 정한다
+    if (user.role === "PARTNER_ADMIN") Object.assign(data, { providerId: user.providerId, visibility: "PUBLIC", featured: false });
     const course = await prisma.course.create({ data: { ...data, status: "DRAFT" } });
     await audit(user.id, "course.create", `Course:${course.id}`, { title: course.title, to: "DRAFT" });
     revalidatePrograms();
@@ -76,9 +85,12 @@ export async function createProgram(input: ProgramInput) {
 }
 
 export async function updateProgram(id: string, input: ProgramInput) {
-  return runAction("program.write", async (user) => {
-    const before = await assertEditable(id);
+  return runAction(PROGRAM_EDIT, async (user) => {
+    const before = await assertEditable(id, user);
     const data = clean(input);
+    if (user.role === "PARTNER_ADMIN") {
+      Object.assign(data, { providerId: before.providerId, visibility: before.visibility, featured: before.featured });
+    }
     await prisma.course.update({ where: { id }, data });
     await audit(user.id, "course.update", `Course:${id}`, { title: data.title, status: before.status });
     revalidatePrograms(id);
@@ -146,7 +158,9 @@ function assertTransitionRole(user: AdminUser, roles: string[]) {
 
 /** 승인 워크플로우 전이 — 모든 전이는 감사 로그에 남는다 */
 export async function transitionProgram(id: string, action: WorkflowAction, note?: string) {
-  return runAction(["workflow.operate", "workflow.clinical"], async (user) => {
+  return runAction(["workflow.operate", "workflow.clinical", "partner.console"], async (user) => {
+    // 파트너 관리자는 승인 요청(제출)만 — 검토·승인·게시는 TRANSITIONS 역할 검사에서도 막힌다
+    if (user.role === "PARTNER_ADMIN" && action !== "submit") throw new ActionError("이 단계를 처리할 권한이 없습니다.");
     const course = await prisma.course.findUnique({
       where: { id },
       select: {
@@ -161,6 +175,7 @@ export async function transitionProgram(id: string, action: WorkflowAction, note
       },
     });
     if (!course) throw new ActionError("프로그램을 찾을 수 없습니다.");
+    assertOwnedBy(user, course.providerId);
     const t = findTransition(action, course.status);
     if (!t) throw new ActionError("현재 상태에서는 할 수 없는 작업입니다. 화면을 새로고침하세요.");
     assertTransitionRole(user, t.roles);

@@ -2,6 +2,7 @@
 import type {
   CourseStatus,
   JobRole,
+  LearningMode,
   Level,
   LectureType,
   ProductType,
@@ -67,6 +68,14 @@ export const JOB_ROLE_LABEL: Record<JobRole, string> = {
   PT: "방문운동사",
   MANAGER: "센터 관리자",
   OTHER: "기타",
+};
+
+export const LEARNING_MODES: LearningMode[] = ["ONLINE", "BLENDED", "OFFLINE", "LIVE"];
+export const LEARNING_MODE_LABEL: Record<LearningMode, string> = {
+  ONLINE: "온라인",
+  BLENDED: "블렌디드 (온라인+실습)",
+  OFFLINE: "오프라인",
+  LIVE: "라이브",
 };
 
 export const LEVELS: Level[] = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
@@ -147,18 +156,31 @@ export const AUDIT_ACTION_LABEL: Record<string, string> = {
   "user.approve": "가입 승인",
   "user.reject": "가입 거절",
   "user.role": "역할 변경",
+  "page.create": "문서 생성",
+  "page.update": "문서 수정",
+  "session.create": "실습 일정 생성",
+  "session.update": "실습 일정 수정",
+  "session.delete": "실습 일정 삭제",
+  "session.export": "신청자 명단 내보내기",
+  "review.hide": "후기 숨김",
+  "review.publish": "후기 다시 게시",
+  "review.dismiss": "신고 기각",
+  "organization.create": "기관 생성",
+  "partner.assign": "파트너 관리자 지정",
+  "partner.unassign": "파트너 관리자 해제",
 };
 
 export function formatDate(d: Date | string | null | undefined): string {
   if (!d) return "-";
   const date = typeof d === "string" ? new Date(d) : d;
-  return date.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
+  return date.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" });
 }
 
 export function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "-";
   const date = typeof d === "string" ? new Date(d) : d;
   return date.toLocaleString("ko-KR", {
+    timeZone: "Asia/Seoul",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

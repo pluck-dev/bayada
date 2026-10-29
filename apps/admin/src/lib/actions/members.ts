@@ -39,10 +39,12 @@ export async function changeRole(id: string, role: Role) {
   return runAction("member.write", async (user) => {
     if (!ROLES.includes(role)) throw new ActionError("역할이 올바르지 않습니다.");
     if (id === user.id) throw new ActionError("본인 역할은 바꿀 수 없습니다.");
+    // 파트너 관리자는 담당 제공기관과 함께 지정해야 해서 파트너 화면에서만 바꾼다
+    if (role === "PARTNER_ADMIN") throw new ActionError("파트너 관리자 지정은 파트너 화면에서 제공기관과 함께 하세요.");
     const before = await prisma.user.findUnique({ where: { id }, select: { role: true, email: true } });
     if (!before) throw new ActionError("회원을 찾을 수 없습니다.");
     if (before.role === role) return { message: "변경 사항이 없습니다." };
-    await prisma.user.update({ where: { id }, data: { role } });
+    await prisma.user.update({ where: { id }, data: { role, providerId: null } });
     await audit(user.id, "user.role", `User:${id}`, { from: before.role, to: role, email: before.email });
     done(id);
     return { message: "역할을 바꿨습니다." };

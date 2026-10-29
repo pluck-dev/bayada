@@ -32,6 +32,7 @@ export async function listPrograms(filter: ProgramListFilter) {
         title: true,
         slug: true,
         productType: true,
+        learningMode: true,
         audiences: true,
         status: true,
         visibility: true,
