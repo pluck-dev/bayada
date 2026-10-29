@@ -8,6 +8,7 @@
     "./types": "./src/types.ts",
     "./constants": "./src/constants.ts",
     "./auth": "./src/auth.ts",
+    "./password-policy": "./src/password-policy.ts",
     "./i18n": "./src/i18n/index.ts",
     "./site-settings": "./src/site-settings.ts"
   },

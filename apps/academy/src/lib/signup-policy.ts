@@ -1,13 +1,7 @@
 import type { JobRole } from "@bayada/db";
 
-// 회원가입 입력 규칙. 화면과 API 가 같이 쓴다.
-export const PASSWORD_RULE = "8자 이상, 영문과 숫자를 모두 포함";
-
-export function passwordError(password: string): string | null {
-  if (password.length < 8) return "비밀번호는 8자 이상이어야 해요.";
-  if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) return "비밀번호에 영문과 숫자를 모두 넣어 주세요.";
-  return null;
-}
+// 회원가입 입력 규칙. 화면과 API 가 같이 쓴다. 비밀번호 규칙은 어드민 비밀번호 재설정과 공용이라 shared 에 둔다.
+export { PASSWORD_RULE, passwordError } from "@bayada/shared/password-policy";
 
 // 피그마 IA: 가입 시 대상 직군을 받아 맞춤 추천에 쓴다
 export const JOB_ROLE_OPTIONS: { value: JobRole; label: string }[] = [
