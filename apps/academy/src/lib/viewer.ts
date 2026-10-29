@@ -9,6 +9,7 @@ export interface Viewer {
   name: string | null;
   role: Role;
   jobRole: JobRole | null;
+  organizationId: string | null;
   organizationName: string | null;
   /** 사내 조직 소속이면 INTERNAL 강의 열람 가능 */
   isInternal: boolean;
@@ -31,6 +32,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       role: true,
       status: true,
       jobRole: true,
+      organizationId: true,
       organization: { select: { name: true, isInternal: true } },
     },
   });
@@ -41,6 +43,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     name: user.name,
     role: user.role,
     jobRole: user.jobRole,
+    organizationId: user.organizationId,
     organizationName: user.organization?.name ?? null,
     isInternal: user.organization?.isInternal ?? false,
   };

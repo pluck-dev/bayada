@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
-import { ChevronDown, LogOut, Menu, Search, X } from "lucide-react";
+import { Building2, ChevronDown, LogOut, Menu, Search, X } from "lucide-react";
 import { JOB_ROLES, JOB_ROLE_LABEL, PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
 
 interface TaxItem {
@@ -15,7 +15,7 @@ interface TaxItem {
 
 interface Props {
   locale: string;
-  user: { name: string; email: string } | null;
+  user: { name: string; email: string; canManageOrg: boolean } | null;
   categories: TaxItem[];
   providers: TaxItem[];
 }
@@ -161,6 +161,16 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
           >
             인증·커리어
           </Link>
+          {user?.canManageOrg && (
+            <Link
+              href={`${base}/business`}
+              aria-current={pathname?.startsWith(`${base}/business`) ? "page" : undefined}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-[15px] font-semibold text-ink-soft transition-colors hover:bg-line-soft hover:text-ink aria-[current=page]:text-ink"
+            >
+              <Building2 className="h-4 w-4 text-brand" aria-hidden />
+              기관 대시보드
+            </Link>
+          )}
         </nav>
 
         <form action={catalog} role="search" className="ml-auto hidden flex-1 justify-end md:flex">
@@ -201,6 +211,7 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
                     ["마이 러닝", `${base}/dashboard`],
                     ["인증서", `${base}/dashboard/certificates`],
                     ["프로필", `${base}/dashboard/profile`],
+                    ...(user.canManageOrg ? [["기관 대시보드", `${base}/business`]] : []),
                   ].map(([label, href]) => (
                     <Link key={href} href={href} className="block px-4 py-2 text-sm text-ink-soft hover:bg-surface hover:text-ink">
                       {label}
@@ -298,6 +309,11 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
                   <Link href={`${base}/dashboard/profile`} className="py-2 text-sm font-medium text-ink">
                     프로필
                   </Link>
+                  {user.canManageOrg && (
+                    <Link href={`${base}/business`} className="py-2 text-sm font-medium text-ink">
+                      기관 대시보드
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={() => signOut({ callbackUrl: base })}
