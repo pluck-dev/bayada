@@ -72,7 +72,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
             <h2 id="confirm-title" className="text-[15px] font-semibold">
               {pending.title}
             </h2>
-            {pending.body && <p className="mt-2 text-[13px] leading-relaxed text-zinc-600">{pending.body}</p>}
+            {pending.body && <p className="mt-2 whitespace-pre-line text-[13px] leading-relaxed text-zinc-600">{pending.body}</p>}
             <div className="mt-5 flex justify-end gap-2">
               <button type="button" className={buttonClass("secondary")} onClick={() => settle(false)}>
                 취소
