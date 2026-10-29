@@ -62,6 +62,7 @@ model Organization {
   name      String
   bizNo     String? // 사업자등록번호
   contact   String? // 담당자 연락처
+  isInternal Boolean @default(false) // 바야다 사내 조직. 소속 회원만 INTERNAL 강의를 본다
   users     User[]
   orders    Order[]
   createdAt DateTime @default(now())

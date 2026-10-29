@@ -68,6 +68,11 @@ async function main() {
     create: { name: "바야다홈헬스케어", slug: "bayada" },
   });
 
+  // 기존 사이트 회원은 모두 바야다 직원이다 → 사내 조직에 묶어 INTERNAL 강의를 보게 한다
+  const internalOrg =
+    (await prisma.organization.findFirst({ where: { isInternal: true } })) ??
+    (await prisma.organization.create({ data: { name: "바야다홈헬스케어", isInternal: true } }));
+
   // ─── 회원 ───
   const users = await q(`SELECT ID, user_email, user_pass, display_name, user_registered FROM ${P}users`);
   const umeta = new Map<number, Record<string, string>>();
@@ -91,6 +96,7 @@ async function main() {
       role: caps.includes("administrator") ? ("ADMIN" as const) : ("STUDENT" as const),
       status: status as "PENDING" | "APPROVED" | "REJECTED",
       phone: m.billing_phone || null,
+      organizationId: internalOrg.id,
       createdAt: new Date(u.user_registered),
     };
     const saved = await prisma.user.upsert({
