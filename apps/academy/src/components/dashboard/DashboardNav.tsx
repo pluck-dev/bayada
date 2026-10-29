@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BookOpen, UserRound } from "lucide-react";
+import { Award, BookOpen, Compass, UserRound } from "lucide-react";
 
 export function DashboardNav({ locale }: { locale: string }) {
   const pathname = usePathname();
@@ -10,6 +10,7 @@ export function DashboardNav({ locale }: { locale: string }) {
   const items = [
     { href: base, label: "마이 러닝", icon: BookOpen },
     { href: `${base}/certificates`, label: "인증서", icon: Award },
+    { href: `${base}/goals`, label: "커리어 목표", icon: Compass },
     { href: `${base}/profile`, label: "프로필", icon: UserRound },
   ];
   return (

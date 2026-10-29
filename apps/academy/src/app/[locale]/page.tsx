@@ -25,6 +25,8 @@ import { ReviewCard } from "@/components/course/ReviewCard";
 import { Tabs } from "@/components/ui/Tabs";
 import { Faq } from "@/components/ui/Faq";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { listPublishedPathways } from "@/lib/queries/pathways";
+import { PathwayCard } from "@/components/pathway/PathwayCard";
 
 const FAQ = [
   {
@@ -93,12 +95,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const base = `/${locale}`;
   const catalog = `${base}/courses`;
   const viewer = await getViewer();
-  const [home, taxonomy, partners, stats, reviews] = await Promise.all([
+  const [home, taxonomy, partners, stats, reviews, pathways] = await Promise.all([
     getHomeData(viewer),
     getTaxonomy(viewer),
     getPartners(),
     getImpactStats(viewer),
     getRecentReviews(viewer),
+    listPublishedPathways(),
   ]);
   const hasCourses = home.popular.length > 0;
   const heroCourses = home.popular.slice(0, 3);
@@ -287,6 +290,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               }
               action={viewer ? undefined : { label: "로그인", href: `${base}/auth/login` }}
             />
+          </div>
+        </section>
+      )}
+
+      {/* ⑤ 커리어 패스웨이 — 게시된 패스웨이가 없으면 숨김 */}
+      {pathways.length > 0 && (
+        <section className="py-16 md:py-20">
+          <div className="container-page">
+            <SectionTitle
+              title="해외 진출 · 국내 커리어"
+              desc="국가·직군별 커리어 경로를 단계별로 안내해 드려요."
+              href={`${base}/pathways`}
+            />
+            <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-5">
+              {pathways.slice(0, 8).map((p) => (
+                <div key={p.id} className="w-[78%] shrink-0 snap-start sm:w-[46%] md:w-auto">
+                  <PathwayCard pathway={p} locale={locale} />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}

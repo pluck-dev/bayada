@@ -25,7 +25,9 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [careerOpen, setCareerOpen] = useState(false);
   const megaRef = useRef<HTMLDivElement>(null);
+  const careerRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const base = `/${locale}`;
 
@@ -34,16 +36,19 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
     setMegaOpen(false);
     setMobileOpen(false);
     setUserOpen(false);
+    setCareerOpen(false);
   }, [pathname]);
 
   useEffect(() => {
     function onDown(e: MouseEvent) {
       if (megaRef.current && !megaRef.current.contains(e.target as Node)) setMegaOpen(false);
+      if (careerRef.current && !careerRef.current.contains(e.target as Node)) setCareerOpen(false);
       if (userRef.current && !userRef.current.contains(e.target as Node)) setUserOpen(false);
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setMegaOpen(false);
+        setCareerOpen(false);
         setUserOpen(false);
         setMobileOpen(false);
       }
@@ -77,6 +82,13 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
   ];
 
   const isCatalog = pathname?.startsWith(catalog);
+  // 인증·커리어 메뉴 (바야다 인증 · 인증과정 프로그램 · 커리어 패스웨이)
+  const careerLinks = [
+    { label: "바야다 인증", desc: "인증 과정 안내와 신청", href: `${base}/certifications` },
+    { label: "인증과정 프로그램", desc: "인증 준비 학습 프로그램", href: `${catalog}?type=CERTIFICATION` },
+    { label: "커리어 패스웨이", desc: "국가·직군별 커리어 경로", href: `${base}/pathways` },
+  ];
+  const isCareer = pathname?.startsWith(`${base}/certifications`) || pathname?.startsWith(`${base}/pathways`);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white/90 backdrop-blur-md print:hidden">
@@ -155,12 +167,35 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
           >
             직군별 학습
           </Link>
-          <Link
-            href={`${catalog}?type=CERTIFICATION`}
-            className="rounded-lg px-3 py-2 text-[15px] font-semibold text-ink-soft transition-colors hover:bg-line-soft hover:text-ink"
-          >
-            인증·커리어
-          </Link>
+          <div ref={careerRef} className="relative" onMouseLeave={() => setCareerOpen(false)}>
+            <button
+              type="button"
+              aria-expanded={careerOpen}
+              aria-haspopup="true"
+              onClick={() => setCareerOpen((v) => !v)}
+              onMouseEnter={() => setCareerOpen(true)}
+              className={`flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-semibold transition-colors hover:bg-line-soft ${
+                careerOpen || isCareer ? "text-ink" : "text-ink-soft"
+              }`}
+            >
+              인증·커리어
+              <ChevronDown className={`h-4 w-4 transition-transform ${careerOpen ? "rotate-180" : ""}`} aria-hidden />
+            </button>
+            {careerOpen && (
+              <div className="absolute left-0 top-full pt-2">
+                <ul className="w-64 rounded-2xl border border-line bg-white p-2 shadow-lift">
+                  {careerLinks.map((it) => (
+                    <li key={it.href}>
+                      <Link href={it.href} className="block rounded-xl px-3 py-2.5 transition-colors hover:bg-surface">
+                        <span className="block text-sm font-semibold text-ink">{it.label}</span>
+                        <span className="mt-0.5 block text-xs text-muted">{it.desc}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           {user?.canManageOrg && (
             <Link
               href={`${base}/business`}
@@ -278,9 +313,11 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
               <Link href={`${base}#roles`} className="py-2 text-base font-semibold text-ink">
                 직군별 학습
               </Link>
-              <Link href={`${catalog}?type=CERTIFICATION`} className="py-2 text-base font-semibold text-ink">
-                인증·커리어
-              </Link>
+              {careerLinks.map((it) => (
+                <Link key={it.href} href={it.href} className="py-2 text-base font-semibold text-ink">
+                  {it.label}
+                </Link>
+              ))}
               <Link href={`${base}#org`} className="py-2 text-base font-semibold text-ink">
                 기관·센터
               </Link>
