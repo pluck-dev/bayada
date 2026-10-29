@@ -1,186 +1,115 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Button, Input, Card, CardContent } from "@bayada/ui";
-import { useDictionary } from "@/components/DictionaryProvider";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const dict = useDictionary();
   const { locale } = useParams<{ locale: string }>();
+  const searchParams = useSearchParams();
+  // 같은 사이트 경로만 허용 (오픈 리다이렉트 방지)
+  const raw = searchParams.get("callbackUrl") ?? "";
+  const callbackUrl = raw.startsWith("/") && !raw.startsWith("//") ? raw : `/${locale}`;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
     try {
       const { signIn } = await import("next-auth/react");
       const result = await signIn("credentials", {
-        email,
-        password,
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
         redirect: false,
       });
-
       if (result?.error) {
-        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+        setError("이메일 또는 비밀번호가 올바르지 않거나, 가입 승인 대기 중인 계정이에요.");
+        setIsLoading(false);
       } else {
-        window.location.href = `/${locale}`;
+        // 헤더(서버 렌더)까지 로그인 상태로 다시 그리기 위해 전체 이동
+        window.location.href = callbackUrl;
       }
     } catch {
-      setError("로그인 중 오류가 발생했습니다.");
-    } finally {
+      setError("로그인 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.");
       setIsLoading(false);
     }
   };
 
+  const inputCls =
+    "h-12 w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink placeholder:text-subtle focus:border-ink focus:outline-none";
+
   return (
-    <div className="flex min-h-[calc(100vh-64px-200px)] items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* 로고 */}
-        <div className="mb-8 text-center">
-          <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--brand)]">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-[color:var(--fg)]">
-              BAYADA <span className="text-[color:var(--brand)]">Academy</span>
-            </span>
-          </Link>
-          <h1 className="mt-4 text-2xl font-bold text-[color:var(--fg)]">
-            {dict.auth.loginTitle}
-          </h1>
-          <p className="mt-2 text-sm text-[color:var(--muted)]">
-            {dict.auth.loginDescription}
-          </p>
-        </div>
+    <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
+      <div className="w-full max-w-[400px]">
+        <h1 className="text-[28px] font-bold tracking-tight text-ink">로그인</h1>
+        <p className="mt-2 text-[15px] text-muted">바야다 아카데미 계정으로 학습을 이어가세요.</p>
 
-        {/* 로그인 폼 */}
-        <Card>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-                  {error}
-                </div>
-              )}
-              {/* 이메일 */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.email}
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-3 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                </div>
-              </div>
-
-              {/* 비밀번호 */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.password}
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    placeholder="비밀번호를 입력하세요"
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-10 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--muted)] hover:text-[color:var(--fg)]"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* 옵션 */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-[color:var(--border)] text-[color:var(--brand)] focus:ring-[color:var(--ring)]"
-                  />
-                  <span className="text-sm text-[color:var(--muted)]">
-                    로그인 상태 유지
-                  </span>
-                </label>
-                <Link
-                  href="#"
-                  className="text-sm text-[color:var(--brand)] hover:underline"
-                >
-                  {dict.auth.forgotPassword}
-                </Link>
-              </div>
-
-              {/* 로그인 버튼 */}
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={isLoading}
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          {error && (
+            <p role="alert" className="rounded-xl bg-brand-soft px-4 py-3 text-sm text-brand">
+              {error}
+            </p>
+          )}
+          <div>
+            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-ink">
+              이메일
+            </label>
+            <input id="email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" className={inputCls} />
+          </div>
+          <div>
+            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-ink">
+              비밀번호
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                placeholder="비밀번호"
+                className={`${inputCls} pr-12`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-ink"
               >
-                {isLoading ? dict.common.loading : dict.auth.loginButton}
-              </Button>
-            </form>
-
-            {/* 구분선 */}
-            <div className="my-6 flex items-center gap-4">
-              <div className="h-px flex-1 bg-[color:var(--border)]" />
-              <span className="text-xs text-[color:var(--muted)]">또는</span>
-              <div className="h-px flex-1 bg-[color:var(--border)]" />
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
-
-            {/* 기관 로그인 */}
-            <Button variant="outline" className="w-full" size="lg">
-              기관 계정으로 로그인
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* 회원가입 안내 */}
-        <p className="mt-6 text-center text-sm text-[color:var(--muted)]">
-          {dict.auth.noAccount}{" "}
-          <Link
-            href={`/${locale}/auth/register`}
-            className="font-medium text-[color:var(--brand)] hover:underline"
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70"
           >
-            {dict.common.register}
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+            로그인
+          </button>
+        </form>
+
+        <p className="mt-8 text-center text-sm text-muted">
+          아직 계정이 없나요?{" "}
+          <Link href={`/${locale}/auth/register`} className="font-semibold text-ink hover:text-brand">
+            무료 가입
           </Link>
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

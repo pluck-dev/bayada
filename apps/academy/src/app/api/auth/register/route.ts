@@ -1,23 +1,19 @@
+import { NextResponse } from "next/server";
 import { userService } from "@/lib/services";
 import { successResponse, errorResponse } from "@/lib/api-utils";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, name, phone } = body;
+    const { password, name, phone } = body;
+    // 로그인은 소문자 이메일로 조회한다
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
 
     if (!email || !password || !name) {
-      return errorResponse({
-        statusCode: 400,
-        message: "이메일, 비밀번호, 이름은 필수입니다.",
-      });
+      return NextResponse.json({ error: "이메일, 비밀번호, 이름은 필수입니다." }, { status: 400 });
     }
-
-    if (password.length < 6) {
-      return errorResponse({
-        statusCode: 400,
-        message: "비밀번호는 6자 이상이어야 합니다.",
-      });
+    if (String(password).length < 6) {
+      return NextResponse.json({ error: "비밀번호는 6자 이상이어야 합니다." }, { status: 400 });
     }
 
     const user = await userService.create({ email, password, name, phone });
