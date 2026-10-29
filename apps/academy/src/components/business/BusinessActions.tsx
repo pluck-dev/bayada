@@ -59,6 +59,7 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
     invites: { id: string; email: string; token: string }[];
     alreadyMembers: string[];
     invalid: string[];
+    emailed?: string[];
   } | null>(null);
 
   function close() {
@@ -77,7 +78,7 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
       const res = await fetch("/api/v1/business/invites", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emails }),
+        body: JSON.stringify({ emails, locale }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return setError(data.error ?? "초대를 만들지 못했어요.");
@@ -95,15 +96,26 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
         <div>
           <p className="flex items-center gap-2 text-[15px] font-semibold text-ink">
             <CheckCircle2 className="h-5 w-5 text-success" aria-hidden />
-            초대 링크 {result.invites.length}개를 만들었어요
+            초대 {result.invites.length}건을 만들었어요
+            {result.emailed && result.emailed.length > 0 && ` · 메일 ${result.emailed.length}통 발송`}
           </p>
           <p className="mt-1.5 text-sm text-muted">
-            아래 링크를 직원에게 메신저·메일로 전달해 주세요. 초대받은 이메일로 로그인(또는 가입)하면 기관에 합류해요.
+            {result.emailed && result.emailed.length > 0
+              ? "초대 메일을 보냈어요. 메일을 못 받았다면 아래 링크를 메신저로 전달해 주세요."
+              : "메일을 보내지 못했어요. 아래 링크를 직원에게 메신저·메일로 전달해 주세요."}{" "}
+            초대받은 이메일로 로그인(또는 가입)하면 기관에 합류해요.
           </p>
           <ul className="mt-4 space-y-3">
             {result.invites.map((i) => (
               <li key={i.id}>
-                <p className="mb-1 text-xs font-semibold text-ink-soft">{i.email}</p>
+                <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
+                  {i.email}
+                  {result.emailed?.includes(i.email) ? (
+                    <span className="rounded-full bg-success-soft px-1.5 py-0.5 text-[11px] font-medium text-success">메일 발송</span>
+                  ) : (
+                    <span className="rounded-full bg-line-soft px-1.5 py-0.5 text-[11px] font-medium text-muted">메일 미발송</span>
+                  )}
+                </p>
                 <InviteLink path={`/${locale}/invite/${i.token}`} />
               </li>
             ))}
@@ -138,7 +150,7 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
             className="mt-3 w-full resize-y rounded-xl border border-line px-4 py-3 font-mono text-sm text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
           />
           <p className="mt-2 text-xs text-muted">
-            지금은 메일을 보내지 않고 초대 링크를 만들어 드려요. 링크는 받은 사람의 이메일 계정에서만 쓸 수 있어요.
+            입력한 주소로 초대 메일을 보내고, 직접 전달할 수 있게 링크도 보여 드려요. 링크는 받은 사람의 이메일 계정에서만 쓸 수 있어요.
           </p>
           {error && (
             <p role="alert" className="mt-3 text-sm text-brand">
@@ -151,7 +163,7 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
             </button>
             <button type="submit" disabled={busy || !emails.trim()} className={btnPrimary}>
               {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-              초대 링크 만들기
+              초대 보내기
             </button>
           </div>
         </form>

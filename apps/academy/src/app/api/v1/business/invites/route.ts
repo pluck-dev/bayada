@@ -4,13 +4,15 @@ import { prisma } from "@bayada/db";
 import { errorResponse } from "@/lib/api-utils";
 import { getViewer } from "@/lib/viewer";
 import { canManageOrg } from "@/lib/queries/business";
+import { orgInviteMail, trySendMail } from "@bayada/services/account";
+import { appUrl, localeOr } from "@/lib/app-url";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_INVITES = 100;
 
 /**
- * 직원 초대. 메일 발송 인프라가 없어 초대 링크(토큰)를 만들어 돌려주고, 관리자가 복사해 전달한다.
- * 같은 이메일을 다시 초대하면 기존 대기 중 링크를 그대로 쓴다.
+ * 직원 초대. 초대 링크(토큰)를 만들어 메일로 보내고, 링크도 돌려줘 관리자가 직접 전달할 수도 있게 한다.
+ * 메일 실패는 초대를 막지 않는다(emailed 에 성공한 주소만). 같은 이메일을 다시 초대하면 기존 대기 중 링크를 그대로 쓰고 메일은 다시 보낸다.
  */
 export async function POST(request: Request) {
   try {
@@ -19,7 +21,7 @@ export async function POST(request: Request) {
     if (!canManageOrg(viewer)) return NextResponse.json({ error: "기관 관리자만 초대할 수 있어요" }, { status: 403 });
     const organizationId = viewer.organizationId;
 
-    const body = (await request.json().catch(() => ({}))) as { emails?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { emails?: unknown; locale?: unknown };
     const raw = typeof body.emails === "string" ? body.emails : Array.isArray(body.emails) ? body.emails.join(",") : "";
     const tokens = [
       ...new Set(
@@ -81,7 +83,25 @@ export async function POST(request: Request) {
       where: { organizationId, email: { in: targets } },
       select: { id: true, email: true, token: true },
     });
-    return NextResponse.json({ invites: fresh, alreadyMembers: [...memberSet], invalid }, { status: 201 });
+    const emailed: string[] = [];
+    if (fresh.length) {
+      const org = await prisma.organization.findUnique({ where: { id: organizationId }, select: { name: true } });
+      const locale = localeOr(body.locale);
+      const sent = await Promise.all(
+        fresh.map((i) =>
+          trySendMail(
+            orgInviteMail({
+              to: i.email,
+              organizationName: org?.name ?? "기관",
+              inviterName: viewer.name,
+              url: appUrl(`/${locale}/invite/${i.token}`),
+            })
+          )
+        )
+      );
+      fresh.forEach((i, n) => sent[n] && emailed.push(i.email));
+    }
+    return NextResponse.json({ invites: fresh, alreadyMembers: [...memberSet], invalid, emailed }, { status: 201 });
   } catch (error) {
     return errorResponse(error);
   }
