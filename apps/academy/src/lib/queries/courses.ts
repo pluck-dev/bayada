@@ -1,6 +1,7 @@
 import { prisma } from "@bayada/db";
 import type { JobRole, LearningMode, Level, Prisma, ProductType } from "@bayada/db";
 import type { Viewer } from "@/lib/viewer";
+import { paymentService } from "@/lib/services";
 import {
   CERT_KINDS,
   JOB_ROLES,
@@ -312,7 +313,12 @@ export async function getCourseForDetail(slug: string) {
 export type CourseDetail = NonNullable<Awaited<ReturnType<typeof getCourseForDetail>>>;
 
 export type CourseAccess =
-  | { kind: "ok"; enrollment: { id: string; progressPercent: number; completedAt: Date | null } | null }
+  | {
+      kind: "ok";
+      enrollment: { id: string; progressPercent: number; completedAt: Date | null } | null;
+      /** 패스로 수강했지만 패스가 끝나(또는 환불돼) 지금은 들을 수 없음 — 진도는 남아 있다 */
+      passLapsed?: boolean;
+    }
   | { kind: "login" } // 사내 전용 — 로그인하면 볼 수 있을 수도
   | { kind: "notfound" };
 
@@ -321,7 +327,7 @@ export type CourseAccess =
  * 수강 중인 사용자는 강의가 보관(ARCHIVED)되거나 사내 전용으로 바뀌어도 계속 들을 수 있다.
  */
 export async function resolveCourseAccess(
-  course: { id: string; status: string; visibility: string },
+  course: { id: string; status: string; visibility: string; price: number; productType: ProductType },
   viewer: Viewer | null
 ): Promise<CourseAccess> {
   const enrollment = viewer
@@ -330,10 +336,13 @@ export async function resolveCourseAccess(
         select: { id: true, progressPercent: true, completedAt: true },
       })
     : null;
-  if (enrollment) return { kind: "ok", enrollment };
+  // 패스로 수강한 강의는 유효한 패스가 그 유형을 포함할 때만 수강 상태로 본다
+  const passLapsed =
+    !!enrollment && !!viewer && !(await paymentService.enrollmentActive(enrollment.id, viewer.id, course));
+  if (enrollment && !passLapsed) return { kind: "ok", enrollment };
   if (course.status !== "PUBLISHED") return { kind: "notfound" };
-  if (course.visibility === "PUBLIC") return { kind: "ok", enrollment: null };
-  if (viewer?.isInternal) return { kind: "ok", enrollment: null };
+  if (course.visibility === "PUBLIC") return { kind: "ok", enrollment: null, passLapsed };
+  if (viewer?.isInternal) return { kind: "ok", enrollment: null, passLapsed };
   return viewer ? { kind: "notfound" } : { kind: "login" };
 }
 

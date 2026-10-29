@@ -1,5 +1,6 @@
 import { prisma, Prisma } from "@bayada/db";
 import { htmlToText } from "@/lib/html-text";
+import { paymentService } from "@/lib/services";
 
 // ─── 진도 · 수료 ───
 
@@ -83,14 +84,20 @@ export async function recomputeEnrollment(userId: string, courseId: string) {
 export async function getLectureEnrollment(userId: string, lectureId: string) {
   const lecture = await prisma.lecture.findUnique({
     where: { id: lectureId },
-    select: { id: true, type: true, section: { select: { courseId: true } } },
+    select: {
+      id: true,
+      type: true,
+      section: { select: { courseId: true, course: { select: { price: true, productType: true } } } },
+    },
   });
   if (!lecture) return null;
   const enrollment = await prisma.enrollment.findUnique({
     where: { userId_courseId: { userId, courseId: lecture.section.courseId } },
     select: { id: true },
   });
-  return { lecture, courseId: lecture.section.courseId, enrolled: !!enrollment };
+  // 패스가 끝난 패스 수강은 진도 저장·퀴즈 응시도 막는다
+  const enrolled = !!enrollment && (await paymentService.enrollmentActive(enrollment.id, userId, lecture.section.course));
+  return { lecture, courseId: lecture.section.courseId, enrolled };
 }
 
 export async function markLectureComplete(userId: string, lectureId: string, courseId: string) {

@@ -4,18 +4,20 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
-/** 무료 수강 신청 → 첫 레슨으로 이동 */
+/** 무료 수강 신청(또는 via="pass" 패스로 수강) → 첫 레슨으로 이동 */
 export function EnrollButton({
   courseId,
   locale,
   slug,
   loggedIn,
+  via,
   className = "",
 }: {
   courseId: string;
   locale: string;
   slug: string;
   loggedIn: boolean;
+  via?: "pass";
   className?: string;
 }) {
   const router = useRouter();
@@ -34,7 +36,7 @@ export function EnrollButton({
       const res = await fetch("/api/v1/enrollments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId }),
+        body: JSON.stringify({ courseId, via }),
       });
       const data = (await res.json().catch(() => ({}))) as { resumeLectureId?: string | null; error?: string };
       if (!res.ok) {
@@ -62,7 +64,7 @@ export function EnrollButton({
         className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70 ${className}`}
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-        {loggedIn ? "수강신청" : "로그인하고 수강신청"}
+        {via === "pass" ? "패스로 수강" : loggedIn ? "수강신청" : "로그인하고 수강신청"}
       </button>
       {error && (
         <p role="alert" className="mt-2 text-sm text-brand">

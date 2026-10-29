@@ -9,6 +9,7 @@ import {
   InvoiceService,
   DashboardService,
   UserService,
+  PaymentService,
 } from "@bayada/services";
 
 // 서비스 인스턴스 싱글턴
@@ -21,3 +22,4 @@ export const orderService = new OrderService(prisma);
 export const invoiceService = new InvoiceService(prisma);
 export const dashboardService = new DashboardService(prisma);
 export const userService = new UserService(prisma);
+export const paymentService = new PaymentService(prisma);

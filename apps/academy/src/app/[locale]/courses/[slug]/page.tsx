@@ -23,6 +23,7 @@ import { getViewer } from "@/lib/viewer";
 import { getCourseForDetail, resolveCourseAccess, visibleCourseWhere } from "@/lib/queries/courses";
 import { getResumeLectureId } from "@/lib/queries/learning";
 import { programsRequiringCourse } from "@/lib/queries/credentials";
+import { getActivePlans, getMyPass } from "@/lib/queries/pass";
 import { canWriteReview, getCourseReviews, getCourseSessions, REVIEW_MIN_PROGRESS } from "@/lib/queries/engagement";
 import {
   JOB_ROLE_LABEL,
@@ -35,9 +36,9 @@ import {
   formatSessionRange,
 } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
-import { INQUIRY_MAILTO } from "@/lib/site";
 import { CourseThumb } from "@/components/course/CourseThumb";
 import { EnrollButton } from "@/components/course/EnrollButton";
+import { BuyButton } from "@/components/course/BuyButton";
 import { WishlistButton } from "@/components/course/WishlistButton";
 import { SessionButton } from "@/components/course/SessionButton";
 import { ReviewCard, Stars } from "@/components/course/ReviewCard";
@@ -156,6 +157,14 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
   const canApplySession = !!enrollment || course.price === 0;
   const progress = enrollment ? (enrollment.completedAt ? 100 : enrollment.progressPercent) : 0;
   const firstFree = lectures.find((l) => l.isFree);
+  // 유료 강의: 이용 중인 패스가 유형을 포함하면 "패스로 수강", 아니면 구매 + 패스 업셀
+  const [plans, myPass] =
+    course.price > 0 && !enrollment
+      ? await Promise.all([getActivePlans(), viewer ? getMyPass(viewer.id) : Promise.resolve(null)])
+      : [[], null];
+  const passCovers = !!myPass?.includes.includes(course.productType);
+  const passOffer = !passCovers && plans.some((p) => p.includes.includes(course.productType));
+  const passLapsed = access.passLapsed === true;
 
   const infoItems = [
     { label: "구성", value: `${lectureCount}개 강의`, icon: BookOpen },
@@ -643,18 +652,31 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                   ) : (
                     <>
                       <p className="text-2xl font-bold tracking-tight text-ink">{formatPrice(course.price)}</p>
+                      {passCovers && (
+                        <p className="mt-1 text-sm font-medium text-brand">아카데미 패스 이용 중 · 추가 결제 없이 수강</p>
+                      )}
+                      {passLapsed && !passCovers && (
+                        <p className="mt-2 rounded-lg bg-surface px-3 py-2 text-[13px] leading-relaxed text-ink-soft">
+                          패스 이용 기간이 끝났어요. 패스를 다시 구독하거나 구매하면 학습 기록 그대로 이어서 들을 수 있어요.
+                        </p>
+                      )}
                       <div className="mt-5">
-                        {course.price > 0 ? (
-                          <a
-                            href={INQUIRY_MAILTO}
-                            className="flex h-12 items-center justify-center rounded-xl bg-ink text-[15px] font-semibold text-white hover:bg-ink-soft"
-                          >
-                            기관 도입 문의
-                          </a>
-                        ) : (
+                        {course.price === 0 ? (
                           <EnrollButton courseId={course.id} locale={locale} slug={course.slug} loggedIn={!!viewer} />
+                        ) : passCovers ? (
+                          <EnrollButton courseId={course.id} locale={locale} slug={course.slug} loggedIn via="pass" />
+                        ) : (
+                          <BuyButton locale={locale} slug={course.slug} />
                         )}
                       </div>
+                      {passOffer && (
+                        <Link
+                          href={`/${locale}/pass`}
+                          className="mt-2 flex h-11 items-center justify-center gap-1.5 rounded-xl border border-brand/20 bg-brand-soft text-sm font-semibold text-brand hover:border-brand"
+                        >
+                          아카데미 패스로 무제한 수강
+                        </Link>
+                      )}
                       {firstFree && (
                         <Link
                           href={`${detailPath}/lectures/${firstFree.id}`}
@@ -713,15 +735,12 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                   {enrollment.completedAt ? "다시 보기" : progress > 0 ? "이어보기" : "학습 시작하기"}
                 </Link>
               )
-            ) : course.price > 0 ? (
-              <a
-                href={INQUIRY_MAILTO}
-                className="flex h-12 items-center justify-center rounded-xl bg-ink text-[15px] font-semibold text-white"
-              >
-                기관 도입 문의
-              </a>
-            ) : (
+            ) : course.price === 0 ? (
               <EnrollButton courseId={course.id} locale={locale} slug={course.slug} loggedIn={!!viewer} />
+            ) : passCovers ? (
+              <EnrollButton courseId={course.id} locale={locale} slug={course.slug} loggedIn via="pass" />
+            ) : (
+              <BuyButton locale={locale} slug={course.slug} />
             )}
           </div>
         </div>
