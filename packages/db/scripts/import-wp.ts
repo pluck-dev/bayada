@@ -35,6 +35,19 @@ function parseKoreanDuration(s?: string | null): number | null {
   return sec || null;
 }
 
+// Elementor 로 만든 페이지는 본문에 <style>·래퍼 div·class 가 섞여 있다. 문서 내용만 남긴다.
+function cleanWpHtml(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\s(class|style|id|data-[\w-]+)="[^"]*"/gi, "")
+    .replace(/<\/?(div|section|span)[^>]*>/gi, "")
+    .replace(/<img[^>]*>/gi, "")
+    .replace(/(\r?\n){3,}/g, "\n\n")
+    .trim();
+}
+
 const toDate = (unix?: number | null) => (unix && unix > 0 ? new Date(unix * 1000) : undefined);
 
 // 카테고리 이름으로 대상 직군을 추정한다. 원본에 직군 필드가 없다.
@@ -315,6 +328,21 @@ async function main() {
     attempts++;
   }
   console.log(`enrollments: ${enrolled}, certificates: +${certs}, progress: ${progressed}, quiz attempts: ${attempts}`);
+
+  // ─── 이용약관·개인정보처리방침 (옛 사이트 페이지 원문) ───
+  for (const [wpSlug, slug] of [["terms-and-conditions", "terms"], ["privacy-policy", "privacy"]] as const) {
+    const [page] = await q(
+      `SELECT post_title, post_content FROM ${P}posts WHERE post_type = 'page' AND post_status = 'publish' AND post_name = ?`,
+      [wpSlug]
+    );
+    if (!page) continue;
+    // 어드민에서 고친 문서를 덮지 않도록 없을 때만 만든다
+    await prisma.page.upsert({
+      where: { slug },
+      update: {},
+      create: { slug, title: page.post_title, content: cleanWpHtml(page.post_content) },
+    });
+  }
 
   await db.end();
 }
