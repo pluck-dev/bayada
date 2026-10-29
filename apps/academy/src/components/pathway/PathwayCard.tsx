@@ -24,7 +24,7 @@ export function PathwayCard({ pathway, locale }: { pathway: PathwayCardData; loc
           />
         ) : (
           <span className="flex h-full w-full flex-col justify-between bg-gradient-to-br from-zinc-100 via-zinc-50 to-white p-5 text-ink">
-            <Globe2 className="h-6 w-6 text-brand" aria-hidden />
+            <Globe2 className="h-6 w-6 self-end text-brand" aria-hidden />
             <span className="text-[26px] font-bold tracking-tight">{pathway.country}</span>
           </span>
         )}

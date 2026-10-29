@@ -50,7 +50,9 @@ function StepStatusBadge({ step, signedIn }: { step: PathwayStepView; signedIn: 
       );
     if (s.state === "in_progress")
       return (
-        <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">학습 중 {s.progress}%</span>
+        <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
+          {s.progress > 0 ? `학습 중 ${s.progress}%` : "수강 신청함"}
+        </span>
       );
     return <span className="rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-ink-soft">시작 전</span>;
   }
@@ -79,7 +81,12 @@ function StepLink({ step, locale }: { step: PathwayStepView; locale: string }) {
           <span className="block truncate text-sm font-semibold text-ink group-hover:text-brand">{step.course.title}</span>
         </span>
         <span className="shrink-0 text-xs font-semibold text-ink-soft">
-          {st === "completed" ? "다시 보기" : st === "in_progress" ? "이어 학습" : "보러 가기"} →
+          {st === "completed"
+            ? "다시 보기"
+            : st === "in_progress" && step.status.kind === "course" && step.status.progress > 0
+              ? "이어 학습"
+              : "보러 가기"}{" "}
+          →
         </span>
       </Link>
     );

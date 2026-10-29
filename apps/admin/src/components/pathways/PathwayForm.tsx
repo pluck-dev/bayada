@@ -309,7 +309,7 @@ export function PathwayForm({
                         {s.link === "course" && (
                           <select
                             aria-label={`STEP ${i + 1} 연결 프로그램`}
-                            className={selectClass}
+                            className={cx(selectClass, "min-w-0 flex-1")}
                             value={s.courseId}
                             onChange={(e) => setStep(i, { courseId: e.target.value })}
                           >
@@ -328,7 +328,7 @@ export function PathwayForm({
                           ) : (
                             <select
                               aria-label={`STEP ${i + 1} 연결 인증 과정`}
-                              className={selectClass}
+                              className={cx(selectClass, "min-w-0 flex-1")}
                               value={s.credentialProgramId}
                               onChange={(e) => setStep(i, { credentialProgramId: e.target.value })}
                             >

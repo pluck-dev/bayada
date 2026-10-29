@@ -11,9 +11,9 @@ export const metadata: Metadata = { title: "커리어 목표" };
 /** 다음 단계 CTA — 연결된 프로그램·인증이 있으면 그리로, 없으면 패스웨이 상세의 해당 단계로 */
 function nextAction(step: PathwayStepView, index: number, locale: string, pathwaySlug: string) {
   if (step.course) {
-    const st = step.status.kind === "course" ? step.status.state : "not_started";
+    const resume = step.status.kind === "course" && step.status.state === "in_progress" && step.status.progress > 0;
     return {
-      label: st === "in_progress" ? "이어 학습하기" : "학습 시작하기",
+      label: resume ? "이어 학습하기" : "학습 시작하기",
       href: `/${locale}/courses/${encodeURIComponent(step.course.slug)}`,
     };
   }
@@ -108,7 +108,7 @@ export default async function GoalsPage({ params }: { params: Promise<{ locale: 
                     <>
                       <p className="text-sm text-ink-soft">
                         <span className="font-semibold text-ink">다음 단계</span> · STEP {current + 1} {next.title}
-                        {next.status.kind === "course" && next.status.state === "in_progress" && (
+                        {next.status.kind === "course" && next.status.state === "in_progress" && next.status.progress > 0 && (
                           <span className="text-brand"> ({next.status.progress}% 학습 중)</span>
                         )}
                       </p>
