@@ -205,6 +205,39 @@
 - 체크아웃 동의 체크박스는 하이드레이션 전에 체크하면 풀린다 — Playwright 는 체크 상태를 확인하고 재시도할 것.
 - 결제 대기 주문은 결제창에서 이탈하면 남는다 → 다음 체크아웃이나 failUrl(orderId 있을 때)에서 CANCELLED 로 정리. 구매자가 창을 닫으면(PAY_PROCESS_CANCELED) orderId 가 안 온다.
 
+# 계정·메일: 메일러(SMTP_URL·mailpit), 비밀번호 재설정 토큰, 세션 무효(passwordChangedAt), 이메일 인증 배너, 소셜 로그인, 로그인 제한
+
+## 메일러 (`@bayada/services/account` — 서버 전용, nodemailer)
+- `SMTP_URL`·`MAIL_FROM`. 개발에서 없으면 발송 대신 서버 로그에 수신자·제목·링크 출력, production 에서 없으면 `MailerNotConfiguredError`. 로컬 수신함: `deploy/docker-compose.yml` 의 mailpit(1025/8025)만 띄우고 `.env.local` 에 `SMTP_URL=smtp://localhost:1025`.
+- services 의 `"./account"` 별도 export 로 둔 이유: nodemailer·node:crypto 가 `@bayada/services` index 를 쓰는 모든 곳에 끌려오지 않게. **클라이언트 컴포넌트에서 import 금지** — 화면과 공용인 비밀번호 규칙은 `@bayada/shared/password-policy` 로 뺐다(academy signup-policy 는 재export).
+- 부가 메일(초대·갱신)은 `trySendMail`(실패해도 본 동작 진행), 메일이 곧 기능인 재설정은 `sendMail`.
+- 메일 링크 주소는 요청 Host 가 아니라 설정값: academy `lib/app-url.ts` = AUTH_URL → NEXTAUTH_URL → SITE_URL (로컬 SITE_URL 은 3000 이라 뒤로 뺌), admin = AUTH_URL → NEXTAUTH_URL. Host 헤더로 만들면 조작된 요청으로 남의 재설정 링크를 공격자 도메인으로 보낼 수 있다.
+
+## 비밀번호 재설정·세션 무효
+- AuthToken: 원문은 메일에만, DB 는 sha256. 30분·1회용. 소비는 `updateMany(usedAt null, 미만료)` count=1 로 이중 사용 방지, 성공 시 같은 계정의 다른 재설정 토큰도 소비 + LoginAttempt 삭제(잠금 해제) + emailVerifiedAt 채움(메일 링크 = 소유 확인).
+- 재설정 화면(GET)은 토큰을 소비하지 않는다(메일 보안 스캐너 선열람 대비). 이메일 인증 링크는 반대로 GET 에서 바로 인증(누가 열어도 결과 동일).
+- 요청 응답은 이메일 존재·승인 여부·과다 요청(15분 3통) 관계없이 항상 `{ok:true}`.
+- 세션 무효: shared auth jwt 콜백이 로그인 시 `token.authTime` 을 넣고, 이후 **매 auth() 호출마다** `getSessionState`(DB 1쿼리)로 `passwordChangedAt > authTime` 이면 null 반환 → Auth.js 가 쿠키 삭제. authTime 없는 옛 토큰은 0 으로 본다. 계정이 지워져도 무효. 아카데미·어드민이 같은 User 라 어느 쪽에서 재설정해도 양쪽 세션이 끊긴다(확인함).
+- WP 해시 재저장(updatePassword)은 passwordChangedAt 을 건드리지 않는다(같은 비밀번호라 세션을 끊으면 안 됨).
+
+## 로그인 실패 제한
+- 이메일+IP 15분 5회 실패면 `LoginRateLimited`(CredentialsSignin, code `rate_limited`) — 잠긴 동안은 비밀번호를 확인하지 않아 맞는 비밀번호도 거부. 없는 이메일도 실패로 센다(계정 존재 노출 방지). 잠긴 시도는 기록하지 않아 15분이 지나면 풀린다. 성공 시 그 이메일+IP 기록 삭제, 하루 지난 행은 실패 기록 때 정리.
+- IP 는 x-forwarded-for 첫 값 → x-real-ip → "unknown". 프록시 없이 직접 노출하면 XFF 를 위조해 IP 를 바꿔 가며 시도할 수 있다 — 운영은 LB/리버스 프록시가 XFF 를 덮어쓰게 둘 것.
+
+## 이메일 인증 (선택, 로그인 안 막음)
+- 배너 대상 = 미인증 && legacyWpId 없음 && 기관 소속 없음 && STUDENT && 자리표시 이메일 아님. 이관 회원·기관 계정은 인증 기록이 원래 없어 조건 없이 띄우면 전원에게 뜬다. 위치는 마이 러닝(/dashboard) 상단 — 헤더는 다른 작업 영역이라 피함.
+- 가입 API 가 인증 메일 발송(실패해도 가입 성공). 재발송 1분 쿨다운(마지막 EMAIL_VERIFY 토큰 createdAt 기준).
+
+## 소셜 로그인 (카카오·구글, 아카데미만)
+- `AUTH_KAKAO_ID/SECRET`·`AUTH_GOOGLE_ID/SECRET` 있는 제공자만 provider 등록 + 버튼 노출(login page 서버 컴포넌트가 판단해 LoginForm 에 넘김). 어드민엔 없음.
+- signIn 콜백에서 연결/생성(`lib/social-auth.ts`): 기존 SocialAccount → **제공자가 확인했다고 보증한 이메일**(구글 email_verified, 카카오 is_email_valid && is_email_verified)이 같은 기존 계정에 연결 → 새 STUDENT(APPROVED). 미확인 이메일이 이미 가입돼 있으면 거부(`?error=SocialEmailInUse`, 계정 탈취 방지). 이메일 없거나 미확인이면 `provider-id@social.bayada.invalid` 자리표시 — 메일러가 `.invalid` 는 건너뛴다.
+- jwt 콜백: 소셜 직후 user.id 는 제공자 id 라 SocialAccount 로 우리 User 를 찾아 넣는다. 첫 로그인 직군은 `redirectTo=/[locale]/auth/onboarding?callbackUrl=…` 이 jobRole 없을 때만 묻는다.
+- 실제 카카오/구글 OAuth 왕복은 키가 없어 미검증(버튼 숨김·온보딩 화면·연결 로직 코드 경로까지만).
+
+## 초대·갱신 메일
+- 기관 초대 API 가 초대마다 메일 발송, 응답 `emailed` 로 성공한 주소만 — 링크 복사 UI 는 그대로(메일 실패 대비).
+- 인증 갱신 메일은 화면 배너(renewalNotifiedAt)와 별개로 `POST /api/cron/credential-renewals`(Bearer CRON_SECRET, 개발은 없으면 허용) 를 하루 한 번 외부 스케줄러가 호출. 인증마다 1회(`renewalEmailedAt` 선점 후 발송, 실패 시 되돌림). 스케줄러는 아직 어디에도 등록돼 있지 않다 — 운영 전환 때 cron 등록 필요.
+
 # 어드민 동적 역할·권한(AdminRoleDef)·사이트 설정(SiteSetting): ADMIN 잠금, 사용자 정의 역할=STUDENT+customRoleKey, 파트너 콘솔 고정, 섹션별 설정 행
 
 ## WHY: 권한은 코드 목록 + DB 역할 행
