@@ -104,3 +104,26 @@
 
 ## 빌드 확인 (dev 서버 켠 채)
 - next.config 의 distDir 을 잠깐 `process.env.NEXT_DIST_DIR || ".next"` 로 바꿔 `NEXT_DIST_DIR=.next-buildcheck next build --webpack` 으로 확인하고 되돌렸다(커밋 안 함). .next 를 공유하지 않으니 dev 워커 EPIPE 가 안 난다(확인함). 단 next build 가 tsconfig.json include 에 `.next-buildcheck/types` 를 추가하고 next-env.d.ts 도 건드리니 빌드 후 둘 다 되돌릴 것.
+
+# 어드민 2차: 파트너 콘솔(PARTNER_ADMIN) 소유권, 후기 신고 처리, 실습 일정 KST, 정적 문서, 기관 B2B
+
+## 파트너 관리자 RBAC — 서버에서 providerId 로 막는다
+- PARTNER_ADMIN 은 ADMIN_ROLES 에 들어가 로그인은 되지만 권한은 `partner.console` 하나. 첫 화면 `/partner-console`.
+- providerId 가 없는 PARTNER_ADMIN 은 `getAdminUser()` 가 null, auth signIn 콜백도 거부 → 제공기관 해제 즉시 콘솔 차단.
+- 프로그램 본문·커리큘럼 액션은 `PROGRAM_EDIT = ["program.write","partner.console"]` + `assertEditable(courseId, user)` 가 소유 확인. 다른 기관 프로그램은 "찾을 수 없습니다"(존재 숨김). 파트너는 게시·보관된 프로그램도 못 고친다(LOCKED_STATUSES 밖이라 따로 막음 — 안 막으면 승인 없이 학습자 화면이 바뀜).
+- create/update 에서 파트너가 보낸 providerId·visibility·featured 는 무시하고 서버 값으로 덮는다.
+- 워크플로우: TRANSITIONS 의 submit 에만 PARTNER_ADMIN 추가. transitionProgram 은 파트너면 submit 외 즉시 거부 + 소유 확인. Playwright 로 서버 액션을 직접 재전송(start_review/approve/다른 기관 submit·update) 해도 막히는 것 확인함.
+- 파트너 관리자 지정은 /partners/[id] 에서만(학습자 계정만). 회원 화면 역할 변경은 PARTNER_ADMIN 을 거부하고, 다른 역할로 바꿀 때 providerId 를 비운다.
+- 파트너 콘솔 통계는 인원·수료율만. W7 피그마의 "최근 수료자(김○○)" 목록은 과업 지시(학습자 식별정보 금지)에 따라 뺐다.
+
+## 후기 신고 = 게시 중 && reportCount > 0
+- 숨김은 reportCount 유지. 다시 게시·신고 기각은 운영자 검토 완료로 보고 reportCount 를 0 으로(이전 값은 AuditLog detail). 안 그러면 대시보드 "미처리 신고"가 영원히 안 줄어든다.
+
+## 함정
+- `"use client"` 파일에서 export 한 상수(EMPTY_PROGRAM)를 서버 컴포넌트가 import 하면 값이 아니라 클라이언트 참조라 스프레드하면 `{}` → /programs/new 가 500 이었다. 폼 기본값은 `lib/program-defaults.ts` 같은 일반 모듈에 둔다.
+- 실습 일정 datetime-local 은 KST 로 해석(`lib/kst.ts`, `+09:00`). formatDate/formatDateTime 에 `timeZone: "Asia/Seoul"` 추가 — Docker(UTC)에서 시간이 9시간 밀리지 않게.
+- 신청자 CSV: UTF-8 BOM + `=,+,-,@` 로 시작하는 셀 앞에 `'` (엑셀 수식 주입 방지). 내려받기는 `session.export` 로 감사 로그.
+- 정적 문서 slug 는 terms/privacy/refund 고정(`lib/pages.ts`). 저장 시 script·iframe·on* 속성·javascript: 거부, 미리보기는 sandbox iframe(스크립트 불가) + 아카데미 `.legacy-content` 스타일. 이관된 약관은 WP 원문이라 `<p>` 없이 줄글이 섞여 있다(아카데미에 아직 문서 라우트 없음, 2026-10-29).
+- 동시 수정: 문서 저장은 편집 시작 시점 updatedAt 을 같이 보내 다르면 거부.
+- 기관 목록·상세는 옛 @bayada/ui 화면을 새 디자인으로 교체. 기관 관리자 지정은 STUDENT↔ORG_ADMIN 사이만(운영 계정 강등 사고 방지). 사내 조직(isInternal) 생성은 일부러 폼에 없다.
+- 빌드 확인은 `apps/admin-buildcheck` 형제 폴더에 src·설정 복사 + node_modules 정션으로 했다(dev 의 .next 를 안 건드림). 지울 때 정션을 `rmdir` 로 먼저 끊고 폴더 삭제.
