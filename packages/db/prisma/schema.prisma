@@ -37,6 +37,7 @@ model User {
   sessionRegistrations   SessionRegistration[]
   assignments            CourseAssignment[]      @relation("AssignmentLearner")
   providerId             String? // PARTNER_ADMIN 이 관리하는 제공기관
+  customRoleKey          String? // 어드민 사용자 정의 역할 (AdminRoleDef.key). 있으면 role 대신 이 역할의 권한을 쓴다
   provider               Provider?               @relation(fields: [providerId], references: [id])
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
@@ -302,6 +303,26 @@ model AuditLog {
   at      DateTime @default(now())
 
   @@index([target])
+}
+
+// 어드민 역할·권한 정의 — 시스템 역할(Role enum 의 운영 역할)도 행으로 두고 권한만 바꾼다.
+// isSystem=true 행은 key 가 Role enum 값과 같고 삭제·이름 변경 불가. ADMIN 은 코드에서 항상 전체 권한(잠금).
+model AdminRoleDef {
+  id          String   @id @default(cuid())
+  key         String   @unique // ADMIN, CONTENT_MANAGER … 또는 사용자 정의 키(custom_xxx)
+  name        String
+  description String   @default("")
+  permissions String[]
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 학습자 사이트 문구·설정 (어드민 '사이트 설정'). 섹션별 key 한 행씩 — @bayada/shared/site-settings 참고
+model SiteSetting {
+  key       String   @id // home.hero, home.sections, faq, footer, inquiry, seo
+  value     Json
+  updatedAt DateTime @updatedAt
 }
 
 model Progress {
