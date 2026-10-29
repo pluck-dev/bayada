@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { buttonClass, inputClass, Field, cx } from "@/components/ui";
@@ -26,7 +27,9 @@ export default function AdminLoginPage() {
         setError(
           result.error === "AccessDenied"
             ? "어드민 콘솔 접근 권한이 없는 계정입니다."
-            : "이메일 또는 비밀번호가 올바르지 않거나 승인되지 않은 계정입니다.",
+            : result.code === "rate_limited"
+              ? "로그인 실패가 반복되어 15분간 로그인을 막았습니다. 잠시 후 다시 시도하거나 비밀번호를 재설정하세요."
+              : "이메일 또는 비밀번호가 올바르지 않거나 승인되지 않은 계정입니다.",
         );
         setLoading(false);
       } else {
@@ -86,6 +89,9 @@ export default function AdminLoginPage() {
             <button type="submit" disabled={loading} className={cx(buttonClass("primary"), "h-9 w-full")}>
               {loading ? "로그인 중…" : "로그인"}
             </button>
+            <Link href={`/${locale ?? "ko"}/auth/forgot-password`} className="text-center text-[12.5px] text-muted hover:text-fg">
+              비밀번호를 잊으셨나요?
+            </Link>
           </div>
         </form>
       </div>
