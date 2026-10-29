@@ -39,6 +39,10 @@ model User {
   providerId             String? // PARTNER_ADMIN 이 관리하는 제공기관
   customRoleKey          String? // 어드민 사용자 정의 역할 (AdminRoleDef.key). 있으면 role 대신 이 역할의 권한을 쓴다
   provider               Provider?               @relation(fields: [providerId], references: [id])
+  passwordChangedAt      DateTime? // 비밀번호 재설정 시각 — 이전에 발급된 세션(JWT)은 무효
+  emailVerifiedAt        DateTime? // 이메일 인증 완료 (외부 가입은 선택, 로그인은 막지 않음)
+  authTokens             AuthToken[]
+  socialAccounts         SocialAccount[]
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
 }
@@ -565,6 +569,7 @@ model Credential {
   expiresAt         DateTime?
   revokedAt         DateTime?
   renewalNotifiedAt DateTime?
+  renewalEmailedAt  DateTime? // 갱신 안내 메일 발송 시각 (cron 이 한 번만 보낸다)
 }
 
 // ─── 아카데미 패스 (요금·기간·포함 범위는 어드민 설정) ───
@@ -636,4 +641,49 @@ model PathwayGoal {
   createdAt DateTime @default(now())
 
   @@id([userId, pathwayId])
+}
+
+// ─── 계정: 비밀번호 재설정·이메일 인증 토큰, 로그인 실패 기록, 소셜 로그인 연결 ───
+enum AuthTokenType {
+  PASSWORD_RESET
+  EMAIL_VERIFY
+}
+
+// 메일로 보낸 1회용 토큰. 원문은 저장하지 않고 sha256 만 둔다
+model AuthToken {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      AuthTokenType
+  tokenHash String        @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  @@index([userId, type])
+}
+
+// 로그인 실패 기록 (이메일+IP 기준 제한). 여러 인스턴스가 같이 보도록 DB 에 둔다
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ip        String
+  createdAt DateTime @default(now())
+
+  @@index([email, ip, createdAt])
+  @@index([createdAt])
+}
+
+// 카카오·구글 계정 연결 (학습자 사이트 전용)
+model SocialAccount {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          String // kakao | google
+  providerAccountId String
+  email             String?
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
