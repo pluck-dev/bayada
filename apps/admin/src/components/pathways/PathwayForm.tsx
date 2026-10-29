@@ -293,10 +293,10 @@ export function PathwayForm({
                       />
                     </Field>
                     <Field label="연결" htmlFor={`st-link-${s.key}`}>
-                      <div className="flex gap-2">
+                      <div className="grid grid-cols-[170px_minmax(0,1fr)] gap-2">
                         <select
                           id={`st-link-${s.key}`}
-                          className={cx(selectClass, "w-[170px] shrink-0")}
+                          className={cx(selectClass, s.link === "none" && "col-span-2")}
                           value={s.link}
                           onChange={(e) => setStep(i, { link: e.target.value as StepLinkKind })}
                         >
@@ -309,7 +309,7 @@ export function PathwayForm({
                         {s.link === "course" && (
                           <select
                             aria-label={`STEP ${i + 1} 연결 프로그램`}
-                            className={cx(selectClass, "min-w-0 flex-1")}
+                            className={selectClass}
                             value={s.courseId}
                             onChange={(e) => setStep(i, { courseId: e.target.value })}
                           >
@@ -328,7 +328,7 @@ export function PathwayForm({
                           ) : (
                             <select
                               aria-label={`STEP ${i + 1} 연결 인증 과정`}
-                              className={cx(selectClass, "min-w-0 flex-1")}
+                              className={selectClass}
                               value={s.credentialProgramId}
                               onChange={(e) => setStep(i, { credentialProgramId: e.target.value })}
                             >
