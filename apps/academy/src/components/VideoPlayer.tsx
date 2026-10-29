@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PlayCircle, Pause, Volume2, VolumeX, Maximize } from "lucide-react";
 
+// YouTube URL이면 영상 ID 반환 (watch / youtu.be / embed / shorts)
+function getYouTubeId(url: string): string | null {
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
 interface VideoPlayerProps {
   videoUrl?: string | null;
   title: string;
@@ -84,7 +92,7 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
   // videoUrl이 없으면 플레이스홀더 표시
   if (!videoUrl) {
     return (
-      <div className="relative aspect-video w-full bg-gray-900 shadow-2xl z-10">
+      <div className="relative aspect-video w-full bg-gray-900">
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white gap-4">
           <div className="rounded-full bg-white/10 p-6 backdrop-blur-sm">
             <PlayCircle className="h-16 w-16 opacity-60" />
@@ -98,8 +106,24 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
     );
   }
 
+  // YouTube 영상은 iframe 임베드로 재생 (실제 영상 업로드 전 샘플용)
+  const youTubeId = getYouTubeId(videoUrl);
+  if (youTubeId) {
+    return (
+      <div className="relative aspect-video w-full bg-black">
+        <iframe
+          src={`https://www.youtube.com/embed/${youTubeId}?rel=0&modestbranding=1`}
+          title={title}
+          className="absolute inset-0 h-full w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="relative aspect-video w-full bg-black shadow-2xl z-10 group">
+    <div className="relative aspect-video w-full bg-black group">
       <video
         ref={videoRef}
         src={videoUrl}
@@ -130,7 +154,7 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
           onClick={handleSeek}
         >
           <div
-            className="h-full rounded-full bg-[var(--brand-primary)] transition-all"
+            className="h-full rounded-full bg-brand transition-all"
             style={{ width: `${progress}%` }}
           />
         </div>

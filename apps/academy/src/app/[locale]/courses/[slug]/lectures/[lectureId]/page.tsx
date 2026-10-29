@@ -1,180 +1,238 @@
-import { courseService, lectureService } from "@/lib/services";
-import { auth } from "@/lib/auth";
-import { prisma } from "@bayada/db";
-import { Badge } from "@bayada/ui";
-import { BookOpen } from "lucide-react";
+import Link from "next/link";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { VideoPlayer } from "@/components/VideoPlayer";
-import { LectureSidebar } from "@/components/LectureSidebar";
-import { LectureActions } from "@/components/LectureActions";
+import { notFound, redirect } from "next/navigation";
+import { ArrowLeft, CheckCircle2, ChevronDown, FileText, HelpCircle, ListOrdered, PlayCircle } from "lucide-react";
+import { prisma } from "@bayada/db";
+import type { LectureType } from "@bayada/db";
+import { getViewer } from "@/lib/viewer";
+import { getCourseForDetail, resolveCourseAccess } from "@/lib/queries/courses";
+import { LECTURE_TYPE_LABEL, formatSeconds } from "@/lib/labels";
+import { decodeParam } from "@/lib/params";
+import { LectureBody } from "@/components/lecture/LectureBody";
+import { QuizRunner, type ClientQuestion } from "@/components/lecture/QuizRunner";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string; lectureId: string }>;
-}): Promise<Metadata> {
-  const { slug, lectureId } = await params;
-  try {
-    const [lecture, course] = await Promise.all([
-      lectureService.getById(lectureId),
-      courseService.getBySlug(slug),
-    ]);
-    return {
-      title: `${lecture.title} - ${course.title}`,
-      description: `${course.title}의 강의: ${lecture.title}`,
-      robots: { index: false, follow: false },
-    };
-  } catch {
-    return { robots: { index: false, follow: false } };
+type Params = Promise<{ locale: string; slug: string; lectureId: string }>;
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
+
+const ICON: Record<LectureType, typeof PlayCircle> = { VIDEO: PlayCircle, TEXT: FileText, QUIZ: HelpCircle };
+
+/** 정답을 빼고 클라이언트에 내려줄 문항 */
+function toClientQuestion(q: { id: string; type: string; text: string; options: unknown }): ClientQuestion {
+  const options = (Array.isArray(q.options) ? q.options : []) as { text?: string }[];
+  switch (q.type) {
+    case "FILL_GAP":
+      return { id: q.id, type: "FILL_GAP", text: q.text, segments: (options[0]?.text ?? "").split(/\|[^|]+\|/) };
+    case "KEYWORDS":
+      return { id: q.id, type: "KEYWORDS", text: q.text };
+    case "MULTI":
+    case "TRUE_FALSE":
+    case "SINGLE":
+    default:
+      return {
+        id: q.id,
+        type: q.type === "MULTI" ? "MULTI" : q.type === "TRUE_FALSE" ? "TRUE_FALSE" : "SINGLE",
+        text: q.text,
+        options: options.map((o) => o.text ?? ""),
+      };
   }
 }
 
-export default async function LecturePage({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string; lectureId: string }>;
-}) {
-  const { locale, slug, lectureId } = await params;
+export default async function LecturePage({ params }: { params: Params }) {
+  const { locale, slug: rawSlug, lectureId } = await params;
+  const slug = decodeParam(rawSlug);
+  const detailPath = `/${locale}/courses/${encodeURIComponent(slug)}`;
+  const selfPath = `${detailPath}/lectures/${lectureId}`;
 
-  // 강의(레슨) 조회
-  let lecture: Awaited<ReturnType<typeof lectureService.getById>>;
-  try {
-    lecture = await lectureService.getById(lectureId);
-  } catch {
-    notFound();
-  }
+  const viewer = await getViewer();
+  const course = await getCourseForDetail(slug);
+  if (!course) notFound();
+  const all = course.sections.flatMap((s) => s.lectures.map((l) => ({ ...l, sectionTitle: s.title })));
+  const index = all.findIndex((l) => l.id === lectureId);
+  if (index < 0) notFound();
+  const current = all[index];
 
-  // 코스 전체 데이터 (사이드바 커리큘럼용)
-  let course: Awaited<ReturnType<typeof courseService.getBySlug>>;
-  try {
-    course = await courseService.getBySlug(slug);
-  } catch {
-    notFound();
-  }
+  const access = await resolveCourseAccess(course, viewer);
+  if (access.kind === "notfound") notFound();
+  if (!viewer) redirect(`/${locale}/auth/login?callbackUrl=${encodeURIComponent(selfPath)}`);
+  if (access.kind === "login") notFound();
+  const enrolled = !!access.enrollment;
+  // 수강 신청 전에는 미리보기(isFree) 레슨만
+  if (!enrolled && !current.isFree) redirect(detailPath);
 
-  // 전체 레슨 목록을 flat하게 만들어 이전/다음 탐색
-  const allLectures = course.sections.flatMap((s) =>
-    s.lectures.map((l) => ({
-      id: l.id,
-      title: l.title,
-      sectionId: s.id,
-    }))
-  );
-  const currentIndex = allLectures.findIndex((l) => l.id === lectureId);
-  const prevLecture = currentIndex > 0 ? allLectures[currentIndex - 1] : null;
-  const nextLecture =
-    currentIndex < allLectures.length - 1
-      ? allLectures[currentIndex + 1]
-      : null;
-
-  // 현재 레슨이 속한 섹션
-  const currentSection = course.sections.find((s) =>
-    s.lectures.some((l) => l.id === lectureId)
-  );
-
-  // 로그인 사용자의 진행도 조회
-  const session = await auth();
-  let completedLectureIds = new Set<string>();
-  let isCurrentCompleted = false;
-
-  if (session?.user) {
-    const userId = (session.user as { id: string }).id;
-    const allLectureIds = allLectures.map((l) => l.id);
-    const progresses = await prisma.progress.findMany({
-      where: {
-        userId,
-        lectureId: { in: allLectureIds },
-        completed: true,
+  const [lecture, doneRows, passedAttempt] = await Promise.all([
+    prisma.lecture.findUnique({
+      where: { id: lectureId },
+      select: {
+        videoUrl: true,
+        content: true,
+        quiz: {
+          select: {
+            id: true,
+            passingScore: true,
+            questions: { orderBy: { order: "asc" }, select: { id: true, type: true, text: true, options: true } },
+          },
+        },
       },
+    }),
+    prisma.progress.findMany({
+      where: { userId: viewer.id, completed: true, lectureId: { in: all.map((l) => l.id) } },
       select: { lectureId: true },
-    });
-    completedLectureIds = new Set(progresses.map((p) => p.lectureId));
-    isCurrentCompleted = completedLectureIds.has(lectureId);
-  }
+    }),
+    current.type === "QUIZ"
+      ? prisma.quizAttempt.findFirst({
+          where: { userId: viewer.id, passed: true, quiz: { lectureId } },
+          select: { id: true },
+        })
+      : Promise.resolve(null),
+  ]);
+  if (!lecture) notFound();
+
+  const done = new Set(doneRows.map((r) => r.lectureId));
+  const computed = all.length ? Math.round((all.filter((l) => done.has(l.id)).length / all.length) * 100) : 0;
+  // 수강 진도율은 Enrollment 기준(마이 러닝·상세와 동일). 옮겨 온 데이터는 레슨 기록보다 높을 수 있다
+  const progress = access.enrollment
+    ? access.enrollment.completedAt
+      ? 100
+      : Math.max(access.enrollment.progressPercent, computed)
+    : computed;
+  const prev = index > 0 ? { id: all[index - 1].id, title: all[index - 1].title } : null;
+  const next = index < all.length - 1 ? { id: all[index + 1].id, title: all[index + 1].title } : null;
+  const basePath = `${detailPath}/lectures`;
+  const certificatesHref = `/${locale}/dashboard/certificates`;
+
+  const curriculum = (
+    <ol className="space-y-5">
+      {course.sections.map((s, si) => (
+        <li key={s.id}>
+          <p className="mb-1.5 px-3 text-xs font-semibold text-muted">
+            {si + 1}. {s.title}
+          </p>
+          <ul>
+            {s.lectures.map((l) => {
+              const Icon = ICON[l.type];
+              const isCurrent = l.id === lectureId;
+              const isDone = done.has(l.id);
+              const canOpen = enrolled || l.isFree;
+              const inner = (
+                <>
+                  {isDone ? (
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-label="완료" />
+                  ) : (
+                    <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${isCurrent ? "text-brand" : "text-subtle"}`} aria-hidden />
+                  )}
+                  <span className="flex-1 leading-snug">{l.title}</span>
+                  {l.duration ? <span className="shrink-0 text-[11px] text-subtle">{formatSeconds(l.duration)}</span> : null}
+                </>
+              );
+              const cls = `flex items-start gap-2.5 rounded-lg px-3 py-2 text-[13px] ${
+                isCurrent ? "bg-white font-semibold text-ink shadow-card ring-1 ring-line" : "text-ink-soft"
+              }`;
+              return (
+                <li key={l.id}>
+                  {canOpen && !isCurrent ? (
+                    <Link href={`${basePath}/${l.id}`} className={`${cls} hover:bg-white hover:text-ink`}>
+                      {inner}
+                    </Link>
+                  ) : (
+                    <div className={`${cls} ${canOpen ? "" : "opacity-50"}`} aria-current={isCurrent ? "page" : undefined}>
+                      {inner}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </li>
+      ))}
+    </ol>
+  );
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col lg:flex-row bg-[#f5f5f7]">
-      {/* Sidebar - 커리큘럼 */}
-      <LectureSidebar
-        locale={locale}
-        slug={slug}
-        courseTitle={course.title}
-        currentLectureId={lectureId}
-        sections={course.sections.map((s) => ({
-          id: s.id,
-          title: s.title,
-          lectures: s.lectures.map((l) => ({
-            id: l.id,
-            title: l.title,
-            type: l.type,
-            duration: l.duration,
-          })),
-        }))}
-        completedLectureIds={completedLectureIds}
-      />
-
-      {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-y-auto w-full">
-        {/* 영상 플레이어 */}
-        <VideoPlayer
-          videoUrl={lecture.videoUrl}
-          title={lecture.title}
-        />
-
-        {/* 강의 정보 */}
-        <div className="flex-1 bg-white relative">
-          <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 relative z-10">
-            <div className="mb-8 pb-8 border-b border-gray-100">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary" className="bg-gray-100 text-gray-500 hover:bg-gray-200">
-                  {lecture.type === "VIDEO" ? "영상 강의" : "텍스트 강의"}
-                </Badge>
-                {currentSection && (
-                  <span className="text-xs font-medium text-gray-400">{currentSection.title}</span>
-                )}
+    <div className="bg-surface">
+      <div className="border-b border-line bg-white">
+        <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-4 px-5 lg:px-8">
+          <Link
+            href={detailPath}
+            className="flex min-w-0 items-center gap-2 text-sm font-semibold text-ink hover:text-brand"
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="truncate">{course.title}</span>
+          </Link>
+          {enrolled && (
+            <div className="ml-auto hidden shrink-0 items-center gap-3 sm:flex">
+              <span className="text-xs text-muted">진도율</span>
+              <div className="h-1.5 w-32 overflow-hidden rounded-full bg-line-soft">
+                <div className="h-full rounded-full bg-brand" style={{ width: `${progress}%` }} />
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                {lecture.title}
-              </h1>
+              <span className="w-9 text-right text-xs font-bold text-ink">{progress}%</span>
+            </div>
+          )}
+        </div>
+      </div>
 
-              {/* 완료 버튼 + 네비게이션 */}
-              <LectureActions
-                locale={locale}
-                slug={slug}
-                lectureId={lectureId}
-                isCompleted={isCurrentCompleted}
-                prevLecture={prevLecture}
-                nextLecture={nextLecture}
-              />
+      <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[320px_1fr]">
+        <aside className="hidden border-r border-line lg:block">
+          <div className="sticky top-[100px] max-h-[calc(100vh-100px)] overflow-y-auto px-4 py-6">
+            <p className="mb-4 flex items-center gap-2 px-3 text-sm font-bold text-ink">
+              <ListOrdered className="h-4 w-4" aria-hidden /> 커리큘럼
+            </p>
+            {curriculum}
+          </div>
+        </aside>
+
+        <div className="min-w-0 px-5 py-8 lg:px-12 lg:py-10">
+          <div className="mx-auto max-w-[920px]">
+            <p className="text-xs font-semibold text-muted">
+              {current.sectionTitle} · {LECTURE_TYPE_LABEL[current.type]}
+            </p>
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-ink md:text-[28px]">{current.title}</h1>
+
+            <div className="mt-6">
+              {current.type === "QUIZ" ? (
+                lecture.quiz && lecture.quiz.questions.length > 0 ? (
+                  <QuizRunner
+                    lectureId={lectureId}
+                    questions={lecture.quiz.questions.map(toClientQuestion)}
+                    passingScore={lecture.quiz.passingScore}
+                    enrolled={enrolled}
+                    alreadyPassed={!!passedAttempt || done.has(lectureId)}
+                    nextHref={next ? `${basePath}/${next.id}` : null}
+                    certificatesHref={certificatesHref}
+                  />
+                ) : (
+                  <p className="rounded-2xl border border-line bg-white p-6 text-sm text-muted">
+                    이 퀴즈에는 문항이 없어요.
+                  </p>
+                )
+              ) : (
+                <LectureBody
+                  key={lectureId}
+                  type={current.type}
+                  lectureId={lectureId}
+                  title={current.title}
+                  videoUrl={lecture.videoUrl}
+                  contentHtml={lecture.content}
+                  enrolled={enrolled}
+                  initialCompleted={done.has(lectureId)}
+                  basePath={basePath}
+                  prev={prev}
+                  next={next}
+                  certificatesHref={certificatesHref}
+                />
+              )}
             </div>
 
-            {/* 탭 & 내용 */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <div className="flex gap-6 border-b border-gray-200 mb-6">
-                  <button className="border-b-2 border-black px-1 pb-4 text-sm font-bold text-black">
-                    설명
-                  </button>
-                  <button className="px-1 pb-4 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-                    강의 노트
-                  </button>
-                </div>
-
-                <div className="prose prose-sm max-w-none text-gray-600">
-                  <p>{course.description || "강의 설명이 준비 중입니다."}</p>
-                </div>
-              </div>
-
-              <div className="lg:col-span-1 space-y-6">
-                <div className="bg-[#f5f5f7] rounded-2xl p-6">
-                  <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <BookOpen className="h-4 w-4" /> 학습 자료
-                  </h3>
-                  <p className="text-sm text-gray-500">아직 등록된 학습 자료가 없습니다.</p>
-                </div>
-              </div>
-            </div>
+            {/* 모바일 커리큘럼 */}
+            <details className="mt-8 rounded-2xl border border-line bg-white lg:hidden">
+              <summary className="flex items-center justify-between px-5 py-4 text-sm font-bold text-ink">
+                <span className="flex items-center gap-2">
+                  <ListOrdered className="h-4 w-4" aria-hidden /> 커리큘럼 · {all.length}개 강의
+                </span>
+                <ChevronDown className="accordion-chevron h-4 w-4 transition-transform" aria-hidden />
+              </summary>
+              <div className="border-t border-line-soft bg-surface px-2 py-4">{curriculum}</div>
+            </details>
           </div>
         </div>
       </div>
