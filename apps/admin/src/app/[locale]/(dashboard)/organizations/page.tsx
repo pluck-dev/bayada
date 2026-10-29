@@ -1,166 +1,78 @@
-import { Building2, Users } from "lucide-react";
-import {
-  Button,
-  DataTable,
-  type Column,
-  Card,
-  CardContent,
-} from "@bayada/ui";
-import { organizationService } from "@/lib/services";
-import { SearchFilter } from "@/components/SearchFilter";
-import { Pagination } from "@/components/Pagination";
 import Link from "next/link";
-
-interface OrgRow {
-  [key: string]: unknown;
-  id: string;
-  name: string;
-  bizNo: string;
-  contact: string;
-  members: number;
-  orders: number;
-  createdAt: string;
-}
-
-const columns: Column<OrgRow>[] = [
-  {
-    key: "name",
-    header: "기관명",
-    render: (row) => (
-      <div>
-        <p className="font-medium text-[color:var(--fg)]">{row.name}</p>
-        {row.bizNo !== "-" && (
-          <p className="text-xs text-[color:var(--muted)]">
-            사업자번호: {row.bizNo}
-          </p>
-        )}
-      </div>
-    ),
-  },
-  {
-    key: "contact",
-    header: "담당자 연락처",
-  },
-  {
-    key: "members",
-    header: "소속 인원",
-    render: (row) => `${row.members}명`,
-  },
-  {
-    key: "orders",
-    header: "주문 수",
-    render: (row) => `${row.orders}건`,
-  },
-  {
-    key: "createdAt",
-    header: "등록일",
-  },
-  {
-    key: "actions",
-    header: "",
-    render: (row) => (
-      <Link href={`/organizations/${row.id}`}>
-        <Button variant="ghost" size="sm">
-          상세
-        </Button>
-      </Link>
-    ),
-  },
-];
+import { requirePage } from "@/lib/session";
+import { listOrganizations } from "@/lib/queries/organizations";
+import { formatDate } from "@/lib/labels";
+import { Badge, EmptyState, PageHeader, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import { SearchBox } from "@/components/SearchBox";
+import { NewOrganizationForm } from "@/components/organizations/OrgControls";
 
 export default async function OrganizationsPage({
+  params,
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>;
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ q?: string }>;
 }) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const search = params.search ?? "";
-
-  const result = await organizationService.list({
-    page,
-    limit: 20,
-    search: search || undefined,
-  });
-
-  const organizations: OrgRow[] = result.items.map((o) => {
-    const org = o as Record<string, unknown>;
-    const _count = org._count as { users?: number; orders?: number } | undefined;
-
-    return {
-      id: org.id as string,
-      name: org.name as string,
-      bizNo: (org.bizNo as string) ?? "-",
-      contact: (org.contact as string) ?? "-",
-      members: _count?.users ?? 0,
-      orders: _count?.orders ?? 0,
-      createdAt: new Date(org.createdAt as string).toLocaleDateString("ko-KR"),
-    };
-  });
-
-  const orgStats = {
-    total: result.total,
-    totalMembers: organizations.reduce((sum, o) => sum + o.members, 0),
-  };
+  const { locale } = await params;
+  await requirePage("commerce", locale);
+  const { q } = await searchParams;
+  const rows = await listOrganizations(q);
+  const base = `/${locale}/organizations`;
 
   return (
-    <div className="space-y-6">
-      {/* 페이지 헤더 */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
-            기관 관리 (B2B)
-          </h1>
-          <p className="mt-1 text-sm text-[color:var(--muted)]">
-            B2B 기관 고객을 관리합니다.
-          </p>
+    <>
+      <PageHeader title="기관 (B2B)" description="기관 고객과 소속 직원, 기관 관리자, 과정 배정 현황을 관리합니다." />
+      <div className="mb-3 flex flex-wrap items-start gap-2">
+        <SearchBox placeholder="기관명 검색" />
+        <div className="ml-auto flex min-w-0 flex-1 justify-end">
+          <NewOrganizationForm locale={locale} />
         </div>
       </div>
 
-      {/* 통계 카드 */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Card>
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fae6ea]">
-              <Building2 className="h-5 w-5 text-brand" />
-            </div>
-            <div>
-              <p className="text-xs text-[color:var(--muted)]">전체 기관</p>
-              <p className="text-lg font-bold text-[color:var(--fg)]">
-                {orgStats.total}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--info-bg)]">
-              <Users className="h-5 w-5 text-[color:var(--info)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[color:var(--muted)]">전체 소속 인원</p>
-              <p className="text-lg font-bold text-[color:var(--fg)]">
-                {orgStats.totalMembers}명
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className={tableWrap}>
+        {rows.length === 0 ? (
+          <EmptyState title={q ? "검색 결과가 없습니다" : "등록된 기관이 없습니다"} />
+        ) : (
+          <table className={tableClass}>
+            <thead>
+              <tr>
+                <th className={thClass}>기관명</th>
+                <th className={thClass}>사업자등록번호</th>
+                <th className={thClass}>담당자 연락처</th>
+                <th className={cx(thClass, "text-right")}>소속 인원</th>
+                <th className={cx(thClass, "text-right")}>대기 초대</th>
+                <th className={cx(thClass, "text-right")}>과정 배정</th>
+                <th className={cx(thClass, "text-right")}>주문</th>
+                <th className={thClass}>등록일</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((o) => (
+                <tr key={o.id} className={trClass}>
+                  <td className={tdClass}>
+                    <Link href={`${base}/${o.id}`} className="font-medium hover:underline">
+                      {o.name}
+                    </Link>
+                    {o.isInternal && (
+                      <span className="ml-2">
+                        <Badge tone="violet">사내</Badge>
+                      </span>
+                    )}
+                  </td>
+                  <td className={cx(tdClass, "tabular text-zinc-600")}>{o.bizNo ?? "-"}</td>
+                  <td className={cx(tdClass, "text-zinc-600")}>{o.contact ?? "-"}</td>
+                  <td className={cx(tdClass, "tabular text-right")}>{o._count.users.toLocaleString()}</td>
+                  <td className={cx(tdClass, "tabular text-right")}>{o.invites.length}</td>
+                  <td className={cx(tdClass, "tabular text-right")}>{o._count.assignments.toLocaleString()}</td>
+                  <td className={cx(tdClass, "tabular text-right")}>{o._count.orders}</td>
+                  <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(o.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-
-      {/* 검색 */}
-      <SearchFilter searchPlaceholder="기관명으로 검색..." />
-
-      {/* 데이터 테이블 */}
-      <DataTable<OrgRow> columns={columns} data={organizations} keyField="id" />
-
-      {/* 페이지네이션 */}
-      <Pagination
-        total={result.total}
-        page={result.page}
-        limit={result.pageSize}
-        totalPages={result.totalPages}
-        unit="개 기관"
-      />
-    </div>
+      <p className="mt-2 text-[12px] text-muted">{rows.length}개 기관</p>
+    </>
   );
 }
