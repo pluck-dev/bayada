@@ -8,12 +8,23 @@ import { getViewer } from "@/lib/viewer";
 import { getCourseForDetail, resolveCourseAccess } from "@/lib/queries/courses";
 import { LECTURE_TYPE_LABEL, formatSeconds } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
+import { htmlToText } from "@/lib/html-text";
 import { LectureBody } from "@/components/lecture/LectureBody";
 import { QuizRunner, type ClientQuestion } from "@/components/lecture/QuizRunner";
 
 type Params = Promise<{ locale: string; slug: string; lectureId: string }>;
 
-export const metadata: Metadata = { robots: { index: false, follow: false } };
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { lectureId } = await params;
+  const lecture = await prisma.lecture.findUnique({
+    where: { id: lectureId },
+    select: { title: true, section: { select: { course: { select: { title: true } } } } },
+  });
+  return {
+    title: lecture ? `${lecture.title} · ${lecture.section.course.title}` : undefined,
+    robots: { index: false, follow: false },
+  };
+}
 
 const ICON: Record<LectureType, typeof PlayCircle> = { VIDEO: PlayCircle, TEXT: FileText, QUIZ: HelpCircle };
 
@@ -22,9 +33,14 @@ function toClientQuestion(q: { id: string; type: string; text: string; options: 
   const options = (Array.isArray(q.options) ? q.options : []) as { text?: string }[];
   switch (q.type) {
     case "FILL_GAP":
-      return { id: q.id, type: "FILL_GAP", text: q.text, segments: (options[0]?.text ?? "").split(/\|[^|]+\|/) };
+      return {
+        id: q.id,
+        type: "FILL_GAP",
+        text: htmlToText(q.text),
+        segments: htmlToText(options[0]?.text ?? "").split(/\|[^|]+\|/),
+      };
     case "KEYWORDS":
-      return { id: q.id, type: "KEYWORDS", text: q.text };
+      return { id: q.id, type: "KEYWORDS", text: htmlToText(q.text) };
     case "MULTI":
     case "TRUE_FALSE":
     case "SINGLE":
@@ -32,8 +48,8 @@ function toClientQuestion(q: { id: string; type: string; text: string; options: 
       return {
         id: q.id,
         type: q.type === "MULTI" ? "MULTI" : q.type === "TRUE_FALSE" ? "TRUE_FALSE" : "SINGLE",
-        text: q.text,
-        options: options.map((o) => o.text ?? ""),
+        text: htmlToText(q.text),
+        options: options.map((o) => htmlToText(o.text ?? "")),
       };
   }
 }

@@ -1,4 +1,5 @@
 import { prisma, Prisma } from "@bayada/db";
+import { htmlToText } from "@/lib/html-text";
 
 // ─── 진도 · 수료 ───
 
@@ -124,7 +125,7 @@ const norm = (s: string) => s.replace(/\s+/g, "").toLowerCase();
 
 /** FILL_GAP 본문 "...|정답|..." 의 정답 목록 */
 export function fillGapAnswers(text: string): string[] {
-  return [...text.matchAll(/\|([^|]+)\|/g)].map((m) => m[1]);
+  return [...htmlToText(text).matchAll(/\|([^|]+)\|/g)].map((m) => m[1] ?? "");
 }
 
 function gradeQuestion(
