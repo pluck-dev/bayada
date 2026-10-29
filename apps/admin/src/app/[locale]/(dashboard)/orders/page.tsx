@@ -1,202 +1,104 @@
-import { Button, Badge, DataTable, type Column } from "@bayada/ui";
-import {
-  ORDER_STATUS_LABELS,
-  ORDER_TYPE_LABELS,
-  formatPrice,
-} from "@bayada/shared";
-import type { OrderStatusValue, OrderTypeValue } from "@bayada/shared";
-import { orderService } from "@/lib/services";
-import { SearchFilter } from "@/components/SearchFilter";
-import { Pagination } from "@/components/Pagination";
 import Link from "next/link";
-
-interface OrderRow {
-  [key: string]: unknown;
-  id: string;
-  orderNo: string;
-  customer: string;
-  email: string;
-  type: OrderTypeValue;
-  items: string;
-  quantity: number;
-  amount: number;
-  status: OrderStatusValue;
-  createdAt: string;
-}
-
-const statusBadgeVariant: Record<OrderStatusValue, "success" | "warning" | "error"> = {
-  CONFIRMED: "success",
-  PENDING: "warning",
-  CANCELLED: "error",
-};
-
-const typeBadgeVariant: Record<OrderTypeValue, "info" | "default"> = {
-  B2C: "info",
-  B2B: "default",
-};
-
-const statusFilters = [
-  { label: "대기", value: "PENDING" },
-  { label: "확정", value: "CONFIRMED" },
-  { label: "취소", value: "CANCELLED" },
-];
-
-const typeFilters = [
-  { label: "개인(B2C)", value: "B2C" },
-  { label: "기관(B2B)", value: "B2B" },
-];
-
-const columns: Column<OrderRow>[] = [
-  {
-    key: "orderNo",
-    header: "주문번호",
-    render: (row) => (
-      <span className="font-mono text-xs">{row.orderNo}</span>
-    ),
-  },
-  {
-    key: "customer",
-    header: "고객",
-    render: (row) => (
-      <div>
-        <p className="font-medium text-[color:var(--fg)]">{row.customer}</p>
-        <p className="text-xs text-[color:var(--muted)]">{row.email}</p>
-      </div>
-    ),
-  },
-  {
-    key: "type",
-    header: "유형",
-    render: (row) => (
-      <Badge variant={typeBadgeVariant[row.type]}>
-        {ORDER_TYPE_LABELS[row.type]}
-      </Badge>
-    ),
-  },
-  {
-    key: "items",
-    header: "강의",
-    render: (row) => (
-      <div>
-        <p className="text-sm">{row.items}</p>
-        {row.quantity > 1 && (
-          <p className="text-xs text-[color:var(--muted)]">{row.quantity}명</p>
-        )}
-      </div>
-    ),
-  },
-  {
-    key: "amount",
-    header: "금액",
-    render: (row) => (
-      <span className="font-medium">{formatPrice(row.amount)}</span>
-    ),
-  },
-  {
-    key: "status",
-    header: "상태",
-    render: (row) => (
-      <Badge variant={statusBadgeVariant[row.status]}>
-        {ORDER_STATUS_LABELS[row.status]}
-      </Badge>
-    ),
-  },
-  {
-    key: "createdAt",
-    header: "주문일",
-  },
-  {
-    key: "actions",
-    header: "",
-    render: (row) => (
-      <Link href={`/orders/${row.id}`}>
-        <Button variant="ghost" size="sm">
-          상세
-        </Button>
-      </Link>
-    ),
-  },
-];
+import { requirePage } from "@/lib/session";
+import { listOrders } from "@/lib/queries/orders";
+import { formatDateTime } from "@/lib/labels";
+import { ORDER_STATUS_LABEL, ORDER_STATUS_TONE, ORDER_TYPE_LABEL, orderTitle } from "@/lib/order-labels";
+import { SearchBox } from "@/components/SearchBox";
+import { Pager } from "@/components/Pager";
+import { Badge, EmptyState, FilterChip, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
 
 export default async function OrdersPage({
+  params,
   searchParams,
 }: {
-  searchParams: Promise<{
-    search?: string;
-    status?: string;
-    type?: string;
-    page?: string;
-  }>;
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ q?: string; status?: string; page?: string }>;
 }) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const search = params.search ?? "";
-  const status = params.status || undefined;
-  const type = params.type as OrderTypeValue | undefined;
-
-  const result = await orderService.list({
-    page,
-    limit: 20,
-    search: search || undefined,
-    status,
-    type,
-  });
-
-  const orders: OrderRow[] = result.items.map((o) => {
-    const order = o as Record<string, unknown>;
-    const user = order.user as { name: string | null; email: string } | null;
-    const org = order.organization as { name: string } | null;
-    const items = (order.items as Array<{ course?: { title: string } }>) ?? [];
-    const firstItem = items[0]?.course?.title ?? "-";
-    const itemLabel = items.length > 1 ? `${firstItem} 외 ${items.length - 1}건` : firstItem;
-
-    return {
-      id: order.id as string,
-      orderNo: order.orderNo as string,
-      customer: org?.name ?? user?.name ?? "-",
-      email: user?.email ?? "-",
-      type: (order.type as OrderTypeValue) ?? "B2C",
-      items: itemLabel,
-      quantity: (order.quantity as number) ?? 1,
-      amount: order.totalAmount as number,
-      status: order.status as OrderStatusValue,
-      createdAt: new Date(order.createdAt as string).toLocaleDateString("ko-KR"),
-    };
-  });
+  const { locale } = await params;
+  await requirePage("commerce", locale);
+  const sp = await searchParams;
+  const data = await listOrders({ q: sp.q, status: sp.status, page: Number(sp.page) || 1 });
+  const base = `/${locale}/orders`;
+  const chip = (status?: string) => qs(base, { q: sp.q, status });
+  const all = Object.values(data.counts).reduce((a, b) => a + (b ?? 0), 0);
 
   return (
-    <div className="space-y-6">
-      {/* 페이지 헤더 */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
-            주문 관리
-          </h1>
-          <p className="mt-1 text-sm text-[color:var(--muted)]">
-            전체 주문을 조회하고 처리합니다.
-          </p>
-        </div>
+    <>
+      <PageHeader
+        title="주문"
+        description="강의 단건 구매·아카데미 패스 결제(토스페이먼츠)와 기관 주문입니다. 환불 요청을 확인하고 전액·부분 환불을 처리합니다."
+      />
+
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <SearchBox placeholder="주문번호·이름·이메일·paymentKey" />
+      </div>
+      <div className="mb-4 flex flex-wrap gap-1.5" role="group" aria-label="주문 상태">
+        <FilterChip href={chip()} active={!data.status} count={all}>
+          전체
+        </FilterChip>
+        <FilterChip href={chip("REFUND_REQUESTED")} active={data.status === "REFUND_REQUESTED"} count={data.requested.size}>
+          환불 요청
+        </FilterChip>
+        {(["PENDING", "CONFIRMED", "REFUNDED", "CANCELLED"] as const).map((s) => (
+          <FilterChip key={s} href={chip(s)} active={data.status === s} count={data.counts[s] ?? 0}>
+            {ORDER_STATUS_LABEL[s]}
+          </FilterChip>
+        ))}
       </div>
 
-      {/* 필터/검색 */}
-      <SearchFilter
-        searchPlaceholder="주문번호 또는 고객명으로 검색..."
-        filterKey="status"
-        filters={statusFilters}
-        secondFilterKey="type"
-        secondFilters={typeFilters}
-      />
-
-      {/* 데이터 테이블 */}
-      <DataTable<OrderRow> columns={columns} data={orders} keyField="id" />
-
-      {/* 페이지네이션 */}
-      <Pagination
-        total={result.total}
-        page={result.page}
-        limit={result.pageSize}
-        totalPages={result.totalPages}
-      />
-    </div>
+      <div className={tableWrap}>
+        {data.rows.length === 0 ? (
+          <EmptyState title="주문이 없습니다" description={sp.q ? "검색 조건을 바꿔 보세요." : undefined} />
+        ) : (
+          <table className={tableClass}>
+            <thead>
+              <tr>
+                <th className={thClass}>주문번호</th>
+                <th className={thClass}>주문자</th>
+                <th className={thClass}>상품</th>
+                <th className={cx(thClass, "text-right!")}>금액</th>
+                <th className={thClass}>상태</th>
+                <th className={thClass}>결제수단</th>
+                <th className={thClass}>주문일시</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.rows.map((o) => (
+                <tr key={o.id} className={trClass}>
+                  <td className={tdClass}>
+                    <Link href={`${base}/${o.id}`} className="font-mono text-[12px] font-medium hover:underline">
+                      {o.orderNo}
+                    </Link>
+                    {o.type === "B2B" && <span className="ml-1.5 text-[11px] text-subtle">{ORDER_TYPE_LABEL.B2B}</span>}
+                  </td>
+                  <td className={tdClass}>
+                    <p className="font-medium">{o.user.name ?? "-"}</p>
+                    <p className="text-[11.5px] text-subtle">{o.organization?.name ?? o.user.email}</p>
+                  </td>
+                  <td className={cx(tdClass, "max-w-[320px] truncate")} title={orderTitle(o.items)}>
+                    {orderTitle(o.items)}
+                  </td>
+                  <td className={cx(tdClass, "tabular text-right")}>
+                    <span className="font-medium">{o.totalAmount.toLocaleString()}원</span>
+                    {o.refundAmount ? <p className="text-[11.5px] text-red-700">환불 {o.refundAmount.toLocaleString()}원</p> : null}
+                  </td>
+                  <td className={tdClass}>
+                    <div className="flex items-center gap-1">
+                      <Badge tone={ORDER_STATUS_TONE[o.status]} dot={o.status === "CONFIRMED"}>
+                        {o.status === "CONFIRMED" && o.refundAmount ? "부분 환불" : ORDER_STATUS_LABEL[o.status]}
+                      </Badge>
+                      {data.requested.has(o.id) && <Badge tone="red">환불 요청</Badge>}
+                    </div>
+                  </td>
+                  <td className={cx(tdClass, "text-zinc-600")}>{o.paymentMethod ?? "-"}</td>
+                  <td className={cx(tdClass, "tabular text-zinc-600")}>{formatDateTime(o.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      <Pager page={data.page} pages={data.pages} total={data.total} />
+    </>
   );
 }

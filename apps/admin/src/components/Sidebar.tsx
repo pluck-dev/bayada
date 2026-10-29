@@ -14,6 +14,7 @@ import {
   ScrollText,
   Building2,
   ShoppingCart,
+  Ticket,
   FileText,
   LogOut,
   MessageSquareWarning,
@@ -61,6 +62,7 @@ const PRIMARY: NavItem[] = [
 const COMMERCE: NavItem[] = [
   { path: "/organizations", label: "기관", icon: Building2, permission: "commerce" },
   { path: "/orders", label: "주문", icon: ShoppingCart, permission: "commerce" },
+  { path: "/pass-plans", label: "패스 요금제", icon: Ticket, permission: "commerce" },
   { path: "/invoices", label: "청구서", icon: FileText, permission: "commerce" },
 ];
 
