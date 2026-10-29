@@ -5,6 +5,7 @@ import { getViewer } from "@/lib/viewer";
 import { getMyEnrollments } from "@/lib/queries/learning";
 import { getMySessions, getMyWishlist } from "@/lib/queries/engagement";
 import { takeRenewalNotices } from "@/lib/queries/credentials";
+import { EmailVerifyBanner } from "@/components/account/EmailVerifyBanner";
 import { RenewalBanner } from "@/components/credentials/RenewalBanner";
 import { formatDate, formatSessionRange } from "@/lib/labels";
 import { CourseCard } from "@/components/course/CourseCard";
@@ -77,6 +78,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-ink md:text-[28px]">마이 러닝</h1>
+      <div className="mt-6 empty:hidden">
+        <EmailVerifyBanner userId={viewer.id} locale={locale} />
+      </div>
       {renewals.length > 0 && (
         <div className="mt-6">
           <RenewalBanner locale={locale} items={renewals} />

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@bayada/db";
+import { sendVerificationEmail } from "@bayada/services/account";
 import { isJobRole, passwordError } from "@/lib/signup-policy";
+import { appUrl, localeOr } from "@/lib/app-url";
 
 // 외부 회원가입. 사내 조직에 묶지 않으므로 PUBLIC 강의만 보인다.
 export async function POST(request: Request) {
@@ -34,5 +36,10 @@ export async function POST(request: Request) {
     data: { email, name, phone, jobRole, password: await hash(password, 12), role: "STUDENT" },
     select: { id: true, email: true, name: true },
   });
+  // 이메일 인증은 선택(가입 마찰 최소화) — 메일 실패가 가입을 막지 않는다. 미인증이면 마이 러닝에 배너가 뜬다
+  const locale = localeOr(body.locale);
+  await sendVerificationEmail(user.id, (token) => appUrl(`/${locale}/auth/verify-email?token=${encodeURIComponent(token)}`)).catch(
+    (error) => console.error("[register] 인증 메일 발송 실패", error)
+  );
   return NextResponse.json({ data: user }, { status: 201 });
 }
