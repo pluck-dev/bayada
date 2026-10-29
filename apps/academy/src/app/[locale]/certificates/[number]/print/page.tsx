@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
@@ -8,6 +7,8 @@ import { getCertificateByNumber } from "@/lib/queries/learning";
 import { formatDate, formatMinutes } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
 import { PrintButton } from "@/components/dashboard/PrintButton";
+import { CertificateQr } from "@/components/dashboard/CertificateQr";
+import { certificateVerifyUrl } from "@/lib/qr";
 
 export const metadata: Metadata = { title: "수료증", robots: { index: false, follow: false } };
 
@@ -25,8 +26,7 @@ export default async function CertificatePrintPage({
   // 본인(또는 관리자)만 원본 출력. 타인은 공개 검증 페이지를 쓴다
   if (!cert || (cert.userId !== viewer.id && viewer.role !== "ADMIN")) notFound();
 
-  const h = await headers();
-  const origin = `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host") ?? "localhost"}`;
+  const verifyUrl = certificateVerifyUrl(locale, cert.number);
   const holder = cert.user.name ?? cert.user.email.split("@")[0];
   const duration = formatMinutes(cert.course.durationMin);
 
@@ -70,11 +70,14 @@ export default async function CertificatePrintPage({
               </p>
             </div>
 
-            <div className="flex items-end justify-between">
-              <div className="text-sm text-muted">
-                <p>발급일 {formatDate(cert.issuedAt)}</p>
-                <p className="mt-1">유효기간 {cert.expiresAt ? `${formatDate(cert.expiresAt)}까지` : "없음"}</p>
-                <p className="mt-1">검증 {`${origin}/${locale}/verify/${cert.number}`}</p>
+            <div className="flex items-end justify-between gap-6">
+              <div className="flex items-end gap-4">
+                <CertificateQr url={verifyUrl} className="h-[84px] w-[84px] shrink-0" />
+                <div className="text-sm text-muted">
+                  <p>발급일 {formatDate(cert.issuedAt)}</p>
+                  <p className="mt-1">유효기간 {cert.expiresAt ? `${formatDate(cert.expiresAt)}까지` : "없음"}</p>
+                  <p className="mt-1 break-all">검증 {verifyUrl}</p>
+                </div>
               </div>
               <div className="text-right">
                 <p className="text-xl font-bold text-ink">바야다홈헬스케어</p>

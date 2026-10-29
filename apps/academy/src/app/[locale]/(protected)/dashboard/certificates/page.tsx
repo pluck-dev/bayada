@@ -6,6 +6,8 @@ import { getMyCertificates } from "@/lib/queries/learning";
 import { formatDate } from "@/lib/labels";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CopyLinkButton } from "@/components/dashboard/CopyLinkButton";
+import { CertificateQr } from "@/components/dashboard/CertificateQr";
+import { certificateVerifyUrl } from "@/lib/qr";
 
 export const metadata: Metadata = { title: "인증서" };
 
@@ -35,7 +37,11 @@ export default async function CertificatesPage({ params }: { params: Promise<{ l
               <li key={c.number} className="flex gap-5 rounded-2xl border border-line bg-white p-5">
                 <div className="flex aspect-[1.414] w-28 shrink-0 flex-col justify-between rounded-lg border border-line bg-surface p-2.5 sm:w-36">
                   <span className="text-[9px] font-extrabold text-brand">BAYADA</span>
-                  <Award className="h-6 w-6 self-center text-brand/70" aria-hidden />
+                  {/* 수료증 미리보기 안의 검증 QR (스캔하면 공개 검증 페이지) */}
+                  <CertificateQr
+                    url={certificateVerifyUrl(locale, c.number)}
+                    className="h-12 w-12 self-center rounded-sm bg-white p-0.5 sm:h-16 sm:w-16"
+                  />
                   <span className="h-px bg-line" />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col">
@@ -54,6 +60,7 @@ export default async function CertificatesPage({ params }: { params: Promise<{ l
                     <CopyLinkButton path={`/${locale}/verify/${c.number}`} />
                   </div>
                 </div>
+
               </li>
             ))}
           </ul>
