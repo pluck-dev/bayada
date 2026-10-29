@@ -47,6 +47,9 @@ services:
       AUTH_TRUST_HOST: "true"
       NEXTAUTH_URL: ${ACADEMY_URL:-http://localhost:4100}
       NEXT_PUBLIC_SITE_URL: ${ACADEMY_URL:-http://localhost:4100}
+      # 결제(토스페이먼츠) — 클라이언트 키도 서버 런타임에 읽어 결제 페이지로 내려준다
+      TOSS_CLIENT_KEY: ${TOSS_CLIENT_KEY:-}
+      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY:-}
 
   admin:
     build: { context: .., args: { APP: admin } }
@@ -60,6 +63,8 @@ services:
       AUTH_SECRET: ${ADMIN_AUTH_SECRET:?ADMIN_AUTH_SECRET 필요}
       AUTH_TRUST_HOST: "true"
       NEXTAUTH_URL: ${ADMIN_URL:-http://localhost:4200}
+      # 환불 처리(토스 결제 취소 API)
+      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY:-}
 
 volumes:
   pgdata:
