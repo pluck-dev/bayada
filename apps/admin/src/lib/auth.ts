@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { createAuthConfig } from "@bayada/shared";
+import { createAuthConfig } from "@bayada/shared/auth";
 import { prisma } from "@bayada/db";
 
 // 관리자 전용 인증 설정

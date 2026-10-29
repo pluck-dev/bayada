@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import { prisma } from "@bayada/db";
-import { createAuthConfig } from "@bayada/shared";
+import { createAuthConfig } from "@bayada/shared/auth";
 
 const authConfig = createAuthConfig({
   findUserByEmail: async (email: string) => {
