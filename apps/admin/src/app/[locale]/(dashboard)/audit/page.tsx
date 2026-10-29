@@ -13,6 +13,11 @@ const GROUPS = [
   { key: "category", label: "카테고리" },
   { key: "provider", label: "제공기관" },
   { key: "user", label: "회원" },
+  { key: "partner", label: "파트너" },
+  { key: "review", label: "후기" },
+  { key: "session", label: "실습 일정" },
+  { key: "page", label: "문서" },
+  { key: "organization", label: "기관" },
 ];
 
 function summarize(detail: unknown): string {

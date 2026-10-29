@@ -16,6 +16,10 @@ import {
   ShoppingCart,
   FileText,
   LogOut,
+  MessageSquareWarning,
+  CalendarDays,
+  FileSignature,
+  LayoutGrid,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -30,7 +34,9 @@ interface NavItem {
   permission?: Permission;
   /** 2차 이후 기능 — 라우트 없이 비활성 표시 */
   phase?: string;
-  badgeKey?: "queue" | "signups";
+  /** 비활성 항목 툴팁 (기본: "{phase} 오픈 예정") */
+  note?: string;
+  badgeKey?: "queue" | "signups" | "reports";
 }
 
 const PRIMARY: NavItem[] = [
@@ -40,8 +46,13 @@ const PRIMARY: NavItem[] = [
   { path: "/curation", label: "배너·메인 큐레이션", icon: GalleryHorizontalEnd, permission: "curation" },
   { path: "/taxonomy", label: "택소노미", icon: Tags, permission: "taxonomy" },
   { path: "/members", label: "회원·수강", icon: Users, permission: "member.read", badgeKey: "signups" },
-  { path: "", label: "인증 심사", icon: BadgeCheck, phase: "2차" },
-  { path: "", label: "파트너", icon: Handshake, phase: "2차" },
+  { path: "/reviews", label: "후기 관리", icon: MessageSquareWarning, permission: "review", badgeKey: "reports" },
+  { path: "/sessions", label: "실습·오프라인 일정", icon: CalendarDays, permission: "session" },
+  // 인증 모델·효력이 고객사 확인 대기(17_확인필요 "인증 효력")라 만들지 않는다
+  { path: "", label: "인증 심사", icon: BadgeCheck, phase: "2차", note: "정책 확정 후 개발 (인증 효력·평가 기준 미정)" },
+  { path: "/partners", label: "파트너", icon: Handshake, permission: "partner.manage" },
+  { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console" },
+  { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages" },
   { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit" },
 ];
 
@@ -62,7 +73,7 @@ export function Sidebar({
   role: AdminRole;
   userName: string;
   userEmail: string;
-  counts: { queue: number; signups: number };
+  counts: { queue: number; signups: number; reports: number };
 }) {
   const pathname = usePathname();
   const base = `/${locale}`;
@@ -72,7 +83,9 @@ export function Sidebar({
     return path === "" ? pathname === base : pathname === href || pathname.startsWith(href + "/");
   };
 
-  const visible = (items: NavItem[]) => items.filter((i) => i.phase || (i.permission && can(role, i.permission)));
+  // 2차 예정 항목은 운영 역할에게만 보여 준다 (파트너 콘솔에는 불필요)
+  const visible = (items: NavItem[]) =>
+    items.filter((i) => (i.phase ? role !== "PARTNER_ADMIN" : !!i.permission && can(role, i.permission)));
   const primary = visible(PRIMARY);
   const commerce = visible(COMMERCE);
 
@@ -83,7 +96,7 @@ export function Sidebar({
         <li key={item.label}>
           <span
             aria-disabled="true"
-            title={`${item.phase} 오픈 예정`}
+            title={item.note ?? `${item.phase} 오픈 예정`}
             className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-[13px] text-zinc-600"
           >
             <Icon className="h-4 w-4 shrink-0" aria-hidden />
@@ -122,7 +135,7 @@ export function Sidebar({
         <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-[13px] font-bold text-white">B</span>
         <div className="leading-tight">
           <p className="text-[13px] font-semibold text-white">Bayada Academy</p>
-          <p className="text-[11px] text-zinc-500">Admin Console</p>
+          <p className="text-[11px] text-zinc-500">{role === "PARTNER_ADMIN" ? "Partner Console" : "Admin Console"}</p>
         </div>
       </div>
 

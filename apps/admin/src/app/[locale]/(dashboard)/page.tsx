@@ -27,7 +27,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
     <>
       <PageHeader title={`안녕하세요, ${user.name ?? "관리자"}님`} description="아카데미 운영 현황입니다. 모든 숫자는 실제 데이터 기준입니다." />
 
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-7 gap-3">
         <Stat label="승인 대기" value={queueTotal} hint="제출 ~ 게시 대기" href={`${base}/approvals`} />
         <Stat
           label="가입 승인 대기"
@@ -38,6 +38,18 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
         <Stat label={`${monthLabel} 신규 수강`} value={d.enrollmentsMonth.toLocaleString()} hint="이번 달 수강 신청" />
         <Stat label={`${monthLabel} 수료`} value={d.completionsMonth.toLocaleString()} hint="이번 달 완료" />
         <Stat label={`${monthLabel} 수료증`} value={d.certificatesMonth.toLocaleString()} hint="이번 달 발급" />
+        <Stat
+          label="미처리 신고 후기"
+          value={d.openReports}
+          hint="게시 중 · 신고 접수"
+          href={can(user.role, "review") ? qs(`${base}/reviews`, { filter: "reported" }) : undefined}
+        />
+        <Stat
+          label="다가오는 실습"
+          value={d.upcomingSessions}
+          hint="14일 안에 시작"
+          href={can(user.role, "session") ? `${base}/sessions` : undefined}
+        />
       </div>
 
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">

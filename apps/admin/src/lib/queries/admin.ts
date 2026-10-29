@@ -1,6 +1,8 @@
 import { prisma, type CourseStatus, type Prisma, type Role, type UserStatus } from "@bayada/db";
 import { ROLES } from "../labels";
 import { QUEUE_STATUSES } from "../workflow";
+import { OPEN_REPORT_WHERE } from "./reviews";
+import { upcomingSessionCount } from "./sessions";
 
 // ─── 대시보드 ───
 /** 한국 시간 기준 이번 달 1일 0시 */
@@ -11,8 +13,18 @@ function monthStartKst(now = new Date()): Date {
 
 export async function getDashboard() {
   const since = monthStartKst();
-  const [byStatus, byVisibility, pendingSignups, enrollmentsMonth, completionsMonth, certificatesMonth, queue, recent] =
-    await Promise.all([
+  const [
+    byStatus,
+    byVisibility,
+    pendingSignups,
+    enrollmentsMonth,
+    completionsMonth,
+    certificatesMonth,
+    queue,
+    recent,
+    openReports,
+    upcomingSessions,
+  ] = await Promise.all([
       prisma.course.groupBy({ by: ["status"], _count: true }),
       prisma.course.groupBy({ by: ["visibility"], where: { status: "PUBLISHED" }, _count: true }),
       prisma.user.count({ where: { status: "PENDING" } }),
@@ -26,6 +38,8 @@ export async function getDashboard() {
         select: { id: true, title: true, status: true, updatedAt: true },
       }),
       prisma.auditLog.findMany({ orderBy: { at: "desc" }, take: 8 }),
+      prisma.review.count({ where: OPEN_REPORT_WHERE }),
+      upcomingSessionCount(14),
     ]);
   const statusCounts = Object.fromEntries(byStatus.map((g) => [g.status, g._count])) as Partial<Record<CourseStatus, number>>;
   const visibilityCounts = Object.fromEntries(byVisibility.map((g) => [g.visibility, g._count])) as Partial<
@@ -40,6 +54,8 @@ export async function getDashboard() {
     completionsMonth,
     certificatesMonth,
     queue,
+    openReports,
+    upcomingSessions,
     recent: await withActors(recent),
   };
 }
@@ -193,15 +209,23 @@ async function withActors<T extends { actorId: string | null }>(rows: T[]) {
 /** target "Course:id" → 표시용 이름 */
 export async function resolveTargets(targets: string[]) {
   const ids = (type: string) => targets.filter((t) => t.startsWith(`${type}:`)).map((t) => t.slice(type.length + 1));
-  const [courses, users, banners] = await Promise.all([
+  const [courses, users, banners, pages, sessions, orgs, reviews] = await Promise.all([
     prisma.course.findMany({ where: { id: { in: ids("Course") } }, select: { id: true, title: true } }),
     prisma.user.findMany({ where: { id: { in: ids("User") } }, select: { id: true, email: true } }),
     prisma.banner.findMany({ where: { id: { in: ids("Banner") } }, select: { id: true, title: true } }),
+    prisma.page.findMany({ where: { id: { in: ids("Page") } }, select: { id: true, title: true } }),
+    prisma.trainingSession.findMany({ where: { id: { in: ids("TrainingSession") } }, select: { id: true, title: true } }),
+    prisma.organization.findMany({ where: { id: { in: ids("Organization") } }, select: { id: true, name: true } }),
+    prisma.review.findMany({ where: { id: { in: ids("Review") } }, select: { id: true, course: { select: { title: true } } } }),
   ]);
   const map = new Map<string, string>();
   courses.forEach((c) => map.set(`Course:${c.id}`, c.title));
   users.forEach((u) => map.set(`User:${u.id}`, u.email));
   banners.forEach((b) => map.set(`Banner:${b.id}`, b.title));
+  pages.forEach((p) => map.set(`Page:${p.id}`, p.title));
+  sessions.forEach((s) => map.set(`TrainingSession:${s.id}`, s.title));
+  orgs.forEach((o) => map.set(`Organization:${o.id}`, o.name));
+  reviews.forEach((r) => map.set(`Review:${r.id}`, `${r.course.title} 후기`));
   return map;
 }
 
