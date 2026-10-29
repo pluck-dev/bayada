@@ -4,12 +4,15 @@ import { BadgeCheck, SearchX } from "lucide-react";
 import { getCertificateByNumber } from "@/lib/queries/learning";
 import { formatDate } from "@/lib/labels";
 import { decodeParam, maskName } from "@/lib/params";
+import { CredentialVerify } from "@/components/credentials/CredentialVerify";
 
-export const metadata: Metadata = { title: "수료증 검증", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "수료증·인증서 검증", robots: { index: false, follow: false } };
 
 export default async function VerifyPage({ params }: { params: Promise<{ locale: string; number: string }> }) {
   const { locale, number: rawNumber } = await params;
   const number = decodeParam(rawNumber).trim().toUpperCase();
+  // 바야다 인증(BC-)은 수료증(BA-)과 다른 테이블 — 유효/만료/취소 상태가 있다
+  if (number.startsWith("BC-")) return <CredentialVerify locale={locale} number={number} />;
   const cert = await getCertificateByNumber(number);
 
   if (!cert) {

@@ -22,6 +22,7 @@ import type { LectureType } from "@bayada/db";
 import { getViewer } from "@/lib/viewer";
 import { getCourseForDetail, resolveCourseAccess, visibleCourseWhere } from "@/lib/queries/courses";
 import { getResumeLectureId } from "@/lib/queries/learning";
+import { programsRequiringCourse } from "@/lib/queries/credentials";
 import { canWriteReview, getCourseReviews, getCourseSessions, REVIEW_MIN_PROGRESS } from "@/lib/queries/engagement";
 import {
   JOB_ROLE_LABEL,
@@ -146,6 +147,8 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
       : Promise.resolve(null),
   ]);
   const wished = viewer ? !!wish : null;
+  // 이 강의가 선수 과정인 공개 바야다 인증 → 수료 안내에 다음 단계로 연결
+  const nextCredentials = await programsRequiringCourse(course.id);
   const reviewSummary = reviewData.summary;
   const reviewable = canWriteReview(enrollment);
   const showReviews = reviewSummary.count > 0 || reviewable;
@@ -467,6 +470,19 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                     >
                       <Award className="h-4 w-4" aria-hidden /> 내 수료증 보기 ({certificate.number})
                     </Link>
+                  )}
+                  {nextCredentials.length > 0 && (
+                    <div className="mt-5 flex flex-col gap-2 border-t border-line pt-4">
+                      {nextCredentials.map((p) => (
+                        <Link
+                          key={p.slug}
+                          href={`/${locale}/certifications/${encodeURIComponent(p.slug)}`}
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-brand"
+                        >
+                          <ShieldCheck className="h-4 w-4 text-brand" aria-hidden />→ 바야다 인증 {p.title}으로 이어집니다
+                        </Link>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
