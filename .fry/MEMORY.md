@@ -103,4 +103,4 @@
 - CountUp 은 화면에 들어올 때만 0→값. full-page 스크린샷에서는 0 으로 찍히니 검증 시 해당 섹션으로 스크롤 후 찍을 것.
 
 ## 빌드 확인 (dev 서버 켠 채)
-- next.config 의 distDir 을 잠깐 `process.env.NEXT_DIST_DIR || ".next"` 로 바꿔 `NEXT_DIST_DIR=.next-buildcheck next build --webpack` 으로 확인하고 되돌렸다(커밋 안 함). .next 를 공유하지 않으니 dev 워커 EPIPE 가 안 난다.
+- next.config 의 distDir 을 잠깐 `process.env.NEXT_DIST_DIR || ".next"` 로 바꿔 `NEXT_DIST_DIR=.next-buildcheck next build --webpack` 으로 확인하고 되돌렸다(커밋 안 함). .next 를 공유하지 않으니 dev 워커 EPIPE 가 안 난다(확인함). 단 next build 가 tsconfig.json include 에 `.next-buildcheck/types` 를 추가하고 next-env.d.ts 도 건드리니 빌드 후 둘 다 되돌릴 것.
