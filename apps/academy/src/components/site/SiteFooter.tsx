@@ -68,7 +68,18 @@ export async function SiteFooter({ locale }: { locale: string }) {
       </div>
       <div className="border-t border-line">
         <div className="container-page flex flex-col gap-2 py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} BAYADA Home Health Care Korea. All rights reserved.</p>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-5">
+            <nav aria-label="약관 및 정책" className="flex items-center gap-2">
+              <Link href={`${base}/terms`} className="font-medium text-ink-soft hover:text-ink">
+                이용약관
+              </Link>
+              <span aria-hidden className="text-line">·</span>
+              <Link href={`${base}/privacy`} className="font-semibold text-ink hover:text-brand">
+                개인정보처리방침
+              </Link>
+            </nav>
+            <p>© {new Date().getFullYear()} BAYADA Home Health Care Korea. All rights reserved.</p>
+          </div>
           <p>
             운영 문의 <a href={`mailto:${INQUIRY_EMAIL}`} className="hover:text-ink">{INQUIRY_EMAIL}</a>
           </p>

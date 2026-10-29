@@ -28,11 +28,18 @@ export default function RegisterPage() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const { status } = useSession();
-
-  // 이미 로그인한 사람은 가입 화면 대신 홈으로
+  // 초대 수락 등에서 넘어온 경우 가입 후 돌아갈 곳 (같은 사이트 경로만 허용)
+  const [callbackUrl, setCallbackUrl] = useState<string | null>(null);
   useEffect(() => {
-    if (status === "authenticated") router.replace(`/${locale}`);
-  }, [status, locale, router]);
+    const raw = new URLSearchParams(window.location.search).get("callbackUrl") ?? "";
+    setCallbackUrl(raw.startsWith("/") && !raw.startsWith("//") ? raw : null);
+  }, []);
+  const afterSignup = callbackUrl ?? `/${locale}`;
+
+  // 이미 로그인한 사람은 가입 화면 대신 홈(또는 돌아갈 곳)으로
+  useEffect(() => {
+    if (status === "authenticated") router.replace(afterSignup);
+  }, [status, afterSignup, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -90,9 +97,9 @@ export default function RegisterPage() {
 
       if (result?.error) {
         // 가입은 됐지만 자동 로그인 실패 → 로그인 페이지로
-        window.location.href = `/${locale}/auth/login`;
+        window.location.href = `/${locale}/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`;
       } else {
-        window.location.href = `/${locale}`;
+        window.location.href = afterSignup;
       }
     } catch {
       setError("회원가입 중 오류가 발생했습니다.");
@@ -294,7 +301,15 @@ export default function RegisterPage() {
                   />
                   <span className="text-sm text-[color:var(--fg)]">
                     <span className="text-[color:var(--error)]">[필수]</span>{" "}
-                    이용약관에 동의합니다
+                    <a
+                      href={`/${locale}/terms`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium underline underline-offset-2 hover:text-[color:var(--brand)]"
+                    >
+                      이용약관
+                    </a>
+                    에 동의합니다
                   </span>
                 </label>
                 <label className="flex items-start gap-2">
@@ -307,7 +322,15 @@ export default function RegisterPage() {
                   />
                   <span className="text-sm text-[color:var(--fg)]">
                     <span className="text-[color:var(--error)]">[필수]</span>{" "}
-                    개인정보 수집 및 이용에 동의합니다
+                    <a
+                      href={`/${locale}/privacy`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium underline underline-offset-2 hover:text-[color:var(--brand)]"
+                    >
+                      개인정보 수집 및 이용
+                    </a>
+                    에 동의합니다
                   </span>
                 </label>
               </div>
@@ -329,7 +352,7 @@ export default function RegisterPage() {
         <p className="mt-6 text-center text-sm text-[color:var(--muted)]">
           {dict.auth.hasAccount}{" "}
           <Link
-            href={`/${locale}/auth/login`}
+            href={`/${locale}/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
             className="font-medium text-[color:var(--brand)] hover:underline"
           >
             {dict.common.login}

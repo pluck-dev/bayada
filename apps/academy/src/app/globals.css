@@ -203,3 +203,82 @@ details[open] .accordion-chevron {
   color: var(--color-ink);
   margin-bottom: 0.25rem;
 }
+
+/* 이용약관·개인정보처리방침 (Page.content). 원문은 <h3> 조항 + 맨 텍스트 + <p>/<br>/<ol> 이 섞여 있다 */
+.legal-prose {
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  color: var(--color-ink-soft);
+  overflow-wrap: anywhere;
+}
+.legal-prose :where(h1, h2, h3, h4) {
+  color: var(--color-ink);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+  margin: 2.4em 0 0.4em;
+}
+.legal-prose > :where(h1, h2, h3, h4):first-child {
+  margin-top: 0;
+}
+.legal-prose h2 {
+  font-size: 1.25rem;
+}
+.legal-prose h3 {
+  font-size: 1.0625rem;
+}
+.legal-prose h4 {
+  font-size: 1rem;
+}
+.legal-prose p {
+  margin: 0.6em 0;
+}
+.legal-prose ol,
+.legal-prose ul {
+  margin: 0.6em 0;
+  padding-left: 1.5em;
+}
+.legal-prose ol {
+  list-style: decimal;
+}
+.legal-prose ol ol {
+  list-style: lower-alpha;
+}
+.legal-prose ul {
+  list-style: disc;
+}
+.legal-prose li {
+  margin: 0.35em 0;
+  padding-left: 0.2em;
+}
+.legal-prose li::marker {
+  color: var(--color-muted);
+}
+.legal-prose strong,
+.legal-prose b {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.legal-prose a {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.875rem;
+}
+.legal-prose th,
+.legal-prose td {
+  border: 1px solid var(--color-line);
+  padding: 0.55em 0.8em;
+  text-align: left;
+  vertical-align: top;
+}
+.legal-prose th {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-weight: 600;
+}

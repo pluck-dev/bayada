@@ -97,7 +97,9 @@ function LoginForm() {
 
         <p className="mt-8 text-center text-sm text-muted">
           아직 계정이 없나요?{" "}
-          <Link href={`/${locale}/auth/register`} className="font-semibold text-ink hover:text-brand">
+          <Link
+            href={`/${locale}/auth/register${raw === callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
+            className="font-semibold text-ink hover:text-brand">
             무료 가입
           </Link>
         </p>
