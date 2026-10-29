@@ -59,7 +59,7 @@ export default async function InvoiceDetailPage({
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-[color:var(--fg)]">
+            <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
               청구서 {inv.invoiceNo as string}
             </h1>
             <Badge variant={statusBadgeVariant[inv.status as InvoiceStatus]}>
@@ -129,7 +129,7 @@ export default async function InvoiceDetailPage({
                 <div>
                   <p className="text-xs text-[color:var(--muted)]">이름</p>
                   <p className="font-medium">
-                    <Link href={`/users/${user.id}`} className="text-[#ce0e2d] hover:underline">
+                    <Link href={`/members/${user.id}`} className="text-brand hover:underline">
                       {user.name ?? "-"}
                     </Link>
                   </p>
@@ -148,7 +148,7 @@ export default async function InvoiceDetailPage({
                 <Building2 className="h-5 w-5 text-[color:var(--muted)]" />
                 <div>
                   <p className="text-xs text-[color:var(--muted)]">기관</p>
-                  <Link href={`/organizations/${org.id}`} className="text-sm font-medium text-[#ce0e2d] hover:underline">
+                  <Link href={`/organizations/${org.id}`} className="text-sm font-medium text-brand hover:underline">
                     {org.name}
                   </Link>
                 </div>
@@ -162,7 +162,7 @@ export default async function InvoiceDetailPage({
                 <ShoppingCart className="h-5 w-5 text-[color:var(--muted)]" />
                 <div>
                   <p className="text-xs text-[color:var(--muted)]">연결된 주문</p>
-                  <Link href={`/orders/${order.id as string}`} className="text-sm font-medium text-[#ce0e2d] hover:underline">
+                  <Link href={`/orders/${order.id as string}`} className="text-sm font-medium text-brand hover:underline">
                     {order.orderNo as string}
                   </Link>
                 </div>

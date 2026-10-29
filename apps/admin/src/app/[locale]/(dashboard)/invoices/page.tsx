@@ -1,4 +1,3 @@
-import { Download, Plus, Send } from "lucide-react";
 import { Button, Badge, DataTable, type Column } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
 import { invoiceService } from "@/lib/services";
@@ -103,11 +102,6 @@ const columns: Column<InvoiceRow>[] = [
     header: "",
     render: (row) => (
       <div className="flex gap-1">
-        {row.status === "DRAFT" && (
-          <Button variant="ghost" size="sm" title="발송">
-            <Send className="h-4 w-4" />
-          </Button>
-        )}
         <Link href={`/invoices/${row.id}`}>
           <Button variant="ghost" size="sm">
             상세
@@ -170,22 +164,12 @@ export default async function InvoicesPage({
       {/* 페이지 헤더 */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[color:var(--fg)]">
+          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
             청구서 관리
           </h1>
           <p className="mt-1 text-sm text-[color:var(--muted)]">
             B2B 기관 고객의 청구서를 관리합니다.
           </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            엑셀 다운로드
-          </Button>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            새 청구서
-          </Button>
         </div>
       </div>
 

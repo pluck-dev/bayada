@@ -49,7 +49,7 @@ export default async function OrderDetailPage({
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-[color:var(--fg)]">
+            <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
               주문 {o.orderNo as string}
             </h1>
             <Badge variant={statusBadgeVariant[o.status as OrderStatusValue]}>
@@ -85,8 +85,8 @@ export default async function OrderDetailPage({
                   <tr key={item.id} className="border-b border-[color:var(--border)] last:border-0">
                     <td className="py-3">
                       <Link
-                        href={`/courses/${item.course.id}/edit`}
-                        className="text-[#ce0e2d] hover:underline"
+                        href={`/programs/${item.course.id}`}
+                        className="text-brand hover:underline"
                       >
                         {item.course.title}
                       </Link>
@@ -123,7 +123,7 @@ export default async function OrderDetailPage({
               <div>
                 <p className="text-xs text-[color:var(--muted)]">이름</p>
                 <p className="font-medium">
-                  <Link href={`/users/${user?.id}`} className="text-[#ce0e2d] hover:underline">
+                  <Link href={`/members/${user?.id}`} className="text-brand hover:underline">
                     {user?.name ?? "-"}
                   </Link>
                 </p>
@@ -138,7 +138,7 @@ export default async function OrderDetailPage({
                   <div>
                     <p className="text-xs text-[color:var(--muted)]">소속 기관</p>
                     <p className="font-medium">
-                      <Link href={`/organizations/${org.id}`} className="text-[#ce0e2d] hover:underline">
+                      <Link href={`/organizations/${org.id}`} className="text-brand hover:underline">
                         {org.name}
                       </Link>
                     </p>
@@ -154,7 +154,7 @@ export default async function OrderDetailPage({
                 <FileText className="h-5 w-5 text-[color:var(--muted)]" />
                 <div className="flex-1">
                   <p className="text-xs text-[color:var(--muted)]">청구서</p>
-                  <Link href={`/invoices/${invoice.id}`} className="text-sm font-medium text-[#ce0e2d] hover:underline">
+                  <Link href={`/invoices/${invoice.id}`} className="text-sm font-medium text-brand hover:underline">
                     청구서 보기
                   </Link>
                 </div>

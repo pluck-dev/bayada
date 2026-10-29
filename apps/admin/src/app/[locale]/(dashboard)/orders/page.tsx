@@ -1,4 +1,3 @@
-import { Download } from "lucide-react";
 import { Button, Badge, DataTable, type Column } from "@bayada/ui";
 import {
   ORDER_STATUS_LABELS,
@@ -170,17 +169,13 @@ export default async function OrdersPage({
       {/* 페이지 헤더 */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[color:var(--fg)]">
+          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
             주문 관리
           </h1>
           <p className="mt-1 text-sm text-[color:var(--muted)]">
             전체 주문을 조회하고 처리합니다.
           </p>
         </div>
-        <Button variant="outline">
-          <Download className="mr-2 h-4 w-4" />
-          엑셀 다운로드
-        </Button>
       </div>
 
       {/* 필터/검색 */}

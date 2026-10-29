@@ -29,7 +29,7 @@ const memberColumns: Column<MemberRow>[] = [
     key: "name",
     header: "이름",
     render: (row) => (
-      <Link href={`/users/${row.id}`} className="font-medium text-[#ce0e2d] hover:underline">
+      <Link href={`/members/${row.id}`} className="font-medium text-brand hover:underline">
         {row.name}
       </Link>
     ),
@@ -90,7 +90,7 @@ export default async function OrganizationDetailPage({
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-[color:var(--fg)]">
+          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
             {o.name as string}
           </h1>
           <p className="mt-1 text-sm text-[color:var(--muted)]">

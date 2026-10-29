@@ -1,166 +1,112 @@
 import Link from "next/link";
-import { Users, BookOpen, ShoppingCart, DollarSign, TrendingUp, UserPlus } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@bayada/ui";
-import { formatPrice } from "@bayada/shared";
-import { StatsCard } from "@/components/StatsCard";
-import { dashboardService, orderService, userService } from "@/lib/services";
+import { requirePage } from "@/lib/session";
+import { can } from "@/lib/rbac";
+import { getDashboard, resolveTargets } from "@/lib/queries/admin";
+import {
+  AUDIT_ACTION_LABEL,
+  COURSE_STATUSES,
+  COURSE_STATUS_LABEL,
+  COURSE_STATUS_TONE,
+  formatDateTime,
+} from "@/lib/labels";
+import { QUEUE_STATUSES } from "@/lib/workflow";
+import { Badge, Card, EmptyState, PageHeader, Stat, qs } from "@/components/ui";
 
-export default async function DashboardPage() {
-  const [stats, recentOrders, recentStudents] = await Promise.all([
-    dashboardService.getAdminStats(),
-    dashboardService.getRecentOrders(5),
-    dashboardService.getRecentStudents(5),
-  ]);
-
-  const statusLabel: Record<string, string> = {
-    PENDING: "대기",
-    CONFIRMED: "확정",
-    CANCELLED: "취소",
-  };
+export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const user = await requirePage("dashboard", locale);
+  const d = await getDashboard();
+  const names = await resolveTargets(d.recent.map((r) => r.target));
+  const queueTotal = QUEUE_STATUSES.reduce((n, s) => n + (d.statusCounts[s] ?? 0), 0);
+  const totalPrograms = COURSE_STATUSES.reduce((n, s) => n + (d.statusCounts[s] ?? 0), 0);
+  // since 는 KST 1일 0시(UTC 로는 전날 15시) — KST 로 옮겨 월을 읽는다
+  const monthLabel = `${new Date(d.since.getTime() + 9 * 3600_000).getUTCMonth() + 1}월`;
+  const base = `/${locale}`;
 
   return (
-    <div className="space-y-6">
-      {/* 페이지 제목 */}
-      <div>
-        <h1 className="text-2xl font-bold text-[color:var(--fg)]">대시보드</h1>
-        <p className="mt-1 text-sm text-[color:var(--muted)]">
-          BAYADA 아카데미 운영 현황을 한눈에 확인하세요.
-        </p>
+    <>
+      <PageHeader title={`안녕하세요, ${user.name ?? "관리자"}님`} description="아카데미 운영 현황입니다. 모든 숫자는 실제 데이터 기준입니다." />
+
+      <div className="grid grid-cols-5 gap-3">
+        <Stat label="승인 대기" value={queueTotal} hint="제출 ~ 게시 대기" href={`${base}/approvals`} />
+        <Stat
+          label="가입 승인 대기"
+          value={d.pendingSignups}
+          hint="회원 가입 신청"
+          href={can(user.role, "member.read") ? qs(`${base}/members`, { status: "PENDING" }) : undefined}
+        />
+        <Stat label={`${monthLabel} 신규 수강`} value={d.enrollmentsMonth.toLocaleString()} hint="이번 달 수강 신청" />
+        <Stat label={`${monthLabel} 수료`} value={d.completionsMonth.toLocaleString()} hint="이번 달 완료" />
+        <Stat label={`${monthLabel} 수료증`} value={d.certificatesMonth.toLocaleString()} hint="이번 달 발급" />
       </div>
 
-      {/* 통계 카드 */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="전체 수강생"
-          value={stats.totalStudents.toLocaleString("ko-KR")}
-          icon={Users}
-        />
-        <StatsCard
-          title="전체 강의"
-          value={stats.totalCourses}
-          icon={BookOpen}
-        />
-        <StatsCard
-          title="전체 주문"
-          value={stats.totalOrders.toLocaleString("ko-KR")}
-          icon={ShoppingCart}
-        />
-        <StatsCard
-          title="총 매출"
-          value={formatPrice(stats.totalRevenue)}
-          icon={DollarSign}
-        />
-      </div>
-
-      {/* 하단 영역: 최근 주문 + 최근 가입 */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* 최근 주문 */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-[#ce0e2d]" />
-                최근 주문
-              </CardTitle>
-              <Link
-                href="/orders"
-                className="text-sm font-medium text-[#ce0e2d] hover:underline"
-              >
-                전체 보기
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[color:var(--border)]">
-                    <th className="pb-3 text-left font-medium text-[color:var(--muted)]">
-                      주문번호
-                    </th>
-                    <th className="pb-3 text-left font-medium text-[color:var(--muted)]">
-                      고객
-                    </th>
-                    <th className="pb-3 text-right font-medium text-[color:var(--muted)]">
-                      금액
-                    </th>
-                    <th className="pb-3 text-center font-medium text-[color:var(--muted)]">
-                      상태
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders.map((order) => (
-                    <tr
-                      key={order.id}
-                      className="border-b border-[color:var(--border)] last:border-0"
-                    >
-                      <td className="py-3 font-mono text-xs">{order.orderNo}</td>
-                      <td className="py-3">{order.user?.name ?? "-"}</td>
-                      <td className="py-3 text-right">
-                        {formatPrice(order.totalAmount)}
-                      </td>
-                      <td className="py-3 text-center">
-                        <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            order.status === "CONFIRMED"
-                              ? "bg-[color:var(--success-bg)] text-[color:var(--success)]"
-                              : order.status === "CANCELLED"
-                                ? "bg-[color:var(--error-bg)] text-[color:var(--error)]"
-                                : "bg-[color:var(--warning-bg)] text-[color:var(--warning)]"
-                          }`}
-                        >
-                          {statusLabel[order.status] ?? order.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 최근 가입 수강생 */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <UserPlus className="h-5 w-5 text-[#ce0e2d]" />
-                최근 가입
-              </CardTitle>
-              <Link
-                href="/users"
-                className="text-sm font-medium text-[#ce0e2d] hover:underline"
-              >
-                전체 보기
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-4">
-              {recentStudents.map((student) => (
-                <li key={student.id} className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--surface-3)] text-sm font-medium text-[color:var(--muted)]">
-                    {(student.name ?? "?").charAt(0)}
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="truncate text-sm font-medium text-[color:var(--fg)]">
-                      {student.name ?? "-"}
-                    </p>
-                    <p className="truncate text-xs text-[color:var(--muted)]">
-                      {student.email}
-                    </p>
-                  </div>
-                  <span className="text-xs text-[color:var(--muted)]">
-                    {new Date(student.createdAt).toLocaleDateString("ko-KR")}
-                  </span>
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
+        <Card title={`프로그램 상태 · 전체 ${totalPrograms}개`} actions={<Link href={`${base}/programs`} className="text-[12px] text-muted hover:text-fg">전체 보기</Link>}>
+          <ul className="flex flex-col gap-2">
+            {COURSE_STATUSES.map((s) => {
+              const n = d.statusCounts[s] ?? 0;
+              const pct = totalPrograms ? (n / totalPrograms) * 100 : 0;
+              return (
+                <li key={s}>
+                  <Link href={qs(`${base}/programs`, { status: s })} className="group grid grid-cols-[120px_1fr_40px] items-center gap-3 text-[13px]">
+                    <Badge tone={COURSE_STATUS_TONE[s]} dot>
+                      {COURSE_STATUS_LABEL[s]}
+                    </Badge>
+                    <span className="h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                      <span className="block h-full rounded-full bg-zinc-800 group-hover:bg-brand" style={{ width: `${pct}%` }} />
+                    </span>
+                    <span className="tabular text-right text-zinc-700">{n}</span>
+                  </Link>
                 </li>
-              ))}
-            </ul>
-          </CardContent>
+              );
+            })}
+          </ul>
+          <p className="mt-4 border-t border-line pt-3 text-[12px] text-muted">
+            게시 중 {d.statusCounts.PUBLISHED ?? 0}개 — 사내 {d.visibilityCounts.INTERNAL ?? 0} · 외부 공개 {d.visibilityCounts.PUBLIC ?? 0}
+          </p>
         </Card>
+
+        <div className="flex flex-col gap-4">
+          <Card title="검토 대기 (오래된 순)" padded={false}>
+            {d.queue.length === 0 ? (
+              <EmptyState title="대기 중인 프로그램이 없습니다" />
+            ) : (
+              <ul className="divide-y divide-zinc-100">
+                {d.queue.map((q) => (
+                  <li key={q.id}>
+                    <Link href={`${base}/approvals/${q.id}`} className="flex items-center gap-3 px-4 py-2.5 text-[13px] hover:bg-zinc-50">
+                      <span className="flex-1 truncate font-medium">{q.title}</span>
+                      <Badge tone={COURSE_STATUS_TONE[q.status]}>{COURSE_STATUS_LABEL[q.status]}</Badge>
+                      <span className="tabular text-[12px] text-subtle">{formatDateTime(q.updatedAt)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+
+          <Card
+            title="최근 활동"
+            padded={false}
+            actions={can(user.role, "audit") && <Link href={`${base}/audit`} className="text-[12px] text-muted hover:text-fg">감사 로그</Link>}
+          >
+            {d.recent.length === 0 ? (
+              <EmptyState title="아직 기록된 활동이 없습니다" description="프로그램·배너·회원 변경이 감사 로그에 쌓입니다." />
+            ) : (
+              <ul className="divide-y divide-zinc-100">
+                {d.recent.map((r) => (
+                  <li key={r.id} className="flex items-center gap-3 px-4 py-2 text-[12.5px]">
+                    <span className="w-[92px] shrink-0 font-medium">{AUDIT_ACTION_LABEL[r.action] ?? r.action}</span>
+                    <span className="flex-1 truncate text-zinc-600">{names.get(r.target) ?? r.target}</span>
+                    <span className="shrink-0 text-subtle">{r.actor?.name ?? r.actor?.email ?? "시스템"}</span>
+                    <span className="tabular shrink-0 text-subtle">{formatDateTime(r.at)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
