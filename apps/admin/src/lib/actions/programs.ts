@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma, type JobRole, type LearningMode, type Level, type ProductType, type Visibility } from "@bayada/db";
 import { ActionError, audit, runAction, type AdminUser } from "../session";
 import { JOB_ROLES, LEARNING_MODES, LEVELS, PRODUCT_TYPES } from "../labels";
-import { PROGRAM_EDIT } from "../rbac";
+import { PROGRAM_EDIT, can, type Permission } from "../rbac";
 import { findTransition, requiredChecklist, type WorkflowAction } from "../workflow";
 import { assertEditable, assertOwnedBy } from "../guards";
 
@@ -152,13 +152,13 @@ export async function setFeatured(id: string, featured: boolean) {
   });
 }
 
-function assertTransitionRole(user: AdminUser, roles: string[]) {
-  if (!roles.includes(user.role)) throw new ActionError("이 단계를 처리할 권한이 없습니다.");
+function assertTransitionPerm(user: AdminUser, perms: Permission[]) {
+  if (!perms.some((p) => can(user, p))) throw new ActionError("이 단계를 처리할 권한이 없습니다.");
 }
 
 /** 승인 워크플로우 전이 — 모든 전이는 감사 로그에 남는다 */
 export async function transitionProgram(id: string, action: WorkflowAction, note?: string) {
-  return runAction(["workflow.operate", "workflow.clinical", "partner.console"], async (user) => {
+  return runAction(["workflow.operate", "workflow.clinical", ...PROGRAM_EDIT], async (user) => {
     // 파트너 관리자는 승인 요청(제출)만 — 검토·승인·게시는 TRANSITIONS 역할 검사에서도 막힌다
     if (user.role === "PARTNER_ADMIN" && action !== "submit") throw new ActionError("이 단계를 처리할 권한이 없습니다.");
     const course = await prisma.course.findUnique({
@@ -178,7 +178,7 @@ export async function transitionProgram(id: string, action: WorkflowAction, note
     assertOwnedBy(user, course.providerId);
     const t = findTransition(action, course.status);
     if (!t) throw new ActionError("현재 상태에서는 할 수 없는 작업입니다. 화면을 새로고침하세요.");
-    assertTransitionRole(user, t.roles);
+    assertTransitionPerm(user, t.perms);
     const trimmed = note?.trim() || null;
     if (t.noteRequired && !trimmed) throw new ActionError("수정 요청 사유를 검토 의견에 입력하세요.");
 

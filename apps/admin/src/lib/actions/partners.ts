@@ -20,13 +20,13 @@ export async function assignPartnerAdmin(providerId: string, email: string) {
     if (!provider.isPartner) throw new ActionError("외부 파트너로 표시된 제공기관에만 파트너 관리자를 둘 수 있습니다.");
     const target = await prisma.user.findUnique({
       where: { email: email.trim().toLowerCase() },
-      select: { id: true, email: true, role: true, status: true, providerId: true },
+      select: { id: true, email: true, role: true, customRoleKey: true, status: true, providerId: true },
     });
     if (!target) throw new ActionError("해당 이메일로 가입한 회원이 없습니다. 먼저 아카데미에 가입해야 합니다.");
     if (target.id === user.id) throw new ActionError("본인 역할은 바꿀 수 없습니다.");
     if (target.status !== "APPROVED") throw new ActionError("가입 승인된 회원만 지정할 수 있습니다.");
     if (target.role === "PARTNER_ADMIN" && target.providerId === providerId) return { message: "이미 이 기관의 파트너 관리자입니다." };
-    if (target.role !== "STUDENT" && target.role !== "PARTNER_ADMIN") {
+    if ((target.role !== "STUDENT" && target.role !== "PARTNER_ADMIN") || target.customRoleKey) {
       throw new ActionError("학습자 계정만 파트너 관리자로 지정할 수 있습니다 (운영·기관 관리자 계정 제외).");
     }
     await prisma.user.update({ where: { id: target.id }, data: { role: "PARTNER_ADMIN", providerId } });

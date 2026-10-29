@@ -42,7 +42,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             <dl className="grid grid-cols-[96px_1fr] gap-x-4 gap-y-2.5 text-[13px]">
               <dt className="text-muted">이름</dt>
               <dd className="font-medium">
-                {can(user.role, "member.read") ? (
+                {can(user, "member.read") ? (
                   <Link href={`/${locale}/members/${app.user.id}`} className="hover:underline">
                     {app.user.name ?? "-"}
                   </Link>
@@ -133,7 +133,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             key={`${app.status}-${app.updatedAt.getTime()}`}
             id={app.id}
             status={app.status}
-            canEvaluate={can(user.role, "credential.evaluate")}
+            canEvaluate={can(user, "credential.evaluate")}
             thresholds={p}
             initial={{
               examScore: app.examScore?.toString() ?? "",
@@ -146,7 +146,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             key={`d-${app.status}`}
             id={app.id}
             status={app.status}
-            canApprove={can(user.role, "credential.approve")}
+            canApprove={can(user, "credential.approve")}
             passed={passed}
             prerequisitesDone={prerequisitesDone}
             decisionNote={app.decisionNote}

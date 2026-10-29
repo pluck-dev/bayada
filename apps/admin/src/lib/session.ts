@@ -1,21 +1,28 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { prisma } from "@bayada/db";
+import { prisma, type Role } from "@bayada/db";
 import { auth } from "./auth";
-import { can, homePath, isAdminRole, type AdminRole, type Permission } from "./rbac";
+import { can, homePath, isAdminRole, type Permission } from "./rbac";
+import { getRoleDef, roleKeyOf } from "./roles";
 
 export interface AdminUser {
   id: string;
   name: string | null;
   email: string;
-  role: AdminRole;
+  /** 시스템 역할 (사용자 정의 역할 사용자는 STUDENT). 파트너 소유권 등 역할 고유 규칙에만 쓴다 */
+  role: Role;
+  /** 실효 역할 키 — customRoleKey ?? role */
+  roleKey: string;
+  roleName: string;
+  /** DB(AdminRoleDef)에서 읽은 실효 권한 — 권한 판정은 항상 이걸로 (can(user, …)) */
+  permissions: Permission[];
   /** PARTNER_ADMIN 이 관리하는 제공기관 (그 외 역할은 null) */
   providerId: string | null;
 }
 
 /**
  * 현재 어드민 사용자. JWT 의 role 은 로그인 시점 값이라
- * 매 요청 DB 에서 역할·상태를 다시 읽어 강등·거절이 즉시 반영되게 한다.
+ * 매 요청 DB 에서 역할·상태·역할 권한을 다시 읽어 강등·거절·권한 변경이 즉시 반영되게 한다.
  */
 export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
   const session = await auth();
@@ -23,25 +30,32 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
   if (!id) return null;
   const user = await prisma.user.findUnique({
     where: { id },
-    select: { id: true, name: true, email: true, role: true, status: true, providerId: true },
+    select: { id: true, name: true, email: true, role: true, status: true, providerId: true, customRoleKey: true },
   });
-  if (!user || user.status !== "APPROVED" || !isAdminRole(user.role)) return null;
+  if (!user || user.status !== "APPROVED") return null;
+  if (!user.customRoleKey && !isAdminRole(user.role)) return null;
   // 제공기관이 해제된 파트너 관리자는 볼 수 있는 게 없으므로 로그인 상태로 취급하지 않는다
-  if (user.role === "PARTNER_ADMIN" && !user.providerId) return null;
+  if (!user.customRoleKey && user.role === "PARTNER_ADMIN" && !user.providerId) return null;
+  const def = await getRoleDef(roleKeyOf(user));
+  // 삭제된 역할이거나 권한이 하나도 없으면 갈 곳이 없다 → 로그인 불가로 취급
+  if (!def || def.permissions.length === 0) return null;
   return {
     id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
+    roleKey: def.key,
+    roleName: def.name,
+    permissions: def.permissions,
     providerId: user.role === "PARTNER_ADMIN" ? user.providerId : null,
   };
 });
 
-/** 페이지 가드 — 비로그인은 로그인으로, 권한 없으면 역할별 첫 화면으로 */
+/** 페이지 가드 — 비로그인은 로그인으로, 권한 없으면 사용자별 첫 화면으로 */
 export async function requirePage(permission: Permission, locale: string): Promise<AdminUser> {
   const user = await getAdminUser();
   if (!user) redirect(`/${locale}/auth/login`);
-  if (!can(user.role, permission)) redirect(homePath(user.role, locale));
+  if (!can(user, permission)) redirect(homePath(user, locale));
   return user;
 }
 
@@ -59,7 +73,7 @@ export async function runAction<T = undefined>(
   const user = await getAdminUser();
   if (!user) return { ok: false, error: "로그인이 필요합니다." };
   const perms = Array.isArray(permission) ? permission : [permission];
-  if (!perms.some((p) => can(user.role, p))) return { ok: false, error: "권한이 없습니다." };
+  if (!perms.some((p) => can(user, p))) return { ok: false, error: "권한이 없습니다." };
   try {
     const res = await fn(user);
     return { ok: true, ...(res ?? {}) };

@@ -28,7 +28,7 @@ export default async function ProgramsPage({
         title="프로그램"
         description="강좌·트랙의 상태와 공개범위를 관리합니다. 사내 전용 강좌를 선택해 외부 플랫폼에 공개할 수 있습니다."
         actions={
-          can(user.role, "program.write") && (
+          can(user, "program.write") && (
             <LinkButton href={`${base}/new`} variant="primary">
               <Plus className="h-3.5 w-3.5" aria-hidden />새 프로그램
             </LinkButton>
@@ -62,7 +62,7 @@ export default async function ProgramsPage({
         ))}
       </div>
 
-      <ProgramTable rows={rows} locale={locale} canWrite={can(user.role, "program.write")} />
+      <ProgramTable rows={rows} locale={locale} canWrite={can(user, "program.write")} />
     </>
   );
 }

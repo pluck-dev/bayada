@@ -90,7 +90,7 @@ export default async function IssuedCredentialsPage({
                   <tr key={c.id} className={cx(trClass, c.revokedAt && "text-zinc-400")}>
                     <td className={cx(tdClass, "font-mono font-medium")}>{c.number}</td>
                     <td className={tdClass}>
-                      {can(user.role, "member.read") ? (
+                      {can(user, "member.read") ? (
                         <Link href={`/${locale}/members/${c.user.id}`} className="font-medium hover:underline">
                           {c.user.name ?? c.user.email}
                         </Link>

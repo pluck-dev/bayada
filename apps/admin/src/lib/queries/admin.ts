@@ -100,7 +100,9 @@ export async function listMembers(f: MemberFilter) {
     });
   }
   if (f.status === "PENDING" || f.status === "APPROVED" || f.status === "REJECTED") and.push({ status: f.status as UserStatus });
-  if (f.role && (ROLES as string[]).includes(f.role)) and.push({ role: f.role as Role });
+  // 시스템 역할 필터는 사용자 정의 역할이 붙은 계정을 뺀다 (그 계정들은 role=STUDENT 로 저장됨)
+  if (f.role && (ROLES as string[]).includes(f.role)) and.push({ role: f.role as Role, customRoleKey: null });
+  else if (f.role) and.push({ customRoleKey: f.role });
   if (f.org === "internal") and.push({ organization: { isInternal: true } });
   if (f.org === "external") and.push({ OR: [{ organizationId: null }, { organization: { isInternal: false } }] });
   const where: Prisma.UserWhereInput = and.length ? { AND: and } : {};
@@ -117,6 +119,7 @@ export async function listMembers(f: MemberFilter) {
         email: true,
         name: true,
         role: true,
+        customRoleKey: true,
         status: true,
         jobRole: true,
         createdAt: true,
@@ -140,6 +143,7 @@ export async function getMember(id: string) {
       name: true,
       phone: true,
       role: true,
+      customRoleKey: true,
       status: true,
       jobRole: true,
       legacyWpId: true,

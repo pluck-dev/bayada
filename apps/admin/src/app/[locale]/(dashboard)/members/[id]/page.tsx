@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 import { requirePage } from "@/lib/session";
 import { can } from "@/lib/rbac";
 import { getMember } from "@/lib/queries/admin";
+import { getRoleDefs } from "@/lib/roles";
 import {
   COURSE_STATUS_LABEL,
   COURSE_STATUS_TONE,
   JOB_ROLE_LABEL,
+  ROLES,
   ROLE_LABEL,
   USER_STATUS_LABEL,
   USER_STATUS_TONE,
@@ -18,11 +20,19 @@ import { MemberControls } from "@/components/members/MemberControls";
 export default async function MemberDetailPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
   const user = await requirePage("member.read", locale);
-  const m = await getMember(id);
+  const [m, roleDefs] = await Promise.all([getMember(id), getRoleDefs()]);
   if (!m) notFound();
+  const customRoles = roleDefs.filter((r) => !r.isSystem);
+  const roleName = m.customRoleKey ? (customRoles.find((r) => r.key === m.customRoleKey)?.name ?? m.customRoleKey) : ROLE_LABEL[m.role];
+  const adminKeys = new Set(roleDefs.filter((r) => r.permissions.length > 0).map((r) => r.key));
+  // 역할 선택지 — 시스템 역할 + 사용자 정의 역할. admin=어드민 콘솔에 들어올 수 있는 역할(확인 대화상자)
+  const roleOptions = [
+    ...ROLES.map((r) => ({ key: r, label: ROLE_LABEL[r], custom: false, admin: adminKeys.has(r) })),
+    ...customRoles.map((r) => ({ key: r.key, label: r.name, custom: true, admin: adminKeys.has(r.key) })),
+  ];
   const completed = m.enrollments.filter((e) => e.completedAt).length;
   const avg = m.enrollments.length ? Math.round(m.enrollments.reduce((n, e) => n + e.progressPercent, 0) / m.enrollments.length) : 0;
-  const canWrite = can(user.role, "member.write") && m.id !== user.id;
+  const canWrite = can(user, "member.write") && m.id !== user.id;
 
   return (
     <>
@@ -36,7 +46,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
             </Badge>
             <span>{m.email}</span>
             <span className="text-subtle">·</span>
-            <span>{ROLE_LABEL[m.role]}</span>
+            <span>{roleName}</span>
             <span className="text-subtle">·</span>
             <span>{m.organization ? `${m.organization.name}${m.organization.isInternal ? " (사내)" : ""}` : "외부 개인"}</span>
           </span>
@@ -69,7 +79,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
                   {m.enrollments.map((e) => (
                     <tr key={e.id} className={trClass}>
                       <td className={cx(tdClass, "whitespace-normal!")}>
-                        {can(user.role, "program.read") ? (
+                        {can(user, "program.read") ? (
                           <Link href={`/${locale}/programs/${e.course.id}`} className="hover:underline">
                             {e.course.title}
                           </Link>
@@ -145,11 +155,11 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
           </Card>
           {canWrite ? (
             <Card title="관리">
-              <MemberControls id={m.id} status={m.status} role={m.role} />
+              <MemberControls id={m.id} status={m.status} roleKey={m.customRoleKey ?? m.role} options={roleOptions} />
             </Card>
           ) : (
-            can(user.role, "member.write") || (
-              <p className="px-1 text-[12px] text-muted">콘텐츠 운영자는 회원 정보를 조회만 할 수 있습니다.</p>
+            can(user, "member.write") || (
+              <p className="px-1 text-[12px] text-muted">회원 관리 권한이 없어 조회만 할 수 있습니다.</p>
             )
           )}
         </aside>

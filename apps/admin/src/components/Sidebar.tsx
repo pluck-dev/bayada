@@ -22,11 +22,12 @@ import {
   FileSignature,
   LayoutGrid,
   Route,
+  ShieldCheck,
+  Settings2,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { can, type AdminRole, type Permission } from "@/lib/rbac";
-import { ROLE_LABEL } from "@/lib/labels";
+import { can, type Permission } from "@/lib/rbac";
 import { cx } from "./ui";
 
 interface NavItem {
@@ -56,6 +57,8 @@ const PRIMARY: NavItem[] = [
   { path: "/partners", label: "파트너", icon: Handshake, permission: "partner.manage" },
   { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console" },
   { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages" },
+  { path: "/site-settings", label: "사이트 설정", icon: Settings2, permission: "site.manage" },
+  { path: "/roles", label: "역할·권한", icon: ShieldCheck, permission: "role.manage" },
   { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit" },
 ];
 
@@ -68,13 +71,18 @@ const COMMERCE: NavItem[] = [
 
 export function Sidebar({
   locale,
-  role,
+  permissions,
+  roleName,
+  isPartner,
   userName,
   userEmail,
   counts,
 }: {
   locale: string;
-  role: AdminRole;
+  /** DB 기준 실효 권한 — 메뉴 노출은 이것만 본다 */
+  permissions: Permission[];
+  roleName: string;
+  isPartner: boolean;
   userName: string;
   userEmail: string;
   counts: { queue: number; signups: number; reports: number; credentials?: number };
@@ -89,7 +97,7 @@ export function Sidebar({
 
   // 2차 예정 항목은 운영 역할에게만 보여 준다 (파트너 콘솔에는 불필요)
   const visible = (items: NavItem[]) =>
-    items.filter((i) => (i.phase ? role !== "PARTNER_ADMIN" : !!i.permission && can(role, i.permission)));
+    items.filter((i) => (i.phase ? !isPartner : !!i.permission && can({ permissions }, i.permission)));
   const primary = visible(PRIMARY);
   const commerce = visible(COMMERCE);
 
@@ -139,7 +147,7 @@ export function Sidebar({
         <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-[13px] font-bold text-white">B</span>
         <div className="leading-tight">
           <p className="text-[13px] font-semibold text-white">Bayada Academy</p>
-          <p className="text-[11px] text-zinc-500">{role === "PARTNER_ADMIN" ? "Partner Console" : "Admin Console"}</p>
+          <p className="text-[11px] text-zinc-500">{isPartner ? "Partner Console" : "Admin Console"}</p>
         </div>
       </div>
 
@@ -161,7 +169,7 @@ export function Sidebar({
           <div className="min-w-0 flex-1 leading-tight">
             <p className="truncate text-[12.5px] font-medium text-zinc-100">{userName}</p>
             <p className="truncate text-[11px] text-zinc-500" title={userEmail}>
-              {ROLE_LABEL[role]}
+              {roleName}
             </p>
           </div>
           <button

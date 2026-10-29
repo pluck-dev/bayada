@@ -33,7 +33,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           label="가입 승인 대기"
           value={d.pendingSignups}
           hint="회원 가입 신청"
-          href={can(user.role, "member.read") ? qs(`${base}/members`, { status: "PENDING" }) : undefined}
+          href={can(user, "member.read") ? qs(`${base}/members`, { status: "PENDING" }) : undefined}
         />
         <Stat label={`${monthLabel} 신규 수강`} value={d.enrollmentsMonth.toLocaleString()} hint="이번 달 수강 신청" />
         <Stat label={`${monthLabel} 수료`} value={d.completionsMonth.toLocaleString()} hint="이번 달 완료" />
@@ -42,13 +42,13 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           label="미처리 신고 후기"
           value={d.openReports}
           hint="게시 중 · 신고 접수"
-          href={can(user.role, "review") ? qs(`${base}/reviews`, { filter: "reported" }) : undefined}
+          href={can(user, "review") ? qs(`${base}/reviews`, { filter: "reported" }) : undefined}
         />
         <Stat
           label="다가오는 실습"
           value={d.upcomingSessions}
           hint="14일 안에 시작"
-          href={can(user.role, "session") ? `${base}/sessions` : undefined}
+          href={can(user, "session") ? `${base}/sessions` : undefined}
         />
       </div>
 
@@ -100,7 +100,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           <Card
             title="최근 활동"
             padded={false}
-            actions={can(user.role, "audit") && <Link href={`${base}/audit`} className="text-[12px] text-muted hover:text-fg">감사 로그</Link>}
+            actions={can(user, "audit") && <Link href={`${base}/audit`} className="text-[12px] text-muted hover:text-fg">감사 로그</Link>}
           >
             {d.recent.length === 0 ? (
               <EmptyState title="아직 기록된 활동이 없습니다" description="프로그램·배너·회원 변경이 감사 로그에 쌓입니다." />

@@ -38,14 +38,16 @@ export async function setOrgAdmin(organizationId: string, userId: string, makeAd
     if (userId === user.id) throw new ActionError("본인 역할은 바꿀 수 없습니다.");
     const target = await prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true, email: true, organizationId: true, status: true },
+      select: { role: true, customRoleKey: true, email: true, organizationId: true, status: true },
     });
     if (!target || target.organizationId !== organizationId) throw new ActionError("이 기관 소속 회원이 아닙니다.");
     const from = target.role;
     const to = makeAdmin ? "ORG_ADMIN" : "STUDENT";
     if (from === to) return { message: "변경 사항이 없습니다." };
     // 운영·파트너 계정은 여기서 바꾸지 않는다 (권한이 줄어드는 사고 방지)
-    if (from !== "STUDENT" && from !== "ORG_ADMIN") throw new ActionError("학습자·기관 관리자 사이에서만 바꿀 수 있습니다.");
+    if ((from !== "STUDENT" && from !== "ORG_ADMIN") || target.customRoleKey) {
+      throw new ActionError("학습자·기관 관리자 사이에서만 바꿀 수 있습니다.");
+    }
     if (makeAdmin && target.status !== "APPROVED") throw new ActionError("가입 승인된 회원만 기관 관리자로 지정할 수 있습니다.");
     await prisma.user.update({ where: { id: userId }, data: { role: to } });
     await audit(user.id, "user.role", `User:${userId}`, { from, to, email: target.email, organizationId });

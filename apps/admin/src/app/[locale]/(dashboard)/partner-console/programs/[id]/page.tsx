@@ -155,7 +155,7 @@ export default async function PartnerProgramPage({
             <Checklist items={checklist} />
           </Card>
           <Card title="승인 요청">
-            <WorkflowPanel courseId={id} status={program.status} role={user.role} checklist={checklist} />
+            <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} />
           </Card>
           <p className="px-1 text-[12px] text-muted">검토·승인·게시는 바야다 운영자와 임상 리뷰어가 진행합니다.</p>
         </aside>

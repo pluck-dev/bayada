@@ -58,7 +58,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
                 </thead>
                 <tbody>
                   {org.users.map((m) => {
-                    const editable = (m.role === "STUDENT" || m.role === "ORG_ADMIN") && m.id !== user.id;
+                    const editable = (m.role === "STUDENT" || m.role === "ORG_ADMIN") && !m.customRoleKey && m.id !== user.id;
                     return (
                       <tr key={m.id} className={trClass}>
                         <td className={cx(tdClass, "font-medium")}>

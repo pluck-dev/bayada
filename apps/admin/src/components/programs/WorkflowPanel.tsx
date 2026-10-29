@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, CircleAlert } from "lucide-react";
 import type { CourseStatus } from "@bayada/db";
-import type { AdminRole } from "@/lib/rbac";
+import type { Permission } from "@/lib/rbac";
 import { availableTransitions, type ChecklistItem, type Transition } from "@/lib/workflow";
 import { transitionProgram } from "@/lib/actions/programs";
 import { COURSE_STATUS_LABEL } from "@/lib/labels";
@@ -46,13 +46,13 @@ const ORDER: Record<string, number> = {
 export function WorkflowPanel({
   courseId,
   status,
-  role,
+  permissions,
   checklist,
   afterHref,
 }: {
   courseId: string;
   status: CourseStatus;
-  role: AdminRole;
+  permissions: Permission[];
   checklist: ChecklistItem[];
   /** 처리 후 이동할 곳 (검토 화면 → 큐) */
   afterHref?: string;
@@ -61,7 +61,7 @@ export function WorkflowPanel({
   const [note, setNote] = useState("");
   const { run, isPending } = useAction();
   const { toast } = useFeedback();
-  const transitions = availableTransitions(status, role).sort((a, b) => ORDER[a.action] - ORDER[b.action]);
+  const transitions = availableTransitions(status, permissions).sort((a, b) => ORDER[a.action] - ORDER[b.action]);
   const needsNote = transitions.some((t) => t.noteRequired || t.action === "to_clinical" || t.action === "approve");
   const missing = checklist.filter((c) => !c.ok);
 

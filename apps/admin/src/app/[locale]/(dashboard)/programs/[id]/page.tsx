@@ -35,7 +35,7 @@ export default async function ProgramDetailPage({
   if (!program) notFound();
   const [options, history] = await Promise.all([getFormOptions(), tab === "history" ? getProgramHistory(id) : Promise.resolve([])]);
 
-  const canWrite = can(user.role, "program.write");
+  const canWrite = can(user, "program.write");
   const locked = !canWrite || LOCKED_STATUSES.includes(program.status);
   const checklist = requiredChecklist({ ...program, lectureCount: lectureCount(program) }, program.provider?.name);
   const base = `/${locale}/programs/${id}`;
@@ -162,7 +162,7 @@ export default async function ProgramDetailPage({
             <Checklist items={checklist} />
           </Card>
           <Card title="워크플로우">
-            <WorkflowPanel courseId={id} status={program.status} role={user.role} checklist={checklist} />
+            <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} />
           </Card>
           {program.publishedAt && <p className="px-1 text-[12px] text-muted">최초/최근 게시 {formatDateTime(program.publishedAt)}</p>}
         </aside>

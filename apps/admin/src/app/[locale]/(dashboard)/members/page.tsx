@@ -1,6 +1,7 @@
 import { requirePage } from "@/lib/session";
 import { can } from "@/lib/rbac";
 import { listMembers } from "@/lib/queries/admin";
+import { getRoleDefs } from "@/lib/roles";
 import { ROLES, ROLE_LABEL } from "@/lib/labels";
 import { FilterChip, PageHeader, qs } from "@/components/ui";
 import { SearchBox } from "@/components/SearchBox";
@@ -18,7 +19,8 @@ export default async function MembersPage({
   const { locale } = await params;
   const user = await requirePage("member.read", locale);
   const sp = await searchParams;
-  const data = await listMembers({ ...sp, page: Number(sp.page) || 1 });
+  const [data, roleDefs] = await Promise.all([listMembers({ ...sp, page: Number(sp.page) || 1 }), getRoleDefs()]);
+  const customRoles = roleDefs.filter((r) => !r.isSystem);
   const base = `/${locale}/members`;
   const link = (patch: Record<string, string | undefined>) =>
     qs(base, { q: sp.q, status: sp.status, role: sp.role, org: sp.org, ...patch, page: undefined });
@@ -37,7 +39,11 @@ export default async function MembersPage({
           param="role"
           label="역할"
           value={sp.role ?? ""}
-          options={[{ value: "", label: "모든 역할" }, ...ROLES.map((r) => ({ value: r, label: ROLE_LABEL[r] }))]}
+          options={[
+            { value: "", label: "모든 역할" },
+            ...ROLES.map((r) => ({ value: r, label: ROLE_LABEL[r] })),
+            ...customRoles.map((r) => ({ value: r.key, label: r.name })),
+          ]}
         />
         <SelectFilter
           param="org"
@@ -69,8 +75,9 @@ export default async function MembersPage({
       <MemberTable
         rows={data.rows.map((r) => ({ ...r, createdAt: r.createdAt.toISOString() }))}
         locale={locale}
-        canWrite={can(user.role, "member.write")}
+        canWrite={can(user, "member.write")}
         selfId={user.id}
+        roleNames={Object.fromEntries(customRoles.map((r) => [r.key, r.name]))}
       />
       <Pager page={data.page} pages={data.pages} total={data.total} unit="명" />
     </>

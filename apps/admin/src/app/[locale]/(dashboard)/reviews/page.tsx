@@ -70,7 +70,7 @@ export default async function ReviewsPage({
               {data.rows.map((r) => (
                 <tr key={r.id} className={cx(trClass, r.status === "PUBLISHED" && r.reportCount > 0 && "bg-red-50/40")}>
                   <td className={cx(tdClass, "max-w-[220px] truncate")}>
-                    {can(user.role, "program.read") ? (
+                    {can(user, "program.read") ? (
                       <Link href={`/${locale}/programs/${r.course.id}`} className="hover:underline" title={r.course.title}>
                         {r.course.title}
                       </Link>

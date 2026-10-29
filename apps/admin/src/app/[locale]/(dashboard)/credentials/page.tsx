@@ -27,7 +27,7 @@ export default async function CredentialQueuePage({
   const programId = sp.program || undefined;
   const data = await listApplications({ status, programId });
   const base = `/${locale}/credentials`;
-  const isEvaluator = can(user.role, "credential.evaluate");
+  const isEvaluator = can(user, "credential.evaluate");
 
   return (
     <>
@@ -126,7 +126,7 @@ export default async function CredentialQueuePage({
           </table>
         )}
       </div>
-      {isEvaluator && !can(user.role, "credential.approve") && (
+      {isEvaluator && !can(user, "credential.approve") && (
         <p className="mt-3 px-1 text-[12px] text-muted">심사위원은 평가·판정까지 할 수 있습니다. 발급(승인)·반려는 운영자가 합니다.</p>
       )}
     </>

@@ -22,8 +22,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
   const user = await requirePage("approval.queue", locale);
   const program = await getProgram(id);
   if (!program) notFound();
-  // 임상 리뷰어는 임상 검토 단계 항목만 본다
-  if (user.role === "CLINICAL_REVIEWER" && program.status !== "CLINICAL_REVIEW") notFound();
+  // 임상 리뷰만 처리하는 역할은 임상 검토 단계 항목만 본다
+  const clinicalOnly = can(user, "workflow.clinical") && !can(user, "workflow.operate");
+  if (clinicalOnly && program.status !== "CLINICAL_REVIEW") notFound();
 
   const history = await getProgramHistory(id);
   const checklist = requiredChecklist({ ...program, lectureCount: lectureCount(program) }, program.provider?.name);
@@ -39,7 +40,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
               {COURSE_STATUS_LABEL[program.status]}
             </Badge>
             <VisibilityPill value={program.visibility} />
-            {can(user.role, "program.read") && (
+            {can(user, "program.read") && (
               <Link href={`/${locale}/programs/${id}`} className="text-[12.5px] underline-offset-2 hover:underline">
                 프로그램 편집 화면 열기
               </Link>
@@ -115,7 +116,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
 
         <aside className="sticky top-0 rounded-lg border border-line bg-zinc-50 p-4">
           <h2 className="mb-3 text-[14px] font-semibold">검토</h2>
-          <WorkflowPanel courseId={id} status={program.status} role={user.role} checklist={checklist} afterHref={user.role === "CLINICAL_REVIEWER" ? `/${locale}/approvals` : undefined}
+          <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} afterHref={clinicalOnly ? `/${locale}/approvals` : undefined}
           />
         </aside>
       </div>

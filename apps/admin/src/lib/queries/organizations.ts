@@ -30,7 +30,7 @@ export async function getOrganization(id: string) {
       _count: { select: { orders: true } },
       users: {
         orderBy: { name: "asc" },
-        select: { id: true, name: true, email: true, role: true, status: true, jobRole: true, createdAt: true },
+        select: { id: true, name: true, email: true, role: true, customRoleKey: true, status: true, jobRole: true, createdAt: true },
       },
       invites: {
         where: { acceptedAt: null },

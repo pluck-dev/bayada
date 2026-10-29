@@ -2,7 +2,7 @@
 // DRAFT → SUBMITTED → IN_REVIEW → (CLINICAL_REVIEW) → APPROVED → PUBLISHED → ARCHIVED
 // 수정 요청(CHANGES_REQUESTED)은 제출·검토 단계 어디서든 가능하고, 수정 후 다시 승인 요청한다.
 import type { CourseStatus } from "@bayada/db";
-import type { AdminRole } from "./rbac";
+import { PROGRAM_EDIT, type Permission } from "./rbac";
 
 export type WorkflowAction =
   | "submit"
@@ -18,33 +18,34 @@ export interface Transition {
   action: WorkflowAction;
   from: CourseStatus;
   to: CourseStatus;
-  roles: AdminRole[];
+  /** 이 중 하나라도 있으면 처리 가능 (역할이 아니라 권한 기준 — 역할·권한 화면에서 바꾼 값이 그대로 적용된다) */
+  perms: Permission[];
   label: string;
   noteRequired?: boolean;
   /** 되돌리기 어려운 전이 — 확인 대화상자 */
   confirm?: string;
 }
 
-const OPS: AdminRole[] = ["ADMIN", "CONTENT_MANAGER"];
-const CLINICAL: AdminRole[] = ["ADMIN", "CLINICAL_REVIEWER"];
-// 승인 요청(제출)만 파트너 관리자도 할 수 있다 — 자기 제공기관 프로그램인지는 서버 액션이 확인
-const SUBMITTERS: AdminRole[] = [...OPS, "PARTNER_ADMIN"];
+const OPS: Permission[] = ["workflow.operate"];
+const CLINICAL: Permission[] = ["workflow.clinical"];
+// 승인 요청(제출)은 프로그램을 고칠 수 있는 사람(파트너 포함) — 자기 제공기관 프로그램인지는 서버 액션이 확인
+const SUBMITTERS: Permission[] = PROGRAM_EDIT;
 
 export const TRANSITIONS: Transition[] = [
-  { action: "submit", from: "DRAFT", to: "SUBMITTED", roles: SUBMITTERS, label: "승인 요청" },
-  { action: "submit", from: "CHANGES_REQUESTED", to: "SUBMITTED", roles: SUBMITTERS, label: "재제출" },
-  { action: "start_review", from: "SUBMITTED", to: "IN_REVIEW", roles: OPS, label: "검토 시작" },
-  { action: "request_changes", from: "SUBMITTED", to: "CHANGES_REQUESTED", roles: OPS, label: "수정 요청", noteRequired: true },
-  { action: "to_clinical", from: "IN_REVIEW", to: "CLINICAL_REVIEW", roles: OPS, label: "임상 리뷰로 넘기기" },
-  { action: "approve", from: "IN_REVIEW", to: "APPROVED", roles: OPS, label: "승인" },
-  { action: "request_changes", from: "IN_REVIEW", to: "CHANGES_REQUESTED", roles: OPS, label: "수정 요청", noteRequired: true },
-  { action: "approve", from: "CLINICAL_REVIEW", to: "APPROVED", roles: CLINICAL, label: "승인" },
-  { action: "request_changes", from: "CLINICAL_REVIEW", to: "CHANGES_REQUESTED", roles: CLINICAL, label: "수정 요청", noteRequired: true },
+  { action: "submit", from: "DRAFT", to: "SUBMITTED", perms: SUBMITTERS, label: "승인 요청" },
+  { action: "submit", from: "CHANGES_REQUESTED", to: "SUBMITTED", perms: SUBMITTERS, label: "재제출" },
+  { action: "start_review", from: "SUBMITTED", to: "IN_REVIEW", perms: OPS, label: "검토 시작" },
+  { action: "request_changes", from: "SUBMITTED", to: "CHANGES_REQUESTED", perms: OPS, label: "수정 요청", noteRequired: true },
+  { action: "to_clinical", from: "IN_REVIEW", to: "CLINICAL_REVIEW", perms: OPS, label: "임상 리뷰로 넘기기" },
+  { action: "approve", from: "IN_REVIEW", to: "APPROVED", perms: OPS, label: "승인" },
+  { action: "request_changes", from: "IN_REVIEW", to: "CHANGES_REQUESTED", perms: OPS, label: "수정 요청", noteRequired: true },
+  { action: "approve", from: "CLINICAL_REVIEW", to: "APPROVED", perms: CLINICAL, label: "승인" },
+  { action: "request_changes", from: "CLINICAL_REVIEW", to: "CHANGES_REQUESTED", perms: CLINICAL, label: "수정 요청", noteRequired: true },
   {
     action: "publish",
     from: "APPROVED",
     to: "PUBLISHED",
-    roles: OPS,
+    perms: OPS,
     label: "게시",
     confirm: "게시하면 공개범위에 맞춰 카탈로그에 바로 노출되고 수강 신청을 받습니다.",
   },
@@ -52,7 +53,7 @@ export const TRANSITIONS: Transition[] = [
     action: "archive",
     from: "PUBLISHED",
     to: "ARCHIVED",
-    roles: OPS,
+    perms: OPS,
     label: "보관",
     confirm: "보관하면 신규 수강 신청이 막힙니다. 이미 수강 중인 학습자는 계속 학습할 수 있습니다.",
   },
@@ -60,7 +61,7 @@ export const TRANSITIONS: Transition[] = [
     action: "archive",
     from: "APPROVED",
     to: "ARCHIVED",
-    roles: OPS,
+    perms: OPS,
     label: "보관",
     confirm: "게시하지 않고 보관합니다. 다시 열려면 보관 해제 후 승인 절차를 거쳐야 합니다.",
   },
@@ -68,7 +69,7 @@ export const TRANSITIONS: Transition[] = [
     action: "restore",
     from: "ARCHIVED",
     to: "DRAFT",
-    roles: OPS,
+    perms: OPS,
     label: "보관 해제",
     confirm: "작성 중 상태로 되돌립니다. 다시 게시하려면 승인 절차를 거쳐야 합니다.",
   },
@@ -78,8 +79,8 @@ export function findTransition(action: WorkflowAction, from: CourseStatus): Tran
   return TRANSITIONS.find((t) => t.action === action && t.from === from);
 }
 
-export function availableTransitions(status: CourseStatus, role: AdminRole): Transition[] {
-  return TRANSITIONS.filter((t) => t.from === status && t.roles.includes(role));
+export function availableTransitions(status: CourseStatus, permissions: readonly Permission[]): Transition[] {
+  return TRANSITIONS.filter((t) => t.from === status && t.perms.some((p) => permissions.includes(p)));
 }
 
 /** 검토가 진행 중이라 본문 수정을 잠그는 상태 */

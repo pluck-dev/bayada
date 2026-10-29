@@ -1,5 +1,6 @@
 import { prisma, type CourseStatus, type Prisma, type Visibility } from "@bayada/db";
-import { COURSE_STATUSES } from "../labels";
+import { COURSE_STATUSES, ROLE_LABEL } from "../labels";
+import { roleNameMap } from "../roles";
 
 export interface ProgramListFilter {
   q?: string;
@@ -95,9 +96,13 @@ export async function getProgramHistory(id: string) {
   const actorIds = [...new Set(logs.map((l) => l.actorId).filter((x): x is string => !!x))];
   const actors = await prisma.user.findMany({
     where: { id: { in: actorIds } },
-    select: { id: true, name: true, email: true, role: true },
+    select: { id: true, name: true, email: true, role: true, customRoleKey: true },
   });
-  const byId = new Map(actors.map((a) => [a.id, a]));
+  const names = await roleNameMap();
+  // 표시용 역할 이름 — 사용자 정의 역할이면 그 이름
+  const byId = new Map(
+    actors.map((a) => [a.id, { ...a, roleLabel: names[a.customRoleKey ?? a.role] ?? ROLE_LABEL[a.role] }]),
+  );
   return logs.map((l) => ({ ...l, actor: l.actorId ? byId.get(l.actorId) ?? null : null }));
 }
 

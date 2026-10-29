@@ -1,6 +1,6 @@
 import type { CourseStatus } from "@bayada/db";
 import type { HistoryEntry } from "@/lib/queries/programs";
-import { AUDIT_ACTION_LABEL, COURSE_STATUSES, COURSE_STATUS_LABEL, COURSE_STATUS_TONE, ROLE_LABEL, formatDateTime } from "@/lib/labels";
+import { AUDIT_ACTION_LABEL, COURSE_STATUSES, COURSE_STATUS_LABEL, COURSE_STATUS_TONE, formatDateTime } from "@/lib/labels";
 import { Badge, EmptyState, cx } from "@/components/ui";
 
 function asStatus(v: unknown): CourseStatus | null {
@@ -67,7 +67,7 @@ export function HistoryTimeline({ entries, publishedAt }: { entries: HistoryEntr
               {e.action === "course.curriculum" && typeof d.op === "string" && <span className="text-[12px] text-muted">{d.op}</span>}
             </div>
             <p className="mt-0.5 text-[12px] text-muted">
-              {e.actor ? `${e.actor.name ?? e.actor.email} · ${ROLE_LABEL[e.actor.role]}` : "시스템"} · {formatDateTime(e.at)}
+              {e.actor ? `${e.actor.name ?? e.actor.email} · ${e.actor.roleLabel}` : "시스템"} · {formatDateTime(e.at)}
             </p>
             {note && <p className="mt-1.5 whitespace-pre-wrap rounded-md bg-zinc-50 px-3 py-2 text-[12.5px] text-zinc-700">{note}</p>}
           </li>

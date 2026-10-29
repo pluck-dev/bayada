@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CourseStatus } from "@bayada/db";
 import { requirePage } from "@/lib/session";
+import { can } from "@/lib/rbac";
 import { listQueue } from "@/lib/queries/admin";
 import { QUEUE_STATUSES } from "@/lib/workflow";
 import { COURSE_STATUS_LABEL, COURSE_STATUS_TONE, JOB_ROLE_LABEL, PRODUCT_TYPE_LABEL, formatDateTime } from "@/lib/labels";
@@ -23,7 +24,8 @@ export default async function ApprovalsPage({
   const { locale } = await params;
   const user = await requirePage("approval.queue", locale);
   const sp = await searchParams;
-  const clinicalOnly = user.role === "CLINICAL_REVIEWER";
+  // 임상 리뷰만 처리하는 역할은 임상 검토 단계 항목만 본다
+  const clinicalOnly = can(user, "workflow.clinical") && !can(user, "workflow.operate");
   const scope: CourseStatus[] = clinicalOnly ? ["CLINICAL_REVIEW"] : QUEUE_STATUSES;
   const all = await listQueue(scope);
   const filter = !clinicalOnly && scope.includes(sp.status as CourseStatus) ? (sp.status as CourseStatus) : null;

@@ -13,6 +13,7 @@ interface Row {
   email: string;
   name: string | null;
   role: Role;
+  customRoleKey: string | null;
   status: UserStatus;
   jobRole: JobRole | null;
   createdAt: string;
@@ -20,7 +21,20 @@ interface Row {
   _count: { enrollments: number; certificates: number };
 }
 
-export function MemberTable({ rows, locale, canWrite, selfId }: { rows: Row[]; locale: string; canWrite: boolean; selfId: string }) {
+export function MemberTable({
+  rows,
+  locale,
+  canWrite,
+  selfId,
+  roleNames,
+}: {
+  rows: Row[];
+  locale: string;
+  canWrite: boolean;
+  selfId: string;
+  /** 사용자 정의 역할 키 → 이름 */
+  roleNames: Record<string, string>;
+}) {
   const { run, isPending } = useAction();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const pendingIds = rows.filter((r) => r.status === "PENDING").map((r) => r.id);
@@ -134,7 +148,7 @@ export function MemberTable({ rows, locale, canWrite, selfId }: { rows: Row[]; l
                     <span className="text-subtle">외부 개인</span>
                   )}
                 </td>
-                <td className={cx(tdClass, "text-zinc-600")}>{ROLE_LABEL[r.role]}</td>
+                <td className={cx(tdClass, "text-zinc-600")}>{r.customRoleKey ? (roleNames[r.customRoleKey] ?? r.customRoleKey) : ROLE_LABEL[r.role]}</td>
                 <td className={cx(tdClass, "text-zinc-600")}>{r.jobRole ? JOB_ROLE_LABEL[r.jobRole] : <span className="text-subtle">-</span>}</td>
                 <td className={tdClass}>
                   <Badge tone={USER_STATUS_TONE[r.status]} dot>
