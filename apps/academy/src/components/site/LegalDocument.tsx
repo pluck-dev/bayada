@@ -4,8 +4,8 @@ import { formatDate } from "@/lib/labels";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import Link from "next/link";
 
-/** 이용약관·개인정보처리방침 (Page 테이블, 어드민에서 수정) */
-export async function LegalDocument({ slug, locale }: { slug: "terms" | "privacy"; locale: string }) {
+/** 이용약관·개인정보처리방침·환불 규정 (Page 테이블, 어드민에서 수정). 문서가 없으면 404 */
+export async function LegalDocument({ slug, locale }: { slug: "terms" | "privacy" | "refund"; locale: string }) {
   const page = await prisma.page.findUnique({ where: { slug } });
   if (!page) notFound();
   const other =

@@ -6,11 +6,15 @@ import { INQUIRY_EMAIL, INQUIRY_MAILTO } from "@/lib/site";
 export async function SiteFooter({ locale }: { locale: string }) {
   const base = `/${locale}`;
   const catalog = `${base}/courses`;
-  const categories = await prisma.category.findMany({
-    orderBy: { order: "asc" },
-    select: { name: true, slug: true },
-    take: 6,
-  });
+  const [categories, refundPage] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { order: "asc" },
+      select: { name: true, slug: true },
+      take: 6,
+    }),
+    // 환불 규정은 어드민 문서 관리에서 만들었을 때만 링크
+    prisma.page.findUnique({ where: { slug: "refund" }, select: { id: true } }),
+  ]);
 
   const columns: { title: string; links: { label: string; href: string }[] }[] = [
     {
@@ -77,6 +81,14 @@ export async function SiteFooter({ locale }: { locale: string }) {
               <Link href={`${base}/privacy`} className="font-semibold text-ink hover:text-brand">
                 개인정보처리방침
               </Link>
+              {refundPage && (
+                <>
+                  <span aria-hidden className="text-line">·</span>
+                  <Link href={`${base}/refund`} className="font-medium text-ink-soft hover:text-ink">
+                    환불 규정
+                  </Link>
+                </>
+              )}
             </nav>
             <p>© {new Date().getFullYear()} BAYADA Home Health Care Korea. All rights reserved.</p>
           </div>

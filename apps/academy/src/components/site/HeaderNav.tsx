@@ -16,11 +16,13 @@ interface TaxItem {
 interface Props {
   locale: string;
   user: { name: string; email: string; canManageOrg: boolean } | null;
+  /** 판매 중인 아카데미 패스 요금제가 있을 때만 메뉴 노출 */
+  hasPass?: boolean;
   categories: TaxItem[];
   providers: TaxItem[];
 }
 
-export function HeaderNav({ locale, user, categories, providers }: Props) {
+export function HeaderNav({ locale, user, categories, providers, hasPass = false }: Props) {
   const pathname = usePathname();
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -196,6 +198,15 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
               </div>
             )}
           </div>
+          {hasPass && (
+            <Link
+              href={`${base}/pass`}
+              aria-current={pathname === `${base}/pass` ? "page" : undefined}
+              className="rounded-lg px-3 py-2 text-[15px] font-semibold text-ink-soft transition-colors hover:bg-line-soft hover:text-ink aria-[current=page]:text-ink"
+            >
+              아카데미 패스
+            </Link>
+          )}
           {user?.canManageOrg && (
             <Link
               href={`${base}/business`}
@@ -245,6 +256,7 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
                   {[
                     ["마이 러닝", `${base}/dashboard`],
                     ["인증서", `${base}/dashboard/certificates`],
+                    ["결제 내역", `${base}/orders`],
                     ["프로필", `${base}/dashboard/profile`],
                     ...(user.canManageOrg ? [["기관 대시보드", `${base}/business`]] : []),
                   ].map(([label, href]) => (
@@ -318,6 +330,11 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
                   {it.label}
                 </Link>
               ))}
+              {hasPass && (
+                <Link href={`${base}/pass`} className="py-2 text-base font-semibold text-ink">
+                  아카데미 패스
+                </Link>
+              )}
               <Link href={`${base}#org`} className="py-2 text-base font-semibold text-ink">
                 기관·센터
               </Link>
@@ -342,6 +359,9 @@ export function HeaderNav({ locale, user, categories, providers }: Props) {
                   </Link>
                   <Link href={`${base}/dashboard/certificates`} className="py-2 text-sm font-medium text-ink">
                     인증서
+                  </Link>
+                  <Link href={`${base}/orders`} className="py-2 text-sm font-medium text-ink">
+                    결제 내역
                   </Link>
                   <Link href={`${base}/dashboard/profile`} className="py-2 text-sm font-medium text-ink">
                     프로필

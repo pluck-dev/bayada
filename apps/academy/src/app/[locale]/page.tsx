@@ -10,11 +10,13 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  Infinity as InfinityIcon,
 } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
 import { getHomeData, getTaxonomy, type CourseCardData } from "@/lib/queries/courses";
 import { getImpactStats, getPartners, getRecentReviews } from "@/lib/queries/engagement";
-import { JOB_ROLES, JOB_ROLE_LABEL } from "@/lib/labels";
+import { JOB_ROLES, JOB_ROLE_LABEL, PRODUCT_TYPE_LABEL } from "@/lib/labels";
+import { getActivePlans } from "@/lib/queries/pass";
 import { INQUIRY_MAILTO } from "@/lib/site";
 import { CourseCard } from "@/components/course/CourseCard";
 import { CourseThumb } from "@/components/course/CourseThumb";
@@ -103,6 +105,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getRecentReviews(viewer),
     listPublishedPathways(),
   ]);
+  const plans = await getActivePlans();
+  const passPromo = plans.length
+    ? {
+        minPrice: Math.min(...plans.map((p) => p.price)),
+        includes: [...new Set(plans.flatMap((p) => p.includes))].map((t) => PRODUCT_TYPE_LABEL[t]).join(" · "),
+      }
+    : null;
   const hasCourses = home.popular.length > 0;
   const heroCourses = home.popular.slice(0, 3);
 
@@ -366,15 +375,38 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
-      {/* 기관·센터 */}
+      {/* ⑧ 업셀 — 아카데미 패스(판매 중인 요금제가 있을 때만) + 기관 도입 */}
       <section id="org" className="scroll-mt-28 py-6">
-        <div className="container-page">
+        <div className={`container-page ${passPromo ? "grid gap-5 lg:grid-cols-2" : ""}`}>
+          {passPromo && (
+            <div className="relative flex flex-col justify-between gap-8 overflow-hidden rounded-3xl border border-brand/15 bg-brand-soft px-8 py-12 md:px-12 md:py-14">
+              <div className="max-w-xl">
+                <p className="inline-flex items-center gap-2 text-sm font-semibold text-brand">
+                  <InfinityIcon className="h-4 w-4" aria-hidden /> 아카데미 패스
+                </p>
+                <h2 className="mt-3 text-2xl font-bold leading-snug tracking-tight text-ink md:text-[30px]">
+                  패스 하나로 마음껏 배우세요
+                </h2>
+                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
+                  {passPromo.includes} 무제한 수강 · {passPromo.minPrice.toLocaleString("ko-KR")}원부터
+                </p>
+              </div>
+              <Link
+                href={`${base}/pass`}
+                className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-ink px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-ink-soft"
+              >
+                패스 알아보기 <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          )}
           <div className="relative overflow-hidden rounded-3xl bg-ink px-8 py-12 text-white md:px-14 md:py-14">
             <div
               className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/30 blur-3xl"
               aria-hidden
             />
-            <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+            <div
+              className={`relative flex h-full flex-col gap-8 ${passPromo ? "justify-between" : "md:flex-row md:items-center md:justify-between"}`}
+            >
               <div className="max-w-xl">
                 <p className="inline-flex items-center gap-2 text-sm font-semibold text-white/70">
                   <Building2 className="h-4 w-4" aria-hidden /> 기관·센터
@@ -388,7 +420,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
               <a
                 href={INQUIRY_MAILTO}
-                className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-white px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-line-soft md:self-auto"
+                className={`inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-white px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-line-soft ${passPromo ? "" : "md:self-auto"}`}
               >
                 기관 도입 문의 <ArrowRight className="h-4 w-4" aria-hidden />
               </a>
