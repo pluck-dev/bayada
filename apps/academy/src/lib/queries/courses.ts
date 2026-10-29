@@ -1,7 +1,16 @@
 import { prisma } from "@bayada/db";
-import type { JobRole, Level, Prisma, ProductType } from "@bayada/db";
+import type { JobRole, LearningMode, Level, Prisma, ProductType } from "@bayada/db";
 import type { Viewer } from "@/lib/viewer";
-import { JOB_ROLES, LEVELS, PRODUCT_TYPES } from "@/lib/labels";
+import {
+  CERT_KINDS,
+  JOB_ROLES,
+  LEARNING_MODES,
+  LEVELS,
+  PRICE_KINDS,
+  PRODUCT_TYPES,
+  type CertKind,
+  type PriceKind,
+} from "@/lib/labels";
 
 /**
  * 노출 규칙 (모든 목록·상세에 서버에서 적용)
@@ -25,6 +34,7 @@ const cardSelect = {
   price: true,
   productType: true,
   level: true,
+  learningMode: true,
   durationMin: true,
   audiences: true,
   visibility: true,
@@ -33,7 +43,37 @@ const cardSelect = {
   _count: { select: { enrollments: true } },
 } satisfies Prisma.CourseSelect;
 
-export type CourseCardData = Prisma.CourseGetPayload<{ select: typeof cardSelect }>;
+type CourseCardRow = Prisma.CourseGetPayload<{ select: typeof cardSelect }>;
+
+/** 카드 데이터 + 공개 후기 평점(1건 이상일 때만) + 찜 여부(비로그인은 null) */
+export type CourseCardData = CourseCardRow & {
+  rating: { avg: number; count: number } | null;
+  wished: boolean | null;
+};
+
+/** 카드 목록에 평점·찜 여부를 붙인다 (쿼리 2번으로 묶어서) */
+export async function withCardExtras(rows: CourseCardRow[], viewer: Viewer | null): Promise<CourseCardData[]> {
+  const ids = [...new Set(rows.map((r) => r.id))];
+  if (ids.length === 0) return [];
+  const [ratings, wishes] = await Promise.all([
+    prisma.review.groupBy({
+      by: ["courseId"],
+      where: { courseId: { in: ids }, status: "PUBLISHED" },
+      _avg: { rating: true },
+      _count: { _all: true },
+    }),
+    viewer
+      ? prisma.wishlist.findMany({ where: { userId: viewer.id, courseId: { in: ids } }, select: { courseId: true } })
+      : Promise.resolve(null),
+  ]);
+  const ratingBy = new Map(ratings.map((r) => [r.courseId, { avg: r._avg.rating ?? 0, count: r._count._all }]));
+  const wished = wishes ? new Set(wishes.map((w) => w.courseId)) : null;
+  return rows.map((r) => ({
+    ...r,
+    rating: ratingBy.get(r.id) ?? null,
+    wished: wished ? wished.has(r.id) : null,
+  }));
+}
 
 // ─── 카탈로그 ───
 
@@ -46,6 +86,9 @@ export interface CatalogFilters {
   level: Level[];
   category: string[];
   provider: string[];
+  mode: LearningMode[];
+  price: PriceKind[];
+  cert: CertKind[];
   sort: CatalogSort;
   page: number;
 }
@@ -75,6 +118,9 @@ export function parseCatalogFilters(sp: Record<string, string | string[] | undef
     level: pickList(sp.level, LEVELS),
     category: rawList(sp.category),
     provider: rawList(sp.provider),
+    mode: pickList(sp.mode, LEARNING_MODES),
+    price: pickList(sp.price, PRICE_KINDS),
+    cert: pickList(sp.cert, CERT_KINDS),
     sort,
     page: Number.isFinite(pageRaw) && pageRaw >= 1 ? Math.floor(pageRaw) : 1,
   };
@@ -99,6 +145,11 @@ export async function listCatalog(viewer: Viewer | null, f: CatalogFilters) {
   if (f.level.length) and.push({ level: { in: f.level } });
   if (f.category.length) and.push({ category: { slug: { in: f.category } } });
   if (f.provider.length) and.push({ provider: { slug: { in: f.provider } } });
+  if (f.mode.length) and.push({ learningMode: { in: f.mode } });
+  // 둘 다 고르면 조건 없음과 같다
+  if (f.price.length === 1) and.push(f.price[0] === "free" ? { price: 0 } : { price: { gt: 0 } });
+  if (f.cert.length === 1)
+    and.push(f.cert[0] === "BAYADA" ? { productType: "CERTIFICATION" } : { productType: { not: "CERTIFICATION" } });
   const where: Prisma.CourseWhereInput = { AND: and };
 
   const orderBy: Prisma.CourseOrderByWithRelationInput[] =
@@ -111,14 +162,14 @@ export async function listCatalog(viewer: Viewer | null, f: CatalogFilters) {
   const total = await prisma.course.count({ where });
   const totalPages = Math.max(1, Math.ceil(total / CATALOG_PAGE_SIZE));
   const page = Math.min(f.page, totalPages);
-  const items = await prisma.course.findMany({
+  const rows = await prisma.course.findMany({
     where,
     orderBy,
     select: cardSelect,
     skip: (page - 1) * CATALOG_PAGE_SIZE,
     take: CATALOG_PAGE_SIZE,
   });
-  return { items, total, page, totalPages };
+  return { items: await withCardExtras(rows, viewer), total, page, totalPages };
 }
 
 /** 필터 패널·메가메뉴용 분류 목록 (노출 가능한 강의 수 포함) */
@@ -147,13 +198,30 @@ export async function getTaxonomy(viewer: Viewer | null) {
 
 export type Taxonomy = Awaited<ReturnType<typeof getTaxonomy>>;
 
+/** 카탈로그 필터 옵션별 강의 수 (학습 방식·가격·인증 유형) */
+export async function getFacetCounts(viewer: Viewer | null) {
+  const visible = visibleCourseWhere(viewer);
+  const [modes, free, paid, bayada, total] = await Promise.all([
+    prisma.course.groupBy({ by: ["learningMode"], where: visible, _count: { _all: true } }),
+    prisma.course.count({ where: { ...visible, price: 0 } }),
+    prisma.course.count({ where: { ...visible, price: { gt: 0 } } }),
+    prisma.course.count({ where: { ...visible, productType: "CERTIFICATION" } }),
+    prisma.course.count({ where: visible }),
+  ]);
+  return {
+    mode: Object.fromEntries(modes.map((m) => [m.learningMode, m._count._all])) as Partial<Record<LearningMode, number>>,
+    price: { free, paid } as Record<PriceKind, number>,
+    cert: { BAYADA: bayada, COMPLETION: total - bayada } as Record<CertKind, number>,
+  };
+}
+
 // ─── 홈 ───
 
 export async function getHomeData(viewer: Viewer | null) {
   const visible = visibleCourseWhere(viewer);
   const now = new Date();
 
-  const [banners, popular, newest, certification, roleEntries] = await Promise.all([
+  const [banners, popularRows, newestRows, certificationRows, roleEntries] = await Promise.all([
     prisma.banner.findMany({
       where: { startsAt: { lte: now }, endsAt: { gte: now } },
       orderBy: [{ order: "asc" }, { startsAt: "desc" }],
@@ -190,11 +258,22 @@ export async function getHomeData(viewer: Viewer | null) {
     ),
   ]);
 
+  // 평점·찜 여부를 한 번에 붙이고 다시 나눈다
+  const all = await withCardExtras(
+    [...popularRows, ...newestRows, ...certificationRows, ...roleEntries.flatMap(([, items]) => items)],
+    viewer
+  );
+  const byId = new Map(all.map((c) => [c.id, c]));
+  const pick = (rows: CourseCardRow[]) => rows.map((r) => byId.get(r.id)!);
+  const popular = pick(popularRows);
+  const newest = pick(newestRows);
+  const certification = pick(certificationRows);
+
   // 해당 직군 대상 강의가 없으면 전체 인기 강의로 대체
   const byRole = Object.fromEntries(
     roleEntries.map(([role, items]) => [
       role,
-      { items: items.length ? items : popular.slice(0, 4), fallback: items.length === 0 },
+      { items: items.length ? pick(items) : popular.slice(0, 4), fallback: items.length === 0 },
     ])
   ) as Record<JobRole, { items: CourseCardData[]; fallback: boolean }>;
 

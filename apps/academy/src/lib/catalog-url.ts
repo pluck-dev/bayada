@@ -1,4 +1,4 @@
-// 카탈로그 URL 상태 (?q=&audience=&type=&level=&category=&provider=&sort=&page=)
+// 카탈로그 URL 상태 (?q=&audience=&type=&level=&category=&provider=&mode=&price=&cert=&sort=&page=)
 export interface CatalogQuery {
   q?: string;
   audience?: string[];
@@ -6,11 +6,14 @@ export interface CatalogQuery {
   level?: string[];
   category?: string[];
   provider?: string[];
+  mode?: string[];
+  price?: string[];
+  cert?: string[];
   sort?: string;
   page?: number;
 }
 
-export const LIST_KEYS = ["audience", "type", "level", "category", "provider"] as const;
+export const LIST_KEYS = ["audience", "type", "level", "category", "provider", "mode", "price", "cert"] as const;
 export type ListKey = (typeof LIST_KEYS)[number];
 
 export function catalogHref(locale: string, query: CatalogQuery): string {

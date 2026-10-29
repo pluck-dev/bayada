@@ -13,11 +13,15 @@ import {
 } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
 import { getHomeData, getTaxonomy, type CourseCardData } from "@/lib/queries/courses";
+import { getImpactStats, getPartners, getRecentReviews } from "@/lib/queries/engagement";
 import { JOB_ROLES, JOB_ROLE_LABEL } from "@/lib/labels";
 import { INQUIRY_MAILTO } from "@/lib/site";
 import { CourseCard } from "@/components/course/CourseCard";
 import { CourseThumb } from "@/components/course/CourseThumb";
 import { BannerCarousel } from "@/components/home/BannerCarousel";
+import { CountUp } from "@/components/home/CountUp";
+import { ReviewCarousel } from "@/components/home/ReviewCarousel";
+import { ReviewCard } from "@/components/course/ReviewCard";
 import { Tabs } from "@/components/ui/Tabs";
 import { Faq } from "@/components/ui/Faq";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -89,7 +93,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const base = `/${locale}`;
   const catalog = `${base}/courses`;
   const viewer = await getViewer();
-  const [home, taxonomy] = await Promise.all([getHomeData(viewer), getTaxonomy(viewer)]);
+  const [home, taxonomy, partners, stats, reviews] = await Promise.all([
+    getHomeData(viewer),
+    getTaxonomy(viewer),
+    getPartners(),
+    getImpactStats(viewer),
+    getRecentReviews(viewer),
+  ]);
   const hasCourses = home.popular.length > 0;
   const heroCourses = home.popular.slice(0, 3);
 
@@ -281,6 +291,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
+      {/* ⑥ 파트너 기관 */}
+      {partners.length > 0 && (
+        <section aria-labelledby="partners-title" className="border-b border-line-soft py-12 md:py-14">
+          <div className="container-page">
+            <p id="partners-title" className="text-center text-sm font-semibold text-muted">
+              함께하는 교육 기관
+            </p>
+            <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+              {partners.map((p) => (
+                <li key={p.slug}>
+                  <Link
+                    href={`${catalog}?provider=${encodeURIComponent(p.slug)}`}
+                    className="flex h-12 items-center opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
+                    title={`${p.name} 프로그램 보기`}
+                  >
+                    {/* 파트너 로고 (어드민 업로드 원격 이미지) */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={p.logo!} alt={p.name} className="max-h-12 w-auto max-w-[160px] object-contain" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       {/* ⑦ 주제별 찾아보기 */}
       {taxonomy.categories.length > 0 && (
         <section className="py-16 md:py-20">
@@ -337,6 +373,59 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
       </section>
+
+      {/* ⑨ 성과 지표 */}
+      {stats.length > 0 && (
+        <section className="pt-16 md:pt-20">
+          <div className="container-page">
+            <SectionTitle title="숫자로 보는 바야다 아카데미" desc="지금까지 함께 배우고 수료한 기록이에요." />
+            <dl
+              className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line ${
+                stats.length >= 4 ? "lg:grid-cols-4" : stats.length === 3 ? "lg:grid-cols-3" : ""
+              }`}
+            >
+              {stats.map((st) => (
+                <div key={st.label} className="bg-white px-6 py-8 md:px-8 md:py-10">
+                  <dt className="text-sm font-medium text-muted">{st.label}</dt>
+                  <dd className="mt-3 flex items-baseline gap-1 text-ink">
+                    <span className="text-[34px] font-bold leading-none tracking-[-0.03em] md:text-[44px]">
+                      <CountUp value={st.value} />
+                    </span>
+                    <span className="text-base font-semibold text-ink-soft">{st.unit}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
+
+      {/* ⑩ 후기 */}
+      {reviews.length > 0 && (
+        <section className="pt-16 md:pt-20">
+          <div className="container-page">
+            <SectionTitle title="수강생 후기" desc="진도 80% 이상 학습한 수강생이 직접 남긴 이야기예요." />
+            <ReviewCarousel count={reviews.length}>
+              {reviews.map((r) => (
+                <div key={r.id} className="w-[84%] shrink-0 snap-start sm:w-[46%] lg:w-[calc((100%-2.5rem)/3)]">
+                  <ReviewCard
+                    review={r}
+                    clamp
+                    heading={
+                      <Link
+                        href={`${catalog}/${encodeURIComponent(r.course.slug)}#reviews`}
+                        className="mb-3 line-clamp-1 text-xs font-semibold text-muted hover:text-brand"
+                      >
+                        {r.course.title}
+                      </Link>
+                    }
+                  />
+                </div>
+              ))}
+            </ReviewCarousel>
+          </div>
+        </section>
+      )}
 
       {/* ⑪ FAQ */}
       <section id="faq" className="scroll-mt-28 py-16 md:py-20">

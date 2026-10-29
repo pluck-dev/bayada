@@ -5,6 +5,7 @@ import {
   Award,
   BarChart3,
   BookOpen,
+  CalendarDays,
   CheckCircle2,
   ChevronDown,
   Clock,
@@ -14,24 +15,33 @@ import {
   MonitorPlay,
   PlayCircle,
   ShieldCheck,
+  Star,
 } from "lucide-react";
 import { prisma } from "@bayada/db";
 import type { LectureType } from "@bayada/db";
 import { getViewer } from "@/lib/viewer";
 import { getCourseForDetail, resolveCourseAccess, visibleCourseWhere } from "@/lib/queries/courses";
 import { getResumeLectureId } from "@/lib/queries/learning";
+import { canWriteReview, getCourseReviews, getCourseSessions, REVIEW_MIN_PROGRESS } from "@/lib/queries/engagement";
 import {
   JOB_ROLE_LABEL,
+  LEARNING_MODE_LABEL,
   LEVEL_LABEL,
   PRODUCT_TYPE_LABEL,
   formatMinutes,
   formatPrice,
   formatSeconds,
+  formatSessionRange,
 } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
 import { INQUIRY_MAILTO } from "@/lib/site";
 import { CourseThumb } from "@/components/course/CourseThumb";
 import { EnrollButton } from "@/components/course/EnrollButton";
+import { WishlistButton } from "@/components/course/WishlistButton";
+import { SessionButton } from "@/components/course/SessionButton";
+import { ReviewCard, Stars } from "@/components/course/ReviewCard";
+import { ReviewForm } from "@/components/course/ReviewForm";
+import { ReportReviewButton } from "@/components/course/ReportReviewButton";
 import { Faq } from "@/components/ui/Faq";
 
 type Params = Promise<{ locale: string; slug: string }>;
@@ -115,7 +125,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
   const lectureCount = lectures.length;
   const quizCount = lectures.filter((l) => l.type === "QUIZ").length;
   const totalMin = course.durationMin ?? Math.round(lectures.reduce((sum, l) => sum + (l.duration ?? 0), 0) / 60);
-  const [resumeLectureId, certificate, providerCourseCount] = await Promise.all([
+  const [resumeLectureId, certificate, providerCourseCount, sessions, reviewData, wish] = await Promise.all([
     enrollment && viewer ? getResumeLectureId(viewer.id, course.id) : Promise.resolve(null),
     enrollment && viewer
       ? prisma.certificate.findUnique({
@@ -126,7 +136,21 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
     course.providerId
       ? prisma.course.count({ where: { providerId: course.providerId, ...visibleCourseWhere(viewer) } })
       : Promise.resolve(0),
+    getCourseSessions(course.id, viewer?.id ?? null),
+    getCourseReviews(course.id, viewer?.id ?? null),
+    viewer
+      ? prisma.wishlist.findUnique({
+          where: { userId_courseId: { userId: viewer.id, courseId: course.id } },
+          select: { courseId: true },
+        })
+      : Promise.resolve(null),
   ]);
+  const wished = viewer ? !!wish : null;
+  const reviewSummary = reviewData.summary;
+  const reviewable = canWriteReview(enrollment);
+  const showReviews = reviewSummary.count > 0 || reviewable;
+  // 실습 신청: 수강 중이거나 무료 공개 강의
+  const canApplySession = !!enrollment || course.price === 0;
   const progress = enrollment ? (enrollment.completedAt ? 100 : enrollment.progressPercent) : 0;
   const firstFree = lectures.find((l) => l.isFree);
 
@@ -134,14 +158,27 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
     { label: "구성", value: `${lectureCount}개 강의`, icon: BookOpen },
     { label: "난이도", value: course.level ? LEVEL_LABEL[course.level] : "전체", icon: BarChart3 },
     { label: "총 학습 시간", value: formatMinutes(totalMin) ?? "-", icon: Clock },
-    { label: "학습 방식", value: "온라인", icon: MonitorPlay },
-    { label: "인증 유형", value: "수료증", icon: Award },
+    { label: "학습 방식", value: LEARNING_MODE_LABEL[course.learningMode], icon: MonitorPlay },
+    {
+      label: "인증 유형",
+      value: course.productType === "CERTIFICATION" ? "바야다 인증" : "수료증",
+      icon: Award,
+    },
   ];
+  if (reviewSummary.count > 0) {
+    infoItems.splice(1, 0, {
+      label: `평점 (${reviewSummary.count})`,
+      value: `★ ${reviewSummary.avg.toFixed(1)}`,
+      icon: Star,
+    });
+  }
 
   const nav = [
     { id: "intro", label: "소개" },
     { id: "curriculum", label: "커리큘럼" },
+    ...(sessions.length ? [{ id: "sessions", label: "실습 일정" }] : []),
     { id: "certificate", label: "수료" },
+    ...(showReviews ? [{ id: "reviews", label: "후기" }] : []),
     { id: "faq", label: "FAQ" },
   ];
 
@@ -215,7 +252,11 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
               </div>
 
               {/* 정보 바 */}
-              <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-5">
+              <dl
+                className={`mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line ${
+                  infoItems.length > 5 ? "sm:grid-cols-3 xl:grid-cols-6" : "sm:grid-cols-5"
+                }`}
+              >
                 {infoItems.map((it) => (
                   <div key={it.label} className="bg-white p-4 sm:p-5">
                     <dt className="flex items-center gap-1.5 text-xs text-muted">
@@ -319,6 +360,75 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
               </div>
             </section>
 
+            {/* 실습 일정 */}
+            {sessions.length > 0 && (
+              <section id="sessions" className="mt-16 scroll-mt-40">
+                <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">
+                  실습 일정 <span className="text-muted">· {sessions.length}회</span>
+                </h2>
+                <p className="mt-2 text-sm text-muted">
+                  {canApplySession
+                    ? "원하는 지역·일정을 골라 신청하세요. 정원이 차면 마감돼요."
+                    : "수강 신청한 분만 실습을 신청할 수 있어요."}
+                </p>
+                <div className="mt-6 overflow-hidden rounded-2xl border border-line">
+                  <table className="w-full text-left text-sm">
+                    <thead className="hidden bg-surface text-xs font-semibold text-muted sm:table-header-group">
+                      <tr>
+                        <th scope="col" className="px-5 py-3">지역</th>
+                        <th scope="col" className="px-5 py-3">일시</th>
+                        <th scope="col" className="px-5 py-3">장소</th>
+                        <th scope="col" className="px-5 py-3">남은 자리</th>
+                        <th scope="col" className="px-5 py-3">
+                          <span className="sr-only">신청</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line-soft">
+                      {sessions.map((ss) => (
+                        <tr key={ss.id} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 px-5 py-4 sm:table-row sm:p-0">
+                          <td className="font-semibold text-ink sm:px-5 sm:py-4">{ss.region}</td>
+                          <td className="col-start-1 text-ink-soft sm:whitespace-nowrap sm:px-5 sm:py-4">
+                            <span className="inline-flex items-center gap-1.5">
+                              <CalendarDays className="h-3.5 w-3.5 text-subtle sm:hidden" aria-hidden />
+                              {formatSessionRange(ss.startsAt, ss.endsAt)}
+                            </span>
+                          </td>
+                          <td className="col-start-1 text-ink-soft sm:px-5 sm:py-4">
+                            {ss.location}
+                            {ss.note && <span className="mt-0.5 block text-xs text-muted">{ss.note}</span>}
+                          </td>
+                          <td className="col-start-1 sm:whitespace-nowrap sm:px-5 sm:py-4">
+                            {ss.remaining > 0 ? (
+                              <span className="text-ink-soft">
+                                <span className={`font-bold ${ss.remaining <= 3 ? "text-brand" : "text-ink"}`}>
+                                  {ss.remaining}
+                                </span>
+                                <span className="text-muted"> / {ss.capacity}석</span>
+                              </span>
+                            ) : (
+                              <span className="font-semibold text-muted">마감 · {ss.capacity}석</span>
+                            )}
+                          </td>
+                          <td className="col-start-2 row-span-4 row-start-1 self-center text-right sm:px-5 sm:py-4">
+                            <SessionButton
+                              sessionId={ss.id}
+                              registered={ss.registered}
+                              full={ss.remaining === 0}
+                              loggedIn={!!viewer}
+                              canApply={canApplySession}
+                              reason="수강 신청 후 실습을 신청할 수 있어요"
+                              locale={locale}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
             {/* 수료 안내 */}
             <section id="certificate" className="mt-16 scroll-mt-40">
               <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">수료 안내</h2>
@@ -392,6 +502,87 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
               </section>
             )}
 
+            {/* 후기·평점 */}
+            {showReviews && (
+              <section id="reviews" className="mt-16 scroll-mt-40">
+                <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">
+                  수강 후기 {reviewSummary.count > 0 && <span className="text-muted">· {reviewSummary.count}개</span>}
+                </h2>
+                {reviewSummary.count > 0 && (
+                  <div className="mt-6 grid gap-6 rounded-2xl border border-line p-6 sm:grid-cols-[180px_1fr] sm:items-center sm:gap-10">
+                    <div className="text-center sm:border-r sm:border-line-soft sm:pr-10">
+                      <p className="text-[44px] font-bold leading-none tracking-tight text-ink">
+                        {reviewSummary.avg.toFixed(1)}
+                      </p>
+                      <div className="mt-3 flex justify-center">
+                        <Stars value={reviewSummary.avg} />
+                      </div>
+                      <p className="mt-2 text-xs text-muted">후기 {reviewSummary.count}개 평균</p>
+                    </div>
+                    <ul className="space-y-1.5">
+                      {reviewSummary.distribution.map((d) => {
+                        const pct = Math.round((d.count / reviewSummary.count) * 100);
+                        return (
+                          <li key={d.star} className="flex items-center gap-3 text-xs">
+                            <span className="w-7 shrink-0 font-semibold text-ink-soft">{d.star}점</span>
+                            <span className="h-2 flex-1 overflow-hidden rounded-full bg-line-soft">
+                              <span className="block h-full rounded-full bg-amber-400" style={{ width: `${pct}%` }} />
+                            </span>
+                            <span className="w-8 shrink-0 text-right text-muted">{d.count}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+                {reviewable && (
+                  <div className="mt-6">
+                    <ReviewForm
+                      courseId={course.id}
+                      initial={
+                        reviewData.mine
+                          ? {
+                              rating: reviewData.mine.rating,
+                              content: reviewData.mine.content,
+                              showName: reviewData.mine.showName,
+                              hidden: reviewData.mine.status !== "PUBLISHED",
+                            }
+                          : null
+                      }
+                    />
+                  </div>
+                )}
+                {reviewSummary.count === 0 ? (
+                  <p className="mt-4 text-sm text-muted">아직 후기가 없어요. 첫 후기를 남겨 주세요.</p>
+                ) : (
+                  <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+                    {reviewData.reviews.map((r) => (
+                      <li key={r.id}>
+                        <ReviewCard
+                          review={r}
+                          footer={
+                            r.mine ? null : (
+                              <ReportReviewButton
+                                reviewId={r.id}
+                                reported={r.reported}
+                                loggedIn={!!viewer}
+                                locale={locale}
+                              />
+                            )
+                          }
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {enrollment && !reviewable && (
+                  <p className="mt-4 text-xs text-muted">
+                    진도율 {REVIEW_MIN_PROGRESS}% 이상이 되면 후기를 남길 수 있어요. (현재 {progress}%)
+                  </p>
+                )}
+              </section>
+            )}
+
             {/* FAQ */}
             <section id="faq" className="mt-16 scroll-mt-40">
               <h2 className="mb-6 text-xl font-bold tracking-tight text-ink md:text-2xl">자주 묻는 질문</h2>
@@ -458,6 +649,13 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                       )}
                     </>
                   )}
+                  <WishlistButton
+                    courseId={course.id}
+                    locale={locale}
+                    wished={wished}
+                    variant="panel"
+                    className="mt-2 w-full"
+                  />
                   <ul className="mt-6 space-y-2 border-t border-line-soft pt-5 text-sm text-ink-soft">
                     <li className="flex items-center gap-2">
                       <BookOpen className="h-4 w-4 text-subtle" aria-hidden /> {lectureCount}개 강의

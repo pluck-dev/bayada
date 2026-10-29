@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Award, BookOpen, GraduationCap } from "lucide-react";
+import { Award, BookOpen, CalendarDays, GraduationCap, Heart, MapPin } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
 import { getMyEnrollments } from "@/lib/queries/learning";
-import { formatDate } from "@/lib/labels";
+import { getMySessions, getMyWishlist } from "@/lib/queries/engagement";
+import { formatDate, formatSessionRange } from "@/lib/labels";
+import { CourseCard } from "@/components/course/CourseCard";
 import { CourseThumb } from "@/components/course/CourseThumb";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Tabs } from "@/components/ui/Tabs";
@@ -56,7 +58,14 @@ function EnrollmentRow({ row, locale }: { row: Row; locale: string }) {
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const viewer = (await getViewer())!;
-  const rows = await getMyEnrollments(viewer.id);
+  const [rows, wishlist, sessions] = await Promise.all([
+    getMyEnrollments(viewer.id),
+    getMyWishlist(viewer),
+    getMySessions(viewer.id),
+  ]);
+  const now = new Date();
+  const upcomingSessions = sessions.filter((s) => s.endsAt >= now);
+  const pastSessions = sessions.filter((s) => s.endsAt < now).reverse();
   const active = rows.filter((r) => !r.completedAt);
   const completed = rows.filter((r) => r.completedAt);
 
@@ -114,6 +123,86 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
                   icon={<GraduationCap className="h-5 w-5" />}
                   title="아직 수료한 프로그램이 없어요"
                   description="모든 강의를 마치면 이곳에 표시되고 수료증이 발급돼요."
+                />
+              ),
+            },
+            {
+              key: "wishlist",
+              label: `찜 ${wishlist.length}`,
+              content: wishlist.length ? (
+                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  {wishlist.map((c) => (
+                    <CourseCard key={c.id} course={c} locale={locale} />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState
+                  icon={<Heart className="h-5 w-5" />}
+                  title="찜한 프로그램이 없어요"
+                  description="관심 있는 프로그램의 하트를 눌러 두면 이곳에서 모아 볼 수 있어요."
+                  action={{ label: "프로그램 둘러보기", href: `/${locale}/courses` }}
+                />
+              ),
+            },
+            {
+              key: "sessions",
+              label: `실습 일정${upcomingSessions.length ? ` ${upcomingSessions.length}` : ""}`,
+              content: sessions.length ? (
+                <div className="space-y-8">
+                  {[
+                    { title: "다가오는 일정", items: upcomingSessions },
+                    { title: "지난 일정", items: pastSessions },
+                  ]
+                    .filter((g) => g.items.length > 0)
+                    .map((g) => (
+                      <div key={g.title}>
+                        <p className="mb-3 text-sm font-semibold text-ink-soft">{g.title}</p>
+                        <ul className="space-y-3">
+                          {g.items.map((s) => {
+                            const past = s.endsAt < now;
+                            return (
+                              <li
+                                key={s.id}
+                                className={`flex flex-col gap-3 rounded-2xl border border-line bg-white p-5 sm:flex-row sm:items-center sm:gap-6 ${
+                                  past ? "opacity-70" : ""
+                                }`}
+                              >
+                                <span className="flex h-12 min-w-12 shrink-0 items-center justify-center self-start rounded-xl bg-surface px-2.5 text-sm font-bold text-ink ring-1 ring-line sm:self-auto">
+                                  {s.region}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[15px] font-semibold text-ink">{s.title}</p>
+                                  <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                                    <span className="inline-flex items-center gap-1">
+                                      <CalendarDays className="h-3.5 w-3.5" aria-hidden />
+                                      {formatSessionRange(s.startsAt, s.endsAt)}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1">
+                                      <MapPin className="h-3.5 w-3.5" aria-hidden />
+                                      {s.location}
+                                    </span>
+                                  </p>
+                                </div>
+                                {s.course && (
+                                  <Link
+                                    href={`/${locale}/courses/${encodeURIComponent(s.course.slug)}#sessions`}
+                                    className="shrink-0 text-sm font-semibold text-ink-soft hover:text-ink"
+                                  >
+                                    {past ? "프로그램 보기" : "일정 관리"} →
+                                  </Link>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <EmptyState
+                  icon={<CalendarDays className="h-5 w-5" />}
+                  title="신청한 실습 일정이 없어요"
+                  description="실습이 있는 프로그램 상세 페이지의 ‘실습 일정’에서 지역과 날짜를 골라 신청할 수 있어요."
                 />
               ),
             },

@@ -57,14 +57,19 @@ export function FilterPanel({
           <div className="space-y-1">
             {g.options.map((o) => {
               const checked = (query[g.key] ?? []).includes(o.value);
+              // 해당 강의가 없는 옵션은 보여 주되 고를 수 없게 (선택돼 있으면 해제는 가능)
+              const empty = o.count === 0 && !checked;
               return (
                 <label
                   key={o.value}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1 py-1.5 text-sm text-ink-soft hover:text-ink"
+                  className={`flex items-center gap-2.5 rounded-lg px-1 py-1.5 text-sm ${
+                    empty ? "cursor-not-allowed text-subtle" : "cursor-pointer text-ink-soft hover:text-ink"
+                  }`}
                 >
                   <input
                     type="checkbox"
                     checked={checked}
+                    disabled={empty}
                     onChange={() => toggle(g.key, o.value)}
                     className="h-4 w-4 rounded border-line accent-[#e31b34]"
                   />

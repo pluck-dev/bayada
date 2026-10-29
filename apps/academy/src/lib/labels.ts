@@ -1,4 +1,4 @@
-import type { JobRole, Level, ProductType, LectureType } from "@bayada/db";
+import type { JobRole, LearningMode, Level, ProductType, LectureType } from "@bayada/db";
 
 // 직군 탭·필터 순서 (피그마 W1 ③)
 export const JOB_ROLES: JobRole[] = ["CAREGIVER", "NURSE_AIDE", "RN", "PT", "MANAGER"];
@@ -29,6 +29,24 @@ export const LEVEL_LABEL: Record<Level, string> = {
   INTERMEDIATE: "중급",
   ADVANCED: "고급",
 };
+
+export const LEARNING_MODES: LearningMode[] = ["ONLINE", "BLENDED", "OFFLINE", "LIVE"];
+
+export const LEARNING_MODE_LABEL: Record<LearningMode, string> = {
+  ONLINE: "온라인",
+  BLENDED: "블렌디드",
+  OFFLINE: "오프라인",
+  LIVE: "라이브",
+};
+
+// 인증 유형 필터: 바야다 인증과정(CERTIFICATION)만 '바야다 인증', 나머지는 이수 시 수료증
+export const CERT_KINDS = ["COMPLETION", "BAYADA"] as const;
+export type CertKind = (typeof CERT_KINDS)[number];
+export const CERT_KIND_LABEL: Record<CertKind, string> = { COMPLETION: "수료증", BAYADA: "바야다 인증" };
+
+export const PRICE_KINDS = ["free", "paid"] as const;
+export type PriceKind = (typeof PRICE_KINDS)[number];
+export const PRICE_KIND_LABEL: Record<PriceKind, string> = { free: "무료", paid: "유료" };
 
 export const LECTURE_TYPE_LABEL: Record<LectureType, string> = {
   VIDEO: "영상",
@@ -62,4 +80,29 @@ export function formatDate(d: Date | string): string {
 
 export function formatPrice(price: number): string {
   return price > 0 ? `${price.toLocaleString("ko-KR")}원` : "무료";
+}
+
+const KST_PARTS = new Intl.DateTimeFormat("ko-KR", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  weekday: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+function kst(d: Date) {
+  const p = Object.fromEntries(KST_PARTS.formatToParts(d).map((x) => [x.type, x.value]));
+  return { date: `${p.year}.${p.month}.${p.day}`, weekday: p.weekday, time: `${p.hour}:${p.minute}` };
+}
+
+/** 실습 일정 표기 (한국 시간): "2026.11.08 (토) 10:00–17:00", 날짜가 다르면 끝 날짜도 */
+export function formatSessionRange(start: Date, end: Date): string {
+  const s = kst(start);
+  const e = kst(end);
+  return s.date === e.date
+    ? `${s.date} (${s.weekday}) ${s.time}–${e.time}`
+    : `${s.date} (${s.weekday}) ${s.time} – ${e.date} (${e.weekday}) ${e.time}`;
 }

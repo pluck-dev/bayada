@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Lock, SearchX, SlidersHorizontal, X } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
-import { getTaxonomy, listCatalog, parseCatalogFilters } from "@/lib/queries/courses";
-import { catalogHref, type CatalogQuery, type ListKey } from "@/lib/catalog-url";
+import { getFacetCounts, getTaxonomy, listCatalog, parseCatalogFilters } from "@/lib/queries/courses";
+import { LIST_KEYS, catalogHref, type CatalogQuery, type ListKey } from "@/lib/catalog-url";
 import {
+  CERT_KINDS,
+  CERT_KIND_LABEL,
+  LEARNING_MODES,
+  LEARNING_MODE_LABEL,
+  PRICE_KINDS,
+  PRICE_KIND_LABEL,
   JOB_ROLES,
   JOB_ROLE_LABEL,
   LEVELS,
@@ -26,7 +32,11 @@ export default async function CatalogPage({
   const { locale } = await params;
   const filters = parseCatalogFilters(await searchParams);
   const viewer = await getViewer();
-  const [result, taxonomy] = await Promise.all([listCatalog(viewer, filters), getTaxonomy(viewer)]);
+  const [result, taxonomy, facets] = await Promise.all([
+    listCatalog(viewer, filters),
+    getTaxonomy(viewer),
+    getFacetCounts(viewer),
+  ]);
 
   const query: CatalogQuery = {
     q: filters.q,
@@ -35,6 +45,9 @@ export default async function CatalogPage({
     level: filters.level,
     category: filters.category,
     provider: filters.provider,
+    mode: filters.mode,
+    price: filters.price,
+    cert: filters.cert,
     sort: filters.sort,
   };
 
@@ -48,11 +61,30 @@ export default async function CatalogPage({
       options: taxonomy.categories.map((c) => ({ value: c.slug, label: c.name, count: c.count })),
     },
   ];
-  if (taxonomy.providers.length > 1 || filters.provider.length) {
+  groups.push(
+    {
+      key: "mode",
+      title: "학습 방식",
+      options: LEARNING_MODES.map((m) => ({ value: m, label: LEARNING_MODE_LABEL[m], count: facets.mode[m] ?? 0 })),
+    },
+    {
+      key: "cert",
+      title: "인증 유형",
+      options: CERT_KINDS.map((c) => ({ value: c, label: CERT_KIND_LABEL[c], count: facets.cert[c] })),
+    },
+    {
+      key: "price",
+      title: "가격",
+      options: PRICE_KINDS.map((p) => ({ value: p, label: PRICE_KIND_LABEL[p], count: facets.price[p] })),
+    }
+  );
+  // 노출 가능한 강의가 있는 기관만 (선택돼 있던 기관은 0개여도 해제할 수 있게 남긴다)
+  const providerOptions = taxonomy.providers.filter((p) => p.count > 0 || filters.provider.includes(p.slug));
+  if (providerOptions.length > 0) {
     groups.push({
       key: "provider",
       title: "제공기관",
-      options: taxonomy.providers.map((p) => ({ value: p.slug, label: p.name, count: p.count })),
+      options: providerOptions.map((p) => ({ value: p.slug, label: p.name, count: p.count })),
     });
   }
 
@@ -62,9 +94,12 @@ export default async function CatalogPage({
     if (key === "type") return PRODUCT_TYPE_LABEL[value as keyof typeof PRODUCT_TYPE_LABEL];
     if (key === "level") return LEVEL_LABEL[value as keyof typeof LEVEL_LABEL];
     if (key === "category") return taxonomy.categories.find((c) => c.slug === value)?.name ?? value;
+    if (key === "mode") return LEARNING_MODE_LABEL[value as keyof typeof LEARNING_MODE_LABEL];
+    if (key === "price") return PRICE_KIND_LABEL[value as keyof typeof PRICE_KIND_LABEL];
+    if (key === "cert") return CERT_KIND_LABEL[value as keyof typeof CERT_KIND_LABEL];
     return taxonomy.providers.find((p) => p.slug === value)?.name ?? value;
   };
-  const chips = (["audience", "type", "level", "category", "provider"] as ListKey[]).flatMap((key) =>
+  const chips = LIST_KEYS.flatMap((key) =>
     (query[key] ?? []).map((value) => ({
       label: labelOf(key, value),
       href: catalogHref(locale, { ...query, [key]: (query[key] ?? []).filter((v) => v !== value) }),
