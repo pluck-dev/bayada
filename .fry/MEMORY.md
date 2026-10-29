@@ -127,3 +127,29 @@
 - 동시 수정: 문서 저장은 편집 시작 시점 updatedAt 을 같이 보내 다르면 거부.
 - 기관 목록·상세는 옛 @bayada/ui 화면을 새 디자인으로 교체. 기관 관리자 지정은 STUDENT↔ORG_ADMIN 사이만(운영 계정 강등 사고 방지). 사내 조직(isInternal) 생성은 일부러 폼에 없다.
 - 빌드 확인은 `apps/admin-buildcheck` 형제 폴더에 src·설정 복사 + node_modules 정션으로 했다(dev 의 .next 를 안 건드림). 지울 때 정션을 `rmdir` 로 먼저 끊고 폴더 삭제.
+
+# 바야다 인증(BC-): 정책은 전부 CredentialProgram 데이터, 심사 상태 전이, 판정 계산, 갱신 알림, 공유 index 커밋
+
+## WHY: 정책 미확정 → 하드코딩 금지
+- 선수 강의·시험/실기 합격 점수·실기 여부·유효기간(null=영구)·갱신 알림 일수·평가 기준 문구는 전부 어드민 `/credentials/programs` 에서 과정별로 설정. 새 과정 기본값도 스키마 기본값(유효기간 영구) 그대로.
+- 과정 삭제는 신청·발급이 하나라도 있으면 막는다(onDelete Cascade 라 발급 인증까지 날아감) → 비공개로 전환.
+
+## 상태 전이·권한 (admin `lib/actions/credentials.ts`)
+- SUBMITTED →(평가 시작, 심사위원)→ EVALUATING →(점수 임시 저장 / 평가 완료)→ EVALUATED →(운영자 승인=발급 | 반려). EVALUATED→EVALUATING 재평가 가능. 반려는 SUBMITTED/EVALUATING/EVALUATED 어디서나, 사유 필수(학습자에게 그대로 보임).
+- 심사위원 = `credential.evaluate`(CLINICAL_REVIEWER·ADMIN), 승인·반려·취소 = `credential.approve`(CONTENT_MANAGER·ADMIN), 과정 CRUD = `credential.program`. PARTNER_ADMIN 은 없음.
+- 모든 전이는 `updateMany where status in (기대 상태)` → count≠1 이면 거부(동시 클릭 이중 처리 방지). 전이마다 AuditLog `credential.*` (target `CredentialApplication:<id>`), 발급은 `Credential:<id>` 로 한 번 더.
+- 합격/불합격은 **저장 필드가 없다** — 매번 현재 과정 기준으로 `judge()` 계산. 평가 완료 시점 점수·기준·결과는 AuditLog detail 에 남김. 승인 대기 중에 기준을 바꾸면 판정이 바뀐다(과정 폼에서 경고).
+- 번호 `BC-YYYY-NNNNNN` 연도(KST)별 일련번호. 승인 트랜잭션 안에서 `pg_advisory_xact_lock(hashtext('credential-number'))` 로 직렬화 후 max+1 (P2002 재시도는 PG 트랜잭션이 abort 돼서 안 씀). expiresAt = 발급일 + validityMonths.
+
+## 학습자 쪽 규칙 (academy `lib/queries/credentials.ts` eligibility — 화면과 신청 API 공용)
+- 신청 가능: 공개 과정 + 선수 강의 전부 Enrollment.completedAt + 진행 중 신청 없음 + (유효 인증 없음 또는 갱신 알림 기간 진입). 갱신 = 새 Credential 행 발급(이전 것은 그대로 만료).
+- 진행 중 신청 1건 보장은 unique 제약이 없어 (user, program) advisory lock 트랜잭션으로.
+- 선수 강의가 보는 사람에게 노출 불가(INTERNAL·비게시)면 제목을 숨기고 "임직원 전용 프로그램" 표기(존재 숨김 규칙). 본인 수강 기록이 있으면 보임.
+- 갱신 알림: 메일 인프라가 없어 `/dashboard`·`/dashboard/certificates` 렌더 시 `takeRenewalNotices` 가 배너 대상 반환 + 처음 본 시각을 renewalNotifiedAt 에 기록 → 어드민 '발급된 인증'의 "갱신 알림 확인" 열. (GET 렌더에서 쓰기하는 건 의도된 것)
+- D-day 는 양쪽 다 올림(ceil)으로 통일. '만료 임박' 은 과정마다 알림 일수가 달라 DB where 로 못 거르고 메모리에서 거른다.
+- 공개 검증 `/verify/BC-…` 는 같은 라우트에서 접두어로 분기(`CredentialVerify`). 상태: 유효 / 만료 / 취소(revokedAt). 출력 `/credentials/[number]/print` 는 취소·만료면 인쇄 숨김 + 도장 표시.
+
+## 함정: 여러 에이전트가 같은 working tree·index 를 공유할 때 커밋
+- index 가 공유라 다른 에이전트가 stage 한 파일(예: cart 삭제)이 내 커밋에 섞인다. 커밋 전 `git diff --cached --stat` 확인, 남의 staged 는 잠시 reset 후 커밋하고 되돌려 놓는다.
+- 남의 미커밋 hunk 가 섞인 공유 파일은 `HEAD 내용 + 내 치환` 을 `git hash-object -w` → `git update-index --cacheinfo` 로 index 에만 넣어 내 hunk 만 커밋.
+- prettier 설정 파일이 없다(기본 80자). 돌리면 기존 120자 스타일과 달라지니 `--print-width 120`.
