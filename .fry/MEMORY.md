@@ -70,3 +70,37 @@
 - 컨테이너에선 `AUTH_TRUST_HOST=true` 필요(Auth.js 가 호스트 신뢰 거부).
 - 운영 DB 데이터는 `import:wp` 를 `VIDEO_BASE_URL`/`UPLOADS_BASE_URL` 을 미디어 서버 주소로 줘서 넣는다. 개발 DB(bayada_v2)는 8088/8089 주소를 갖고 있어 그대로 덤프하면 안 된다.
 - 로컬에서 academy/admin 을 같은 localhost 에 띄우면 Auth.js 기본 쿠키(authjs.*)가 겹친다 → admin 은 `bayada-admin.*` 쿠키 이름 사용.
+
+# 아카데미 v3 학습자 기능: 찜·후기 신고·실습 정원·기관 대시보드(B2B)·초대 링크·수료증 QR
+
+## 후기·평점
+- 작성 자격: Enrollment 진도 ≥80% 또는 completedAt (`canWriteReview`). 강의당 1개(upsert). 숨김(HIDDEN) 후기는 작성자가 수정해도 숨김 유지.
+- 신고 중복 방지는 별도 테이블 없이 AuditLog(action=`review.report`, target=`Review:<id>`, actorId) 로 판정 + `pg_advisory_xact_lock` 으로 동시 신고 직렬화.
+- 함정: Review.updatedAt 은 @updatedAt 이라 reportCount 증가만 해도 바뀌어 화면에 "수정됨"이 뜬다 → 신고 시 `updatedAt: review.updatedAt` 을 명시해 유지. 어드민에서 숨김/공개 처리할 때도 같은 문제가 있다.
+- 카드 평점은 `withCardExtras()` 가 groupBy 로 붙임(공개 후기 1건 이상일 때만). 찜 여부도 같이 붙이며 비로그인은 `wished: null`.
+
+## 실습 일정 정원
+- 신청 조건: 수강 중 OR (노출 가능 + 무료). 정원은 트랜잭션 안에서 `SELECT ... FOR UPDATE` 로 세션 행을 잠그고 count → create. 시작 시각 이후엔 신청/취소 불가.
+
+## 기관 대시보드 /business
+- 권한 `canManageOrg`: organizationId 있고 role ORG_ADMIN 또는 ADMIN. Viewer 에 organizationId 추가함.
+- 실데이터상 사내 조직 1곳에 82명(그중 REJECTED 28·PENDING 8) → 직원 수·배정 대상은 APPROVED 만. 배정 API 도 APPROVED 만 허용.
+- 배정 = CourseAssignment createMany(skipDuplicates) + 기존 조합 dueAt updateMany + Enrollment createMany(skipDuplicates). 이수 판정은 Enrollment.completedAt.
+- 이수 기한은 날짜 입력값의 KST 23:59:59 로 저장.
+- 초대: 메일 인프라가 없어 토큰 링크를 만들어 관리자가 복사·전달. 수락은 **초대받은 이메일로 로그인한 경우만**(링크 전달 악용 방지). 수락 시 User.organizationId 를 덮어쓴다(사내 조직 → 외부 기관이면 INTERNAL 강의 열람권이 사라짐, 화면에서 경고).
+- 가입 페이지는 `?callbackUrl=` 을 지원(초대 → 가입 → 초대 페이지로 복귀). useSearchParams 대신 window.location 을 읽어 Suspense 경계 문제를 피함.
+- CSV: UTF-8 BOM + `=+-@` 로 시작하는 셀 앞에 `'` (엑셀 수식 주입 방지). 소스에는 `﻿` 이스케이프로 둔다(prettier/에디터가 보이지 않는 문자로 바꾸는 경우가 있었음).
+
+## 수료증 QR · 절대 주소
+- QR·인쇄물의 검증 URL 은 요청 호스트가 아니라 `SITE_URL`(NEXT_PUBLIC_SITE_URL, 없으면 academy.bayada.co.kr) 기준. 로컬 `.env.local` 값이 web 포트(3000)라 로컬 QR 은 3000 을 가리킨다 — 운영 값만 맞으면 됨.
+- `qrcode` 로 서버에서 SVG 생성해 심는다(클라이언트 번들 없음).
+
+## 약관 페이지
+- Page.content(어드민 편집 HTML)는 `lib/sanitize-html.ts` 허용목록으로 정리 후 출력. 원본 약관 끝에 WP 시절 "ZZ테스트 문구" 가 실제로 들어 있다(데이터 문제, 코드 아님).
+
+## 홈 섹션 노출 규칙
+- ⑥ 파트너: Provider.isPartner && logo 있는 곳만. ⑨ 성과 지표: 값 0 인 항목은 숨김, 개설 프로그램 수는 보는 사람 기준 노출 규칙 적용(비로그인은 0 → 숨김). ⑩ 후기: 보는 사람이 볼 수 있는 강의의 공개 후기만.
+- CountUp 은 화면에 들어올 때만 0→값. full-page 스크린샷에서는 0 으로 찍히니 검증 시 해당 섹션으로 스크롤 후 찍을 것.
+
+## 빌드 확인 (dev 서버 켠 채)
+- next.config 의 distDir 을 잠깐 `process.env.NEXT_DIST_DIR || ".next"` 로 바꿔 `NEXT_DIST_DIR=.next-buildcheck next build --webpack` 으로 확인하고 되돌렸다(커밋 안 함). .next 를 공유하지 않으니 dev 워커 EPIPE 가 안 난다.
