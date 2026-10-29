@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
-  BookOpen,
   Mail,
   Lock,
   Eye,
@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 import { Button, Input, Card, CardContent } from "@bayada/ui";
 import { useDictionary } from "@/components/DictionaryProvider";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { JOB_ROLE_OPTIONS, PASSWORD_RULE, passwordError } from "@/lib/signup-policy";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +26,13 @@ export default function RegisterPage() {
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const dict = useDictionary();
   const { locale } = useParams<{ locale: string }>();
+  const router = useRouter();
+  const { status } = useSession();
+
+  // 이미 로그인한 사람은 가입 화면 대신 홈으로
+  useEffect(() => {
+    if (status === "authenticated") router.replace(`/${locale}`);
+  }, [status, locale, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +45,7 @@ export default function RegisterPage() {
     const phone = (formData.get("phone") as string) || undefined;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
+    const jobRole = formData.get("jobRole") as string;
 
     if (password !== confirmPassword) {
       setError("비밀번호가 일치하지 않습니다.");
@@ -44,8 +53,14 @@ export default function RegisterPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("비밀번호는 6자 이상이어야 합니다.");
+    const pwError = passwordError(password);
+    if (pwError) {
+      setError(pwError);
+      setIsLoading(false);
+      return;
+    }
+    if (!jobRole) {
+      setError("직군을 선택해 주세요.");
       setIsLoading(false);
       return;
     }
@@ -55,7 +70,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, phone }),
+        body: JSON.stringify({ name, email, password, phone, jobRole }),
       });
 
       if (!res.ok) {
@@ -92,12 +107,8 @@ export default function RegisterPage() {
         {/* 로고 */}
         <div className="mb-8 text-center">
           <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--brand)]">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-[color:var(--fg)]">
-              BAYADA <span className="text-[color:var(--brand)]">Academy</span>
-            </span>
+            <span className="text-2xl font-extrabold tracking-tight text-[color:var(--brand)]">BAYADA</span>
+            <span className="text-xl font-semibold text-[color:var(--fg)]">Academy</span>
           </Link>
           <h1 className="mt-4 text-2xl font-bold text-[color:var(--fg)]">
             {dict.auth.registerTitle}
@@ -178,6 +189,32 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {/* 직군 — 맞춤 추천에 사용 */}
+              <div>
+                <label
+                  htmlFor="jobRole"
+                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
+                >
+                  직군 <span className="text-[color:var(--error)]">*</span>
+                </label>
+                <select
+                  id="jobRole"
+                  name="jobRole"
+                  required
+                  defaultValue=""
+                  className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] px-3 text-sm text-[color:var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
+                >
+                  <option value="" disabled>
+                    하시는 일을 선택해 주세요
+                  </option>
+                  {JOB_ROLE_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* 비밀번호 */}
               <div>
                 <label
@@ -193,7 +230,7 @@ export default function RegisterPage() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    placeholder="8자 이상, 영문+숫자 조합"
+                    placeholder={PASSWORD_RULE}
                     className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-10 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
                   />
                   <button

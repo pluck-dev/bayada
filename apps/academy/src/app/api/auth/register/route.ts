@@ -1,24 +1,38 @@
 import { NextResponse } from "next/server";
-import { userService } from "@/lib/services";
-import { successResponse, errorResponse } from "@/lib/api-utils";
+import { hash } from "bcryptjs";
+import { prisma } from "@bayada/db";
+import { isJobRole, passwordError } from "@/lib/signup-policy";
 
+// 외부 회원가입. 사내 조직에 묶지 않으므로 PUBLIC 강의만 보인다.
 export async function POST(request: Request) {
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
-    const { password, name, phone } = body;
-    // 로그인은 소문자 이메일로 조회한다
-    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-
-    if (!email || !password || !name) {
-      return NextResponse.json({ error: "이메일, 비밀번호, 이름은 필수입니다." }, { status: 400 });
-    }
-    if (String(password).length < 6) {
-      return NextResponse.json({ error: "비밀번호는 6자 이상이어야 합니다." }, { status: 400 });
-    }
-
-    const user = await userService.create({ email, password, name, phone });
-    return successResponse(user, 201);
-  } catch (error) {
-    return errorResponse(error);
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "잘못된 요청이에요." }, { status: 400 });
   }
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const password = typeof body.password === "string" ? body.password : "";
+  const phone = typeof body.phone === "string" && body.phone.trim() ? body.phone.trim() : null;
+  const jobRole = isJobRole(body.jobRole) ? body.jobRole : null;
+
+  if (!email || !name || !password) {
+    return NextResponse.json({ error: "이름, 이메일, 비밀번호는 필수예요." }, { status: 400 });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: "이메일 형식을 확인해 주세요." }, { status: 400 });
+  }
+  const pwError = passwordError(password);
+  if (pwError) return NextResponse.json({ error: pwError }, { status: 400 });
+  if (!jobRole) return NextResponse.json({ error: "직군을 선택해 주세요." }, { status: 400 });
+
+  if (await prisma.user.findUnique({ where: { email }, select: { id: true } })) {
+    return NextResponse.json({ error: "이미 가입된 이메일이에요." }, { status: 409 });
+  }
+  const user = await prisma.user.create({
+    data: { email, name, phone, jobRole, password: await hash(password, 12), role: "STUDENT" },
+    select: { id: true, email: true, name: true },
+  });
+  return NextResponse.json({ data: user }, { status: 201 });
 }
