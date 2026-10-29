@@ -37,7 +37,7 @@ interface NavItem {
   phase?: string;
   /** 비활성 항목 툴팁 (기본: "{phase} 오픈 예정") */
   note?: string;
-  badgeKey?: "queue" | "signups" | "reports";
+  badgeKey?: "queue" | "signups" | "reports" | "credentials";
 }
 
 const PRIMARY: NavItem[] = [
@@ -50,8 +50,8 @@ const PRIMARY: NavItem[] = [
   { path: "/reviews", label: "후기 관리", icon: MessageSquareWarning, permission: "review", badgeKey: "reports" },
   { path: "/sessions", label: "실습·오프라인 일정", icon: CalendarDays, permission: "session" },
   { path: "/pathways", label: "커리어 패스웨이", icon: Route, permission: "pathway" },
-  // 인증 모델·효력이 고객사 확인 대기(17_확인필요 "인증 효력")라 만들지 않는다
-  { path: "", label: "인증 심사", icon: BadgeCheck, phase: "2차", note: "정책 확정 후 개발 (인증 효력·평가 기준 미정)" },
+  // 인증 정책(효력·평가 기준)은 미확정 — 정책 값은 전부 인증 과정 데이터로 어드민에서 설정
+  { path: "/credentials", label: "인증 심사", icon: BadgeCheck, permission: "credential.read", badgeKey: "credentials" },
   { path: "/partners", label: "파트너", icon: Handshake, permission: "partner.manage" },
   { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console" },
   { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages" },
@@ -75,7 +75,7 @@ export function Sidebar({
   role: AdminRole;
   userName: string;
   userEmail: string;
-  counts: { queue: number; signups: number; reports: number };
+  counts: { queue: number; signups: number; reports: number; credentials?: number };
 }) {
   const pathname = usePathname();
   const base = `/${locale}`;
@@ -109,7 +109,7 @@ export function Sidebar({
       );
     }
     const active = isActive(item.path);
-    const count = item.badgeKey ? counts[item.badgeKey] : 0;
+    const count = item.badgeKey ? (counts[item.badgeKey] ?? 0) : 0;
     return (
       <li key={item.path || "home"}>
         <Link

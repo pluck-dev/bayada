@@ -174,6 +174,18 @@ export const AUDIT_ACTION_LABEL: Record<string, string> = {
   "organization.create": "기관 생성",
   "partner.assign": "파트너 관리자 지정",
   "partner.unassign": "파트너 관리자 해제",
+  "credential_program.create": "인증 과정 생성",
+  "credential_program.update": "인증 과정 수정",
+  "credential_program.delete": "인증 과정 삭제",
+  "credential.apply": "인증 신청 (학습자)",
+  "credential.start_evaluation": "인증 평가 시작",
+  "credential.score": "인증 점수 임시 저장",
+  "credential.evaluate": "인증 평가 완료",
+  "credential.reopen": "인증 재평가",
+  "credential.approve": "인증 승인",
+  "credential.issue": "인증 발급",
+  "credential.reject": "인증 반려",
+  "credential.revoke": "인증 취소",
 };
 
 export function formatDate(d: Date | string | null | undefined): string {

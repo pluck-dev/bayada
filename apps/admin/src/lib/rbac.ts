@@ -26,7 +26,11 @@ export type Permission =
   | "pages" // 정적 문서 (약관·개인정보처리방침·환불 규정)
   | "pathway" // 커리어 패스웨이 (국가·직군별 경로, 단계)
   | "partner.manage" // 파트너 제공기관·파트너 관리자 지정
-  | "partner.console"; // 파트너 콘솔 — 자기 제공기관 프로그램만
+  | "partner.console" // 파트너 콘솔 — 자기 제공기관 프로그램만
+  | "credential.read" // 바야다 인증 심사 큐 열람
+  | "credential.evaluate" // 심사위원 — 시험·실기 점수 입력, 평가 완료(합격/불합격 판정)
+  | "credential.approve" // 운영자 — 승인(발급)·반려, 발급된 인증 취소
+  | "credential.program"; // 인증 과정(정책 값) 생성·수정
 
 const MATRIX: Record<AdminRole, readonly Permission[]> = {
   // Super Admin — 전부
@@ -48,6 +52,10 @@ const MATRIX: Record<AdminRole, readonly Permission[]> = {
     "pages",
     "partner.manage",
     "pathway",
+    "credential.read",
+    "credential.evaluate",
+    "credential.approve",
+    "credential.program",
   ],
   // 콘텐츠 운영자 — 프로그램 CRU + 승인/게시, 배너 CRUD, 회원은 조회만
   CONTENT_MANAGER: [
@@ -62,9 +70,12 @@ const MATRIX: Record<AdminRole, readonly Permission[]> = {
     "review",
     "session",
     "pathway",
+    "credential.read",
+    "credential.approve",
+    "credential.program",
   ],
-  // 임상 리뷰어 — 승인 대기 큐 중 CLINICAL_REVIEW 항목만
-  CLINICAL_REVIEWER: ["approval.queue", "workflow.clinical"],
+  // 임상 리뷰어 — 승인 대기 큐 중 CLINICAL_REVIEW 항목만 + 바야다 인증 심사위원(평가만, 발급은 운영자)
+  CLINICAL_REVIEWER: ["approval.queue", "workflow.clinical", "credential.read", "credential.evaluate"],
   // 파트너 관리자 — 파트너 콘솔만. 자기 제공기관 프로그램 작성·수정·승인 요청(승인·게시 불가), 통계는 인원·수료율만
   PARTNER_ADMIN: ["partner.console"],
 };

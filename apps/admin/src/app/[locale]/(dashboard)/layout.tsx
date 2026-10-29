@@ -25,6 +25,14 @@ export default async function DashboardLayout({
     can(user.role, "member.read") ? prisma.user.count({ where: { status: "PENDING" } }) : Promise.resolve(0),
     can(user.role, "review") ? prisma.review.count({ where: OPEN_REPORT_WHERE }) : Promise.resolve(0),
   ]);
+  // 바야다 인증: 심사위원은 평가 대기·평가 중, 운영자는 승인 대기를 센다
+  const credentialTodo = [
+    ...(can(user.role, "credential.evaluate") ? (["SUBMITTED", "EVALUATING"] as const) : []),
+    ...(can(user.role, "credential.approve") ? (["EVALUATED"] as const) : []),
+  ];
+  const credentials = credentialTodo.length
+    ? await prisma.credentialApplication.count({ where: { status: { in: credentialTodo } } })
+    : 0;
 
   return (
     <FeedbackProvider>
@@ -34,7 +42,7 @@ export default async function DashboardLayout({
           role={user.role}
           userName={user.name ?? user.email}
           userEmail={user.email}
-          counts={{ queue, signups, reports }}
+          counts={{ queue, signups, reports, credentials }}
         />
         <main className="flex-1 overflow-y-auto bg-white">
           <div className="mx-auto max-w-[1280px] px-8 py-7">{children}</div>
