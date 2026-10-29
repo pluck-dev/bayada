@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { createAuthConfig } from "@bayada/shared/auth";
 import { prisma } from "@bayada/db";
+import { clearLoginFailures, getSessionState, isLoginLocked, recordLoginFailure } from "@bayada/services/account";
 import { DEFAULT_ROLE_PERMISSIONS, effectivePermissions, isAdminRole } from "./rbac";
 
 // 어드민 콘솔 인증 — Super Admin·콘텐츠 운영자·임상 리뷰어·파트너 관리자(제공기관 지정된 경우)·사용자 정의 역할만 로그인한다.
@@ -25,6 +26,9 @@ const authConfig = createAuthConfig({
   updatePassword: async (userId, password) => {
     await prisma.user.update({ where: { id: userId }, data: { password } });
   },
+  // 로그인 실패 제한(이메일+IP 15분 5회)·비밀번호 재설정 시 이전 세션 무효 — 아카데미와 같은 DB 기록을 쓴다
+  loginGuard: { isLocked: isLoginLocked, recordFailure: recordLoginFailure, clearFailures: clearLoginFailures },
+  getSessionState,
 });
 
 // 아카데미와 같은 호스트(로컬 localhost, 운영 시 같은 상위 도메인)에서도 세션이 섞이지 않게 쿠키 이름을 따로 쓴다.
