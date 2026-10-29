@@ -196,6 +196,8 @@ export class OrderService {
       // 수강 등록 생성
       if (order.type === "B2C") {
         for (const item of order.items) {
+          // 패스 구매 항목은 강의가 없다 (구독은 결제 확정 쪽에서 만든다)
+          if (!item.courseId) continue;
           await tx.enrollment.create({
             data: { userId: order.userId, courseId: item.courseId },
           }).catch(() => {
