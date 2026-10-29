@@ -153,3 +153,26 @@
 - index 가 공유라 다른 에이전트가 stage 한 파일(예: cart 삭제)이 내 커밋에 섞인다. 커밋 전 `git diff --cached --stat` 확인, 남의 staged 는 잠시 reset 후 커밋하고 되돌려 놓는다.
 - 남의 미커밋 hunk 가 섞인 공유 파일은 `HEAD 내용 + 내 치환` 을 `git hash-object -w` → `git update-index --cacheinfo` 로 index 에만 넣어 내 hunk 만 커밋.
 - prettier 설정 파일이 없다(기본 80자). 돌리면 기존 120자 스타일과 달라지니 `--print-width 120`.
+
+# 커리어 패스웨이(Pathway): 시드 0건, 정보 기준일·면책 필수, 단계 상태 판정, 게시 조건, i18n 현황
+
+## WHY: 콘텐츠는 어드민 작성 데이터, 시드 없음
+- 국가별 면허·이민 요건은 사실 확인·책임 문제가 있어 코드/시드에 예시 패스웨이를 넣지 않았다(0건 출고). 아카데미는 0건이면 /pathways 빈 상태, 홈 ⑤ 숨김.
+- 공개 상세는 항상 정보 기준일 + 면책 고지 박스를 본문보다 먼저 보여 준다. disclaimer 가 비면 `DEFAULT_PATHWAY_DISCLAIMER`(academy `lib/queries/pathways.ts`) — 어드민 폼 placeholder 에도 같은 문구가 복사돼 있으니 바꿀 땐 둘 다.
+- 어드민 도움말의 BAYADA 해외 거점(독일·아일랜드·뉴질랜드·한국, 인도는 제휴) 은 search/01.txt·05.txt(bayada.com/international) 근거. 패스웨이 본문에 쓰라는 뜻이 아니라 "취업·이민 지원 약속 금지" 경고용.
+
+## 게시 조건·저장 규칙 (서버 액션에서 강제)
+- 게시: infoAsOf 있고 단계 ≥1. 게시 중엔 기준일 비우기·단계 0개 저장 거부, 삭제도 거부(먼저 게시 중단).
+- 단계 연결은 PUBLISHED 프로그램 / active CredentialProgram 만. 저장은 단계 전체 교체(deleteMany+createMany) — 단계 id 는 저장마다 바뀐다(목표는 Pathway 단위라 무관).
+- infoAsOf 는 날짜만 의미 → `YYYY-MM-DDT00:00:00Z` 로 저장. 화면은 UTC 자정이라 KST·UTC 어디서 읽어도 같은 날짜.
+- 동시 수정: baseUpdatedAt 비교. 단계만 바뀌어도 updatedAt 을 명시 갱신해 검사가 걸리게 함.
+
+## 학습자 단계 상태
+- 프로그램 단계: Enrollment(completedAt → 수료, 있으면 학습 중, 0% 는 "수강 신청함"). 인증 단계: Credential(revokedAt null, 만료 전). 자유 단계는 자동 판정 불가 → 그 뒤 단계를 하나라도 마쳤으면 지나간 것으로 본다(`pathwayProgress`).
+- 연결 프로그램이 보는 사람에게 비노출(INTERNAL 등)이고 수강 기록도 없으면 링크 대신 "열람 권한이 있는 회원에게만" 안내(존재·제목 숨김 규칙 유지).
+- 인증 링크는 `/[locale]/certifications/[slug]`(인증 기능 라우트). 커리어 목표는 `/dashboard/goals` — 게시 중단된 패스웨이의 목표는 숨김(행은 남음, 재게시 시 복귀).
+
+## i18n 현황 (2026-10-29 점검)
+- 로케일은 ko/en/ja/zh (피그마 3차는 ko/en/ja/de — de 없음, /de 는 /ko/de 로 리다이렉트돼 404). 비ko 로케일은 크래시 없이 전부 한국어로 렌더.
+- 미들웨어가 Accept-Language 로 리다이렉트 → 영어 브라우저는 / → /en 으로 가서 한국어 화면을 본다. `<html lang="ko">` 고정, 메타 제목도 한국어, sitemap 은 같은 한국어 페이지를 4개 로케일로 낸다(중복 콘텐츠).
+- 사전(dictionaries)을 쓰는 화면은 cart·orders·register 3곳뿐, 나머지 학습자 UI 문자열은 하드코딩 한국어.
