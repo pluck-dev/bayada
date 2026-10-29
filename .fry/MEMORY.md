@@ -204,3 +204,27 @@
 - 토스 샌드박스 카드사 창(KB Pay 등)·토스페이는 실제 본인 인증(휴대폰·주민번호)을 요구해 자동화로 승인까지 못 간다. 검증은 결제창 열기까지 실브라우저 + 승인/취소 API 실호출(가짜 paymentKey → NOT_FOUND 응답으로 인증·형식 확인) + 토스 응답만 스텁한 하네스로 지급·환불 로직을 실 DB 에서 돌렸다.
 - 체크아웃 동의 체크박스는 하이드레이션 전에 체크하면 풀린다 — Playwright 는 체크 상태를 확인하고 재시도할 것.
 - 결제 대기 주문은 결제창에서 이탈하면 남는다 → 다음 체크아웃이나 failUrl(orderId 있을 때)에서 CANCELLED 로 정리. 구매자가 창을 닫으면(PAY_PROCESS_CANCELED) orderId 가 안 온다.
+
+# 어드민 동적 역할·권한(AdminRoleDef)·사이트 설정(SiteSetting): ADMIN 잠금, 사용자 정의 역할=STUDENT+customRoleKey, 파트너 콘솔 고정, 섹션별 설정 행
+
+## WHY: 권한은 코드 목록 + DB 역할 행
+- 권한 키·한국어 이름·설명은 코드(`apps/admin/src/lib/rbac.ts` PERMISSION_DEFS) — 기능이 코드에 있으니 권한 종류도 코드가 정한다. 역할별 보유 권한만 DB `AdminRoleDef.permissions`. 새 권한을 추가하면 ADMIN 은 자동으로 갖고, 다른 역할은 역할·권한 화면에서 체크해야 생긴다(기존 행은 시드가 덮지 않음).
+- 시스템 역할 4개(ADMIN·CONTENT_MANAGER·CLINICAL_REVIEWER·PARTNER_ADMIN)는 행이 없으면 `ensureSystemRoles()`(createMany skipDuplicates)가 옛 MATRIX 값으로 만든다 — 첫 조회 때 자동 + `pnpm --filter ./apps/admin seed:roles`. STUDENT·ORG_ADMIN 은 아카데미 역할이라 매트릭스에 없다(넣으면 학습자 전원이 어드민에 들어올 수 있게 됨).
+- 권한 판정은 항상 `can(user, perm)`(AdminUser.permissions). `user.role` 은 파트너 소유권 등 역할 고유 규칙에만 쓴다. 워크플로우 전이도 역할이 아니라 권한(workflow.operate / workflow.clinical / PROGRAM_EDIT) 기준으로 바꿨다. "임상만 보는 큐" = workflow.clinical 있고 workflow.operate 없음.
+- 캐시: React cache(요청당 1회)만. 프로세스 메모리 캐시는 두지 않았다(인스턴스 여러 개면 저장 후 옛 권한 유지). 저장 시 revalidatePath 레이아웃.
+
+## 잠금·함정
+- ADMIN 은 DB 값과 무관하게 `effectivePermissions` 가 항상 전체 권한(열 잠금). 마지막 승인된 Super Admin(customRoleKey 없음)은 역할 변경·가입 거절 불가. Super Admin 지정·해제는 Super Admin 만(회원 관리 권한으로 최고 권한을 넘기지 못하게). 본인 역할에서 role.manage 를 빼는 저장도 거부.
+- `partner.console` 은 PARTNER_ADMIN 전용 고정(FIXED_PERMISSIONS). guards.ts 소유권 검사가 `role === "PARTNER_ADMIN"` 기준이라 다른 역할에 주면 남의 기관 프로그램을 고칠 수 있게 된다.
+- 사용자 정의 역할 사용자 = `role=STUDENT` + `customRoleKey`. 아카데미에선 평범한 학습자. 기관 관리자 지정·파트너 지정 화면은 customRoleKey 있는 계정을 거부한다(안 막으면 role 만 바뀌고 어드민 권한은 그대로 남음). 회원 역할 필터: 시스템 역할 선택 시 customRoleKey null 조건 추가.
+- 권한이 0개인 역할·삭제된 역할 사용자는 signIn 거부 + getAdminUser null(갈 첫 화면이 없어 리다이렉트 루프가 남). 첫 화면은 `homePath(user)` 가 권한 순서로 고른다.
+- 역할 삭제는 지정 회원 0명일 때만. 권한 저장은 화면을 연 시점 값(base)과 DB 를 비교해 동시 수정 거부. AuditLog `role.permissions`(before/after/added/removed), `role.create|update|delete`.
+
+## 사이트 설정 (SiteSetting: 섹션별 key 한 행)
+- 타입·기본값·정규화는 `@bayada/shared/site-settings`(순수). 기본값 = 옛 하드코딩 문구라 행이 없으면 화면이 그대로. '기본값으로' = 행 삭제. 섹션별 행인 이유: 동시 편집 시 다른 섹션을 덮지 않음, 감사 로그가 섹션 단위, 필드 추가 시 마이그레이션 불필요.
+- 아카데미 홈·헤더·푸터는 로그인 쿠키를 읽는 동적 렌더링이라 요청마다 `getSiteSettings()`(React cache) — revalidate 엔드포인트 불필요. DB 실패 시 기본값(빌드 정적 생성 대비).
+- 링크 값: `/…` 는 언어 경로 아래, `#…` 홈 안 위치, https·mailto·tel 만 허용(javascript: 거부 — 저장 시 에러로 알림, 정규화는 조용히 비움).
+- 홈 섹션을 숨기면 헤더 '기관·센터'(#org=업셀)·'자주 묻는 질문'(#faq) 바로가기와 푸터 FAQ 링크도 숨긴다. FAQ 항목 0개면 섹션 자체 숨김.
+- OG 이미지 URL: file-based `opengraph-image.tsx` 가 config 메타데이터보다 우선이라 metadata.openGraph.images 로는 안 바뀐다 → opengraph-image 가 설정 URL 을 받아 그대로 내려준다(force-dynamic, 실패 시 생성 이미지). 그리고 원래 i18n 미들웨어가 `/opengraph-image` 를 `/ko/…` 로 보내 404 였다 → matcher 에서 제외. og:image:type 은 png 로 고정 표기(설정 이미지가 jpg 여도).
+- 검증(2026-10-29): Playwright 로 CM 후기 관리 끄기→메뉴·페이지 차단, 사용자 정의 역할(2권한) 지정→사이드바 2개·첫 화면 /programs, 커스텀 역할에 회원 관리 줘도 Super Admin 승격 거부, 히어로·FAQ·SEO 제목 수정→아카데미 반영 후 전부 원복·테스트 계정 삭제.
+- 함정(이 PC): Git Bash 의 python heredoc 에서 `"\n"`·`"\r"` 이 실제 개행/CR 로 들어갔다 — 백슬래시가 있는 코드는 Edit/Write 도구로 고칠 것. HeaderNav·SiteHeader 는 CRLF 파일.
