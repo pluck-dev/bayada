@@ -25,7 +25,7 @@ const PREVIEW_CSS = `
   blockquote { margin: 1em 0; padding: 12px 16px; background: #fafafa; border-radius: 12px; white-space: pre-line; }
 `;
 
-function previewDoc(title: string, html: string): string {
+export function previewDoc(title: string, html: string): string {
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>${PREVIEW_CSS}</style></head><body><h1>${title
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")}</h1>${html}</body></html>`;
