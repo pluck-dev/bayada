@@ -11,30 +11,35 @@ datasource db {
 
 // ─── 사용자 ───
 model User {
-  id                   String                @id @default(cuid())
-  email                String                @unique
-  name                 String?
-  password             String // bcrypt hash
-  role                 Role                  @default(STUDENT)
-  status               UserStatus            @default(APPROVED) // 사내 가입 승인 (New User Approve 이관)
-  jobRole              JobRole? // 대상 직군 (최초 로그인 시 수집)
-  phone                String?
-  legacyWpId           Int?                  @unique // bestcareacademy.com wp_users.ID
-  organizationId       String?
-  organization         Organization?         @relation(fields: [organizationId], references: [id])
-  enrollments          Enrollment[]
-  progresses           Progress[]
-  orders               Order[]
-  quizAttempts         QuizAttempt[]
-  certificates         Certificate[]
-  wishlist             Wishlist[]
-  reviews              Review[]
-  sessionRegistrations SessionRegistration[]
-  assignments          CourseAssignment[]    @relation("AssignmentLearner")
-  providerId           String? // PARTNER_ADMIN 이 관리하는 제공기관
-  provider             Provider?             @relation(fields: [providerId], references: [id])
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  name                   String?
+  password               String // bcrypt hash
+  role                   Role                    @default(STUDENT)
+  status                 UserStatus              @default(APPROVED) // 사내 가입 승인 (New User Approve 이관)
+  jobRole                JobRole? // 대상 직군 (최초 로그인 시 수집)
+  phone                  String?
+  legacyWpId             Int?                    @unique // bestcareacademy.com wp_users.ID
+  organizationId         String?
+  organization           Organization?           @relation(fields: [organizationId], references: [id])
+  enrollments            Enrollment[]
+  progresses             Progress[]
+  orders                 Order[]
+  quizAttempts           QuizAttempt[]
+  certificates           Certificate[]
+  wishlist               Wishlist[]
+  credentialApplications CredentialApplication[] @relation("Applicant")
+  credentialEvaluations  CredentialApplication[] @relation("Evaluator")
+  credentials            Credential[]
+  subscriptions          Subscription[]
+  pathwayGoals           PathwayGoal[]
+  reviews                Review[]
+  sessionRegistrations   SessionRegistration[]
+  assignments            CourseAssignment[]      @relation("AssignmentLearner")
+  providerId             String? // PARTNER_ADMIN 이 관리하는 제공기관
+  provider               Provider?               @relation(fields: [providerId], references: [id])
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
 }
 
 enum UserStatus {
@@ -103,6 +108,7 @@ model Course {
   orderItems   OrderItem[]
   certificates Certificate[]
   wishlist     Wishlist[]
+  pathwaySteps PathwayStep[]
   reviews      Review[]
   sessions     TrainingSession[]
   assignments  CourseAssignment[]
@@ -323,6 +329,13 @@ model Order {
   type           OrderType     @default(B2C)
   status         OrderStatus   @default(PENDING)
   totalAmount    Int           @default(0)
+  paymentKey     String?       @unique // 토스페이먼츠 결제 키
+  paymentMethod  String?
+  paidAt         DateTime?
+  refundedAt     DateTime?
+  refundAmount   Int?
+  refundReason   String?
+  subscription   Subscription?
   items          OrderItem[]
   invoice        Invoice?
   createdAt      DateTime      @default(now())
@@ -335,18 +348,21 @@ enum OrderType {
 
 enum OrderStatus {
   PENDING
-  CONFIRMED
+  CONFIRMED // B2B 확정 / 결제 완료
   CANCELLED
+  REFUNDED
 }
 
 model OrderItem {
-  id       String @id @default(cuid())
-  orderId  String
-  courseId String
-  quantity Int    @default(1) // B2B: 수강생 수
-  price    Int
-  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  course   Course @relation(fields: [courseId], references: [id])
+  id         String    @id @default(cuid())
+  orderId    String
+  courseId   String? // 단건 강의 구매
+  passPlanId String? // 아카데미 패스 구매
+  quantity   Int       @default(1) // B2B: 수강생 수
+  price      Int
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  course     Course?   @relation(fields: [courseId], references: [id])
+  passPlan   PassPlan? @relation(fields: [passPlanId], references: [id])
 }
 
 model Invoice {
@@ -465,4 +481,138 @@ model Page {
   title     String
   content   String   @db.Text // HTML
   updatedAt DateTime @updatedAt
+}
+
+// ─── 바야다 인증 (정책값은 어드민에서 설정: 필수 강의·합격 점수·실기·유효기간·갱신 알림) ───
+model CredentialProgram {
+  id                    String                  @id @default(cuid())
+  slug                  String                  @unique
+  title                 String
+  summary               String?
+  description           String?                 @db.Text
+  requiredCourseIds     String[] // 신청 전에 수료해야 하는 강의
+  examPassingScore      Int                     @default(80) // 필기(시험) 합격 점수
+  practicalRequired     Boolean                 @default(true) // 실기 평가 여부
+  practicalPassingScore Int                     @default(80)
+  validityMonths        Int? // null 이면 영구
+  renewalNoticeDays     Int                     @default(30)
+  criteria              String?                 @db.Text // 평가 기준 안내
+  active                Boolean                 @default(false)
+  applications          CredentialApplication[]
+  credentials           Credential[]
+  pathwaySteps          PathwayStep[]
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+}
+
+model CredentialApplication {
+  id             String              @id @default(cuid())
+  programId      String
+  userId         String
+  program        CredentialProgram   @relation(fields: [programId], references: [id], onDelete: Cascade)
+  user           User                @relation("Applicant", fields: [userId], references: [id], onDelete: Cascade)
+  status         CredentialAppStatus @default(SUBMITTED)
+  motivation     String?             @db.Text
+  examScore      Int?
+  practicalScore Int?
+  evaluatorId    String?
+  evaluator      User?               @relation("Evaluator", fields: [evaluatorId], references: [id])
+  evaluatorNote  String?             @db.Text
+  decisionNote   String?             @db.Text
+  decidedAt      DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+// 신청 → 평가 중 → 평가 완료(합격/불합격 판정) → 운영자 승인(발급) / 반려
+enum CredentialAppStatus {
+  SUBMITTED
+  EVALUATING
+  EVALUATED
+  APPROVED
+  REJECTED
+}
+
+model Credential {
+  id                String            @id @default(cuid())
+  number            String            @unique // BC-2026-000001
+  programId         String
+  userId            String
+  program           CredentialProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issuedAt          DateTime          @default(now())
+  expiresAt         DateTime?
+  revokedAt         DateTime?
+  renewalNotifiedAt DateTime?
+}
+
+// ─── 아카데미 패스 (요금·기간·포함 범위는 어드민 설정) ───
+model PassPlan {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?        @db.Text
+  price         Int // 원
+  durationDays  Int
+  includes      ProductType[] // 무제한 수강 대상 상품 유형
+  active        Boolean        @default(true)
+  orderItems    OrderItem[]
+  subscriptions Subscription[]
+  createdAt     DateTime       @default(now())
+}
+
+model Subscription {
+  id         String    @id @default(cuid())
+  userId     String
+  planId     String
+  orderId    String?   @unique
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan       PassPlan  @relation(fields: [planId], references: [id])
+  order      Order?    @relation(fields: [orderId], references: [id])
+  startsAt   DateTime
+  endsAt     DateTime
+  canceledAt DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+// ─── 커리어 패스웨이 (국가·직종별 경로) ───
+model Pathway {
+  id         String        @id @default(cuid())
+  slug       String        @unique
+  title      String
+  country    String // 미국, 아일랜드, 국내 ...
+  jobRole    JobRole?
+  summary    String?
+  content    String?       @db.Text // 자격 경로 개요 (HTML)
+  infoAsOf   DateTime? // 정보 기준일
+  disclaimer String?       @db.Text // 법적 자문 아님 등 면책 고지
+  coverImage String?
+  published  Boolean       @default(false)
+  order      Int           @default(0)
+  steps      PathwayStep[]
+  goals      PathwayGoal[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model PathwayStep {
+  id                  String             @id @default(cuid())
+  pathwayId           String
+  pathway             Pathway            @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
+  order               Int
+  title               String
+  description         String?            @db.Text
+  courseId            String?
+  course              Course?            @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  credentialProgramId String?
+  credentialProgram   CredentialProgram? @relation(fields: [credentialProgramId], references: [id], onDelete: SetNull)
+}
+
+model PathwayGoal {
+  userId    String
+  pathwayId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pathway   Pathway  @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, pathwayId])
 }
