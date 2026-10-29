@@ -17,6 +17,8 @@ export { SectionService } from "./section";
 export { LectureService } from "./lecture";
 export { EnrollmentService } from "./enrollment";
 export { OrderService } from "./order";
+export { PaymentService, ENROLLMENT_SOURCE, ORDER_AUDIT, type CheckoutTarget, type RefundRequestState } from "./order/payment";
+export { TossError, tossClientKey, isTossTestMode } from "./order/toss";
 export { InvoiceService } from "./invoice";
 export { OrganizationService } from "./organization";
 export { UserService } from "./user";
