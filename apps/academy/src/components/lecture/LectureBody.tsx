@@ -1,5 +1,6 @@
 "use client";
 
+import { Notice, buttonVariants, cn } from "@bayada/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -83,26 +84,26 @@ export function LectureBody({
   return (
     <div>
       {type === "VIDEO" ? (
-        <div className="overflow-hidden rounded-2xl bg-black">
+        <div className="overflow-hidden rounded-xl bg-black">
           <VideoPlayer videoUrl={videoUrl} title={title} onTimeUpdate={reportTime} onComplete={complete} />
         </div>
       ) : (
-        <article className="rounded-2xl border border-line bg-white p-6 md:p-10">
+        <article className="rounded-xl bg-canvas p-6 md:p-10">
           {contentHtml ? (
             // 옮겨 온 WordPress 레슨 본문(관리자 작성, 신뢰 콘텐츠)
             <div className="legacy-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
           ) : (
-            <p className="text-sm text-muted">이 레슨에는 본문이 없어요.</p>
+            <p className="text-body-sm text-muted">이 레슨에는 본문이 없어요.</p>
           )}
         </article>
       )}
 
       {courseCompleted && (
-        <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-brand/20 bg-brand-soft p-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex items-center gap-2 text-[15px] font-semibold text-ink">
-            <Award className="h-5 w-5 text-brand" aria-hidden /> 축하해요! 프로그램을 수료했어요. 수료증이 발급되었습니다.
+        <div className="mt-6 flex flex-col gap-4 rounded-xl bg-success-soft p-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-center gap-2 text-body font-semibold text-ink">
+            <Award className="h-5 w-5 text-success" aria-hidden /> 축하해요! 프로그램을 수료했어요. 수료증이 발급되었습니다.
           </p>
-          <Link href={certificatesHref} className="shrink-0 text-sm font-semibold text-brand hover:underline">
+          <Link href={certificatesHref} className="shrink-0 text-body-sm font-semibold text-ink underline underline-offset-4">
             인증서 보기 →
           </Link>
         </div>
@@ -115,11 +116,7 @@ export function LectureBody({
               type="button"
               onClick={complete}
               disabled={completed || saving}
-              className={`inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-semibold transition-colors ${
-                completed
-                  ? "border border-success/30 bg-success-soft text-success"
-                  : "bg-ink text-white hover:bg-ink-soft"
-              }`}
+              className={cn(buttonVariants({ variant: "secondary", size: "lg" }), completed && "border-success-line bg-success-soft text-success")}
             >
               {saving ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -129,10 +126,10 @@ export function LectureBody({
               {completed ? "학습 완료" : type === "VIDEO" ? "완료로 표시" : "다 읽었어요"}
             </button>
           ) : (
-            <span className="text-sm text-muted">미리보기 중이에요. 수강 신청하면 진도가 저장돼요.</span>
+            <span className="text-body-sm text-muted">미리보기 중이에요. 수강 신청하면 진도가 저장돼요.</span>
           )}
           {error && (
-            <p role="alert" className="mt-2 text-sm text-brand">
+            <p role="alert" className="mt-2 text-body-sm text-danger">
               {error}
             </p>
           )}
@@ -141,7 +138,7 @@ export function LectureBody({
           {prev && (
             <Link
               href={`${basePath}/${prev.id}`}
-              className="inline-flex h-11 items-center gap-1 rounded-xl border border-line px-4 text-sm font-semibold text-ink hover:border-ink"
+              className={buttonVariants({ variant: "secondary", size: "lg" })}
             >
               <ChevronLeft className="h-4 w-4" aria-hidden /> 이전
             </Link>
@@ -153,7 +150,7 @@ export function LectureBody({
                 // 읽기 레슨은 다음으로 넘어가면 완료로 본다
                 if (type === "TEXT") void complete();
               }}
-              className="inline-flex h-11 items-center gap-1 rounded-xl bg-brand px-4 text-sm font-semibold text-white hover:bg-brand-strong"
+              className={buttonVariants({ variant: "primary", size: "lg" })}
             >
               다음 강의 <ChevronRight className="h-4 w-4" aria-hidden />
             </Link>

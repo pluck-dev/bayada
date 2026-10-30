@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { cn } from "@bayada/ui";
 import { catalogHref, type CatalogQuery, type ListKey } from "@/lib/catalog-url";
 
 export interface FilterGroup {
@@ -33,25 +34,25 @@ export function FilterPanel({
   const hasAny = groups.some((g) => (query[g.key] ?? []).length > 0);
 
   return (
-    <div className={`transition-opacity ${pending ? "opacity-60" : ""}`} aria-busy={pending}>
+    <div className={cn("transition-opacity", pending && "opacity-60")} aria-busy={pending}>
       <div className="flex items-center justify-between">
-        <p className="text-sm font-bold text-ink">필터</p>
+        <p className="text-body font-semibold text-ink">필터</p>
         {hasAny && (
           <button
             type="button"
             onClick={() =>
               startTransition(() => router.push(catalogHref(locale, { q: query.q, sort: query.sort }), { scroll: false }))
             }
-            className="text-xs font-medium text-muted hover:text-ink"
+            className="text-caption font-medium text-muted underline-offset-4 hover:text-ink hover:underline"
           >
             초기화
           </button>
         )}
       </div>
       {groups.map((g) => (
-        <fieldset key={g.key} className="mt-5 border-t border-line-soft pt-5">
+        <fieldset key={g.key} className="mt-6">
           <legend className="sr-only">{g.title}</legend>
-          <p aria-hidden className="mb-3 text-[13px] font-semibold text-ink-soft">
+          <p aria-hidden className="mb-2 text-body-sm font-semibold text-ink">
             {g.title}
           </p>
           <div className="space-y-1">
@@ -62,19 +63,20 @@ export function FilterPanel({
               return (
                 <label
                   key={o.value}
-                  className={`flex items-center gap-2.5 rounded-lg px-1 py-1.5 text-sm ${
-                    empty ? "cursor-not-allowed text-subtle" : "cursor-pointer text-ink-soft hover:text-ink"
-                  }`}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-md py-1.5 text-body-sm",
+                    empty ? "cursor-not-allowed text-disabled" : "cursor-pointer text-ink-soft hover:text-ink",
+                  )}
                 >
                   <input
                     type="checkbox"
                     checked={checked}
                     disabled={empty}
                     onChange={() => toggle(g.key, o.value)}
-                    className="h-4 w-4 rounded border-line accent-[#e31b34]"
+                    className="h-4 w-4 rounded-xs border-line-strong accent-ink"
                   />
                   <span className="flex-1">{o.label}</span>
-                  {typeof o.count === "number" && <span className="text-xs text-subtle">{o.count}</span>}
+                  {typeof o.count === "number" && <span className="tabular text-caption text-subtle">{o.count}</span>}
                 </label>
               );
             })}

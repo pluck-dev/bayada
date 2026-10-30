@@ -94,12 +94,12 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
     return (
       <div className="relative aspect-video w-full bg-gray-900">
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white gap-4">
-          <div className="rounded-full bg-white/10 p-6 backdrop-blur-sm">
+          <div className="rounded-full bg-canvas/10 p-6 backdrop-blur-sm">
             <PlayCircle className="h-16 w-16 opacity-60" />
           </div>
           <div className="text-center px-8">
-            <p className="text-white/80 text-sm font-medium">{title}</p>
-            <p className="text-white/40 text-xs mt-1">영상이 아직 등록되지 않았습니다</p>
+            <p className="text-white/80 text-body-sm font-medium">{title}</p>
+            <p className="text-white/40 text-caption mt-1">영상이 아직 등록되지 않았습니다</p>
           </div>
         </div>
       </div>
@@ -140,7 +140,7 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
           className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
           onClick={togglePlay}
         >
-          <div className="rounded-full bg-white/10 p-6 backdrop-blur-sm transition-transform hover:scale-110">
+          <div className="rounded-full bg-canvas/10 p-6 backdrop-blur-sm transition-transform hover:scale-110">
             <PlayCircle className="h-16 w-16 text-white opacity-90 fill-white/20" />
           </div>
         </div>
@@ -150,7 +150,7 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 pb-3 pt-8 opacity-0 transition-opacity group-hover:opacity-100">
         {/* 프로그레스 바 */}
         <div
-          className="mb-3 h-1 w-full cursor-pointer rounded-full bg-white/30 hover:h-1.5 transition-all"
+          className="mb-3 h-1 w-full cursor-pointer rounded-full bg-canvas/30 hover:h-1.5 transition-all"
           onClick={handleSeek}
         >
           <div
@@ -167,7 +167,7 @@ export function VideoPlayer({ videoUrl, title, onTimeUpdate, onComplete }: Video
             <button onClick={toggleMute} className="text-white hover:text-white/80 transition-colors">
               {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
             </button>
-            <span className="text-xs text-white/70">
+            <span className="text-caption text-white/70">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>

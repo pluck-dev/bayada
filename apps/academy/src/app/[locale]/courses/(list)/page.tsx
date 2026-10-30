@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Lock, SearchX, SlidersHorizontal, X } from "lucide-react";
+import { Lock, Search, SearchX, SlidersHorizontal, X } from "lucide-react";
+import { Badge, Breadcrumb, EmptyState, PageHeader, Pagination, buttonVariants, controlClass, tagClass } from "@bayada/ui";
 import { getViewer } from "@/lib/viewer";
 import { getFacetCounts, getTaxonomy, listCatalog, parseCatalogFilters } from "@/lib/queries/courses";
 import { LIST_KEYS, catalogHref, type CatalogQuery, type ListKey } from "@/lib/catalog-url";
@@ -20,7 +21,6 @@ import {
 import { CourseCard } from "@/components/course/CourseCard";
 import { FilterPanel, type FilterGroup } from "@/components/catalog/FilterPanel";
 import { SortSelect } from "@/components/catalog/SortSelect";
-import { EmptyState } from "@/components/ui/EmptyState";
 
 export default async function CatalogPage({
   params,
@@ -111,60 +111,55 @@ export default async function CatalogPage({
   const title = filters.type.length === 1 && filters.type[0] === "CERTIFICATION" ? "인증·커리어" : "전체 프로그램";
 
   return (
-    <div className="container-page pb-8 pt-8 md:pt-10">
-      <nav aria-label="현재 위치" className="text-xs text-muted">
-        <Link href={`/${locale}`} className="hover:text-ink">
-          홈
-        </Link>
-        <span className="mx-1.5">/</span>
-        <span className="text-ink-soft">{title}</span>
-      </nav>
-      <h1 className="mt-3 text-[32px] font-bold tracking-[-0.02em] text-ink md:text-[40px]">{title}</h1>
+    <div className="container-page page-y">
+      <PageHeader
+        breadcrumb={<Breadcrumb LinkComponent={Link} items={[{ label: "홈", href: `/${locale}` }, { label: title }]} />}
+        title={title}
+        description="직군·주제·난이도로 필요한 교육을 찾아보세요."
+      />
 
-      <form action={`/${locale}/courses`} role="search" className="mt-6 max-w-xl">
+      <form action={`/${locale}/courses`} role="search" className="max-w-xl">
         {Object.entries(query).flatMap(([k, v]) =>
           k !== "q" && Array.isArray(v) && v.length ? [<input key={k} type="hidden" name={k} value={v.join(",")} />] : []
         )}
         {filters.sort !== "recommended" && <input type="hidden" name="sort" value={filters.sort} />}
         <label className="relative block">
           <span className="sr-only">프로그램 검색</span>
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-subtle" aria-hidden />
           <input
             name="q"
             type="search"
             defaultValue={filters.q}
             placeholder="프로그램, 주제, 기관 이름으로 검색"
-            className="h-12 w-full rounded-2xl border border-line bg-white pl-4 pr-24 text-[15px] text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
+            className={controlClass("md", "pl-12 pr-24")}
           />
-          <button
-            type="submit"
-            className="absolute right-1.5 top-1.5 h-9 rounded-xl bg-ink px-4 text-sm font-semibold text-white hover:bg-ink-soft"
-          >
+          <button type="submit" className={`${buttonVariants({ variant: "secondary", size: "sm" })} absolute right-2 top-2`}>
             검색
           </button>
         </label>
       </form>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[232px_1fr]">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[220px_1fr]">
         {/* 필터: 데스크톱 사이드바 / 모바일 접이식 */}
         <aside className="hidden lg:block">
-          <div className="sticky top-32 rounded-2xl border border-line bg-white p-5">
+          <div className="sticky top-24">
             <FilterPanel locale={locale} query={query} groups={groups} />
           </div>
         </aside>
-        <details className="rounded-2xl border border-line bg-white lg:hidden">
-          <summary className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-ink">
+        <details className="rounded-xl border border-line bg-canvas lg:hidden">
+          <summary className="flex items-center gap-2 px-5 py-3.5 text-body-sm font-semibold text-ink">
             <SlidersHorizontal className="h-4 w-4" aria-hidden /> 필터
-            {isFiltered && <span className="rounded-full bg-brand px-1.5 text-[11px] text-white">{chips.length}</span>}
+            {isFiltered && <Badge tone="neutral">{chips.length}</Badge>}
           </summary>
-          <div className="border-t border-line-soft p-5">
+          <div className="border-t border-line p-5">
             <FilterPanel locale={locale} query={query} groups={groups} />
           </div>
         </details>
 
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[15px] font-semibold text-ink">
-              <span className="text-brand">{result.total}</span>개 프로그램
+            <p className="text-body text-muted">
+              <span className="tabular font-semibold text-ink">{result.total}</span>개 프로그램
             </p>
             <SortSelect locale={locale} query={query} />
           </div>
@@ -176,7 +171,7 @@ export default async function CatalogPage({
                   key={c.href + c.label}
                   href={c.href}
                   scroll={false}
-                  className="inline-flex items-center gap-1 rounded-full border border-line bg-surface py-1 pl-3 pr-2 text-xs font-medium text-ink-soft hover:border-ink-soft hover:text-ink"
+                  className={`${tagClass({ size: "sm" })} pr-2`}
                   aria-label={`${c.label} 조건 해제`}
                 >
                   {c.label} <X className="h-3.5 w-3.5" aria-hidden />
@@ -185,7 +180,7 @@ export default async function CatalogPage({
               <Link
                 href={catalogHref(locale, { sort: query.sort })}
                 scroll={false}
-                className="ml-1 text-xs font-medium text-muted underline-offset-2 hover:text-ink hover:underline"
+                className="ml-1 text-caption font-medium text-muted underline-offset-2 hover:text-ink hover:underline"
               >
                 전체 해제
               </Link>
@@ -194,74 +189,51 @@ export default async function CatalogPage({
 
           <div className="mt-6">
             {result.items.length > 0 ? (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {result.items.map((c) => (
                   <CourseCard key={c.id} course={c} locale={locale} />
                 ))}
               </div>
             ) : isFiltered ? (
               <EmptyState
-                icon={<SearchX className="h-5 w-5" />}
+                framed
+                icon={<SearchX />}
                 title="조건에 맞는 프로그램이 없어요"
                 description="검색어를 바꾸거나 필터를 줄여 보세요."
-                action={{ label: "전체 보기", href: `/${locale}/courses` }}
+                action={
+                  <Link href={`/${locale}/courses`} className={buttonVariants({ variant: "secondary" })}>
+                    전체 보기
+                  </Link>
+                }
               />
             ) : (
               <EmptyState
-                icon={<Lock className="h-5 w-5" />}
+                framed
+                icon={<Lock />}
                 title={viewer ? "아직 공개된 프로그램이 없어요" : "지금은 임직원 전용 프로그램을 운영하고 있어요"}
                 description={
                   viewer
                     ? "새 프로그램이 공개되면 이곳에서 바로 확인할 수 있어요."
                     : "바야다홈헬스케어 임직원이라면 로그인 후 사내 교육 프로그램을 볼 수 있어요."
                 }
-                action={viewer ? undefined : { label: "로그인", href: `/${locale}/auth/login` }}
+                action={
+                  viewer ? undefined : (
+                    <Link href={`/${locale}/auth/login`} className={buttonVariants({ variant: "secondary" })}>
+                      로그인
+                    </Link>
+                  )
+                }
               />
             )}
           </div>
 
-          {result.totalPages > 1 && (
-            <nav aria-label="페이지" className="mt-10 flex items-center justify-center gap-1">
-              {result.page > 1 ? (
-                <Link
-                  href={catalogHref(locale, { ...query, page: result.page - 1 })}
-                  aria-label="이전 페이지"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft hover:bg-line-soft"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Link>
-              ) : (
-                <span className="flex h-9 w-9 items-center justify-center text-line" aria-hidden>
-                  <ChevronLeft className="h-4 w-4" />
-                </span>
-              )}
-              {Array.from({ length: result.totalPages }, (_, i) => i + 1).map((p) => (
-                <Link
-                  key={p}
-                  href={catalogHref(locale, { ...query, page: p })}
-                  aria-current={p === result.page ? "page" : undefined}
-                  className={`flex h-9 min-w-9 items-center justify-center rounded-full px-2 text-sm font-semibold ${
-                    p === result.page ? "bg-ink text-white" : "text-ink-soft hover:bg-line-soft"
-                  }`}
-                >
-                  {p}
-                </Link>
-              ))}
-              {result.page < result.totalPages ? (
-                <Link
-                  href={catalogHref(locale, { ...query, page: result.page + 1 })}
-                  aria-label="다음 페이지"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft hover:bg-line-soft"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              ) : (
-                <span className="flex h-9 w-9 items-center justify-center text-line" aria-hidden>
-                  <ChevronRight className="h-4 w-4" />
-                </span>
-              )}
-            </nav>
-          )}
+          <Pagination
+            className="mt-12"
+            page={result.page}
+            totalPages={result.totalPages}
+            hrefFor={(p) => catalogHref(locale, { ...query, page: p })}
+            LinkComponent={Link}
+          />
         </div>
       </div>
     </div>

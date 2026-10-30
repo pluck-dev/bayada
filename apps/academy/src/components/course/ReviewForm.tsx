@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@bayada/ui";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2, Star } from "lucide-react";
@@ -50,15 +51,15 @@ export function ReviewForm({
 
   if (!open) {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-5 py-4">
-        <p className="text-sm text-ink-soft">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-5 py-4">
+        <p className="text-body-sm text-ink-soft">
           {saved ? "후기를 저장했어요. 소중한 의견 고마워요." : "내 후기를 남겼어요."}
           {initial?.hidden && <span className="ml-1 text-muted">(운영 검토로 비공개 처리된 후기예요)</span>}
         </p>
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-full border border-line bg-white px-4 py-1.5 text-sm font-semibold text-ink hover:border-ink"
+          className="rounded-full border border-line bg-canvas px-4 py-1.5 text-body-sm font-semibold text-ink hover:border-ink"
         >
           후기 수정
         </button>
@@ -68,8 +69,8 @@ export function ReviewForm({
 
   const shown = hover || rating;
   return (
-    <form onSubmit={submit} className="rounded-2xl border border-line bg-white p-5 sm:p-6">
-      <p className="text-[15px] font-bold text-ink">{initial ? "후기 수정" : "이 프로그램은 어떠셨나요?"}</p>
+    <form onSubmit={submit} className="rounded-xl border border-line bg-canvas p-5 sm:p-6">
+      <p className="text-body font-bold text-ink">{initial ? "후기 수정" : "이 프로그램은 어떠셨나요?"}</p>
       <div className="mt-3 flex items-center gap-3">
         <div role="radiogroup" aria-label="별점" className="flex" onMouseLeave={() => setHover(0)}>
           {[1, 2, 3, 4, 5].map((n) => (
@@ -90,7 +91,7 @@ export function ReviewForm({
             </button>
           ))}
         </div>
-        {shown > 0 && <span className="text-sm font-semibold text-ink-soft">{RATING_TEXT[shown]}</span>}
+        {shown > 0 && <span className="text-body-sm font-semibold text-ink-soft">{RATING_TEXT[shown]}</span>}
       </div>
       <label className="mt-4 block">
         <span className="sr-only">후기 내용</span>
@@ -100,26 +101,26 @@ export function ReviewForm({
           maxLength={1000}
           rows={4}
           placeholder="현장에서 도움이 된 점, 아쉬웠던 점을 들려주세요. (10자 이상)"
-          className="w-full resize-y rounded-xl border border-line bg-white px-4 py-3 text-[15px] leading-relaxed text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
+          className="w-full resize-y rounded-xl border border-line bg-canvas px-4 py-3 text-body leading-relaxed text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
         />
       </label>
-      <div className="mt-1 text-right text-xs text-subtle">{content.length}/1000</div>
+      <div className="mt-1 text-right text-caption text-subtle">{content.length}/1000</div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-soft">
+        <label className="flex cursor-pointer items-center gap-2 text-body-sm text-ink-soft">
           <input
             type="checkbox"
             checked={showName}
             onChange={(e) => setShowName(e.target.checked)}
             className="h-4 w-4 rounded border-line accent-[#e31b34]"
           />
-          이름 공개에 동의해요 <span className="text-xs text-muted">(동의하지 않으면 홍*동처럼 가려져요)</span>
+          이름 공개에 동의해요 <span className="text-caption text-muted">(동의하지 않으면 홍*동처럼 가려져요)</span>
         </label>
         <div className="flex gap-2">
           {initial && (
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="h-10 rounded-xl border border-line px-4 text-sm font-semibold text-ink-soft hover:border-ink"
+              className="h-10 rounded-xl border border-line px-4 text-body-sm font-semibold text-ink-soft hover:border-ink"
             >
               취소
             </button>
@@ -127,7 +128,7 @@ export function ReviewForm({
           <button
             type="submit"
             disabled={busy}
-            className="flex h-10 items-center gap-1.5 rounded-xl bg-ink px-5 text-sm font-semibold text-white hover:bg-ink-soft disabled:opacity-70"
+            className={buttonVariants({ variant: "secondary", size: "md" })}
           >
             {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
             {initial ? "수정 완료" : "후기 등록"}
@@ -135,7 +136,7 @@ export function ReviewForm({
         </div>
       </div>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-brand">
+        <p role="alert" className="mt-3 text-body-sm text-danger">
           {error}
         </p>
       )}

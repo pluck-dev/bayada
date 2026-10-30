@@ -7,7 +7,6 @@ import {
   BookOpen,
   CalendarDays,
   CheckCircle2,
-  ChevronDown,
   Clock,
   FileText,
   HelpCircle,
@@ -44,7 +43,7 @@ import { SessionButton } from "@/components/course/SessionButton";
 import { ReviewCard, Stars } from "@/components/course/ReviewCard";
 import { ReviewForm } from "@/components/course/ReviewForm";
 import { ReportReviewButton } from "@/components/course/ReportReviewButton";
-import { Faq } from "@/components/ui/Faq";
+import { Accordion, Avatar, Badge, Breadcrumb, Notice, ProgressBar, SectionHeader, buttonVariants, cn } from "@bayada/ui";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -101,20 +100,20 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
     return (
       <div className="container-page py-24">
         <div className="mx-auto flex max-w-md flex-col items-center text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-surface text-ink-soft">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-sunken text-ink-soft">
             <Lock className="h-6 w-6" aria-hidden />
           </span>
-          <h1 className="mt-6 text-2xl font-bold tracking-tight text-ink">임직원 전용 프로그램이에요</h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted">
+          <h1 className="mt-6 text-h2 font-bold tracking-tight text-ink">임직원 전용 프로그램이에요</h1>
+          <p className="mt-3 text-body leading-relaxed text-muted">
             바야다홈헬스케어 임직원 계정으로 로그인하면 이 프로그램을 확인하고 수강할 수 있어요.
           </p>
           <Link
             href={`/${locale}/auth/login?callbackUrl=${encodeURIComponent(detailPath)}`}
-            className="mt-8 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white hover:bg-ink-soft"
+            className={cn(buttonVariants({ variant: "primary", size: "lg" }), "mt-8")}
           >
             로그인
           </Link>
-          <Link href={`/${locale}/courses`} className="mt-3 text-sm font-medium text-muted hover:text-ink">
+          <Link href={`/${locale}/courses`} className="mt-3 text-body-sm font-medium text-muted hover:text-ink">
             다른 프로그램 둘러보기
           </Link>
         </div>
@@ -196,96 +195,80 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
   return (
     <div className="pb-24 lg:pb-0">
-      {/* 서브 내비 */}
-      <div className="sticky top-16 z-30 border-b border-line bg-white/95 backdrop-blur md:top-[100px]">
-        <div className="container-page flex h-12 items-center justify-between gap-4">
-          <nav aria-label="프로그램 상세 메뉴" className="no-scrollbar flex gap-6 overflow-x-auto">
+      {/* 섹션 바로가기 — 헤더(64px) 바로 아래 고정 */}
+      <div className="sticky top-16 z-sticky border-b border-line bg-canvas/95 backdrop-blur">
+        <div className="container-page">
+          <nav aria-label="프로그램 상세 메뉴" className="no-scrollbar flex h-12 items-center gap-6 overflow-x-auto">
             {nav.map((n) => (
-              <a key={n.id} href={`#${n.id}`} className="shrink-0 text-sm font-semibold text-ink-soft hover:text-ink">
+              <a
+                key={n.id}
+                href={`#${n.id}`}
+                className="shrink-0 text-body-sm font-semibold text-ink-soft transition-colors hover:text-ink"
+              >
                 {n.label}
               </a>
             ))}
-          </nav>
-          <nav aria-label="현재 위치" className="hidden truncate text-xs text-muted md:block">
-            <Link href={`/${locale}`} className="hover:text-ink">
-              홈
-            </Link>
-            <span className="mx-1.5">/</span>
-            <Link href={`/${locale}/courses`} className="hover:text-ink">
-              전체 프로그램
-            </Link>
-            {course.category && (
-              <>
-                <span className="mx-1.5">/</span>
-                <Link
-                  href={`/${locale}/courses?category=${encodeURIComponent(course.category.slug)}`}
-                  className="hover:text-ink"
-                >
-                  {course.category.name}
-                </Link>
-              </>
-            )}
           </nav>
         </div>
       </div>
 
       <div className="container-page">
-        <div className="grid gap-10 pt-10 lg:grid-cols-[1fr_360px] lg:gap-14">
+        <div className="grid gap-10 pt-8 md:pt-10 lg:grid-cols-[1fr_360px] lg:gap-16">
           <div className="min-w-0">
             {/* 히어로 */}
             <section id="intro" className="scroll-mt-40">
-              <div className="flex items-center gap-2 text-sm text-muted">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[11px] font-bold text-brand">
-                  {(course.provider?.name ?? "B").charAt(0)}
-                </span>
-                {course.provider?.name ?? "바야다홈헬스케어"}
-              </div>
-              <h1 className="mt-4 text-[30px] font-bold leading-tight tracking-[-0.02em] text-ink md:text-[40px]">
+              <Breadcrumb
+                LinkComponent={Link}
+                items={[
+                  { label: "홈", href: `/${locale}` },
+                  { label: "전체 프로그램", href: `/${locale}/courses` },
+                  ...(course.category
+                    ? [{ label: course.category.name, href: `/${locale}/courses?category=${encodeURIComponent(course.category.slug)}` }]
+                    : []),
+                ]}
+              />
+              <p className="mt-6 text-body-sm font-medium text-muted">
+                {PRODUCT_TYPE_LABEL[course.productType]} · {course.provider?.name ?? "바야다홈헬스케어"}
+              </p>
+              <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-[-0.025em] text-ink md:text-[36px]">
                 {course.title}
               </h1>
-              {course.summary && <p className="mt-4 text-[17px] leading-relaxed text-muted">{course.summary}</p>}
+              {course.summary && <p className="mt-4 text-body-lg text-muted">{course.summary}</p>}
               <div className="mt-5 flex flex-wrap gap-2">
-                {course.audiences.map((a) => (
-                  <span key={a} className="rounded-full border border-line px-3 py-1 text-xs font-medium text-ink-soft">
-                    {JOB_ROLE_LABEL[a]}
-                  </span>
-                ))}
-                <span className="rounded-full border border-line px-3 py-1 text-xs font-medium text-ink-soft">
-                  {PRODUCT_TYPE_LABEL[course.productType]}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
-                  <Award className="h-3.5 w-3.5" aria-hidden /> 수료증 발급
-                </span>
                 {course.visibility === "INTERNAL" && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-ink px-3 py-1 text-xs font-medium text-white">
-                    <Lock className="h-3 w-3" aria-hidden /> 사내 전용
-                  </span>
+                  <Badge size="md" tone="inverse" icon={<Lock aria-hidden />}>
+                    사내 전용
+                  </Badge>
                 )}
+                {course.audiences.map((a) => (
+                  <Badge key={a} size="md" variant="outline">
+                    {JOB_ROLE_LABEL[a]}
+                  </Badge>
+                ))}
+                <Badge size="md" variant="outline" icon={<Award aria-hidden />}>
+                  수료증 발급
+                </Badge>
               </div>
 
               {/* 정보 바 */}
-              <dl
-                className={`mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line ${
-                  infoItems.length > 5 ? "sm:grid-cols-3 xl:grid-cols-6" : "sm:grid-cols-5"
-                }`}
-              >
+              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 sm:grid-cols-3 xl:grid-cols-6">
                 {infoItems.map((it) => (
-                  <div key={it.label} className="bg-white p-4 sm:p-5">
-                    <dt className="flex items-center gap-1.5 text-xs text-muted">
+                  <div key={it.label}>
+                    <dt className="flex items-center gap-1.5 text-caption text-muted">
                       <it.icon className="h-3.5 w-3.5" aria-hidden /> {it.label}
                     </dt>
-                    <dd className="mt-1.5 text-[15px] font-bold text-ink">{it.value}</dd>
+                    <dd className="mt-1 text-body font-semibold text-ink">{it.value}</dd>
                   </div>
                 ))}
               </dl>
 
               {course.objectives.length > 0 && (
                 <div className="mt-14">
-                  <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">배우게 될 내용</h2>
-                  <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <SectionHeader title="배우게 될 내용" />
+                  <ul className="grid gap-3 sm:grid-cols-2">
                     {course.objectives.map((o) => (
-                      <li key={o} className="flex gap-2.5 text-[15px] leading-relaxed text-ink-soft">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden />
+                      <li key={o} className="flex gap-2.5 text-body leading-relaxed text-ink-soft">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" aria-hidden />
                         {o}
                       </li>
                     ))}
@@ -295,9 +278,9 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
               {course.description && (
                 <div className="mt-14">
-                  <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">프로그램 소개</h2>
+                  <SectionHeader title="프로그램 소개" />
                   <div
-                    className="legacy-content mt-5"
+                    className="legacy-content"
                     // 옮겨 온 WordPress 본문(관리자 작성, 신뢰 콘텐츠)
                     dangerouslySetInnerHTML={{ __html: course.description }}
                   />
@@ -306,31 +289,37 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             </section>
 
             {/* 커리큘럼 */}
-            <section id="curriculum" className="mt-16 scroll-mt-40">
-              <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">
-                커리큘럼 <span className="text-muted">· {lectureCount}개 강의</span>
-              </h2>
-              {quizCount > 0 && <p className="mt-2 text-sm text-muted">퀴즈 {quizCount}개 포함</p>}
-              <div className="mt-6 space-y-3">
+            <section id="curriculum" className="mt-14 scroll-mt-32">
+              <SectionHeader
+                title={
+                  <>
+                    커리큘럼 <span className="font-semibold text-muted">· {lectureCount}개 강의</span>
+                  </>
+                }
+                description={quizCount > 0 ? `퀴즈 ${quizCount}개 포함` : undefined}
+              />
+              <div className="divide-y divide-line overflow-hidden rounded-xl border border-line">
                 {course.sections.map((s, si) => {
                   const secSec = s.lectures.reduce((sum, l) => sum + (l.duration ?? 0), 0);
                   return (
                     <details
                       key={s.id}
                       open={si === 0}
-                      className="overflow-hidden rounded-2xl border border-line bg-white"
+                      className="group"
                     >
-                      <summary className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-surface">
-                        <span className="text-[15px] font-semibold text-ink">
+                      <summary className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-surface">
+                        <span className="text-body font-semibold text-ink">
                           {si + 1}. {s.title}
                         </span>
-                        <span className="flex shrink-0 items-center gap-3 text-xs text-muted">
+                        <span className="flex shrink-0 items-center gap-3 text-caption text-muted">
                           {s.lectures.length}개
                           {secSec > 0 && ` · ${formatMinutes(Math.round(secSec / 60))}`}
-                          <ChevronDown className="accordion-chevron h-4 w-4 transition-transform" aria-hidden />
+                          <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 text-subtle transition-transform group-open:rotate-180" aria-hidden>
+                            <path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z" />
+                          </svg>
                         </span>
                       </summary>
-                      <ul className="border-t border-line-soft">
+                      <ul className="border-t border-line-soft pb-2">
                         {s.lectures.map((l) => {
                           const Icon = LECTURE_ICON[l.type];
                           const canOpen = !!enrollment || l.isFree;
@@ -339,11 +328,9 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                               <Icon className="h-4 w-4 shrink-0 text-subtle" aria-hidden />
                               <span className="flex-1 truncate">{l.title}</span>
                               {l.isFree && !enrollment && (
-                                <span className="rounded bg-brand-soft px-1.5 py-0.5 text-[11px] font-semibold text-brand">
-                                  미리보기
-                                </span>
+                                <Badge tone="brand">미리보기</Badge>
                               )}
-                              <span className="shrink-0 text-xs text-muted">
+                              <span className="shrink-0 text-caption text-muted">
                                 {l.type === "QUIZ"
                                   ? `${l.quiz?._count.questions ?? 0}문항`
                                   : (formatSeconds(l.duration) ?? (l.type === "TEXT" ? "읽기" : ""))}
@@ -355,12 +342,12 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                               {canOpen ? (
                                 <Link
                                   href={`${detailPath}/lectures/${l.id}`}
-                                  className="flex items-center gap-3 px-5 py-3 text-sm text-ink-soft hover:bg-surface hover:text-ink"
+                                  className="flex items-center gap-3 px-5 py-2.5 text-body-sm text-ink-soft hover:bg-surface hover:text-ink"
                                 >
                                   {row}
                                 </Link>
                               ) : (
-                                <div className="flex items-center gap-3 px-5 py-3 text-sm text-ink-soft">{row}</div>
+                                <div className="flex items-center gap-3 px-5 py-2.5 text-body-sm text-ink-soft">{row}</div>
                               )}
                             </li>
                           );
@@ -374,18 +361,22 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
             {/* 실습 일정 */}
             {sessions.length > 0 && (
-              <section id="sessions" className="mt-16 scroll-mt-40">
-                <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">
-                  실습 일정 <span className="text-muted">· {sessions.length}회</span>
-                </h2>
-                <p className="mt-2 text-sm text-muted">
-                  {canApplySession
-                    ? "원하는 지역·일정을 골라 신청하세요. 정원이 차면 마감돼요."
-                    : "수강 신청한 분만 실습을 신청할 수 있어요."}
-                </p>
-                <div className="mt-6 overflow-hidden rounded-2xl border border-line">
-                  <table className="w-full text-left text-sm">
-                    <thead className="hidden bg-surface text-xs font-semibold text-muted sm:table-header-group">
+              <section id="sessions" className="mt-14 scroll-mt-32">
+                <SectionHeader
+                  title={
+                    <>
+                      실습 일정 <span className="font-semibold text-muted">· {sessions.length}회</span>
+                    </>
+                  }
+                  description={
+                    canApplySession
+                      ? "원하는 지역·일정을 골라 신청하세요. 정원이 차면 마감돼요."
+                      : "수강 신청한 분만 실습을 신청할 수 있어요."
+                  }
+                />
+                <div className="overflow-hidden rounded-xl border border-line">
+                  <table className="w-full text-left text-body-sm">
+                    <thead className="hidden bg-surface text-caption font-semibold text-muted sm:table-header-group">
                       <tr>
                         <th scope="col" className="px-5 py-3">지역</th>
                         <th scope="col" className="px-5 py-3">일시</th>
@@ -408,12 +399,12 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                           </td>
                           <td className="col-start-1 text-ink-soft sm:px-5 sm:py-4">
                             {ss.location}
-                            {ss.note && <span className="mt-0.5 block text-xs text-muted">{ss.note}</span>}
+                            {ss.note && <span className="mt-0.5 block text-caption text-muted">{ss.note}</span>}
                           </td>
                           <td className="col-start-1 sm:whitespace-nowrap sm:px-5 sm:py-4">
                             {ss.remaining > 0 ? (
                               <span className="text-ink-soft">
-                                <span className={`font-bold ${ss.remaining <= 3 ? "text-brand" : "text-ink"}`}>
+                                <span className={cn("font-bold", ss.remaining <= 3 ? "text-warning" : "text-ink")}>
                                   {ss.remaining}
                                 </span>
                                 <span className="text-muted"> / {ss.capacity}석</span>
@@ -442,40 +433,40 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             )}
 
             {/* 수료 안내 */}
-            <section id="certificate" className="mt-16 scroll-mt-40">
-              <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">수료 안내</h2>
-              <div className="mt-6 grid gap-6 rounded-2xl border border-line bg-surface p-6 sm:grid-cols-[200px_1fr] sm:p-8">
-                <div className="flex aspect-[1.414] flex-col justify-between rounded-xl border border-line bg-white p-4 shadow-card">
+            <section id="certificate" className="mt-14 scroll-mt-32">
+              <SectionHeader title="수료 안내" />
+              <div className="grid gap-6 sm:grid-cols-[180px_1fr] sm:gap-8">
+                <div className="flex aspect-[1.414] flex-col justify-between rounded-lg border border-line bg-canvas p-4">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[11px] font-extrabold text-brand">BAYADA</span>
-                    <span className="text-[10px] font-semibold text-ink">Academy</span>
+                    <span className="text-micro font-extrabold text-brand">BAYADA</span>
+                    <span className="text-micro font-semibold text-ink">Academy</span>
                   </div>
                   <div>
                     <p className="text-[9px] tracking-[0.2em] text-muted">CERTIFICATE</p>
-                    <p className="mt-1 line-clamp-2 text-xs font-bold leading-snug text-ink">{course.title}</p>
+                    <p className="mt-1 line-clamp-2 text-caption font-bold leading-snug text-ink">{course.title}</p>
                   </div>
                   <div className="h-px bg-line" />
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-ink">모든 강의를 마치면 수료증이 발급돼요</p>
-                  <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-ink-soft">
+                  <p className="text-title text-ink">모든 강의를 마치면 수료증이 발급돼요</p>
+                  <ul className="mt-4 space-y-2.5 text-body-sm leading-relaxed text-ink-soft">
                     <li className="flex gap-2">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden />
                       영상·읽기 강의를 모두 완료하고{quizCount > 0 ? " 퀴즈를 합격 점수 이상으로 통과하면" : "면"} 자동 발급
                     </li>
                     <li className="flex gap-2">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden />
                       마이 러닝 &gt; 인증서에서 PDF로 저장
                     </li>
                     <li className="flex gap-2">
-                      <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                      <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden />
                       고유 번호와 검증 링크로 누구나 발급 사실 확인
                     </li>
                   </ul>
                   {certificate && (
                     <Link
                       href={`/${locale}/certificates/${certificate.number}/print`}
-                      className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:underline"
+                      className="mt-5 inline-flex items-center gap-1.5 text-body-sm font-semibold text-ink underline-offset-4 hover:underline"
                     >
                       <Award className="h-4 w-4" aria-hidden /> 내 수료증 보기 ({certificate.number})
                     </Link>
@@ -486,9 +477,9 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                         <Link
                           key={p.slug}
                           href={`/${locale}/certifications/${encodeURIComponent(p.slug)}`}
-                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-brand"
+                          className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-ink underline-offset-4 hover:underline"
                         >
-                          <ShieldCheck className="h-4 w-4 text-brand" aria-hidden />→ 바야다 인증 {p.title}으로 이어집니다
+                          <ShieldCheck className="h-4 w-4 text-ink-soft" aria-hidden />바야다 인증 {p.title}으로 이어집니다
                         </Link>
                       ))}
                     </div>
@@ -499,29 +490,27 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
             {/* 제공기관 */}
             {course.provider && (
-              <section className="mt-16">
-                <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">제공기관</h2>
-                <div className="mt-6 flex items-center gap-5 rounded-2xl border border-line p-6">
+              <section className="mt-14">
+                <SectionHeader title="제공기관" />
+                <div className="flex items-center gap-4">
                   {course.provider.logo ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={course.provider.logo} alt="" className="h-14 w-14 rounded-full border border-line object-cover" />
+                    <img src={course.provider.logo} alt="" className="h-12 w-12 rounded-full border border-line object-cover" />
                   ) : (
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">
-                      {course.provider.name.charAt(0)}
-                    </span>
+                    <Avatar name={course.provider.name} size="lg" className="bg-surface-sunken text-ink-soft" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="text-base font-bold text-ink">{course.provider.name}</p>
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="text-body font-bold text-ink">{course.provider.name}</p>
+                    <p className="mt-1 text-body-sm text-muted">
                       {course.provider.isPartner ? "파트너 교육기관" : "바야다 아카데미 운영 기관"}
                       {providerCourseCount > 0 && ` · 프로그램 ${providerCourseCount}개`}
                     </p>
                   </div>
                   <Link
                     href={`/${locale}/courses?provider=${encodeURIComponent(course.provider.slug)}`}
-                    className="hidden shrink-0 text-sm font-semibold text-ink-soft hover:text-ink sm:block"
+                    className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "hidden sm:inline-flex")}
                   >
-                    프로그램 보기 →
+                    프로그램 보기
                   </Link>
                 </div>
               </section>
@@ -529,28 +518,33 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
             {/* 후기·평점 */}
             {showReviews && (
-              <section id="reviews" className="mt-16 scroll-mt-40">
-                <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">
-                  수강 후기 {reviewSummary.count > 0 && <span className="text-muted">· {reviewSummary.count}개</span>}
-                </h2>
+              <section id="reviews" className="mt-14 scroll-mt-32">
+                <SectionHeader
+                  className="mb-0"
+                  title={
+                    <>
+                      수강 후기 {reviewSummary.count > 0 && <span className="font-semibold text-muted">· {reviewSummary.count}개</span>}
+                    </>
+                  }
+                />
                 {reviewSummary.count > 0 && (
-                  <div className="mt-6 grid gap-6 rounded-2xl border border-line p-6 sm:grid-cols-[180px_1fr] sm:items-center sm:gap-10">
-                    <div className="text-center sm:border-r sm:border-line-soft sm:pr-10">
+                  <div className="mt-6 grid gap-6 rounded-xl bg-surface p-6 sm:grid-cols-[180px_1fr] sm:items-center sm:gap-10">
+                    <div className="text-center sm:border-r sm:border-line sm:pr-10">
                       <p className="text-[44px] font-bold leading-none tracking-tight text-ink">
                         {reviewSummary.avg.toFixed(1)}
                       </p>
                       <div className="mt-3 flex justify-center">
                         <Stars value={reviewSummary.avg} />
                       </div>
-                      <p className="mt-2 text-xs text-muted">후기 {reviewSummary.count}개 평균</p>
+                      <p className="mt-2 text-caption text-muted">후기 {reviewSummary.count}개 평균</p>
                     </div>
                     <ul className="space-y-1.5">
                       {reviewSummary.distribution.map((d) => {
                         const pct = Math.round((d.count / reviewSummary.count) * 100);
                         return (
-                          <li key={d.star} className="flex items-center gap-3 text-xs">
+                          <li key={d.star} className="flex items-center gap-3 text-caption">
                             <span className="w-7 shrink-0 font-semibold text-ink-soft">{d.star}점</span>
-                            <span className="h-2 flex-1 overflow-hidden rounded-full bg-line-soft">
+                            <span className="h-2 flex-1 overflow-hidden rounded-full bg-surface-sunken">
                               <span className="block h-full rounded-full bg-amber-400" style={{ width: `${pct}%` }} />
                             </span>
                             <span className="w-8 shrink-0 text-right text-muted">{d.count}</span>
@@ -578,7 +572,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                   </div>
                 )}
                 {reviewSummary.count === 0 ? (
-                  <p className="mt-4 text-sm text-muted">아직 후기가 없어요. 첫 후기를 남겨 주세요.</p>
+                  <p className="mt-4 text-body-sm text-muted">아직 후기가 없어요. 첫 후기를 남겨 주세요.</p>
                 ) : (
                   <ul className="mt-6 grid gap-4 sm:grid-cols-2">
                     {reviewData.reviews.map((r) => (
@@ -601,7 +595,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                   </ul>
                 )}
                 {enrollment && !reviewable && (
-                  <p className="mt-4 text-xs text-muted">
+                  <p className="mt-4 text-caption text-muted">
                     진도율 {REVIEW_MIN_PROGRESS}% 이상이 되면 후기를 남길 수 있어요. (현재 {progress}%)
                   </p>
                 )}
@@ -609,56 +603,52 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             )}
 
             {/* FAQ */}
-            <section id="faq" className="mt-16 scroll-mt-40">
-              <h2 className="mb-6 text-xl font-bold tracking-tight text-ink md:text-2xl">자주 묻는 질문</h2>
-              <Faq items={DETAIL_FAQ} />
+            <section id="faq" className="mt-14 scroll-mt-32 pb-8">
+              <SectionHeader title="자주 묻는 질문" />
+              <Accordion items={DETAIL_FAQ.map((f) => ({ title: f.q, content: <p className="leading-relaxed">{f.a}</p> }))} />
             </section>
           </div>
 
           {/* 수강 패널 */}
           <aside className="lg:row-start-1 lg:col-start-2">
-            <div className="lg:sticky lg:top-[172px]">
-              <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-card">
-                <div className="aspect-[16/9] bg-line-soft">
+            <div className="lg:sticky lg:top-[136px]">
+              <div className="overflow-hidden rounded-xl border border-line bg-canvas">
+                <div className="aspect-video bg-surface-sunken">
                   <CourseThumb src={course.thumbnail} title={course.title} label={course.category?.name} />
                 </div>
                 <div className="p-6">
                   {enrollment ? (
                     <>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-semibold text-ink">
-                          {enrollment.completedAt ? "수료 완료" : "학습 중"}
-                        </span>
-                        <span className="font-bold text-ink">{progress}%</span>
-                      </div>
-                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-line-soft">
-                        <div className="h-full rounded-full bg-brand" style={{ width: `${progress}%` }} />
-                      </div>
+                      <ProgressBar
+                        value={progress}
+                        showValue
+                        label={<span className="font-semibold text-ink">{enrollment.completedAt ? "수료 완료" : "학습 중"}</span>}
+                      />
                       {resumeLectureId && (
                         <Link
                           href={`${detailPath}/lectures/${resumeLectureId}`}
-                          className="mt-5 flex h-12 items-center justify-center rounded-xl bg-brand text-[15px] font-semibold text-white hover:bg-brand-strong"
+                          className={cn(buttonVariants({ variant: "primary", size: "lg", fullWidth: true }), "mt-5")}
                         >
                           {enrollment.completedAt ? "다시 보기" : progress > 0 ? "이어보기" : "학습 시작하기"}
                         </Link>
                       )}
                       <Link
                         href={`/${locale}/dashboard`}
-                        className="mt-2 flex h-11 items-center justify-center rounded-xl border border-line text-sm font-semibold text-ink hover:border-ink"
+                        className={cn(buttonVariants({ variant: "secondary", size: "lg", fullWidth: true }), "mt-2")}
                       >
                         마이 러닝
                       </Link>
                     </>
                   ) : (
                     <>
-                      <p className="text-2xl font-bold tracking-tight text-ink">{formatPrice(course.price)}</p>
+                      <p className="text-h2 text-ink">{formatPrice(course.price)}</p>
                       {passCovers && (
-                        <p className="mt-1 text-sm font-medium text-brand">아카데미 패스 이용 중 · 추가 결제 없이 수강</p>
+                        <p className="mt-1 text-body-sm font-medium text-success">아카데미 패스 이용 중 · 추가 결제 없이 수강</p>
                       )}
                       {passLapsed && !passCovers && (
-                        <p className="mt-2 rounded-lg bg-surface px-3 py-2 text-[13px] leading-relaxed text-ink-soft">
+                        <Notice tone="warning" className="mt-3 px-3 py-2.5">
                           패스 이용 기간이 끝났어요. 패스를 다시 구독하거나 구매하면 학습 기록 그대로 이어서 들을 수 있어요.
-                        </p>
+                        </Notice>
                       )}
                       <div className="mt-5">
                         {course.price === 0 ? (
@@ -672,7 +662,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                       {passOffer && (
                         <Link
                           href={`/${locale}/pass`}
-                          className="mt-2 flex h-11 items-center justify-center gap-1.5 rounded-xl border border-brand/20 bg-brand-soft text-sm font-semibold text-brand hover:border-brand"
+                          className="mt-3 block text-center text-body-sm font-semibold text-ink-soft underline underline-offset-4 hover:text-ink"
                         >
                           아카데미 패스로 무제한 수강
                         </Link>
@@ -680,7 +670,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                       {firstFree && (
                         <Link
                           href={`${detailPath}/lectures/${firstFree.id}`}
-                          className="mt-2 flex h-11 items-center justify-center rounded-xl border border-line text-sm font-semibold text-ink hover:border-ink"
+                          className={cn(buttonVariants({ variant: "secondary", size: "lg", fullWidth: true }), "mt-2")}
                         >
                           미리보기
                         </Link>
@@ -694,7 +684,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                     variant="panel"
                     className="mt-2 w-full"
                   />
-                  <ul className="mt-6 space-y-2 border-t border-line-soft pt-5 text-sm text-ink-soft">
+                  <ul className="mt-6 space-y-2 border-t border-line pt-5 text-body-sm text-ink-soft">
                     <li className="flex items-center gap-2">
                       <BookOpen className="h-4 w-4 text-subtle" aria-hidden /> {lectureCount}개 강의
                       {quizCount > 0 && ` · 퀴즈 ${quizCount}개`}
@@ -716,13 +706,13 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
       </div>
 
       {/* 모바일 하단 고정 CTA */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 px-5 py-3 backdrop-blur lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-line bg-canvas/95 px-5 py-3 backdrop-blur lg:hidden">
         <div className="flex items-center gap-4">
           <div className="shrink-0">
             {enrollment ? (
-              <p className="text-sm font-bold text-ink">진도 {progress}%</p>
+              <p className="text-body-sm font-bold text-ink">진도 {progress}%</p>
             ) : (
-              <p className="text-lg font-bold text-ink">{formatPrice(course.price)}</p>
+              <p className="text-title font-bold text-ink">{formatPrice(course.price)}</p>
             )}
           </div>
           <div className="flex-1">
@@ -730,7 +720,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
               resumeLectureId && (
                 <Link
                   href={`${detailPath}/lectures/${resumeLectureId}`}
-                  className="flex h-12 items-center justify-center rounded-xl bg-brand text-[15px] font-semibold text-white"
+                  className={buttonVariants({ variant: "primary", size: "lg", fullWidth: true })}
                 >
                   {enrollment.completedAt ? "다시 보기" : progress > 0 ? "이어보기" : "학습 시작하기"}
                 </Link>

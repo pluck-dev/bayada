@@ -1,3 +1,4 @@
+import { ProgressBar, cn } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -121,7 +122,7 @@ export default async function LecturePage({ params }: { params: Params }) {
     <ol className="space-y-5">
       {course.sections.map((s, si) => (
         <li key={s.id}>
-          <p className="mb-1.5 px-3 text-xs font-semibold text-muted">
+          <p className="mb-1.5 px-3 text-caption font-semibold text-muted">
             {si + 1}. {s.title}
           </p>
           <ul>
@@ -138,16 +139,17 @@ export default async function LecturePage({ params }: { params: Params }) {
                     <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${isCurrent ? "text-brand" : "text-subtle"}`} aria-hidden />
                   )}
                   <span className="flex-1 leading-snug">{l.title}</span>
-                  {l.duration ? <span className="shrink-0 text-[11px] text-subtle">{formatSeconds(l.duration)}</span> : null}
+                  {l.duration ? <span className="shrink-0 text-micro text-subtle">{formatSeconds(l.duration)}</span> : null}
                 </>
               );
-              const cls = `flex items-start gap-2.5 rounded-lg px-3 py-2 text-[13px] ${
-                isCurrent ? "bg-white font-semibold text-ink shadow-card ring-1 ring-line" : "text-ink-soft"
-              }`;
+              const cls = cn(
+                "flex items-start gap-2.5 rounded-lg px-3 py-2 text-body-sm",
+                isCurrent ? "bg-canvas font-semibold text-ink ring-1 ring-line" : "text-ink-soft",
+              );
               return (
                 <li key={l.id}>
                   {canOpen && !isCurrent ? (
-                    <Link href={`${basePath}/${l.id}`} className={`${cls} hover:bg-white hover:text-ink`}>
+                    <Link href={`${basePath}/${l.id}`} className={`${cls} hover:bg-canvas hover:text-ink`}>
                       {inner}
                     </Link>
                   ) : (
@@ -166,22 +168,20 @@ export default async function LecturePage({ params }: { params: Params }) {
 
   return (
     <div className="bg-surface">
-      <div className="border-b border-line bg-white">
+      <div className="border-b border-line bg-canvas">
         <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-4 px-5 lg:px-8">
           <Link
             href={detailPath}
-            className="flex min-w-0 items-center gap-2 text-sm font-semibold text-ink hover:text-brand"
+            className="flex min-w-0 items-center gap-2 text-body-sm font-semibold text-ink underline-offset-4 hover:underline"
           >
             <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
             <span className="truncate">{course.title}</span>
           </Link>
           {enrolled && (
             <div className="ml-auto hidden shrink-0 items-center gap-3 sm:flex">
-              <span className="text-xs text-muted">진도율</span>
-              <div className="h-1.5 w-32 overflow-hidden rounded-full bg-line-soft">
-                <div className="h-full rounded-full bg-brand" style={{ width: `${progress}%` }} />
-              </div>
-              <span className="w-9 text-right text-xs font-bold text-ink">{progress}%</span>
+              <span className="text-caption text-muted">진도율</span>
+              <ProgressBar value={progress} size="sm" className="w-32" />
+              <span className="tabular w-9 text-right text-caption font-bold text-ink">{progress}%</span>
             </div>
           )}
         </div>
@@ -189,8 +189,8 @@ export default async function LecturePage({ params }: { params: Params }) {
 
       <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[320px_1fr]">
         <aside className="hidden border-r border-line lg:block">
-          <div className="sticky top-[100px] max-h-[calc(100vh-100px)] overflow-y-auto px-4 py-6">
-            <p className="mb-4 flex items-center gap-2 px-3 text-sm font-bold text-ink">
+          <div className="sticky top-16 max-h-[calc(100vh-64px)] overflow-y-auto px-4 py-6">
+            <p className="mb-4 flex items-center gap-2 px-3 text-body-sm font-bold text-ink">
               <ListOrdered className="h-4 w-4" aria-hidden /> 커리큘럼
             </p>
             {curriculum}
@@ -199,10 +199,10 @@ export default async function LecturePage({ params }: { params: Params }) {
 
         <div className="min-w-0 px-5 py-8 lg:px-12 lg:py-10">
           <div className="mx-auto max-w-[920px]">
-            <p className="text-xs font-semibold text-muted">
+            <p className="text-caption font-semibold text-muted">
               {current.sectionTitle} · {LECTURE_TYPE_LABEL[current.type]}
             </p>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-ink md:text-[28px]">{current.title}</h1>
+            <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-tight text-ink md:text-h1">{current.title}</h1>
 
             <div className="mt-6">
               {current.type === "QUIZ" ? (
@@ -217,7 +217,7 @@ export default async function LecturePage({ params }: { params: Params }) {
                     certificatesHref={certificatesHref}
                   />
                 ) : (
-                  <p className="rounded-2xl border border-line bg-white p-6 text-sm text-muted">
+                  <p className="rounded-xl bg-canvas p-6 text-body-sm text-muted">
                     이 퀴즈에는 문항이 없어요.
                   </p>
                 )
@@ -240,12 +240,12 @@ export default async function LecturePage({ params }: { params: Params }) {
             </div>
 
             {/* 모바일 커리큘럼 */}
-            <details className="mt-8 rounded-2xl border border-line bg-white lg:hidden">
-              <summary className="flex items-center justify-between px-5 py-4 text-sm font-bold text-ink">
+            <details className="group mt-8 rounded-xl border border-line bg-canvas lg:hidden">
+              <summary className="flex items-center justify-between px-5 py-4 text-body-sm font-bold text-ink">
                 <span className="flex items-center gap-2">
                   <ListOrdered className="h-4 w-4" aria-hidden /> 커리큘럼 · {all.length}개 강의
                 </span>
-                <ChevronDown className="accordion-chevron h-4 w-4 transition-transform" aria-hidden />
+                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden />
               </summary>
               <div className="border-t border-line-soft bg-surface px-2 py-4">{curriculum}</div>
             </details>

@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants, cn, controlClass } from "@bayada/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
@@ -101,11 +102,11 @@ export function QuizRunner({
   }
 
   const inputCls =
-    "mx-1 inline-block h-9 w-44 sm:w-56 rounded-lg border border-line bg-white px-3 align-middle text-sm text-ink focus:border-ink focus:outline-none disabled:bg-surface";
+    controlClass("md", "mx-1 inline-block h-10 w-44 align-middle text-body-sm sm:w-56");
 
   return (
     <div>
-      <div className="rounded-2xl border border-line bg-surface p-5 text-sm text-ink-soft">
+      <div className="rounded-xl bg-canvas p-5 text-body-sm text-ink-soft">
         총 {questions.length}문항 · 합격 기준 {passingScore}점 이상
         {alreadyPassed && !result && (
           <span className="ml-2 inline-flex items-center gap-1 font-semibold text-success">
@@ -117,21 +118,21 @@ export function QuizRunner({
       {result && (
         <div
           role="status"
-          className={`mt-5 rounded-2xl border p-6 ${
-            result.passed ? "border-success/30 bg-success-soft" : "border-brand/20 bg-brand-soft"
+          className={`mt-5 rounded-xl border p-6 ${
+            result.passed ? "border-success-line bg-success-soft" : "border-danger-line bg-danger-soft"
           }`}
         >
           <div className="flex items-center gap-3">
             {result.passed ? (
               <CheckCircle2 className="h-7 w-7 text-success" aria-hidden />
             ) : (
-              <XCircle className="h-7 w-7 text-brand" aria-hidden />
+              <XCircle className="h-7 w-7 text-danger" aria-hidden />
             )}
             <div>
-              <p className="text-lg font-bold text-ink">
+              <p className="text-title font-bold text-ink">
                 {result.score}점 · {result.passed ? "통과했어요!" : "아쉽게도 통과하지 못했어요"}
               </p>
-              <p className="text-sm text-muted">
+              <p className="text-body-sm text-muted">
                 {result.total}문항 중 {result.correctCount}문항 정답 · 합격 기준 {result.passingScore}점
               </p>
             </div>
@@ -141,7 +142,7 @@ export function QuizRunner({
               <button
                 type="button"
                 onClick={retry}
-                className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-ink px-4 text-sm font-semibold text-white hover:bg-ink-soft"
+                className={buttonVariants({ variant: "secondary", size: "md" })}
               >
                 <RotateCcw className="h-4 w-4" aria-hidden /> 다시 풀기
               </button>
@@ -149,7 +150,7 @@ export function QuizRunner({
             {result.passed && result.courseCompleted && (
               <Link
                 href={certificatesHref}
-                className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-brand px-4 text-sm font-semibold text-white hover:bg-brand-strong"
+                className={buttonVariants({ variant: "primary", size: "md" })}
               >
                 <Award className="h-4 w-4" aria-hidden /> 수료증 보기
               </Link>
@@ -157,7 +158,7 @@ export function QuizRunner({
             {result.passed && nextHref && (
               <Link
                 href={nextHref}
-                className="inline-flex h-10 items-center gap-1 rounded-xl bg-brand px-4 text-sm font-semibold text-white hover:bg-brand-strong"
+                className={buttonVariants({ variant: "primary", size: "md" })}
               >
                 다음 강의 <ChevronRight className="h-4 w-4" aria-hidden />
               </Link>
@@ -172,33 +173,33 @@ export function QuizRunner({
           return (
             <fieldset
               key={q.id}
-              className={`rounded-2xl border bg-white p-6 ${
-                verdict === undefined ? "border-line" : verdict ? "border-success/40" : "border-brand/40"
+              className={`rounded-xl border bg-canvas p-6 ${
+                verdict === undefined ? "border-line" : verdict ? "border-success-line" : "border-danger-line"
               }`}
             >
               <legend className="sr-only">{qi + 1}번 문항</legend>
               <div className="flex items-start justify-between gap-4">
-                <p className="text-[15px] font-semibold leading-relaxed text-ink">
-                  <span className="mr-2 text-brand">Q{qi + 1}.</span>
+                <p className="text-body font-semibold leading-relaxed text-ink">
+                  <span className="mr-2 text-muted">Q{qi + 1}.</span>
                   {q.text}
                 </p>
                 {verdict !== undefined &&
                   (verdict ? (
-                    <span className="shrink-0 text-xs font-semibold text-success">정답</span>
+                    <span className="shrink-0 text-caption font-semibold text-success">정답</span>
                   ) : (
-                    <span className="shrink-0 text-xs font-semibold text-brand">오답</span>
+                    <span className="shrink-0 text-caption font-semibold text-danger">오답</span>
                   ))}
               </div>
 
               {(q.type === "SINGLE" || q.type === "MULTI" || q.type === "TRUE_FALSE") && (
                 <div className="mt-4 space-y-2">
-                  {q.type === "MULTI" && <p className="text-xs text-muted">정답을 모두 고르세요</p>}
+                  {q.type === "MULTI" && <p className="text-caption text-muted">정답을 모두 고르세요</p>}
                   {q.options.map((opt, oi) => {
                     const checked = (choices[q.id] ?? []).includes(oi);
                     return (
                       <label
                         key={oi}
-                        className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
+                        className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-body-sm transition-colors ${
                           checked ? "border-ink bg-surface text-ink" : "border-line text-ink-soft hover:border-ink-soft"
                         }`}
                       >
@@ -208,7 +209,7 @@ export function QuizRunner({
                           checked={checked}
                           disabled={!!result}
                           onChange={() => choose(q, oi)}
-                          className="h-4 w-4 accent-[#18181b]"
+                          className="h-4 w-4 accent-ink"
                         />
                         {opt}
                       </label>
@@ -218,7 +219,7 @@ export function QuizRunner({
               )}
 
               {q.type === "FILL_GAP" && (
-                <p className="mt-4 rounded-xl bg-surface p-4 text-[15px] leading-[2.4] text-ink-soft">
+                <p className="mt-4 rounded-xl bg-surface p-4 text-body leading-[2.4] text-ink-soft">
                   {q.segments.map((seg, si) => (
                     <Fragment key={si}>
                       {seg}
@@ -243,7 +244,7 @@ export function QuizRunner({
                   disabled={!!result}
                   onChange={(e) => setText(q.id, 0, e.target.value)}
                   placeholder="답을 입력하세요"
-                  className="mt-4 h-11 w-full rounded-xl border border-line px-4 text-sm text-ink focus:border-ink focus:outline-none disabled:bg-surface"
+                  className="mt-4 h-11 w-full rounded-xl border border-line px-4 text-body-sm text-ink focus:border-ink focus:outline-none disabled:bg-surface"
                 />
               )}
             </fieldset>
@@ -251,7 +252,7 @@ export function QuizRunner({
         })}
 
         {error && (
-          <p role="alert" className="text-sm text-brand">
+          <p role="alert" className="text-body-sm text-danger">
             {error}
           </p>
         )}
@@ -261,13 +262,13 @@ export function QuizRunner({
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex h-12 items-center gap-2 rounded-xl bg-brand px-6 text-[15px] font-semibold text-white hover:bg-brand-strong disabled:opacity-70"
+              className={buttonVariants({ variant: "primary", size: "lg" })}
             >
               {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
               제출하고 채점하기
             </button>
           ) : (
-            <p className="text-sm text-muted">수강 신청 후 퀴즈를 제출할 수 있어요.</p>
+            <p className="text-body-sm text-muted">수강 신청 후 퀴즈를 제출할 수 있어요.</p>
           ))}
       </form>
     </div>

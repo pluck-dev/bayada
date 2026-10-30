@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Button } from "@bayada/ui";
 
 /** 무료 수강 신청(또는 via="pass" 패스로 수강) → 첫 레슨으로 이동 */
 export function EnrollButton({
@@ -57,17 +57,18 @@ export function EnrollButton({
 
   return (
     <div>
-      <button
-        type="button"
+      <Button
+        variant="primary"
+        size="lg"
+        fullWidth
         onClick={enroll}
-        disabled={loading}
-        className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70 ${className}`}
+        loading={loading}
+        className={className}
       >
-        {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
         {via === "pass" ? "패스로 수강" : loggedIn ? "수강신청" : "로그인하고 수강신청"}
-      </button>
+      </Button>
       {error && (
-        <p role="alert" className="mt-2 text-sm text-brand">
+        <p role="alert" className="mt-2 text-body-sm text-danger">
           {error}
         </p>
       )}

@@ -40,13 +40,13 @@ export function ReportReviewButton({
     }
   }
 
-  if (reported) return <span className="text-xs text-subtle">신고됨</span>;
+  if (reported) return <span className="text-caption text-subtle">신고됨</span>;
   return (
     <button
       type="button"
       onClick={report}
       disabled={busy}
-      className="inline-flex items-center gap-1 text-xs text-subtle transition-colors hover:text-ink-soft disabled:opacity-60"
+      className="inline-flex items-center gap-1 text-caption text-subtle transition-colors hover:text-ink-soft disabled:opacity-60"
     >
       <Flag className="h-3 w-3" aria-hidden /> 신고
     </button>

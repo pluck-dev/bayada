@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@bayada/ui";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -49,8 +50,7 @@ export function SessionButton({
     }
   }
 
-  const base =
-    "inline-flex h-9 min-w-[88px] items-center justify-center gap-1.5 rounded-lg px-3.5 text-sm font-semibold transition-colors";
+  const base = buttonVariants({ variant: "secondary", size: "sm" }) + " min-w-[88px]";
   let button;
   if (registered) {
     button = (
@@ -58,7 +58,7 @@ export function SessionButton({
         type="button"
         onClick={submit}
         disabled={busy}
-        className={`${base} border border-line text-ink-soft hover:border-ink hover:text-ink`}
+        className={base}
       >
         {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />}
         신청 취소
@@ -66,13 +66,13 @@ export function SessionButton({
     );
   } else if (full) {
     button = (
-      <span className={`${base} cursor-not-allowed bg-line-soft text-subtle`} aria-disabled>
+      <span className={base} aria-disabled>
         마감
       </span>
     );
   } else if (loggedIn && !canApply) {
     button = (
-      <span className={`${base} cursor-not-allowed border border-line text-subtle`} aria-disabled title={reason}>
+      <span className={base} aria-disabled title={reason}>
         신청
       </span>
     );
@@ -82,7 +82,7 @@ export function SessionButton({
         type="button"
         onClick={submit}
         disabled={busy}
-        className={`${base} bg-ink text-white hover:bg-ink-soft disabled:opacity-70`}
+        className={base}
       >
         {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />}
         {loggedIn ? "신청" : "로그인 후 신청"}
@@ -94,7 +94,7 @@ export function SessionButton({
     <div className="flex flex-col items-end gap-1">
       {button}
       {error && (
-        <p role="alert" className="text-xs text-brand">
+        <p role="alert" className="text-caption text-danger">
           {error}
         </p>
       )}
