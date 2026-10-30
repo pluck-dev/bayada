@@ -15,8 +15,8 @@ import { unserialize } from "./php-unserialize";
 
 const WP = process.env.WP_MYSQL_URL ?? "mysql://root:root@127.0.0.1:3307/bestcba6_WPEP7";
 const P = "lLJ_";
-const VIDEO_BASE_URL = (process.env.VIDEO_BASE_URL ?? "http://localhost:8089/videos/").replace(/\/?$/, "/");
-const UPLOADS_BASE_URL = (process.env.UPLOADS_BASE_URL ?? "http://localhost:8088/wp-content/uploads/").replace(/\/?$/, "/");
+const VIDEO_BASE_URL = (process.env.VIDEO_BASE_URL ?? "http://localhost:4300/videos/").replace(/\/?$/, "/");
+const UPLOADS_BASE_URL = (process.env.UPLOADS_BASE_URL ?? "http://localhost:4300/uploads/").replace(/\/?$/, "/");
 // 2026-10-28 영상 백업: cloudflare uid → 파일명 (bestcareacademy-restore/scripts/video_map.json)
 const VIDEO_MAP_PATH =
   process.env.VIDEO_MAP_PATH ?? "D:/dev/clients/bayada/bestcareacademy-restore/scripts/video_map.json";
