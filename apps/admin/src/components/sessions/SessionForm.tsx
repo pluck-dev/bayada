@@ -112,7 +112,7 @@ export function SessionForm({
         </fieldset>
       </Card>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-white/95 px-1 py-3 backdrop-blur">
+      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
         {sessionId && (
           <Button
             variant="danger"
@@ -130,7 +130,7 @@ export function SessionForm({
             일정 삭제
           </Button>
         )}
-        {dirty && <span className="text-[12px] text-amber-700">저장하지 않은 변경 사항이 있습니다</span>}
+        {dirty && <span className="text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
         <Button type="submit" variant="primary" disabled={isPending || (!!sessionId && !dirty)}>
           {isPending ? "저장 중…" : sessionId ? "저장" : "일정 만들기"}
         </Button>

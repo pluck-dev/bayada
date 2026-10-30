@@ -28,8 +28,8 @@ export default async function PartnerConsolePage({ params }: { params: Promise<{
       <div className="mb-4 flex items-center gap-4 rounded-lg border border-line bg-surface px-5 py-4">
         <ProviderLogo name={provider.name} logo={provider.logo} size="lg" />
         <div className="min-w-0 flex-1">
-          <p className="text-[16px] font-semibold tracking-[-0.01em]">{provider.name}</p>
-          <p className="mt-0.5 text-[12.5px] text-muted">{provider.description ?? "외부 파트너 제공기관"} · 담당 {user.name ?? user.email}</p>
+          <p className="text-body font-semibold tracking-[-0.01em]">{provider.name}</p>
+          <p className="mt-0.5 text-caption text-muted">{provider.description ?? "외부 파트너 제공기관"} · 담당 {user.name ?? user.email}</p>
         </div>
         <LinkButton href={`${base}/programs/new`} variant="primary">
           <Plus className="h-3.5 w-3.5" aria-hidden />
@@ -69,26 +69,26 @@ export default async function PartnerConsolePage({ params }: { params: Promise<{
                       {r.title}
                     </Link>
                   </td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{LEARNING_MODE_LABEL[r.learningMode].split(" ")[0]}</td>
+                  <td className={cx(tdClass, "text-muted")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
+                  <td className={cx(tdClass, "text-muted")}>{LEARNING_MODE_LABEL[r.learningMode].split(" ")[0]}</td>
                   <td className={tdClass}>
                     <Badge tone={COURSE_STATUS_TONE[r.status]} dot>
                       {COURSE_STATUS_LABEL[r.status]}
                     </Badge>
                   </td>
-                  <td className={cx(tdClass, "max-w-[260px] truncate", r.status === "CHANGES_REQUESTED" ? "text-amber-800" : "text-zinc-400")} title={r.reviewNote ?? undefined}>
+                  <td className={cx(tdClass, "max-w-[260px] truncate", r.status === "CHANGES_REQUESTED" ? "text-warning" : "text-zinc-400")} title={r.reviewNote ?? undefined}>
                     {r.status === "CHANGES_REQUESTED" && r.reviewNote ? r.reviewNote : "-"}
                   </td>
                   <td className={cx(tdClass, "tabular text-right")}>{r.enrollments ? r.enrollments.toLocaleString() : "-"}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{rate(r.completed, r.enrollments)}</td>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(r.updatedAt)}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(r.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
-      <p className="mt-3 text-[12px] leading-relaxed text-muted">
+      <p className="mt-3 text-caption leading-relaxed text-muted">
         제출 전 필수 항목(학습목표·대상 직군·소요시간·커리큘럼·제공기관)을 채워야 승인 요청할 수 있습니다. 수강 통계는 개인정보 보호를 위해 인원과 수료율만
         보여 줍니다.
       </p>

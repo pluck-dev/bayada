@@ -202,7 +202,7 @@ export function PathwayForm({
               />
             </Field>
           </div>
-          <div className="mt-4 flex gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12px] leading-relaxed text-amber-900">
+          <div className="mt-4 flex gap-2.5 rounded-md border border-warning-line bg-warning-soft px-3 py-2.5 text-caption leading-relaxed text-warning">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
             <div>
               <p className="font-medium">작성 원칙 — 국가별 면허·비자 요건은 반드시 해당 국가 공식 기관 자료로 확인해 쓰고, 확인한 날짜를 정보 기준일에 넣으세요.</p>
@@ -214,15 +214,15 @@ export function PathwayForm({
           </div>
         </Card>
 
-        <div className="rounded-lg border border-line bg-white">
+        <div className="rounded-lg border border-line bg-canvas">
           <header className="border-b border-line px-4 py-2.5">
-            <h2 className="text-[13px] font-semibold text-fg">자격 경로 개요 (본문)</h2>
+            <h2 className="text-caption font-semibold text-fg">자격 경로 개요 (본문)</h2>
           </header>
           <div className="grid grid-cols-2 gap-4 p-4">
             <div className="flex min-w-0 flex-col gap-1.5">
-              <label htmlFor="pw-content" className="flex items-center justify-between text-[12.5px] font-medium text-zinc-700">
+              <label htmlFor="pw-content" className="flex items-center justify-between text-caption font-medium text-ink-soft">
                 <span>본문 HTML</span>
-                <span className="tabular text-[11.5px] font-normal text-subtle">{v.content.length.toLocaleString()}자</span>
+                <span className="tabular text-micro font-normal text-subtle">{v.content.length.toLocaleString()}자</span>
               </label>
               <textarea
                 id="pw-content"
@@ -230,19 +230,19 @@ export function PathwayForm({
                 value={v.content}
                 onChange={(e) => set("content", e.target.value)}
                 placeholder="<h3>면허 취득 단계</h3><p>…</p>"
-                className={cx(textareaClass, "h-[420px] resize-none font-mono text-[12px]! leading-[1.6]!")}
+                className={cx(textareaClass, "h-[420px] resize-none font-mono text-caption! leading-[1.6]!")}
               />
-              <p className="text-[11.5px] text-muted">h3·p·ol/ul·table·a 태그를 쓸 수 있습니다. 스크립트·iframe·이벤트 속성은 저장되지 않습니다.</p>
+              <p className="text-micro text-muted">h3·p·ol/ul·table·a 태그를 쓸 수 있습니다. 스크립트·iframe·이벤트 속성은 저장되지 않습니다.</p>
             </div>
             <div className="flex min-w-0 flex-col gap-1.5">
-              <span className="text-[12.5px] font-medium text-zinc-700">미리보기</span>
+              <span className="text-caption font-medium text-ink-soft">미리보기</span>
               <iframe
                 title="본문 미리보기"
                 sandbox=""
                 srcDoc={previewDoc("자격 경로 개요", deferredContent)}
-                className="h-[420px] w-full rounded-md border border-line bg-white"
+                className="h-[420px] w-full rounded-md border border-line bg-canvas"
               />
-              <p className="text-[11.5px] text-muted">아카데미 본문 스타일 기준입니다.</p>
+              <p className="text-micro text-muted">아카데미 본문 스타일 기준입니다.</p>
             </div>
           </div>
         </div>
@@ -257,13 +257,13 @@ export function PathwayForm({
           }
         >
           {steps.length === 0 ? (
-            <p className="py-6 text-center text-[12.5px] text-muted">단계가 없습니다. 게시하려면 1개 이상 필요합니다.</p>
+            <p className="py-6 text-center text-caption text-muted">단계가 없습니다. 게시하려면 1개 이상 필요합니다.</p>
           ) : (
             <ol className="flex flex-col gap-3">
               {steps.map((s, i) => (
-                <li key={s.key} className="rounded-md border border-line bg-zinc-50/60 p-3">
+                <li key={s.key} className="rounded-md border border-line bg-surface p-3">
                   <div className="mb-2.5 flex items-center gap-2">
-                    <span className="rounded bg-zinc-900 px-1.5 py-0.5 text-[11px] font-semibold text-white">STEP {i + 1}</span>
+                    <span className="rounded bg-zinc-900 px-1.5 py-0.5 text-micro font-semibold text-white">STEP {i + 1}</span>
                     <span className="ml-auto flex items-center gap-1">
                       <Button size="sm" variant="ghost" aria-label={`STEP ${i + 1} 위로`} disabled={i === 0} onClick={() => moveStep(i, -1)}>
                         <ArrowUp className="h-3.5 w-3.5" aria-hidden />
@@ -324,7 +324,7 @@ export function PathwayForm({
                         )}
                         {s.link === "credential" &&
                           (options.credentials.length === 0 ? (
-                            <span className="flex items-center text-[12px] text-muted">운영 중인 인증 과정이 없습니다</span>
+                            <span className="flex items-center text-caption text-muted">운영 중인 인증 과정이 없습니다</span>
                           ) : (
                             <select
                               aria-label={`STEP ${i + 1} 연결 인증 과정`}
@@ -357,13 +357,13 @@ export function PathwayForm({
               ))}
             </ol>
           )}
-          <p className="mt-3 text-[11.5px] text-muted">
+          <p className="mt-3 text-micro text-muted">
             프로그램은 게시된 것만, 인증은 운영 중인 과정만 연결할 수 있습니다. 학습자 화면에서 연결 단계는 수강·수료·인증 보유 상태가 자동으로 표시되고, 자유 단계는 안내만 보입니다.
           </p>
         </Card>
       </fieldset>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-white/95 px-1 py-3 backdrop-blur">
+      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
         {pathwayId && (
           <>
             <Button
@@ -385,7 +385,7 @@ export function PathwayForm({
             >
               삭제
             </Button>
-            <span className="ml-2 flex items-center gap-2 text-[12px]">
+            <span className="ml-2 flex items-center gap-2 text-caption">
               {published ? (
                 <Badge tone="green" dot>
                   게시 중
@@ -413,9 +413,9 @@ export function PathwayForm({
         )}
         <span className="mr-auto" />
         {dirty ? (
-          <span className="text-[12px] text-amber-700">저장하지 않은 변경 사항이 있습니다</span>
+          <span className="text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>
         ) : (
-          base && <span className="text-[12px] text-muted">최종 수정 {formatDateTime(base)}</span>
+          base && <span className="text-caption text-muted">최종 수정 {formatDateTime(base)}</span>
         )}
         <Button type="submit" variant="primary" disabled={isPending || (!!pathwayId && !dirty)}>
           {isPending ? "저장 중…" : pathwayId ? "저장" : "패스웨이 만들기"}

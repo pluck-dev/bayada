@@ -91,11 +91,11 @@ export default async function AuditPage({
                 const name = names.get(r.target);
                 return (
                   <tr key={r.id} className={trClass}>
-                    <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDateTime(r.at)}</td>
+                    <td className={cx(tdClass, "tabular text-subtle")}>{formatDateTime(r.at)}</td>
                     <td className={tdClass}>{r.actor?.name ?? r.actor?.email ?? "시스템"}</td>
                     <td className={tdClass}>
                       <span className="font-medium">{AUDIT_ACTION_LABEL[r.action] ?? r.action}</span>
-                      <span className="ml-1.5 font-mono text-[11px] text-subtle">{r.action}</span>
+                      <span className="ml-1.5 font-mono text-micro text-subtle">{r.action}</span>
                     </td>
                     <td className={cx(tdClass, "max-w-[280px] truncate")}>
                       {href && name ? (
@@ -103,10 +103,10 @@ export default async function AuditPage({
                           {name}
                         </Link>
                       ) : (
-                        <span className="text-zinc-500">{name ?? r.target}</span>
+                        <span className="text-subtle">{name ?? r.target}</span>
                       )}
                     </td>
-                    <td className={cx(tdClass, "max-w-[320px] truncate text-[12px] text-zinc-600")} title={summarize(r.detail)}>
+                    <td className={cx(tdClass, "max-w-[320px] truncate text-caption text-muted")} title={summarize(r.detail)}>
                       {summarize(r.detail)}
                     </td>
                   </tr>

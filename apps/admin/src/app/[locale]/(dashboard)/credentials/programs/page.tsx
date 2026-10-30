@@ -48,14 +48,14 @@ export default async function CredentialProgramsPage({ params }: { params: Promi
                     <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
                       {p.title}
                     </Link>
-                    <p className="mt-0.5 font-mono text-[11.5px] text-subtle">/certifications/{p.slug}</p>
+                    <p className="mt-0.5 font-mono text-micro text-subtle">/certifications/{p.slug}</p>
                   </td>
                   <td className={cx(tdClass, "tabular text-right")}>{p.requiredCourseIds.length}개</td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>
+                  <td className={cx(tdClass, "tabular text-muted")}>
                     시험 {p.examPassingScore}
                     {p.practicalRequired ? ` · 실기 ${p.practicalPassingScore}` : " · 실기 없음"}
                   </td>
-                  <td className={cx(tdClass, "text-zinc-600")}>
+                  <td className={cx(tdClass, "text-muted")}>
                     {validityLabel(p.validityMonths)}
                     {p.validityMonths != null && <span className="text-subtle"> · {p.renewalNoticeDays}일 전 알림</span>}
                   </td>
@@ -70,7 +70,7 @@ export default async function CredentialProgramsPage({ params }: { params: Promi
                       <Badge tone="slate">비공개</Badge>
                     )}
                   </td>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(p.updatedAt)}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(p.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>

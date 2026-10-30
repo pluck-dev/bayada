@@ -97,15 +97,15 @@ export default async function IssuedCredentialsPage({
                       ) : (
                         <span className="font-medium">{c.user.name ?? c.user.email}</span>
                       )}
-                      <p className="text-[11.5px] text-subtle">{c.user.email}</p>
+                      <p className="text-micro text-subtle">{c.user.email}</p>
                     </td>
                     <td className={cx(tdClass, "max-w-[220px] truncate")} title={c.program.title}>
                       {c.program.title}
                     </td>
-                    <td className={cx(tdClass, "tabular text-zinc-600")}>{formatDate(c.issuedAt)}</td>
-                    <td className={cx(tdClass, "tabular text-zinc-600")}>
+                    <td className={cx(tdClass, "tabular text-muted")}>{formatDate(c.issuedAt)}</td>
+                    <td className={cx(tdClass, "tabular text-muted")}>
                       {c.expiresAt ? formatDate(c.expiresAt) : "영구"}
-                      {soon && c.expiresAt && <span className="ml-1.5 text-[11.5px] font-medium text-amber-700">D-{daysUntil(c.expiresAt, now)}</span>}
+                      {soon && c.expiresAt && <span className="ml-1.5 text-micro font-medium text-warning">D-{daysUntil(c.expiresAt, now)}</span>}
                     </td>
                     <td className={tdClass}>
                       {c.revokedAt ? (
@@ -122,7 +122,7 @@ export default async function IssuedCredentialsPage({
                         </Badge>
                       )}
                     </td>
-                    <td className={cx(tdClass, "tabular text-[12.5px] text-zinc-500")}>
+                    <td className={cx(tdClass, "tabular text-caption text-subtle")}>
                       {c.renewalNotifiedAt ? formatDate(c.renewalNotifiedAt) : <span className="text-subtle">-</span>}
                     </td>
                     <td className={cx(tdClass, "text-right")}>{!c.revokedAt && <RevokeButton id={c.id} number={c.number} />}</td>

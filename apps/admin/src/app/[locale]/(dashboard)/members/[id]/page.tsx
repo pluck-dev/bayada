@@ -94,17 +94,17 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
                       </td>
                       <td className={tdClass}>
                         <div className="flex items-center gap-2">
-                          <span className="h-1.5 w-24 overflow-hidden rounded-full bg-zinc-100">
+                          <span className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-sunken">
                             <span
                               className={cx("block h-full rounded-full", e.completedAt ? "bg-emerald-500" : "bg-zinc-700")}
                               style={{ width: `${e.progressPercent}%` }}
                             />
                           </span>
-                          <span className="tabular text-[12px] text-zinc-600">{e.progressPercent}%</span>
+                          <span className="tabular text-caption text-muted">{e.progressPercent}%</span>
                         </div>
                       </td>
-                      <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(e.createdAt)}</td>
-                      <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(e.completedAt)}</td>
+                      <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(e.createdAt)}</td>
+                      <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(e.completedAt)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -128,10 +128,10 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
                 <tbody>
                   {m.certificates.map((c) => (
                     <tr key={c.id} className={trClass}>
-                      <td className={cx(tdClass, "font-mono text-[12px]")}>{c.number}</td>
+                      <td className={cx(tdClass, "font-mono text-caption")}>{c.number}</td>
                       <td className={cx(tdClass, "whitespace-normal!")}>{c.course.title}</td>
-                      <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(c.issuedAt)}</td>
-                      <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(c.expiresAt)}</td>
+                      <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(c.issuedAt)}</td>
+                      <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(c.expiresAt)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -142,7 +142,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
 
         <aside className="flex flex-col gap-4">
           <Card title="회원 정보">
-            <dl className="grid grid-cols-[72px_1fr] gap-y-2 text-[12.5px]">
+            <dl className="grid grid-cols-[72px_1fr] gap-y-2 text-caption">
               <dt className="text-muted">직군</dt>
               <dd>{m.jobRole ? JOB_ROLE_LABEL[m.jobRole] : "-"}</dd>
               <dt className="text-muted">연락처</dt>
@@ -159,7 +159,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
             </Card>
           ) : (
             can(user, "member.write") || (
-              <p className="px-1 text-[12px] text-muted">회원 관리 권한이 없어 조회만 할 수 있습니다.</p>
+              <p className="px-1 text-caption text-muted">회원 관리 권한이 없어 조회만 할 수 있습니다.</p>
             )
           )}
         </aside>

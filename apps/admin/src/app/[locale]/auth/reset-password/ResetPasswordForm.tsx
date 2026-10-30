@@ -39,7 +39,7 @@ export function ResetPasswordForm({ token, locale }: { token: string; locale: st
     return (
       <div>
         <h1 className="text-[20px] font-semibold tracking-[-0.02em]">비밀번호를 변경했습니다</h1>
-        <p className="mt-2 text-[13px] leading-relaxed text-muted">
+        <p className="mt-2 text-caption leading-relaxed text-muted">
           기존에 로그인된 모든 세션은 로그아웃됐습니다. 새 비밀번호로 다시 로그인하세요.
         </p>
         <Link href={`/${locale}/auth/login`} className={cx(buttonClass("primary"), "mt-5 h-9 w-full")}>
@@ -52,9 +52,9 @@ export function ResetPasswordForm({ token, locale }: { token: string; locale: st
   return (
     <form onSubmit={handleSubmit}>
       <h1 className="text-[20px] font-semibold tracking-[-0.02em]">새 비밀번호 설정</h1>
-      <p className="mt-1 text-[13px] text-muted">{PASSWORD_RULE}</p>
+      <p className="mt-1 text-caption text-muted">{PASSWORD_RULE}</p>
       {error && (
-        <div role="alert" className="mt-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[12.5px] text-red-800">
+        <div role="alert" className="mt-5 rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-caption text-danger">
           {error}
         </div>
       )}

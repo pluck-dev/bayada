@@ -22,7 +22,7 @@ export default async function AdminResetPasswordPage({
       ) : (
         <div>
           <h1 className="text-[20px] font-semibold tracking-[-0.02em]">링크를 쓸 수 없습니다</h1>
-          <p className="mt-2 text-[13px] leading-relaxed text-muted">재설정 링크가 만료됐거나(30분) 이미 사용됐습니다.</p>
+          <p className="mt-2 text-caption leading-relaxed text-muted">재설정 링크가 만료됐거나(30분) 이미 사용됐습니다.</p>
           <Link href={`/${locale}/auth/forgot-password`} className={cx(buttonClass("primary"), "mt-5 h-9 w-full")}>
             재설정 메일 다시 받기
           </Link>

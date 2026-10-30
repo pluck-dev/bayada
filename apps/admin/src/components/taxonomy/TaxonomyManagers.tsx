@@ -52,12 +52,12 @@ export function CategoryManager({ rows }: { rows: CategoryRow[] }) {
       }
     >
       {editing !== null && (
-        <form onSubmit={save} className="grid grid-cols-[1fr_1fr_72px] gap-3 border-b border-line bg-zinc-50/60 p-4">
+        <form onSubmit={save} className="grid grid-cols-[1fr_1fr_72px] gap-3 border-b border-line bg-surface p-4">
           <Field label="이름" required>
             <input required autoFocus className={inputClass} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
           <Field label="slug" required>
-            <input required className={cx(inputClass, "font-mono text-[12px]!")} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+            <input required className={cx(inputClass, "font-mono text-caption!")} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
           </Field>
           <Field label="순서">
             <input type="number" className={cx(inputClass, "tabular")} value={form.order} onChange={(e) => setForm({ ...form, order: Number(e.target.value) })} />
@@ -88,9 +88,9 @@ export function CategoryManager({ rows }: { rows: CategoryRow[] }) {
           <tbody>
             {rows.map((c) => (
               <tr key={c.id} className={trClass}>
-                <td className={cx(tdClass, "tabular text-zinc-500")}>{c.order}</td>
+                <td className={cx(tdClass, "tabular text-subtle")}>{c.order}</td>
                 <td className={cx(tdClass, "font-medium")}>{c.name}</td>
-                <td className={cx(tdClass, "font-mono text-[12px] text-zinc-500")}>{c.slug}</td>
+                <td className={cx(tdClass, "font-mono text-caption text-subtle")}>{c.slug}</td>
                 <td className={cx(tdClass, "tabular text-right")}>{c.count}</td>
                 <td className={tdClass}>
                   <div className="flex">
@@ -169,17 +169,17 @@ export function ProviderManager({ rows }: { rows: ProviderRow[] }) {
       }
     >
       {editing !== null && (
-        <form onSubmit={save} className="grid grid-cols-2 gap-3 border-b border-line bg-zinc-50/60 p-4">
+        <form onSubmit={save} className="grid grid-cols-2 gap-3 border-b border-line bg-surface p-4">
           <Field label="이름" required>
             <input required autoFocus className={inputClass} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
           <Field label="slug" required>
-            <input required className={cx(inputClass, "font-mono text-[12px]!")} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+            <input required className={cx(inputClass, "font-mono text-caption!")} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
           </Field>
           <Field label="로고 URL" className="col-span-2">
             <input className={inputClass} placeholder="https://" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} />
           </Field>
-          <label className="flex items-center gap-2 text-[12.5px]">
+          <label className="flex items-center gap-2 text-caption">
             <input type="checkbox" className="h-4 w-4 accent-zinc-900" checked={form.isPartner} onChange={(e) => setForm({ ...form, isPartner: e.target.checked })} />
             외부 파트너 기관
           </label>
@@ -214,13 +214,13 @@ export function ProviderManager({ rows }: { rows: ProviderRow[] }) {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={p.logo} alt="" className="h-7 w-7 rounded border border-line object-contain" />
                     ) : (
-                      <span className="flex h-7 w-7 items-center justify-center rounded bg-zinc-100 text-[11px] font-semibold text-zinc-500">
+                      <span className="flex h-7 w-7 items-center justify-center rounded bg-surface-sunken text-micro font-semibold text-subtle">
                         {p.name.slice(0, 1)}
                       </span>
                     )}
                     <div>
                       <p className="font-medium">{p.name}</p>
-                      <p className="font-mono text-[11.5px] text-subtle">{p.slug}</p>
+                      <p className="font-mono text-micro text-subtle">{p.slug}</p>
                     </div>
                   </div>
                 </td>

@@ -68,7 +68,7 @@ export default async function ReviewsPage({
             </thead>
             <tbody>
               {data.rows.map((r) => (
-                <tr key={r.id} className={cx(trClass, r.status === "PUBLISHED" && r.reportCount > 0 && "bg-red-50/40")}>
+                <tr key={r.id} className={cx(trClass, r.status === "PUBLISHED" && r.reportCount > 0 && "bg-danger-soft")}>
                   <td className={cx(tdClass, "max-w-[220px] truncate")}>
                     {can(user, "program.read") ? (
                       <Link href={`/${locale}/programs/${r.course.id}`} className="hover:underline" title={r.course.title}>
@@ -89,11 +89,11 @@ export default async function ReviewsPage({
                       ))}
                     </span>
                   </td>
-                  <td className={cx(tdClass, "max-w-[380px] whitespace-normal! text-zinc-700")} title={r.content}>
+                  <td className={cx(tdClass, "max-w-[380px] whitespace-normal! text-ink-soft")} title={r.content}>
                     {excerpt(r.content)}
                   </td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{maskName(r.user.name, r.user.email)}</td>
-                  <td className={cx(tdClass, "tabular text-right", r.reportCount > 0 ? "font-semibold text-red-700" : "text-zinc-400")}>
+                  <td className={cx(tdClass, "text-muted")}>{maskName(r.user.name, r.user.email)}</td>
+                  <td className={cx(tdClass, "tabular text-right", r.reportCount > 0 ? "font-semibold text-danger" : "text-zinc-400")}>
                     {r.reportCount}
                   </td>
                   <td className={tdClass}>
@@ -111,7 +111,7 @@ export default async function ReviewsPage({
                       </Badge>
                     )}
                   </td>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(r.createdAt)}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(r.createdAt)}</td>
                   <td className={cx(tdClass, "text-right")}>
                     <ReviewActions id={r.id} status={r.status} reportCount={r.reportCount} />
                   </td>

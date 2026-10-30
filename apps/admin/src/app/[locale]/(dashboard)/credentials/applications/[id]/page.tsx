@@ -39,7 +39,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
       <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-6">
         <div className="flex min-w-0 flex-col gap-4">
           <Card title="응시자">
-            <dl className="grid grid-cols-[96px_1fr] gap-x-4 gap-y-2.5 text-[13px]">
+            <dl className="grid grid-cols-[96px_1fr] gap-x-4 gap-y-2.5 text-caption">
               <dt className="text-muted">이름</dt>
               <dd className="font-medium">
                 {can(user, "member.read") ? (
@@ -68,37 +68,37 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             }
             padded={false}
           >
-            <ul className="divide-y divide-zinc-100">
+            <ul className="divide-y divide-line-soft">
               {prerequisites.map((r) => (
-                <li key={r.courseId} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
+                <li key={r.courseId} className="flex items-center gap-3 px-4 py-2.5 text-caption">
                   {r.completedAt ? (
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-label="수료" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-label="수료" />
                   ) : (
                     <CircleDashed className="h-4 w-4 shrink-0 text-zinc-400" aria-label="미수료" />
                   )}
                   <span className="min-w-0 flex-1 truncate">{r.title}</span>
-                  <span className={cx("tabular shrink-0 text-[12px]", r.completedAt ? "text-emerald-700" : "text-muted")}>
+                  <span className={cx("tabular shrink-0 text-caption", r.completedAt ? "text-success" : "text-muted")}>
                     {r.completedAt ? `${formatDate(r.completedAt)} 수료` : r.enrolled ? `진도 ${r.progressPercent}%` : "수강 기록 없음"}
                   </span>
                 </li>
               ))}
             </ul>
-            <p className="border-t border-line px-4 py-2 text-[11.5px] text-muted">수강 기록(수료일)에서 지금 다시 계산한 값입니다.</p>
+            <p className="border-t border-line px-4 py-2 text-micro text-muted">수강 기록(수료일)에서 지금 다시 계산한 값입니다.</p>
           </Card>
 
           <Card title="신청 동기">
-            <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-700">{app.motivation || "작성하지 않았습니다."}</p>
+            <p className="whitespace-pre-wrap text-caption leading-relaxed text-ink-soft">{app.motivation || "작성하지 않았습니다."}</p>
           </Card>
 
           {credentials.length > 0 && (
             <Card title="이 과정의 발급 이력" padded={false}>
-              <ul className="divide-y divide-zinc-100">
+              <ul className="divide-y divide-line-soft">
                 {credentials.map((c) => {
                   const state = c.revokedAt ? "취소" : c.expiresAt && c.expiresAt <= now ? "만료" : "유효";
                   return (
-                    <li key={c.id} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
+                    <li key={c.id} className="flex items-center gap-3 px-4 py-2.5 text-caption">
                       <span className="font-mono font-medium">{c.number}</span>
-                      <span className="tabular text-zinc-500">
+                      <span className="tabular text-subtle">
                         {formatDate(c.issuedAt)} ~ {c.expiresAt ? formatDate(c.expiresAt) : "영구"}
                       </span>
                       <span className="ml-auto">
@@ -113,14 +113,14 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
 
           <Card title="처리 이력" padded={false}>
             {history.length === 0 ? (
-              <p className="px-4 py-3 text-[12.5px] text-muted">기록이 없습니다.</p>
+              <p className="px-4 py-3 text-caption text-muted">기록이 없습니다.</p>
             ) : (
-              <ol className="divide-y divide-zinc-100">
+              <ol className="divide-y divide-line-soft">
                 {history.map((h) => (
-                  <li key={h.id} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
-                    <span className="tabular w-[132px] shrink-0 text-[12px] text-zinc-500">{formatDateTime(h.at)}</span>
+                  <li key={h.id} className="flex items-center gap-3 px-4 py-2.5 text-caption">
+                    <span className="tabular w-[132px] shrink-0 text-caption text-subtle">{formatDateTime(h.at)}</span>
                     <span className="font-medium">{AUDIT_ACTION_LABEL[h.action] ?? h.action}</span>
-                    <span className="ml-auto text-[12px] text-muted">{h.actor}</span>
+                    <span className="ml-auto text-caption text-muted">{h.actor}</span>
                   </li>
                 ))}
               </ol>
@@ -155,7 +155,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             validity={validityLabel(p.validityMonths)}
           />
           <Card title="평가 기준">
-            <dl className="grid grid-cols-[84px_1fr] gap-x-3 gap-y-2 text-[13px]">
+            <dl className="grid grid-cols-[84px_1fr] gap-x-3 gap-y-2 text-caption">
               <dt className="text-muted">시험</dt>
               <dd className="tabular">{p.examPassingScore}점 이상</dd>
               <dt className="text-muted">실기</dt>
@@ -163,7 +163,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
               <dt className="text-muted">유효기간</dt>
               <dd>{validityLabel(p.validityMonths)}</dd>
             </dl>
-            {p.criteria && <p className="mt-3 whitespace-pre-wrap border-t border-line pt-3 text-[12.5px] leading-relaxed text-zinc-600">{p.criteria}</p>}
+            {p.criteria && <p className="mt-3 whitespace-pre-wrap border-t border-line pt-3 text-caption leading-relaxed text-muted">{p.criteria}</p>}
           </Card>
         </div>
       </div>

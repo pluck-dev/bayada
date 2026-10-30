@@ -83,18 +83,18 @@ export default async function ApprovalsPage({
                       {r.title}
                     </Link>
                   </td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{r.audiences.map((a) => JOB_ROLE_LABEL[a]).join(", ") || "-"}</td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{r.provider?.name ?? "-"}</td>
+                  <td className={cx(tdClass, "text-muted")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
+                  <td className={cx(tdClass, "text-muted")}>{r.audiences.map((a) => JOB_ROLE_LABEL[a]).join(", ") || "-"}</td>
+                  <td className={cx(tdClass, "text-muted")}>{r.provider?.name ?? "-"}</td>
                   <td className={tdClass}>
                     <Badge tone={COURSE_STATUS_TONE[r.status]} dot>
                       {COURSE_STATUS_LABEL[r.status]}
                     </Badge>
-                    <span className="ml-2 text-[12px] text-subtle">{STEP_HINT[r.status]}</span>
+                    <span className="ml-2 text-caption text-subtle">{STEP_HINT[r.status]}</span>
                   </td>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDateTime(r.updatedAt)}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{formatDateTime(r.updatedAt)}</td>
                   <td className={tdClass}>
-                    <Link href={`${base}/${r.id}`} className="text-[12.5px] font-medium text-fg underline-offset-2 hover:underline">
+                    <Link href={`${base}/${r.id}`} className="text-caption font-medium text-fg underline-offset-2 hover:underline">
                       검토 →
                     </Link>
                   </td>

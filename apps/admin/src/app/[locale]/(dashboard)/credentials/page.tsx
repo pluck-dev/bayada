@@ -86,13 +86,13 @@ export default async function CredentialQueuePage({
                       <Link href={`${base}/applications/${r.id}`} className="font-medium hover:underline">
                         {r.user.name ?? r.user.email}
                       </Link>
-                      <p className="text-[11.5px] text-subtle">{r.user.email}</p>
+                      <p className="text-micro text-subtle">{r.user.email}</p>
                     </td>
                     <td className={cx(tdClass, "max-w-[240px] truncate")} title={r.program.title}>
                       {r.program.title}
                     </td>
-                    <td className={cx(tdClass, "text-zinc-600")}>{r.program.practicalRequired ? "시험 + 실기" : "시험"}</td>
-                    <td className={cx(tdClass, "tabular text-right text-zinc-700")}>
+                    <td className={cx(tdClass, "text-muted")}>{r.program.practicalRequired ? "시험 + 실기" : "시험"}</td>
+                    <td className={cx(tdClass, "tabular text-right text-ink-soft")}>
                       {r.examScore ?? "-"}
                       {r.program.practicalRequired && <span className="text-subtle"> / {r.practicalScore ?? "-"}</span>}
                     </td>
@@ -118,7 +118,7 @@ export default async function CredentialQueuePage({
                         <span className="text-subtle">-</span>
                       )}
                     </td>
-                    <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(r.createdAt)}</td>
+                    <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(r.createdAt)}</td>
                   </tr>
                 );
               })}
@@ -127,7 +127,7 @@ export default async function CredentialQueuePage({
         )}
       </div>
       {isEvaluator && !can(user, "credential.approve") && (
-        <p className="mt-3 px-1 text-[12px] text-muted">심사위원은 평가·판정까지 할 수 있습니다. 발급(승인)·반려는 운영자가 합니다.</p>
+        <p className="mt-3 px-1 text-caption text-muted">심사위원은 평가·판정까지 할 수 있습니다. 발급(승인)·반려는 운영자가 합니다.</p>
       )}
     </>
   );

@@ -53,27 +53,27 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       </div>
 
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
-        <Card title={`프로그램 상태 · 전체 ${totalPrograms}개`} actions={<Link href={`${base}/programs`} className="text-[12px] text-muted hover:text-fg">전체 보기</Link>}>
+        <Card title={`프로그램 상태 · 전체 ${totalPrograms}개`} actions={<Link href={`${base}/programs`} className="text-caption text-muted hover:text-fg">전체 보기</Link>}>
           <ul className="flex flex-col gap-2">
             {COURSE_STATUSES.map((s) => {
               const n = d.statusCounts[s] ?? 0;
               const pct = totalPrograms ? (n / totalPrograms) * 100 : 0;
               return (
                 <li key={s}>
-                  <Link href={qs(`${base}/programs`, { status: s })} className="group grid grid-cols-[120px_1fr_40px] items-center gap-3 text-[13px]">
+                  <Link href={qs(`${base}/programs`, { status: s })} className="group grid grid-cols-[120px_1fr_40px] items-center gap-3 text-caption">
                     <Badge tone={COURSE_STATUS_TONE[s]} dot>
                       {COURSE_STATUS_LABEL[s]}
                     </Badge>
-                    <span className="h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                    <span className="h-1.5 overflow-hidden rounded-full bg-surface-sunken">
                       <span className="block h-full rounded-full bg-zinc-800 group-hover:bg-brand" style={{ width: `${pct}%` }} />
                     </span>
-                    <span className="tabular text-right text-zinc-700">{n}</span>
+                    <span className="tabular text-right text-ink-soft">{n}</span>
                   </Link>
                 </li>
               );
             })}
           </ul>
-          <p className="mt-4 border-t border-line pt-3 text-[12px] text-muted">
+          <p className="mt-4 border-t border-line pt-3 text-caption text-muted">
             게시 중 {d.statusCounts.PUBLISHED ?? 0}개 — 사내 {d.visibilityCounts.INTERNAL ?? 0} · 외부 공개 {d.visibilityCounts.PUBLIC ?? 0}
           </p>
         </Card>
@@ -83,13 +83,13 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
             {d.queue.length === 0 ? (
               <EmptyState title="대기 중인 프로그램이 없습니다" />
             ) : (
-              <ul className="divide-y divide-zinc-100">
+              <ul className="divide-y divide-line-soft">
                 {d.queue.map((q) => (
                   <li key={q.id}>
-                    <Link href={`${base}/approvals/${q.id}`} className="flex items-center gap-3 px-4 py-2.5 text-[13px] hover:bg-zinc-50">
+                    <Link href={`${base}/approvals/${q.id}`} className="flex items-center gap-3 px-4 py-2.5 text-caption hover:bg-surface">
                       <span className="flex-1 truncate font-medium">{q.title}</span>
                       <Badge tone={COURSE_STATUS_TONE[q.status]}>{COURSE_STATUS_LABEL[q.status]}</Badge>
-                      <span className="tabular text-[12px] text-subtle">{formatDateTime(q.updatedAt)}</span>
+                      <span className="tabular text-caption text-subtle">{formatDateTime(q.updatedAt)}</span>
                     </Link>
                   </li>
                 ))}
@@ -100,16 +100,16 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           <Card
             title="최근 활동"
             padded={false}
-            actions={can(user, "audit") && <Link href={`${base}/audit`} className="text-[12px] text-muted hover:text-fg">감사 로그</Link>}
+            actions={can(user, "audit") && <Link href={`${base}/audit`} className="text-caption text-muted hover:text-fg">감사 로그</Link>}
           >
             {d.recent.length === 0 ? (
               <EmptyState title="아직 기록된 활동이 없습니다" description="프로그램·배너·회원 변경이 감사 로그에 쌓입니다." />
             ) : (
-              <ul className="divide-y divide-zinc-100">
+              <ul className="divide-y divide-line-soft">
                 {d.recent.map((r) => (
-                  <li key={r.id} className="flex items-center gap-3 px-4 py-2 text-[12.5px]">
+                  <li key={r.id} className="flex items-center gap-3 px-4 py-2 text-caption">
                     <span className="w-[92px] shrink-0 font-medium">{AUDIT_ACTION_LABEL[r.action] ?? r.action}</span>
-                    <span className="flex-1 truncate text-zinc-600">{names.get(r.target) ?? r.target}</span>
+                    <span className="flex-1 truncate text-muted">{names.get(r.target) ?? r.target}</span>
                     <span className="shrink-0 text-subtle">{r.actor?.name ?? r.actor?.email ?? "시스템"}</span>
                     <span className="tabular shrink-0 text-subtle">{formatDateTime(r.at)}</span>
                   </li>

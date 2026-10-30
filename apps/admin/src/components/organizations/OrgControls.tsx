@@ -42,7 +42,7 @@ export function NewOrganizationForm({ locale }: { locale: string }) {
   }
   return (
     <form
-      className="grid w-full grid-cols-[1.4fr_1fr_1fr_auto] items-end gap-3 rounded-lg border border-line bg-zinc-50/60 p-4"
+      className="grid w-full grid-cols-[1.4fr_1fr_1fr_auto] items-end gap-3 rounded-lg border border-line bg-surface p-4"
       onSubmit={(e) => {
         e.preventDefault();
         run(() => createOrganization(v), {

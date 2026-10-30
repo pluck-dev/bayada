@@ -31,13 +31,13 @@ export function RefundPanel({
   return (
     <Card title="환불 처리">
       {request && (
-        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-[12.5px] text-red-800">
+        <div className="mb-4 rounded-md border border-danger-line bg-danger-soft px-3 py-2.5 text-caption text-danger">
           <p className="font-medium">학습자 환불 요청 · {request.at}</p>
           <p className="mt-0.5">사유: {request.reason}</p>
         </div>
       )}
       {!canRefund ? (
-        <p className="text-[12.5px] text-muted">{notRefundableReason ?? "환불할 수 없는 주문입니다."}</p>
+        <p className="text-caption text-muted">{notRefundableReason ?? "환불할 수 없는 주문입니다."}</p>
       ) : (
         <form
           className="flex flex-col gap-3"
@@ -84,7 +84,7 @@ export function RefundPanel({
               onChange={(e) => setReason(e.target.value)}
             />
           </Field>
-          <p className="text-[11.5px] text-muted">
+          <p className="text-micro text-muted">
             {completes
               ? full
                 ? "전액 환불 → 주문 상태 '환불', 수강권 회수"

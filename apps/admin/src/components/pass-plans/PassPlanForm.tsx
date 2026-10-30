@@ -88,7 +88,7 @@ export function PassPlanForm({
             />
           </Field>
           <fieldset className="col-span-2 flex flex-col gap-1.5">
-            <legend className="mb-1.5 text-[12.5px] font-medium text-zinc-700">
+            <legend className="mb-1.5 text-caption font-medium text-ink-soft">
               무제한 수강 대상 상품 유형<span className="ml-0.5 text-brand">*</span>
             </legend>
             <div className="flex flex-wrap gap-2">
@@ -98,8 +98,8 @@ export function PassPlanForm({
                   <label
                     key={t}
                     className={cx(
-                      "inline-flex h-8 cursor-pointer items-center gap-2 rounded-md border px-3 text-[13px] transition-colors",
-                      on ? "border-zinc-900 bg-zinc-900 text-white" : "border-line bg-white text-zinc-700 hover:border-line-strong",
+                      "inline-flex h-8 cursor-pointer items-center gap-2 rounded-md border px-3 text-caption transition-colors",
+                      on ? "border-ink bg-zinc-900 text-white" : "border-line bg-canvas text-ink-soft hover:border-line-strong",
                     )}
                   >
                     <input
@@ -113,11 +113,11 @@ export function PassPlanForm({
                 );
               })}
             </div>
-            <p className="text-[11.5px] text-muted">
+            <p className="text-micro text-muted">
               유료 프로그램 중 이 유형이면서 학습자에게 노출되는 프로그램을 패스로 수강할 수 있습니다. 사내 전용 노출 규칙은 그대로 적용됩니다.
             </p>
           </fieldset>
-          <label className="col-span-2 inline-flex items-center gap-2 text-[13px] text-zinc-700">
+          <label className="col-span-2 inline-flex items-center gap-2 text-caption text-ink-soft">
             <input type="checkbox" checked={v.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-zinc-900" />
             판매 중 (끄면 새 구독만 막히고, 이용 중인 구독은 만료일까지 유지)
           </label>

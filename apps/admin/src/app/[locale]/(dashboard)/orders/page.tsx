@@ -66,21 +66,21 @@ export default async function OrdersPage({
               {data.rows.map((o) => (
                 <tr key={o.id} className={trClass}>
                   <td className={tdClass}>
-                    <Link href={`${base}/${o.id}`} className="font-mono text-[12px] font-medium hover:underline">
+                    <Link href={`${base}/${o.id}`} className="font-mono text-caption font-medium hover:underline">
                       {o.orderNo}
                     </Link>
-                    {o.type === "B2B" && <span className="ml-1.5 text-[11px] text-subtle">{ORDER_TYPE_LABEL.B2B}</span>}
+                    {o.type === "B2B" && <span className="ml-1.5 text-micro text-subtle">{ORDER_TYPE_LABEL.B2B}</span>}
                   </td>
                   <td className={tdClass}>
                     <p className="font-medium">{o.user.name ?? "-"}</p>
-                    <p className="text-[11.5px] text-subtle">{o.organization?.name ?? o.user.email}</p>
+                    <p className="text-micro text-subtle">{o.organization?.name ?? o.user.email}</p>
                   </td>
                   <td className={cx(tdClass, "max-w-[320px] truncate")} title={orderTitle(o.items)}>
                     {orderTitle(o.items)}
                   </td>
                   <td className={cx(tdClass, "tabular text-right")}>
                     <span className="font-medium">{o.totalAmount.toLocaleString()}원</span>
-                    {o.refundAmount ? <p className="text-[11.5px] text-red-700">환불 {o.refundAmount.toLocaleString()}원</p> : null}
+                    {o.refundAmount ? <p className="text-micro text-danger">환불 {o.refundAmount.toLocaleString()}원</p> : null}
                   </td>
                   <td className={tdClass}>
                     <div className="flex items-center gap-1">
@@ -90,8 +90,8 @@ export default async function OrdersPage({
                       {data.requested.has(o.id) && <Badge tone="red">환불 요청</Badge>}
                     </div>
                   </td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{o.paymentMethod ?? "-"}</td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>{formatDateTime(o.createdAt)}</td>
+                  <td className={cx(tdClass, "text-muted")}>{o.paymentMethod ?? "-"}</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>{formatDateTime(o.createdAt)}</td>
                 </tr>
               ))}
             </tbody>

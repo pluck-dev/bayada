@@ -51,12 +51,12 @@ export default async function PathwaysPage({ params }: { params: Promise<{ local
                     <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
                       {p.title}
                     </Link>
-                    <p className="mt-0.5 font-mono text-[11.5px] text-subtle">{p.slug}</p>
+                    <p className="mt-0.5 font-mono text-micro text-subtle">{p.slug}</p>
                   </td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{p.jobRole ? JOB_ROLE_LABEL[p.jobRole] : "-"}</td>
+                  <td className={cx(tdClass, "text-muted")}>{p.jobRole ? JOB_ROLE_LABEL[p.jobRole] : "-"}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{p._count.steps}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{p._count.goals.toLocaleString()}</td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>
+                  <td className={cx(tdClass, "tabular text-muted")}>
                     {p.infoAsOf ? formatDate(p.infoAsOf) : <Badge tone="amber">미입력</Badge>}
                   </td>
                   <td className={tdClass}>
@@ -68,7 +68,7 @@ export default async function PathwaysPage({ params }: { params: Promise<{ local
                       <Badge tone="slate">비공개</Badge>
                     )}
                   </td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>{formatDateTime(p.updatedAt)}</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>{formatDateTime(p.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>

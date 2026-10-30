@@ -104,7 +104,7 @@ export function ProgramForm({
               <input
                 id="slug"
                 required
-                className={cx(inputClass, "font-mono text-[12.5px]!")}
+                className={cx(inputClass, "font-mono text-caption!")}
                 value={v.slug}
                 onChange={(e) => {
                   setSlugTouched(true);
@@ -128,7 +128,7 @@ export function ProgramForm({
               <textarea
                 id="description"
                 rows={8}
-                className={cx(textareaClass, "font-mono text-[12.5px]!")}
+                className={cx(textareaClass, "font-mono text-caption!")}
                 value={v.description}
                 onChange={(e) => set("description", e.target.value)}
               />
@@ -225,7 +225,7 @@ export function ProgramForm({
               />
             </Field>
             <div className="col-span-3 flex flex-col gap-1.5">
-              <span className="text-[12.5px] font-medium text-zinc-700" id="aud-label">
+              <span className="text-caption font-medium text-ink-soft" id="aud-label">
                 대상 직군<span className="ml-0.5 text-brand">*</span>
               </span>
               <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="aud-label">
@@ -238,8 +238,8 @@ export function ProgramForm({
                       aria-pressed={on}
                       onClick={() => set("audiences", on ? v.audiences.filter((a) => a !== r) : [...v.audiences, r as JobRole])}
                       className={cx(
-                        "h-7 rounded-full border px-3 text-[12.5px] transition-colors",
-                        on ? "border-zinc-900 bg-zinc-900 text-white" : "border-line text-zinc-600 hover:border-line-strong",
+                        "h-7 rounded-full border px-3 text-caption transition-colors",
+                        on ? "border-ink bg-zinc-900 text-white" : "border-line text-muted hover:border-line-strong",
                       )}
                     >
                       {JOB_ROLE_LABEL[r]}
@@ -267,7 +267,7 @@ export function ProgramForm({
           <ol className="flex flex-col gap-2">
             {objectives.map((o, i) => (
               <li key={i} className="flex items-center gap-2">
-                <span className="tabular w-5 text-right text-[12px] text-subtle">{i + 1}</span>
+                <span className="tabular w-5 text-right text-caption text-subtle">{i + 1}</span>
                 <input
                   className={inputClass}
                   value={o}
@@ -304,7 +304,7 @@ export function ProgramForm({
           <Card title="노출">
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <span className="text-[12.5px] font-medium text-zinc-700" id="vis-label">
+                <span className="text-caption font-medium text-ink-soft" id="vis-label">
                   공개범위
                 </span>
                 <div className="inline-flex w-fit rounded-md border border-line p-0.5" role="radiogroup" aria-labelledby="vis-label">
@@ -316,17 +316,17 @@ export function ProgramForm({
                       aria-checked={v.visibility === vis}
                       onClick={() => set("visibility", vis)}
                       className={cx(
-                        "h-7 rounded px-3 text-[12.5px] font-medium",
-                        v.visibility === vis ? "bg-zinc-900 text-white" : "text-zinc-600 hover:text-fg",
+                        "h-7 rounded px-3 text-caption font-medium",
+                        v.visibility === vis ? "bg-zinc-900 text-white" : "text-muted hover:text-fg",
                       )}
                     >
                       {vis === "INTERNAL" ? "사내 전용" : "외부 공개"}
                     </button>
                   ))}
                 </div>
-                <p className="text-[11.5px] text-muted">사내 전용은 바야다 사내 조직 소속 회원에게만 보입니다.</p>
+                <p className="text-micro text-muted">사내 전용은 바야다 사내 조직 소속 회원에게만 보입니다.</p>
               </div>
-              <label className="flex items-start gap-2 pt-6 text-[13px]">
+              <label className="flex items-start gap-2 pt-6 text-caption">
                 <input
                   type="checkbox"
                   checked={v.featured}
@@ -335,7 +335,7 @@ export function ProgramForm({
                 />
                 <span>
                   메인 큐레이션(신규·인기)에 노출
-                  <span className="block text-[11.5px] text-muted">게시 상태일 때만 메인에 보입니다.</span>
+                  <span className="block text-micro text-muted">게시 상태일 때만 메인에 보입니다.</span>
                 </span>
               </label>
             </div>
@@ -344,8 +344,8 @@ export function ProgramForm({
       </fieldset>
 
       {!locked && (
-        <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-white/95 px-1 py-3 backdrop-blur">
-          {dirty && <span className="mr-auto text-[12px] text-amber-700">저장하지 않은 변경 사항이 있습니다</span>}
+        <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+          {dirty && <span className="mr-auto text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
           <Button type="submit" variant="primary" disabled={isPending || (!!programId && !dirty)}>
             {isPending ? "저장 중…" : programId ? "저장" : "만들고 커리큘럼 편집"}
           </Button>

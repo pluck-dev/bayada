@@ -62,13 +62,13 @@ export function MemberTable({
   return (
     <>
       {canWrite && sel.length > 0 && (
-        <div className="mb-2 flex h-10 items-center gap-2 rounded-lg bg-zinc-900 px-3 text-[12.5px] text-white">
+        <div className="mb-2 flex h-10 items-center gap-2 rounded-lg bg-zinc-900 px-3 text-caption text-white">
           <span className="font-medium">승인 대기 {sel.length}명 선택</span>
           <button
             type="button"
             disabled={isPending}
             onClick={() => decide(sel, "APPROVED")}
-            className="ml-2 h-7 rounded-md bg-white px-2.5 font-medium text-zinc-900 hover:bg-zinc-100"
+            className="ml-2 h-7 rounded-md bg-canvas px-2.5 font-medium text-ink hover:bg-surface-sunken"
           >
             일괄 승인
           </button>
@@ -136,20 +136,20 @@ export function MemberTable({
                   <Link href={`/${locale}/members/${r.id}`} className="font-medium hover:underline">
                     {r.name ?? "(이름 없음)"}
                   </Link>
-                  <p className="text-[12px] text-muted">{r.email}</p>
+                  <p className="text-caption text-muted">{r.email}</p>
                 </td>
-                <td className={cx(tdClass, "text-zinc-600")}>
+                <td className={cx(tdClass, "text-muted")}>
                   {r.organization ? (
                     <>
                       {r.organization.name}
-                      {r.organization.isInternal && <span className="ml-1.5 text-[11px] text-subtle">사내</span>}
+                      {r.organization.isInternal && <span className="ml-1.5 text-micro text-subtle">사내</span>}
                     </>
                   ) : (
                     <span className="text-subtle">외부 개인</span>
                   )}
                 </td>
-                <td className={cx(tdClass, "text-zinc-600")}>{r.customRoleKey ? (roleNames[r.customRoleKey] ?? r.customRoleKey) : ROLE_LABEL[r.role]}</td>
-                <td className={cx(tdClass, "text-zinc-600")}>{r.jobRole ? JOB_ROLE_LABEL[r.jobRole] : <span className="text-subtle">-</span>}</td>
+                <td className={cx(tdClass, "text-muted")}>{r.customRoleKey ? (roleNames[r.customRoleKey] ?? r.customRoleKey) : ROLE_LABEL[r.role]}</td>
+                <td className={cx(tdClass, "text-muted")}>{r.jobRole ? JOB_ROLE_LABEL[r.jobRole] : <span className="text-subtle">-</span>}</td>
                 <td className={tdClass}>
                   <Badge tone={USER_STATUS_TONE[r.status]} dot>
                     {USER_STATUS_LABEL[r.status]}
@@ -157,7 +157,7 @@ export function MemberTable({
                 </td>
                 <td className={cx(tdClass, "tabular text-right")}>{r._count.enrollments}</td>
                 <td className={cx(tdClass, "tabular text-right")}>{r._count.certificates}</td>
-                <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(r.createdAt)}</td>
+                <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(r.createdAt)}</td>
                 {canWrite && (
                   <td className={tdClass}>
                     {r.status === "PENDING" && r.id !== selfId && (

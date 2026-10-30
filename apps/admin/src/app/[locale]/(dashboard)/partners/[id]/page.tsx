@@ -57,7 +57,7 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
                       </Badge>
                     </td>
                     <td className={cx(tdClass, "tabular text-right")}>{c._count.enrollments.toLocaleString()}</td>
-                    <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(c.updatedAt)}</td>
+                    <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(c.updatedAt)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -68,16 +68,16 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
         <aside className="flex flex-col gap-4">
           <Card title={`파트너 관리자 (${p.admins.length})`} padded={false}>
             {p.admins.length === 0 ? (
-              <p className="px-4 py-5 text-center text-[12.5px] text-muted">지정된 파트너 관리자가 없습니다.</p>
+              <p className="px-4 py-5 text-center text-caption text-muted">지정된 파트너 관리자가 없습니다.</p>
             ) : (
-              <ul className="divide-y divide-zinc-100">
+              <ul className="divide-y divide-line-soft">
                 {p.admins.map((a) => (
-                  <li key={a.id} className="flex items-center gap-2 px-4 py-2 text-[12.5px]">
+                  <li key={a.id} className="flex items-center gap-2 px-4 py-2 text-caption">
                     <span className="min-w-0 flex-1">
                       <Link href={`/${locale}/members/${a.id}`} className="block truncate font-medium hover:underline">
                         {a.name ?? a.email}
                       </Link>
-                      <span className="block truncate text-[11.5px] text-subtle">{a.email}</span>
+                      <span className="block truncate text-micro text-subtle">{a.email}</span>
                     </span>
                     <UnassignPartnerAdminButton providerId={p.id} userId={a.id} label={a.name ?? a.email} />
                   </li>
@@ -90,7 +90,7 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
               <AssignPartnerAdminForm providerId={p.id} providerName={p.name} />
             </Card>
           ) : (
-            <p className="px-1 text-[12px] text-muted">바야다 자체 제공기관에는 파트너 관리자를 두지 않습니다.</p>
+            <p className="px-1 text-caption text-muted">바야다 자체 제공기관에는 파트너 관리자를 두지 않습니다.</p>
           )}
         </aside>
       </div>

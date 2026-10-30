@@ -73,11 +73,11 @@ export function PageEditor({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="flex min-w-0 flex-col gap-1.5">
-          <label htmlFor="page-content" className="flex items-center justify-between text-[12.5px] font-medium text-zinc-700">
+          <label htmlFor="page-content" className="flex items-center justify-between text-caption font-medium text-ink-soft">
             <span>
               본문 HTML<span className="ml-0.5 text-brand">*</span>
             </span>
-            <span className="tabular text-[11.5px] font-normal text-subtle">{content.length.toLocaleString()}자</span>
+            <span className="tabular text-micro font-normal text-subtle">{content.length.toLocaleString()}자</span>
           </label>
           <textarea
             id="page-content"
@@ -85,26 +85,26 @@ export function PageEditor({
             spellCheck={false}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className={cx(textareaClass, "h-[calc(100vh-330px)] min-h-[420px] resize-none font-mono text-[12px]! leading-[1.6]!")}
+            className={cx(textareaClass, "h-[calc(100vh-330px)] min-h-[420px] resize-none font-mono text-caption! leading-[1.6]!")}
           />
-          <p className="text-[11.5px] text-muted">h3·p·ol/ul·table·a 태그를 쓸 수 있습니다. 스크립트·iframe·이벤트 속성은 저장되지 않습니다.</p>
+          <p className="text-micro text-muted">h3·p·ol/ul·table·a 태그를 쓸 수 있습니다. 스크립트·iframe·이벤트 속성은 저장되지 않습니다.</p>
         </div>
         <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-[12.5px] font-medium text-zinc-700">미리보기</span>
+          <span className="text-caption font-medium text-ink-soft">미리보기</span>
           <iframe
             title="문서 미리보기"
             sandbox=""
             srcDoc={previewDoc(title, deferred)}
-            className="h-[calc(100vh-330px)] min-h-[420px] w-full rounded-md border border-line bg-white"
+            className="h-[calc(100vh-330px)] min-h-[420px] w-full rounded-md border border-line bg-canvas"
           />
-          <p className="text-[11.5px] text-muted">아카데미 본문 스타일 기준입니다.</p>
+          <p className="text-micro text-muted">아카데미 본문 스타일 기준입니다.</p>
         </div>
       </div>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-white/95 px-1 py-3 backdrop-blur">
-        <span className="mr-auto text-[12px]">
+      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+        <span className="mr-auto text-caption">
           {dirty ? (
-            <span className="text-amber-700">저장하지 않은 변경 사항이 있습니다</span>
+            <span className="text-warning">저장하지 않은 변경 사항이 있습니다</span>
           ) : (
             <span className="text-muted">최종 수정 {base ? formatDateTime(base) : "-"}</span>
           )}

@@ -67,7 +67,7 @@ export default async function PartnerProgramPage({
             href={t.key === "basic" ? base : `${base}?tab=${t.key}`}
             aria-current={tab === t.key ? "page" : undefined}
             className={cx(
-              "-mb-px border-b-2 px-3 py-2 text-[13px] font-medium transition-colors",
+              "-mb-px border-b-2 px-3 py-2 text-caption font-medium transition-colors",
               tab === t.key ? "border-brand text-fg" : "border-transparent text-muted hover:text-fg",
             )}
           >
@@ -79,7 +79,7 @@ export default async function PartnerProgramPage({
       <div className="grid grid-cols-[minmax(0,1fr)_280px] items-start gap-6">
         <div className="min-w-0">
           {locked && tab !== "history" && (
-            <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-[12.5px] text-blue-800">
+            <div className="mb-4 rounded-md border border-info-line bg-info-soft px-3 py-2 text-caption text-info">
               {program.status === "PUBLISHED" || program.status === "ARCHIVED"
                 ? `${COURSE_STATUS_LABEL[program.status]} 상태라 파트너 콘솔에서는 고칠 수 없습니다. 변경이 필요하면 바야다 운영자에게 요청하세요.`
                 : `${COURSE_STATUS_LABEL[program.status]} 단계라 편집이 잠겨 있습니다. 검토자가 수정 요청하면 다시 고칠 수 있습니다.`}
@@ -146,9 +146,9 @@ export default async function PartnerProgramPage({
 
         <aside className="sticky top-0 flex flex-col gap-4">
           {program.status === "CHANGES_REQUESTED" && program.reviewNote && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-[12px] font-semibold text-amber-900">수정 요청 사유</p>
-              <p className="mt-1 whitespace-pre-wrap text-[12.5px] text-amber-900">{program.reviewNote}</p>
+            <div className="rounded-lg border border-warning-line bg-warning-soft p-3">
+              <p className="text-caption font-semibold text-warning">수정 요청 사유</p>
+              <p className="mt-1 whitespace-pre-wrap text-caption text-warning">{program.reviewNote}</p>
             </div>
           )}
           <Card title="필수 항목 체크">
@@ -157,7 +157,7 @@ export default async function PartnerProgramPage({
           <Card title="승인 요청">
             <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} />
           </Card>
-          <p className="px-1 text-[12px] text-muted">검토·승인·게시는 바야다 운영자와 임상 리뷰어가 진행합니다.</p>
+          <p className="px-1 text-caption text-muted">검토·승인·게시는 바야다 운영자와 임상 리뷰어가 진행합니다.</p>
         </aside>
       </div>
     </>

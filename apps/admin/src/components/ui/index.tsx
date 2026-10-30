@@ -1,24 +1,36 @@
-// 어드민 공통 UI 프리미티브 — 서버·클라이언트 컴포넌트 어디서나 쓴다 (상태 없음)
+// 어드민 UI — 모양은 전부 @bayada/ui(디자인 시스템)에서 온다. 여기는 어드민 밀도(sm/xs, compact)와
+// 기존 호출 형태(buttonClass·tone 이름 등)를 맞추는 얇은 어댑터만 둔다. 새 모양을 여기서 만들지 말 것.
 import Link from "next/link";
+import {
+  Badge as UiBadge,
+  Card as UiCard,
+  CardHeader,
+  EmptyState as UiEmptyState,
+  Field as UiField,
+  PageHeader as UiPageHeader,
+  StatCard,
+  buttonVariants,
+  cn,
+  controlClass,
+  selectClass as uiSelectClass,
+  tableClasses,
+  tagClass,
+  textareaClass as uiTextareaClass,
+  type BadgeTone,
+} from "@bayada/ui";
 import type { Tone } from "@/lib/labels";
 
-export function cx(...parts: Array<string | false | null | undefined>): string {
-  return parts.filter(Boolean).join(" ");
-}
+export const cx = cn;
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "dark";
 type ButtonSize = "sm" | "md";
 
+/** 어드민 버튼: md = 32px(sm), sm = 28px(xs). "dark" 는 폐지 — secondary 로 그린다 (화면당 레드 1개 규칙) */
 export function buttonClass(variant: ButtonVariant = "secondary", size: ButtonSize = "md"): string {
-  return cx(
-    "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2",
-    size === "sm" ? "h-7 px-2.5 text-[12px]" : "h-8 px-3 text-[13px]",
-    variant === "primary" && "bg-brand text-white hover:bg-brand-hover shadow-[0_1px_0_rgba(0,0,0,0.08)]",
-    variant === "dark" && "bg-zinc-900 text-white hover:bg-zinc-700",
-    variant === "secondary" && "border border-line bg-white text-fg hover:bg-zinc-50 hover:border-line-strong",
-    variant === "ghost" && "text-zinc-600 hover:bg-zinc-100 hover:text-fg",
-    variant === "danger" && "border border-red-200 bg-white text-red-700 hover:bg-red-50",
-  );
+  return buttonVariants({
+    variant: variant === "dark" ? "secondary" : variant,
+    size: size === "sm" ? "xs" : "sm",
+  });
 }
 
 export function Button({
@@ -28,7 +40,7 @@ export function Button({
   type = "button",
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; size?: ButtonSize }) {
-  return <button type={type} className={cx(buttonClass(variant, size), className)} {...props} />;
+  return <button type={type} className={cn(buttonClass(variant, size), className)} {...props} />;
 }
 
 export function LinkButton({
@@ -45,34 +57,29 @@ export function LinkButton({
   children: React.ReactNode;
 }) {
   return (
-    <Link href={href} className={cx(buttonClass(variant, size), className)}>
+    <Link href={href} className={cn(buttonClass(variant, size), className)}>
       {children}
     </Link>
   );
 }
 
-const TONE: Record<Tone, string> = {
-  zinc: "bg-zinc-100 text-zinc-700 ring-zinc-200",
-  slate: "bg-slate-100 text-slate-500 ring-slate-200",
-  blue: "bg-blue-50 text-blue-700 ring-blue-200",
-  violet: "bg-violet-50 text-violet-700 ring-violet-200",
-  amber: "bg-amber-50 text-amber-800 ring-amber-200",
-  red: "bg-red-50 text-red-700 ring-red-200",
-  teal: "bg-teal-50 text-teal-700 ring-teal-200",
-  green: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+/** 도메인 tone(lib/labels) → 디자인 시스템 상태 색. 상태 색 규칙은 DESIGN-SYSTEM.md §6 */
+const TONE: Record<Tone, BadgeTone> = {
+  zinc: "neutral",
+  slate: "neutral",
+  blue: "info",
+  violet: "info",
+  amber: "warning",
+  red: "danger",
+  teal: "success",
+  green: "success",
 };
 
 export function Badge({ tone = "zinc", children, dot }: { tone?: Tone; children: React.ReactNode; dot?: boolean }) {
   return (
-    <span
-      className={cx(
-        "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[11.5px] font-medium ring-1 ring-inset",
-        TONE[tone],
-      )}
-    >
-      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />}
+    <UiBadge tone={TONE[tone]} dot={dot}>
       {children}
-    </span>
+    </UiBadge>
   );
 }
 
@@ -88,20 +95,19 @@ export function PageHeader({
   back?: { href: string; label: string };
 }) {
   return (
-    <div className="mb-5">
-      {back && (
-        <Link href={back.href} className="mb-2 inline-flex text-[12.5px] text-muted hover:text-fg">
-          ← {back.label}
-        </Link>
-      )}
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="min-w-0">
-          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-fg">{title}</h1>
-          {description && <p className="mt-1 text-[13px] text-muted">{description}</p>}
-        </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
-      </div>
-    </div>
+    <UiPageHeader
+      size="compact"
+      title={title}
+      description={description}
+      actions={actions}
+      back={
+        back ? (
+          <Link href={back.href} className="inline-flex text-caption text-muted hover:text-ink">
+            ← {back.label}
+          </Link>
+        ) : undefined
+      }
+    />
   );
 }
 
@@ -119,42 +125,28 @@ export function Card({
   padded?: boolean;
 }) {
   return (
-    <section className={cx("rounded-lg border border-line bg-white", className)}>
-      {(title || actions) && (
-        <header className="flex items-center justify-between gap-2 border-b border-line px-4 py-2.5">
-          <h2 className="text-[13px] font-semibold text-fg">{title}</h2>
-          {actions}
-        </header>
-      )}
+    <UiCard as="section" className={cn("overflow-visible", className)}>
+      {(title || actions) && <CardHeader size="sm" divider title={title} actions={actions} className="items-center" />}
       <div className={padded ? "p-4" : undefined}>{children}</div>
-    </section>
+    </UiCard>
   );
 }
 
 export function EmptyState({ title, description }: { title: string; description?: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
-      <div className="mb-3 h-9 w-9 rounded-full border border-dashed border-line-strong" aria-hidden />
-      <p className="text-[13px] font-medium text-fg">{title}</p>
-      {description && <p className="mt-1 max-w-sm text-[12.5px] text-muted">{description}</p>}
-    </div>
-  );
+  return <UiEmptyState size="sm" title={title} description={description} />;
 }
 
-// ─── 테이블 ───
-export const tableWrap = "overflow-auto rounded-lg border border-line bg-white";
-export const tableClass = "w-full border-collapse text-[13px]";
-export const thClass =
-  "sticky top-0 z-10 whitespace-nowrap border-b border-line bg-zinc-50/95 px-3 py-2 text-left text-[11.5px] font-medium text-muted backdrop-blur";
-export const tdClass = "whitespace-nowrap border-b border-zinc-100 px-3 py-2 align-middle";
-export const trClass = "hover:bg-zinc-50/70";
+// ─── 테이블 (compact 밀도) ───
+export const tableWrap = tableClasses.wrap;
+export const tableClass = tableClasses.table;
+export const thClass = tableClasses.th;
+export const tdClass = tableClasses.td;
+export const trClass = tableClasses.tr;
 
-// ─── 폼 ───
-export const inputClass =
-  "h-8 w-full rounded-md border border-line bg-white px-2.5 text-[13px] text-fg placeholder:text-subtle transition-colors hover:border-line-strong focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:bg-zinc-50 disabled:text-muted";
-export const textareaClass =
-  "w-full rounded-md border border-line bg-white px-2.5 py-2 text-[13px] leading-relaxed text-fg placeholder:text-subtle hover:border-line-strong focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:bg-zinc-50";
-export const selectClass = inputClass + " pr-7";
+// ─── 폼 (sm 밀도) ───
+export const inputClass = controlClass("sm");
+export const textareaClass = uiTextareaClass("sm");
+export const selectClass = uiSelectClass("sm");
 
 export function Field({
   label,
@@ -172,49 +164,34 @@ export function Field({
   className?: string;
 }) {
   return (
-    <div className={cx("flex flex-col gap-1.5", className)}>
-      <label htmlFor={htmlFor} className="text-[12.5px] font-medium text-zinc-700">
-        {label}
-        {required && <span className="ml-0.5 text-brand">*</span>}
-      </label>
+    <UiField size="sm" label={label} help={hint} required={required} htmlFor={htmlFor} className={className}>
       {children}
-      {hint && <p className="text-[11.5px] text-muted">{hint}</p>}
-    </div>
+    </UiField>
   );
 }
 
 /** URL 쿼리 기반 필터 칩 */
 export function FilterChip({ href, active, children, count }: { href: string; active: boolean; children: React.ReactNode; count?: number }) {
   return (
-    <Link
-      href={href}
-      aria-current={active ? "true" : undefined}
-      className={cx(
-        "inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-medium transition-colors",
-        active ? "border-zinc-900 bg-zinc-900 text-white" : "border-line bg-white text-zinc-600 hover:border-line-strong hover:text-fg",
-      )}
-    >
+    <Link href={href} aria-current={active ? "true" : undefined} className={tagClass({ active, size: "sm" })}>
       {children}
-      {count !== undefined && <span className={cx("tabular", active ? "text-zinc-300" : "text-subtle")}>{count}</span>}
+      {count !== undefined && <span className={cn("tabular", active ? "text-neutral-300" : "text-subtle")}>{count}</span>}
     </Link>
   );
 }
 
+/** 숫자 타일 — 어드민 바탕이 회색이라 흰 면 + 선으로 */
 export function Stat({ label, value, hint, href }: { label: string; value: React.ReactNode; hint?: string; href?: string }) {
-  const body = (
-    <>
-      <p className="text-[12px] text-muted">{label}</p>
-      <p className="tabular mt-1.5 text-[24px] font-semibold tracking-[-0.02em] text-fg">{value}</p>
-      {hint && <p className="mt-0.5 text-[11.5px] text-subtle">{hint}</p>}
-    </>
-  );
-  const cls = "block rounded-lg border border-line bg-white px-4 py-3.5";
-  return href ? (
-    <Link href={href} className={cx(cls, "transition-colors hover:border-line-strong")}>
-      {body}
-    </Link>
-  ) : (
-    <div className={cls}>{body}</div>
+  return (
+    <StatCard
+      size="sm"
+      label={label}
+      value={value}
+      hint={hint}
+      href={href}
+      LinkComponent={Link}
+      className={cn("border border-line bg-canvas", href && "hover:border-line-strong hover:bg-canvas")}
+    />
   );
 }
 

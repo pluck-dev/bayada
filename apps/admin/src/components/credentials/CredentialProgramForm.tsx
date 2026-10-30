@@ -84,7 +84,7 @@ export function CredentialProgramForm({
               />
             </Field>
             <Field label="공개" htmlFor="cp-active" hint="공개하면 아카데미 인증 목록에 보이고 신청을 받습니다.">
-              <label className="flex h-8 items-center gap-2 text-[13px]">
+              <label className="flex h-8 items-center gap-2 text-caption">
                 <input id="cp-active" type="checkbox" className="h-4 w-4 accent-zinc-900" checked={v.active} onChange={(e) => set("active", e.target.checked)} />
                 {v.active ? "공개 중 (신청 받음)" : "비공개"}
               </label>
@@ -100,20 +100,20 @@ export function CredentialProgramForm({
 
         <Card title="신청 자격 — 선수 프로그램">
           <div className="flex flex-col gap-3">
-            <p className="text-[12.5px] text-muted">모두 수료(수료일 기록)한 학습자만 신청할 수 있습니다. 게시 중인 프로그램에서 고릅니다.</p>
+            <p className="text-caption text-muted">모두 수료(수료일 기록)한 학습자만 신청할 수 있습니다. 게시 중인 프로그램에서 고릅니다.</p>
             {v.requiredCourseIds.length > 0 && (
-              <ul className="flex flex-col divide-y divide-zinc-100 rounded-md border border-line">
+              <ul className="flex flex-col divide-y divide-line-soft rounded-md border border-line">
                 {v.requiredCourseIds.map((id, i) => {
                   const c = courseById.get(id);
                   return (
-                    <li key={id} className="flex items-center gap-2.5 px-3 py-2 text-[13px]">
-                      <span className="tabular w-5 text-[12px] text-subtle">{i + 1}</span>
+                    <li key={id} className="flex items-center gap-2.5 px-3 py-2 text-caption">
+                      <span className="tabular w-5 text-caption text-subtle">{i + 1}</span>
                       <span className="min-w-0 flex-1 truncate">{c?.title ?? "삭제된 프로그램"}</span>
-                      {c?.note && <span className="shrink-0 text-[11.5px] text-subtle">{c.note}</span>}
+                      {c?.note && <span className="shrink-0 text-micro text-subtle">{c.note}</span>}
                       <button
                         type="button"
                         aria-label={`${c?.title ?? "프로그램"} 빼기`}
-                        className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-fg"
+                        className="rounded p-1 text-zinc-400 hover:bg-surface-sunken hover:text-fg"
                         onClick={() => set("requiredCourseIds", v.requiredCourseIds.filter((x) => x !== id))}
                       >
                         <X className="h-3.5 w-3.5" />
@@ -213,14 +213,14 @@ export function CredentialProgramForm({
             </Field>
           </div>
           {thresholdChanged && pending > 0 && (
-            <p className="mt-3 rounded-md bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800">
+            <p className="mt-3 rounded-md bg-warning-soft px-3 py-2 text-caption text-warning">
               진행 중인 신청 {pending}건의 합격/불합격 판정이 새 기준으로 다시 계산됩니다.
             </p>
           )}
         </Card>
       </fieldset>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-white/95 px-1 py-3 backdrop-blur">
+      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
         {programId && (
           <Button
             variant="danger"
@@ -238,7 +238,7 @@ export function CredentialProgramForm({
             과정 삭제
           </Button>
         )}
-        {dirty && <span className="text-[12px] text-amber-700">저장하지 않은 변경 사항이 있습니다</span>}
+        {dirty && <span className="text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
         <Button type="submit" variant="primary" disabled={isPending || (!!programId && !dirty)}>
           {isPending ? "저장 중…" : programId ? "저장" : "과정 만들기"}
         </Button>

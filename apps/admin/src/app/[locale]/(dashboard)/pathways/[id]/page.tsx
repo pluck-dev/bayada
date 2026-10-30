@@ -31,7 +31,7 @@ export default async function PathwayEditPage({ params }: { params: Promise<{ lo
             )}
             <span>{p.country}</span>
             <span className="text-subtle">·</span>
-            <span className="font-mono text-[12px]">/pathways/{p.slug}</span>
+            <span className="font-mono text-caption">/pathways/{p.slug}</span>
             <span className="text-subtle">·</span>
             <span>목표 설정 {p._count.goals.toLocaleString()}명</span>
             <span className="text-subtle">·</span>

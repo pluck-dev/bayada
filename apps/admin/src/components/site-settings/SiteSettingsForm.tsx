@@ -61,13 +61,13 @@ function useSection<K extends SiteSettingKey>(key: K, initial: SiteSettings[K], 
 
   const footer = (
     <div className="mt-4 flex items-center justify-between gap-3 border-t border-line pt-3">
-      <p className="text-[12px] text-muted">
+      <p className="text-caption text-muted">
         {justSaved && !dirty ? (
           <Badge tone="green" dot>
             아카데미에 반영됨
           </Badge>
         ) : dirty ? (
-          <span className="text-amber-700">저장하지 않은 변경이 있습니다</span>
+          <span className="text-warning">저장하지 않은 변경이 있습니다</span>
         ) : isDefault ? (
           "기본값 사용 중"
         ) : (
@@ -99,14 +99,14 @@ export function SiteSettingsForm({ settings, savedAt, academyUrl }: Props) {
   const at = (k: SiteSettingKey) => savedAt[k] ?? null;
   return (
     <div className="grid grid-cols-[180px_minmax(0,1fr)] items-start gap-6">
-      <nav aria-label="설정 섹션" className="sticky top-0 flex flex-col gap-0.5 text-[13px]">
+      <nav aria-label="설정 섹션" className="sticky top-0 flex flex-col gap-0.5 text-caption">
         {NAV.map((n) => (
-          <a key={n.key} href={`#${anchor(n.key)}`} className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-zinc-600 hover:bg-zinc-100 hover:text-fg">
+          <a key={n.key} href={`#${anchor(n.key)}`} className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-muted hover:bg-surface-sunken hover:text-fg">
             {n.label}
             {savedAt[n.key] && <span className="h-1.5 w-1.5 rounded-full bg-brand" title="기본값에서 바뀜" aria-label="변경됨" />}
           </a>
         ))}
-        <a href={academyUrl} target="_blank" rel="noopener noreferrer" className="mt-3 px-2.5 text-[12px] text-muted underline-offset-2 hover:text-fg hover:underline">
+        <a href={academyUrl} target="_blank" rel="noopener noreferrer" className="mt-3 px-2.5 text-caption text-muted underline-offset-2 hover:text-fg hover:underline">
           아카데미에서 보기 ↗
         </a>
       </nav>
@@ -135,7 +135,7 @@ function HeroSection({ initial, savedAt }: { initial: SiteSettings["home.hero"];
             <input id="hero-eyebrow" className={inputClass} maxLength={80} value={v.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} />
           </Field>
           <Field label="제목" htmlFor="hero-title" className="col-span-2" hint="줄을 바꾸면 화면에서도 줄이 바뀝니다. 120자 이내.">
-            <textarea id="hero-title" rows={2} maxLength={120} className={cx(textareaClass, "text-[15px] font-semibold")} value={v.title} onChange={(e) => set("title", e.target.value)} />
+            <textarea id="hero-title" rows={2} maxLength={120} className={cx(textareaClass, "text-body font-semibold")} value={v.title} onChange={(e) => set("title", e.target.value)} />
           </Field>
           <Field label="부제" htmlFor="hero-subtitle" className="col-span-2">
             <textarea id="hero-subtitle" rows={2} maxLength={300} className={textareaClass} value={v.subtitle} onChange={(e) => set("subtitle", e.target.value)} />
@@ -144,13 +144,13 @@ function HeroSection({ initial, savedAt }: { initial: SiteSettings["home.hero"];
             <input id="hero-cta1-label" className={inputClass} maxLength={40} value={v.primaryCta.label} onChange={(e) => set("primaryCta", { ...v.primaryCta, label: e.target.value })} />
           </Field>
           <Field label="주 버튼 링크" htmlFor="hero-cta1-href" hint={LINK_HINT}>
-            <input id="hero-cta1-href" className={cx(inputClass, "font-mono text-[12px]")} value={v.primaryCta.href} onChange={(e) => set("primaryCta", { ...v.primaryCta, href: e.target.value })} />
+            <input id="hero-cta1-href" className={cx(inputClass, "font-mono text-caption")} value={v.primaryCta.href} onChange={(e) => set("primaryCta", { ...v.primaryCta, href: e.target.value })} />
           </Field>
           <Field label="보조 버튼 문구" htmlFor="hero-cta2-label">
             <input id="hero-cta2-label" className={inputClass} maxLength={40} value={v.secondaryCta.label} onChange={(e) => set("secondaryCta", { ...v.secondaryCta, label: e.target.value })} />
           </Field>
           <Field label="보조 버튼 링크" htmlFor="hero-cta2-href">
-            <input id="hero-cta2-href" className={cx(inputClass, "font-mono text-[12px]")} value={v.secondaryCta.href} onChange={(e) => set("secondaryCta", { ...v.secondaryCta, href: e.target.value })} />
+            <input id="hero-cta2-href" className={cx(inputClass, "font-mono text-caption")} value={v.secondaryCta.href} onChange={(e) => set("secondaryCta", { ...v.secondaryCta, href: e.target.value })} />
           </Field>
         </fieldset>
         {footer}
@@ -166,16 +166,16 @@ function SectionsSection({ initial, savedAt }: { initial: SiteSettings["home.sec
   return (
     <section id={anchor("home.sections")} className="scroll-mt-4">
       <Card title="홈 섹션 표시·순서">
-        <p className="mb-3 text-[12px] text-muted">
+        <p className="mb-3 text-caption text-muted">
           히어로 아래 섹션 순서입니다. 데이터가 없는 섹션(게시된 패스웨이 0건, 파트너 로고 없음 등)은 켜 두어도 보이지 않습니다. 업셀·FAQ 를 끄면 상단 메뉴의 바로가기도 숨겨집니다.
         </p>
-        <ol className="divide-y divide-zinc-100 rounded-md border border-line">
+        <ol className="divide-y divide-line-soft rounded-md border border-line">
           {v.order.map((k, i) => {
             const off = v.hidden.includes(k);
             return (
-              <li key={k} className={cx("flex items-center gap-3 px-3 py-2", off && "bg-zinc-50")}>
-                <span className="tabular w-5 text-[12px] text-subtle">{i + 1}</span>
-                <span className={cx("flex-1 text-[13px]", off ? "text-muted line-through" : "font-medium text-fg")}>{HOME_SECTION_LABEL[k]}</span>
+              <li key={k} className={cx("flex items-center gap-3 px-3 py-2", off && "bg-surface")}>
+                <span className="tabular w-5 text-caption text-subtle">{i + 1}</span>
+                <span className={cx("flex-1 text-caption", off ? "text-muted line-through" : "font-medium text-fg")}>{HOME_SECTION_LABEL[k]}</span>
                 <Button size="sm" variant="ghost" disabled={isPending} onClick={() => toggle(k)} aria-label={`${HOME_SECTION_LABEL[k]} ${off ? "표시" : "숨김"}`}>
                   {off ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                   {off ? "숨김" : "표시"}
@@ -216,7 +216,7 @@ function FaqSection({ initial, savedAt }: { initial: SiteSettings["faq"]; savedA
             {v.items.map((it, i) => (
               <li key={i} className="rounded-md border border-line p-3">
                 <div className="mb-2 flex items-center gap-1">
-                  <span className="tabular flex-1 text-[12px] font-medium text-muted">질문 {i + 1}</span>
+                  <span className="tabular flex-1 text-caption font-medium text-muted">질문 {i + 1}</span>
                   <Button size="sm" variant="ghost" disabled={i === 0} onClick={() => setV({ ...v, items: move(v.items, i, -1) })} aria-label={`질문 ${i + 1} 위로`}>
                     <ArrowUp className="h-3.5 w-3.5" />
                   </Button>
@@ -224,7 +224,7 @@ function FaqSection({ initial, savedAt }: { initial: SiteSettings["faq"]; savedA
                     <ArrowDown className="h-3.5 w-3.5" />
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setV({ ...v, items: v.items.filter((_, j) => j !== i) })} aria-label={`질문 ${i + 1} 삭제`}>
-                    <Trash2 className="h-3.5 w-3.5 text-red-600" />
+                    <Trash2 className="h-3.5 w-3.5 text-danger" />
                   </Button>
                 </div>
                 <input className={cx(inputClass, "font-medium")} placeholder="질문" maxLength={200} value={it.q} onChange={(e) => setItem(i, { q: e.target.value })} aria-label={`질문 ${i + 1}`} />
@@ -236,7 +236,7 @@ function FaqSection({ initial, savedAt }: { initial: SiteSettings["faq"]; savedA
             <Button size="sm" onClick={() => setV({ ...v, items: [...v.items, { q: "", a: "" }] })} disabled={v.items.length >= 50}>
               <Plus className="h-3.5 w-3.5" /> 질문 추가
             </Button>
-            {v.items.length === 0 && <span className="ml-3 text-[12px] text-amber-700">질문이 없으면 홈 FAQ 섹션과 바로가기가 숨겨집니다.</span>}
+            {v.items.length === 0 && <span className="ml-3 text-caption text-warning">질문이 없으면 홈 FAQ 섹션과 바로가기가 숨겨집니다.</span>}
           </div>
         </fieldset>
         {footer}
@@ -271,13 +271,13 @@ function FooterSection({ initial, savedAt }: { initial: SiteSettings["footer"]; 
             <input id="ft-copy" className={inputClass} maxLength={120} value={v.copyright} onChange={(e) => set("copyright", e.target.value)} />
           </Field>
           <div className="col-span-2 flex flex-col gap-2">
-            <span className="text-[12.5px] font-medium text-zinc-700">SNS 링크</span>
+            <span className="text-caption font-medium text-ink-soft">SNS 링크</span>
             {v.sns.map((s, i) => (
               <div key={i} className="flex gap-2">
                 <input className={cx(inputClass, "w-40")} placeholder="이름 (예: 인스타그램)" maxLength={30} value={s.label} onChange={(e) => set("sns", v.sns.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} aria-label={`SNS ${i + 1} 이름`} />
-                <input className={cx(inputClass, "font-mono text-[12px]")} placeholder="https://" value={s.url} onChange={(e) => set("sns", v.sns.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))} aria-label={`SNS ${i + 1} 주소`} />
+                <input className={cx(inputClass, "font-mono text-caption")} placeholder="https://" value={s.url} onChange={(e) => set("sns", v.sns.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))} aria-label={`SNS ${i + 1} 주소`} />
                 <Button size="sm" variant="ghost" className="h-8" onClick={() => set("sns", v.sns.filter((_, j) => j !== i))} aria-label={`SNS ${i + 1} 삭제`}>
-                  <Trash2 className="h-3.5 w-3.5 text-red-600" />
+                  <Trash2 className="h-3.5 w-3.5 text-danger" />
                 </Button>
               </div>
             ))}
@@ -299,7 +299,7 @@ function InquirySection({ initial, savedAt }: { initial: SiteSettings["inquiry"]
   return (
     <section id={anchor("inquiry")} className="scroll-mt-4">
       <Card title="기관 도입 문의">
-        <p className="mb-3 text-[12px] text-muted">홈 업셀·히어로의 ‘기관 도입 문의’, 푸터 고객센터, 기관 대시보드 안내에서 쓰는 연결 주소입니다.</p>
+        <p className="mb-3 text-caption text-muted">홈 업셀·히어로의 ‘기관 도입 문의’, 푸터 고객센터, 기관 대시보드 안내에서 쓰는 연결 주소입니다.</p>
         <fieldset disabled={isPending} className="grid grid-cols-2 gap-4">
           <Field label="문의 메일" htmlFor="iq-email">
             <input id="iq-email" type="email" className={inputClass} maxLength={120} value={v.email} onChange={(e) => setV({ ...v, email: e.target.value })} />
@@ -308,7 +308,7 @@ function InquirySection({ initial, savedAt }: { initial: SiteSettings["inquiry"]
             <input id="iq-subject" className={inputClass} maxLength={120} value={v.subject} onChange={(e) => setV({ ...v, subject: e.target.value })} />
           </Field>
           <Field label="별도 문의 링크" htmlFor="iq-url" className="col-span-2" hint="문의 폼 등 링크가 있으면 메일 대신 이 주소로 연결합니다. 비우면 메일.">
-            <input id="iq-url" className={cx(inputClass, "font-mono text-[12px]")} placeholder="https://" value={v.url} onChange={(e) => setV({ ...v, url: e.target.value })} />
+            <input id="iq-url" className={cx(inputClass, "font-mono text-caption")} placeholder="https://" value={v.url} onChange={(e) => setV({ ...v, url: e.target.value })} />
           </Field>
         </fieldset>
         {footer}
@@ -334,7 +334,7 @@ function SeoSection({ initial, savedAt }: { initial: SiteSettings["seo"]; savedA
             <textarea id="seo-desc" rows={2} maxLength={300} className={textareaClass} value={v.description} onChange={(e) => setV({ ...v, description: e.target.value })} />
           </Field>
           <Field label="OG 이미지 URL" htmlFor="seo-og" className="col-span-2" hint="1200×630 권장. 비우면 자동 생성 이미지를 씁니다.">
-            <input id="seo-og" className={cx(inputClass, "font-mono text-[12px]")} placeholder="https://…/og.png" value={v.ogImageUrl} onChange={(e) => setV({ ...v, ogImageUrl: e.target.value })} />
+            <input id="seo-og" className={cx(inputClass, "font-mono text-caption")} placeholder="https://…/og.png" value={v.ogImageUrl} onChange={(e) => setV({ ...v, ogImageUrl: e.target.value })} />
           </Field>
           {/^https?:\/\//i.test(v.ogImageUrl) && (
             // 운영자가 입력한 원격 이미지 미리보기

@@ -59,20 +59,20 @@ export default async function OrganizationsPage({
                       </span>
                     )}
                   </td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>{o.bizNo ?? "-"}</td>
-                  <td className={cx(tdClass, "text-zinc-600")}>{o.contact ?? "-"}</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>{o.bizNo ?? "-"}</td>
+                  <td className={cx(tdClass, "text-muted")}>{o.contact ?? "-"}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{o._count.users.toLocaleString()}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{o.invites.length}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{o._count.assignments.toLocaleString()}</td>
                   <td className={cx(tdClass, "tabular text-right")}>{o._count.orders}</td>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(o.createdAt)}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(o.createdAt)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
-      <p className="mt-2 text-[12px] text-muted">{rows.length}개 기관</p>
+      <p className="mt-2 text-caption text-muted">{rows.length}개 기관</p>
     </>
   );
 }

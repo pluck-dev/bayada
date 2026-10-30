@@ -74,12 +74,12 @@ export default async function SessionsPage({
                       <Link href={`${base}/${s.id}`} className="font-medium hover:underline">
                         {s.title}
                       </Link>
-                      {s.course && <p className="mt-0.5 text-[11.5px] text-subtle">{s.course.title}</p>}
+                      {s.course && <p className="mt-0.5 text-micro text-subtle">{s.course.title}</p>}
                     </td>
-                    <td className={cx(tdClass, "max-w-[260px] truncate text-zinc-600")} title={s.location}>
+                    <td className={cx(tdClass, "max-w-[260px] truncate text-muted")} title={s.location}>
                       <span className="font-medium text-fg">{s.region}</span> · {s.location}
                     </td>
-                    <td className={cx(tdClass, "tabular text-zinc-600")}>
+                    <td className={cx(tdClass, "tabular text-muted")}>
                       {formatDateTime(s.startsAt)}
                       <span className="text-subtle">
                         {" ~ "}
@@ -88,10 +88,10 @@ export default async function SessionsPage({
                     </td>
                     <td className={tdClass}>
                       <div className="flex items-center gap-2">
-                        <span className="h-1.5 w-20 overflow-hidden rounded-full bg-zinc-100">
+                        <span className="h-1.5 w-20 overflow-hidden rounded-full bg-surface-sunken">
                           <span className={cx("block h-full rounded-full", full ? "bg-brand" : "bg-zinc-700")} style={{ width: `${pct}%` }} />
                         </span>
-                        <span className="tabular text-[12.5px] text-zinc-700">
+                        <span className="tabular text-caption text-ink-soft">
                           {n} / {s.capacity}
                         </span>
                       </div>

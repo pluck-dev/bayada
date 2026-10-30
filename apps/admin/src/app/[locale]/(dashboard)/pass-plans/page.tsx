@@ -57,10 +57,10 @@ export default async function PassPlansPage({ params }: { params: Promise<{ loca
                     <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
                       {p.name}
                     </Link>
-                    {p.description && <p className="mt-0.5 line-clamp-1 text-[11.5px] text-subtle">{p.description}</p>}
+                    {p.description && <p className="mt-0.5 line-clamp-1 text-micro text-subtle">{p.description}</p>}
                   </td>
                   <td className={cx(tdClass, "tabular font-medium")}>{p.price.toLocaleString()}원</td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>{p.durationDays}일</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>{p.durationDays}일</td>
                   <td className={tdClass}>
                     <div className="flex flex-wrap gap-1">
                       {p.includes.map((t) => (
@@ -69,7 +69,7 @@ export default async function PassPlansPage({ params }: { params: Promise<{ loca
                     </div>
                   </td>
                   <td className={cx(tdClass, "tabular")}>{p._count.subscriptions}명</td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>{p._count.orderItems}건</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>{p._count.orderItems}건</td>
                   <td className={tdClass}>
                     {p.active ? (
                       <Badge tone="green" dot>
@@ -79,7 +79,7 @@ export default async function PassPlansPage({ params }: { params: Promise<{ loca
                       <Badge tone="slate">판매 중지</Badge>
                     )}
                   </td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>{formatDate(p.createdAt)}</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>{formatDate(p.createdAt)}</td>
                 </tr>
               ))}
             </tbody>

@@ -15,15 +15,15 @@ export function Checklist({ items }: { items: ChecklistItem[] }) {
   return (
     <ul className="flex flex-col gap-2">
       {items.map((c) => (
-        <li key={c.key} className="flex items-start gap-2 text-[13px]">
+        <li key={c.key} className="flex items-start gap-2 text-caption">
           {c.ok ? (
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-label="충족" />
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-label="충족" />
           ) : (
-            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-label="미충족" />
+            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-label="미충족" />
           )}
-          <span className={cx("flex-1", c.ok ? "text-fg" : "text-brand")}>
+          <span className={cx("flex-1", c.ok ? "text-fg" : "text-danger")}>
             {c.label}
-            <span className={cx("ml-1.5 text-[12px]", c.ok ? "text-muted" : "text-red-400")}>{c.detail}</span>
+            <span className={cx("ml-1.5 text-caption", c.ok ? "text-muted" : "text-red-400")}>{c.detail}</span>
           </span>
         </li>
       ))}
@@ -83,7 +83,7 @@ export function WorkflowPanel({
 
   if (!transitions.length) {
     return (
-      <p className="text-[12.5px] text-muted">
+      <p className="text-caption text-muted">
         현재 상태(<b className="font-medium text-fg">{COURSE_STATUS_LABEL[status]}</b>)에서 이 계정이 할 수 있는 작업이 없습니다.
       </p>
     );
@@ -95,7 +95,7 @@ export function WorkflowPanel({
     <div className="flex flex-col gap-3">
       {needsNote && (
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="review-note" className="text-[12.5px] font-medium text-zinc-700">
+          <label htmlFor="review-note" className="text-caption font-medium text-ink-soft">
             검토 의견
           </label>
           <textarea
@@ -127,7 +127,7 @@ export function WorkflowPanel({
         })}
       </div>
       {transitions.some((t) => t.action === "submit") && missing.length > 0 && (
-        <p className="text-[12px] text-brand">필수 항목 {missing.length}개를 채워야 승인 요청할 수 있습니다.</p>
+        <p className="text-caption text-danger">필수 항목 {missing.length}개를 채워야 승인 요청할 수 있습니다.</p>
       )}
     </div>
   );

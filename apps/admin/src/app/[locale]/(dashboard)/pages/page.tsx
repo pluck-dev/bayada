@@ -40,15 +40,15 @@ export default async function PagesPage({ params }: { params: Promise<{ locale: 
                         {p.title}
                       </Link>
                     ) : (
-                      <span className="flex items-center gap-2 text-zinc-500">
+                      <span className="flex items-center gap-2 text-subtle">
                         {d.title}
                         <Badge tone="amber">미작성</Badge>
                       </span>
                     )}
                   </td>
-                  <td className={cx(tdClass, "font-mono text-[12px] text-zinc-500")}>{d.slug}</td>
-                  <td className={cx(tdClass, "tabular text-right text-zinc-600")}>{p ? `${p.content.length.toLocaleString()}자` : "-"}</td>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{p ? formatDateTime(p.updatedAt) : "-"}</td>
+                  <td className={cx(tdClass, "font-mono text-caption text-subtle")}>{d.slug}</td>
+                  <td className={cx(tdClass, "tabular text-right text-muted")}>{p ? `${p.content.length.toLocaleString()}자` : "-"}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{p ? formatDateTime(p.updatedAt) : "-"}</td>
                   <td className={tdClass}>
                     <LinkButton href={`${base}/${d.slug}`} size="sm" variant={p ? "secondary" : "primary"}>
                       {p ? "편집" : `${d.title} 만들기`}

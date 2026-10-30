@@ -78,7 +78,7 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
               {roles.map((r) => (
                 <th key={r.key} className={cx(thClass, "min-w-[104px] text-center align-bottom")}>
                   <span className="flex flex-col items-center gap-0.5">
-                    <span className="flex items-center gap-1 text-[12px] font-semibold text-fg">
+                    <span className="flex items-center gap-1 text-caption font-semibold text-fg">
                       {r.key === "ADMIN" && <Lock className="h-3 w-3 text-zinc-400" aria-label="잠금" />}
                       {r.name}
                     </span>
@@ -95,24 +95,24 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
             {GROUPS.map((g) => (
               <Fragment key={g}>
                 <tr>
-                  <td colSpan={roles.length + 1} className="border-b border-line bg-zinc-50/70 px-3 py-1.5 text-[11.5px] font-semibold text-zinc-500">
+                  <td colSpan={roles.length + 1} className="border-b border-line bg-surface px-3 py-1.5 text-micro font-semibold text-subtle">
                     {g}
                   </td>
                 </tr>
                 {PERMISSION_DEFS.filter((p) => p.group === g).map((p) => {
                   const fixedTo = FIXED_PERMISSIONS[p.key];
                   return (
-                    <tr key={p.key} className="hover:bg-zinc-50/70">
+                    <tr key={p.key} className="hover:bg-surface">
                       <td className={cx(tdClass, "whitespace-normal")}>
                         <p className="font-medium text-fg">{p.label}</p>
-                        <p className="mt-0.5 text-[11.5px] leading-snug text-muted">{p.desc}</p>
+                        <p className="mt-0.5 text-micro leading-snug text-muted">{p.desc}</p>
                       </td>
                       {roles.map((r) => {
                         const locked = r.key === "ADMIN" || !!fixedTo;
                         const checked = (draft[r.key] ?? []).includes(p.key);
                         const changed = checked !== (base[r.key] ?? []).includes(p.key);
                         return (
-                          <td key={r.key} className={cx(tdClass, "text-center", changed && "bg-amber-50")}>
+                          <td key={r.key} className={cx(tdClass, "text-center", changed && "bg-warning-soft")}>
                             <input
                               type="checkbox"
                               className="h-4 w-4 accent-zinc-900 disabled:cursor-not-allowed disabled:opacity-40"
@@ -140,8 +140,8 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
         </table>
       </div>
 
-      <div className="sticky bottom-0 z-10 -mx-1 flex items-center justify-between gap-3 rounded-lg border border-line bg-white/95 px-4 py-3 shadow-[var(--shadow-pop)] backdrop-blur">
-        <div className="min-w-0 text-[12.5px]">
+      <div className="sticky bottom-0 z-10 -mx-1 flex items-center justify-between gap-3 rounded-lg border border-line bg-canvas/95 px-4 py-3 shadow-[var(--shadow-pop)] backdrop-blur">
+        <div className="min-w-0 text-caption">
           {changeCount === 0 ? (
             <span className="text-muted">
               변경 사항 없음 · Super Admin 열은 잠겨 있어 바꿀 수 없습니다.
@@ -153,10 +153,10 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
                   <span className="font-medium text-fg">{d.role.name}</span>
                   <span className="text-muted"> · </span>
                   {d.added.map((p) => (
-                    <span key={p} className="mr-1.5 text-emerald-700">+{LABEL[p]}</span>
+                    <span key={p} className="mr-1.5 text-success">+{LABEL[p]}</span>
                   ))}
                   {d.removed.map((p) => (
-                    <span key={p} className="mr-1.5 text-red-700">−{LABEL[p]}</span>
+                    <span key={p} className="mr-1.5 text-danger">−{LABEL[p]}</span>
                   ))}
                 </li>
               ))}
@@ -192,11 +192,11 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
     <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5">
       <Card title="사용자 정의 역할" padded={false}>
         {custom.length === 0 ? (
-          <p className="px-4 py-6 text-[12.5px] text-muted">
+          <p className="px-4 py-6 text-caption text-muted">
             아직 없습니다. 오른쪽에서 역할을 만들고 위 매트릭스에서 권한을 체크하세요. 회원·수강 화면에서 회원에게 지정합니다.
           </p>
         ) : (
-          <ul className="divide-y divide-zinc-100">
+          <ul className="divide-y divide-line-soft">
             {custom.map((r) => (
               <li key={r.key} className="flex items-center gap-3 px-4 py-3">
                 {editing === r.key ? (
@@ -221,11 +221,11 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
                 ) : (
                   <>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-medium text-fg">
+                      <p className="text-caption font-medium text-fg">
                         {r.name}
-                        {r.key === selfRoleKey && <span className="ml-1.5 text-[11.5px] font-normal text-muted">(내 역할)</span>}
+                        {r.key === selfRoleKey && <span className="ml-1.5 text-micro font-normal text-muted">(내 역할)</span>}
                       </p>
-                      <p className="truncate text-[11.5px] text-muted">
+                      <p className="truncate text-micro text-muted">
                         {r.description || "설명 없음"} · 권한 {r.permissions.length}개 · 회원 {r.users}명
                       </p>
                     </div>

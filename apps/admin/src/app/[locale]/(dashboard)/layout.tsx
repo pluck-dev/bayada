@@ -47,7 +47,7 @@ export default async function DashboardLayout({
           userEmail={user.email}
           counts={{ queue, signups, reports, credentials }}
         />
-        <main className="flex-1 overflow-y-auto bg-white">
+        <main className="flex-1 overflow-y-auto bg-canvas">
           <div className="mx-auto max-w-[1280px] px-8 py-7">{children}</div>
         </main>
       </div>

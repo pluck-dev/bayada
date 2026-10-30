@@ -79,7 +79,7 @@ export function BannerManager({ banners, now }: { banners: BannerRow[]; now: str
       }
     >
       {editing !== null && (
-        <form onSubmit={save} className="border-b border-line bg-zinc-50/60 p-4">
+        <form onSubmit={save} className="border-b border-line bg-surface p-4">
           <fieldset disabled={isPending} className="grid grid-cols-4 gap-3">
             <Field label="제목" required className="col-span-2">
               <input required className={inputClass} value={form.title} onChange={(e) => set("title", e.target.value)} />
@@ -133,7 +133,7 @@ export function BannerManager({ banners, now }: { banners: BannerRow[]; now: str
               const st = bannerState(b, now);
               return (
                 <tr key={b.id} className={trClass}>
-                  <td className={cx(tdClass, "tabular text-zinc-500")}>{b.order}</td>
+                  <td className={cx(tdClass, "tabular text-subtle")}>{b.order}</td>
                   <td className={cx(tdClass, "whitespace-normal!")}>
                     <div className="flex items-center gap-3">
                       {b.image ? (
@@ -141,16 +141,16 @@ export function BannerManager({ banners, now }: { banners: BannerRow[]; now: str
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={b.image} alt="" className="h-9 w-16 rounded border border-line object-cover" />
                       ) : (
-                        <span className="h-9 w-16 rounded border border-dashed border-line bg-zinc-50" aria-hidden />
+                        <span className="h-9 w-16 rounded border border-dashed border-line bg-surface" aria-hidden />
                       )}
                       <div>
                         <p className="font-medium">{b.title}</p>
-                        {b.subtitle && <p className="text-[12px] text-muted">{b.subtitle}</p>}
+                        {b.subtitle && <p className="text-caption text-muted">{b.subtitle}</p>}
                       </div>
                     </div>
                   </td>
-                  <td className={cx(tdClass, "max-w-[200px] truncate text-[12px] text-zinc-500")}>{b.linkUrl ?? "-"}</td>
-                  <td className={cx(tdClass, "tabular text-zinc-600")}>
+                  <td className={cx(tdClass, "max-w-[200px] truncate text-caption text-subtle")}>{b.linkUrl ?? "-"}</td>
+                  <td className={cx(tdClass, "tabular text-muted")}>
                     {fmtKst(b.startsAt)} ~ {fmtKst(b.endsAt)}
                   </td>
                   <td className={tdClass}>

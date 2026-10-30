@@ -41,7 +41,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
             </Badge>
             <VisibilityPill value={program.visibility} />
             {can(user, "program.read") && (
-              <Link href={`/${locale}/programs/${id}`} className="text-[12.5px] underline-offset-2 hover:underline">
+              <Link href={`/${locale}/programs/${id}`} className="text-caption underline-offset-2 hover:underline">
                 프로그램 편집 화면 열기
               </Link>
             )}
@@ -56,7 +56,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           </Card>
 
           <Card title="프로그램 요약">
-            <dl className="grid grid-cols-[96px_1fr] gap-x-4 gap-y-2.5 text-[13px]">
+            <dl className="grid grid-cols-[96px_1fr] gap-x-4 gap-y-2.5 text-caption">
               <dt className="text-muted">유형</dt>
               <dd>
                 {PRODUCT_TYPE_LABEL[program.productType]}
@@ -87,15 +87,15 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
 
           <Card title={`커리큘럼 · 레슨 ${lectureCount(program)}개`}>
             {program.sections.length === 0 ? (
-              <p className="text-[13px] text-muted">커리큘럼이 없습니다.</p>
+              <p className="text-caption text-muted">커리큘럼이 없습니다.</p>
             ) : (
               <ol className="flex flex-col gap-3">
                 {program.sections.map((s, i) => (
                   <li key={s.id}>
-                    <p className="text-[13px] font-semibold">
+                    <p className="text-caption font-semibold">
                       {i + 1}. {s.title}
                     </p>
-                    <ul className="mt-1 flex flex-col gap-0.5 pl-4 text-[12.5px] text-zinc-600">
+                    <ul className="mt-1 flex flex-col gap-0.5 pl-4 text-caption text-muted">
                       {s.lectures.map((l) => (
                         <li key={l.id}>
                           <span className="text-subtle">[{LECTURE_TYPE_LABEL[l.type]}]</span> {l.title}
@@ -114,8 +114,8 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           </Card>
         </div>
 
-        <aside className="sticky top-0 rounded-lg border border-line bg-zinc-50 p-4">
-          <h2 className="mb-3 text-[14px] font-semibold">검토</h2>
+        <aside className="sticky top-0 rounded-lg border border-line bg-surface p-4">
+          <h2 className="mb-3 text-body-sm font-semibold">검토</h2>
           <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} afterHref={clinicalOnly ? `/${locale}/approvals` : undefined}
           />
         </aside>

@@ -118,7 +118,7 @@ export default async function InvoiceDetailPage({
                 <div>
                   <p className="text-micro text-muted">이름</p>
                   <p className="font-medium">
-                    <Link href={`/members/${user.id}`} className="text-brand hover:underline">
+                    <Link href={`/members/${user.id}`} className="font-medium text-ink underline underline-offset-2 hover:text-brand-700">
                       {user.name ?? "-"}
                     </Link>
                   </p>
@@ -137,7 +137,7 @@ export default async function InvoiceDetailPage({
                 <Building2 className="h-5 w-5 text-muted" />
                 <div>
                   <p className="text-micro text-muted">기관</p>
-                  <Link href={`/organizations/${org.id}`} className="text-sm font-medium text-brand hover:underline">
+                  <Link href={`/organizations/${org.id}`} className="text-body-sm font-medium text-ink underline underline-offset-2 hover:text-brand-700">
                     {org.name}
                   </Link>
                 </div>
@@ -151,7 +151,7 @@ export default async function InvoiceDetailPage({
                 <ShoppingCart className="h-5 w-5 text-muted" />
                 <div>
                   <p className="text-micro text-muted">연결된 주문</p>
-                  <Link href={`/orders/${order.id as string}`} className="text-sm font-medium text-brand hover:underline">
+                  <Link href={`/orders/${order.id as string}`} className="text-body-sm font-medium text-ink underline underline-offset-2 hover:text-brand-700">
                     {order.orderNo as string}
                   </Link>
                 </div>

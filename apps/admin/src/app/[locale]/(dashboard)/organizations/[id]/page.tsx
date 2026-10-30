@@ -66,15 +66,15 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
                             {m.name ?? "-"}
                           </Link>
                         </td>
-                        <td className={cx(tdClass, "text-zinc-600")}>{m.email}</td>
-                        <td className={cx(tdClass, "text-zinc-600")}>{m.jobRole ? JOB_ROLE_LABEL[m.jobRole] : "-"}</td>
+                        <td className={cx(tdClass, "text-muted")}>{m.email}</td>
+                        <td className={cx(tdClass, "text-muted")}>{m.jobRole ? JOB_ROLE_LABEL[m.jobRole] : "-"}</td>
                         <td className={tdClass}>
                           <span className="flex items-center gap-1.5">
                             <Badge tone={m.role === "ORG_ADMIN" ? "amber" : m.role === "STUDENT" ? "zinc" : "blue"}>{ROLE_LABEL[m.role]}</Badge>
                             {m.status !== "APPROVED" && <Badge tone={USER_STATUS_TONE[m.status]}>{USER_STATUS_LABEL[m.status]}</Badge>}
                           </span>
                         </td>
-                        <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(m.createdAt)}</td>
+                        <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(m.createdAt)}</td>
                         <td className={cx(tdClass, "text-right")}>
                           {editable && (
                             <OrgAdminButton orgId={org.id} userId={m.id} name={m.name ?? m.email} isAdmin={m.role === "ORG_ADMIN"} />
@@ -92,11 +92,11 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
         <div className="flex flex-col gap-4">
           <Card title={`대기 중 초대 (${org.invites.length})`} padded={false}>
             {org.invites.length === 0 ? (
-              <p className="px-4 py-6 text-center text-[12.5px] text-muted">수락 대기 중인 초대가 없습니다.</p>
+              <p className="px-4 py-6 text-center text-caption text-muted">수락 대기 중인 초대가 없습니다.</p>
             ) : (
-              <ul className="divide-y divide-zinc-100">
+              <ul className="divide-y divide-line-soft">
                 {org.invites.map((i) => (
-                  <li key={i.id} className="flex items-center gap-2 px-4 py-2 text-[12.5px]">
+                  <li key={i.id} className="flex items-center gap-2 px-4 py-2 text-caption">
                     <span className="flex-1 truncate">{i.email}</span>
                     <span className="tabular text-subtle">{formatDate(i.createdAt)}</span>
                   </li>
@@ -107,7 +107,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
 
           <Card title="과정 배정 현황" padded={false}>
             {org.courses.length === 0 ? (
-              <p className="px-4 py-6 text-center text-[12.5px] text-muted">기관 관리자가 배정한 과정이 없습니다.</p>
+              <p className="px-4 py-6 text-center text-caption text-muted">기관 관리자가 배정한 과정이 없습니다.</p>
             ) : (
               <table className={tableClass}>
                 <thead>
@@ -123,7 +123,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
                         <Link href={`/${locale}/programs/${c.courseId}`} className="hover:underline">
                           {c.title}
                         </Link>
-                        {c.nextDue && <p className="tabular text-[11.5px] text-subtle">가장 빠른 기한 {formatDate(c.nextDue)}</p>}
+                        {c.nextDue && <p className="tabular text-micro text-subtle">가장 빠른 기한 {formatDate(c.nextDue)}</p>}
                       </td>
                       <td className={cx(tdClass, "tabular text-right")}>
                         {c.completed} / {c.assigned}

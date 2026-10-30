@@ -45,16 +45,16 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
                       <ProviderLogo name={p.name} logo={p.logo} />
                       <span>
                         <span className="block font-medium hover:underline">{p.name}</span>
-                        <span className="block font-mono text-[11.5px] text-subtle">{p.slug}</span>
+                        <span className="block font-mono text-micro text-subtle">{p.slug}</span>
                       </span>
                     </Link>
                   </td>
                   <td className={cx(tdClass, "tabular text-right")}>{p._count.courses}</td>
-                  <td className={cx(tdClass, "whitespace-normal! text-zinc-600")}>
+                  <td className={cx(tdClass, "whitespace-normal! text-muted")}>
                     {p.admins.length ? (
                       p.admins.map((a) => a.name ?? a.email).join(", ")
                     ) : (
-                      <span className="text-amber-700">미지정</span>
+                      <span className="text-warning">미지정</span>
                     )}
                   </td>
                   <td className={tdClass}>

@@ -58,7 +58,7 @@ export function CurriculumEditor({
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[12.5px] text-muted">
+      <p className="text-caption text-muted">
         섹션 {sections.length}개 · 레슨 {total}개
         {locked && " · 검토 중이라 편집이 잠겨 있습니다."}
       </p>
@@ -108,8 +108,8 @@ function SectionBlock({ section, index, last, locked }: { section: CurriculumSec
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <section className="overflow-hidden rounded-lg border border-line bg-white">
-      <header className="flex items-center gap-2 bg-zinc-50 px-3 py-2">
+    <section className="overflow-hidden rounded-lg border border-line bg-canvas">
+      <header className="flex items-center gap-2 bg-surface px-3 py-2">
         <button
           type="button"
           onClick={() => setOpen(!open)}
@@ -119,7 +119,7 @@ function SectionBlock({ section, index, last, locked }: { section: CurriculumSec
         >
           {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </button>
-        <span className="tabular text-[12px] text-subtle">{String(index + 1).padStart(2, "0")}</span>
+        <span className="tabular text-caption text-subtle">{String(index + 1).padStart(2, "0")}</span>
         {editing ? (
           <form
             className="flex flex-1 items-center gap-1.5"
@@ -137,9 +137,9 @@ function SectionBlock({ section, index, last, locked }: { section: CurriculumSec
             </Button>
           </form>
         ) : (
-          <h3 className="flex-1 text-[13px] font-semibold">{section.title}</h3>
+          <h3 className="flex-1 text-caption font-semibold">{section.title}</h3>
         )}
-        <span className="text-[12px] text-muted">{section.lectures.length}개 레슨</span>
+        <span className="text-caption text-muted">{section.lectures.length}개 레슨</span>
         {!locked && !editing && (
           <div className="flex items-center">
             <Button size="sm" variant="ghost" aria-label="섹션 제목 수정" onClick={() => setEditing(true)}>
@@ -179,18 +179,18 @@ function SectionBlock({ section, index, last, locked }: { section: CurriculumSec
             const Icon = TYPE_ICON[l.type];
             const isOpen = expanded === l.id;
             return (
-              <li key={l.id} className="border-t border-zinc-100">
-                <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50/60">
+              <li key={l.id} className="border-t border-line-soft">
+                <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface">
                   <Icon className="ml-6 h-4 w-4 shrink-0 text-zinc-400" aria-hidden />
                   <button
                     type="button"
-                    className="flex-1 truncate text-left text-[13px] hover:underline"
+                    className="flex-1 truncate text-left text-caption hover:underline"
                     onClick={() => setExpanded(isOpen ? null : l.id)}
                     aria-expanded={isOpen}
                   >
                     {l.title}
                   </button>
-                  <span className="text-[11.5px] text-subtle">
+                  <span className="text-micro text-subtle">
                     {LECTURE_TYPE_LABEL[l.type]}
                     {l.type === "QUIZ" && l.quiz ? ` · ${l.quiz.questions.length}문항` : ""}
                     {l.duration ? ` · ${fmtDuration(l.duration)}` : ""}
@@ -227,7 +227,7 @@ function SectionBlock({ section, index, last, locked }: { section: CurriculumSec
                   )}
                 </div>
                 {isOpen && (
-                  <div className="border-t border-zinc-100 bg-zinc-50/50 px-4 py-4 pl-12">
+                  <div className="border-t border-line-soft bg-surface px-4 py-4 pl-12">
                     <LectureEditor lecture={l} locked={locked} />
                   </div>
                 )}
@@ -235,7 +235,7 @@ function SectionBlock({ section, index, last, locked }: { section: CurriculumSec
             );
           })}
           {!locked && (
-            <li className="border-t border-zinc-100 px-3 py-2">
+            <li className="border-t border-line-soft px-3 py-2">
               <form
                 className="flex items-center gap-2 pl-6"
                 onSubmit={(e) => {
@@ -310,18 +310,18 @@ function LectureEditor({ lecture, locked }: { lecture: CurriculumLecture; locked
               onChange={(e) => setDurationMin(e.target.value ? Number(e.target.value) : null)}
             />
           </Field>
-          <label className="col-span-1 flex items-end gap-1.5 pb-1.5 text-[12.5px]">
+          <label className="col-span-1 flex items-end gap-1.5 pb-1.5 text-caption">
             <input type="checkbox" checked={isFree} onChange={(e) => setIsFree(e.target.checked)} className="h-4 w-4 accent-zinc-900" />
             무료 미리보기
           </label>
           {lecture.type === "VIDEO" && (
             <Field label="영상 URL" className="col-span-6" hint="MP4 주소 또는 YouTube 링크">
-              <input className={cx(inputClass, "font-mono text-[12px]!")} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://" />
+              <input className={cx(inputClass, "font-mono text-caption!")} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://" />
             </Field>
           )}
           {lecture.type === "TEXT" && (
             <Field label="본문" className="col-span-6" hint="HTML 사용 가능">
-              <textarea rows={8} className={cx(textareaClass, "font-mono text-[12.5px]!")} value={content} onChange={(e) => setContent(e.target.value)} />
+              <textarea rows={8} className={cx(textareaClass, "font-mono text-caption!")} value={content} onChange={(e) => setContent(e.target.value)} />
             </Field>
           )}
           {!locked && (
@@ -383,10 +383,10 @@ function QuizEditor({ lecture, locked }: { lecture: CurriculumLecture; locked: b
   };
 
   return (
-    <div className="rounded-md border border-line bg-white">
+    <div className="rounded-md border border-line bg-canvas">
       <div className="flex items-center justify-between border-b border-line px-3 py-2">
-        <p className="text-[12.5px] font-semibold">퀴즈 문항 {questions.length}개</p>
-        <label className="flex items-center gap-2 text-[12.5px] text-zinc-600">
+        <p className="text-caption font-semibold">퀴즈 문항 {questions.length}개</p>
+        <label className="flex items-center gap-2 text-caption text-muted">
           합격 점수
           <input
             type="number"
@@ -400,11 +400,11 @@ function QuizEditor({ lecture, locked }: { lecture: CurriculumLecture; locked: b
           %
         </label>
       </div>
-      <ol className="flex flex-col divide-y divide-zinc-100">
+      <ol className="flex flex-col divide-y divide-line-soft">
         {questions.map((q, i) => (
           <li key={i} className="flex flex-col gap-2 px-3 py-3">
             <div className="flex items-start gap-2">
-              <span className="tabular mt-1.5 w-5 text-right text-[12px] text-subtle">{i + 1}.</span>
+              <span className="tabular mt-1.5 w-5 text-right text-caption text-subtle">{i + 1}.</span>
               <select
                 disabled={locked}
                 className={cx(selectClass, "w-[120px]!")}
@@ -434,8 +434,8 @@ function QuizEditor({ lecture, locked }: { lecture: CurriculumLecture; locked: b
               )}
             </div>
             <div className="ml-7 flex flex-col gap-1.5">
-              {q.type === "FILL_GAP" && <p className="text-[11.5px] text-muted">보기 본문에서 정답을 |정답| 처럼 세로막대로 감싸면 빈칸이 됩니다.</p>}
-              {q.type === "KEYWORDS" && <p className="text-[11.5px] text-muted">정답으로 인정할 키워드를 한 줄에 하나씩 입력합니다.</p>}
+              {q.type === "FILL_GAP" && <p className="text-micro text-muted">보기 본문에서 정답을 |정답| 처럼 세로막대로 감싸면 빈칸이 됩니다.</p>}
+              {q.type === "KEYWORDS" && <p className="text-micro text-muted">정답으로 인정할 키워드를 한 줄에 하나씩 입력합니다.</p>}
               {q.options.map((o, k) => (
                 <div key={k} className="flex items-center gap-2">
                   {(q.type === "SINGLE" || q.type === "MULTI" || q.type === "TRUE_FALSE") && (
@@ -451,7 +451,7 @@ function QuizEditor({ lecture, locked }: { lecture: CurriculumLecture; locked: b
                   )}
                   <input
                     disabled={locked || q.type === "TRUE_FALSE"}
-                    className={cx(inputClass, "h-7!", o.correct && q.type !== "KEYWORDS" && q.type !== "FILL_GAP" && "border-emerald-300! bg-emerald-50/40!")}
+                    className={cx(inputClass, "h-7!", o.correct && q.type !== "KEYWORDS" && q.type !== "FILL_GAP" && "border-success-line! bg-success-soft!")}
                     value={o.text}
                     onChange={(e) => setOpt(i, k, { text: e.target.value })}
                     placeholder={q.type === "KEYWORDS" ? "키워드" : q.type === "FILL_GAP" ? "본문 (|정답| 포함)" : `보기 ${k + 1}`}
@@ -467,7 +467,7 @@ function QuizEditor({ lecture, locked }: { lecture: CurriculumLecture; locked: b
               {!locked && q.type !== "TRUE_FALSE" && q.type !== "FILL_GAP" && (
                 <button
                   type="button"
-                  className="w-fit text-[12px] text-zinc-500 hover:text-fg"
+                  className="w-fit text-caption text-subtle hover:text-fg"
                   onClick={() => patch(i, { options: [...q.options, { text: "", correct: false }] })}
                 >
                   + {q.type === "KEYWORDS" ? "키워드" : "보기"} 추가

@@ -119,7 +119,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
           </Card>
 
           <Card title="결제 정보">
-            <dl className="grid grid-cols-[120px_1fr] gap-y-2 text-[13px]">
+            <dl className="grid grid-cols-[120px_1fr] gap-y-2 text-caption">
               <dt className="text-muted">결제 금액</dt>
               <dd className="tabular font-medium">{order.totalAmount.toLocaleString()}원</dd>
               <dt className="text-muted">환불 금액</dt>
@@ -131,11 +131,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
               <dt className="text-muted">승인 일시</dt>
               <dd className="tabular">{order.paidAt ? formatDateTime(order.paidAt) : "-"}</dd>
               <dt className="text-muted">Toss paymentKey</dt>
-              <dd className="break-all font-mono text-[12px]">{order.paymentKey ?? "-"}</dd>
+              <dd className="break-all font-mono text-caption">{order.paymentKey ?? "-"}</dd>
               <dt className="text-muted">영수증</dt>
               <dd>
                 {receiptUrl ? (
-                  <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">
+                  <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline underline-offset-2 hover:text-brand-700">
                     토스 영수증 열기
                   </a>
                 ) : (
@@ -147,7 +147,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
                   <dt className="text-muted">구독 기간</dt>
                   <dd className="tabular">
                     {formatDate(order.subscription.startsAt)} ~ {formatDate(order.subscription.endsAt)}
-                    {order.subscription.canceledAt && <span className="ml-1.5 text-red-700">해지 {formatDate(order.subscription.canceledAt)}</span>}
+                    {order.subscription.canceledAt && <span className="ml-1.5 text-danger">해지 {formatDate(order.subscription.canceledAt)}</span>}
                   </dd>
                 </>
               )}
@@ -155,7 +155,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
                 <>
                   <dt className="text-muted">청구서</dt>
                   <dd>
-                    <Link href={`${base}/invoices/${order.invoice.id}`} className="text-brand hover:underline">
+                    <Link href={`${base}/invoices/${order.invoice.id}`} className="font-medium text-ink underline underline-offset-2 hover:text-brand-700">
                       {order.invoice.invoiceNo}
                     </Link>
                   </dd>
@@ -166,18 +166,18 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
 
           <Card title="처리 이력" padded={false}>
             {logs.length === 0 ? (
-              <p className="px-4 py-6 text-center text-[12.5px] text-muted">기록이 없습니다.</p>
+              <p className="px-4 py-6 text-center text-caption text-muted">기록이 없습니다.</p>
             ) : (
-              <ol className="divide-y divide-zinc-100">
+              <ol className="divide-y divide-line-soft">
                 {logs.map((l) => (
-                  <li key={l.id} className="flex gap-3 px-4 py-2.5 text-[12.5px]">
+                  <li key={l.id} className="flex gap-3 px-4 py-2.5 text-caption">
                     <span className="tabular w-[118px] shrink-0 text-subtle">{formatDateTime(l.at)}</span>
                     <div className="min-w-0">
                       <p className="font-medium">
                         {AUDIT_ACTION_LABEL[l.action] ?? l.action}
                         <span className="ml-1.5 font-normal text-subtle">{l.actorId ? actors.get(l.actorId) ?? "-" : "시스템"}</span>
                       </p>
-                      <p className="mt-0.5 text-zinc-600">{detailText(l.action, (l.detail ?? {}) as Record<string, unknown>)}</p>
+                      <p className="mt-0.5 text-muted">{detailText(l.action, (l.detail ?? {}) as Record<string, unknown>)}</p>
                     </div>
                   </li>
                 ))}
@@ -188,16 +188,16 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
 
         <div className="flex flex-col gap-4">
           <Card title="주문자">
-            <p className="text-[13px] font-medium">
+            <p className="text-caption font-medium">
               <Link href={`${base}/members/${order.user.id}`} className="hover:underline">
                 {order.user.name ?? "-"}
               </Link>
             </p>
-            <p className="text-[12px] text-muted">{order.user.email}</p>
+            <p className="text-caption text-muted">{order.user.email}</p>
             {order.organization && (
-              <p className="mt-2 text-[12px]">
+              <p className="mt-2 text-caption">
                 기관{" "}
-                <Link href={`${base}/organizations/${order.organization.id}`} className="text-brand hover:underline">
+                <Link href={`${base}/organizations/${order.organization.id}`} className="font-medium text-ink underline underline-offset-2 hover:text-brand-700">
                   {order.organization.name}
                 </Link>
               </p>

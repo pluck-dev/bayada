@@ -21,12 +21,12 @@ export function CredentialTabs({ items }: { items: { href: string; label: string
           href={i.href}
           aria-current={active === i.href ? "page" : undefined}
           className={cx(
-            "-mb-px flex items-center gap-1.5 border-b-2 pb-2.5 text-[13px] font-medium transition-colors",
-            active === i.href ? "border-zinc-900 text-fg" : "border-transparent text-muted hover:text-fg",
+            "-mb-px flex items-center gap-1.5 border-b-2 pb-2.5 text-caption font-medium transition-colors",
+            active === i.href ? "border-ink text-fg" : "border-transparent text-muted hover:text-fg",
           )}
         >
           {i.label}
-          {!!i.count && <span className="tabular rounded-full bg-zinc-100 px-1.5 text-[11px] text-zinc-600">{i.count}</span>}
+          {!!i.count && <span className="tabular rounded-full bg-surface-sunken px-1.5 text-micro text-muted">{i.count}</span>}
         </Link>
       ))}
     </nav>

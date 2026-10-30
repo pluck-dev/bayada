@@ -19,12 +19,12 @@ import { useAction } from "@/components/ui/feedback";
 
 export function VisibilityPill({ value }: { value: "INTERNAL" | "PUBLIC" }) {
   return value === "PUBLIC" ? (
-    <span className="inline-flex items-center gap-1 text-[12px] font-medium text-sky-700">
+    <span className="inline-flex items-center gap-1 text-caption font-medium text-sky-700">
       <Globe className="h-3.5 w-3.5" aria-hidden />
       {VISIBILITY_LABEL.PUBLIC}
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 text-[12px] text-zinc-500">
+    <span className="inline-flex items-center gap-1 text-caption text-subtle">
       <Lock className="h-3.5 w-3.5" aria-hidden />
       {VISIBILITY_LABEL.INTERNAL}
     </span>
@@ -76,8 +76,8 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
       {canWrite && (
         <div
           className={cx(
-            "mb-2 flex h-10 items-center gap-2 rounded-lg border px-3 text-[12.5px] transition-colors",
-            visibleSelected.length ? "border-zinc-900 bg-zinc-900 text-white" : "border-dashed border-line text-muted",
+            "mb-2 flex h-10 items-center gap-2 rounded-lg border px-3 text-caption transition-colors",
+            visibleSelected.length ? "border-ink bg-zinc-900 text-white" : "border-dashed border-line text-muted",
           )}
           aria-live="polite"
         >
@@ -89,7 +89,7 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
                 type="button"
                 disabled={isPending}
                 onClick={() => apply(visibleSelected, "PUBLIC")}
-                className="inline-flex h-7 items-center gap-1 rounded-md bg-white px-2.5 font-medium text-zinc-900 hover:bg-zinc-100 disabled:opacity-50"
+                className="inline-flex h-7 items-center gap-1 rounded-md bg-canvas px-2.5 font-medium text-ink hover:bg-surface-sunken disabled:opacity-50"
               >
                 <Globe className="h-3.5 w-3.5" aria-hidden />
                 외부 공개로 전환
@@ -142,7 +142,7 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className={cx(trClass, selected.has(r.id) && "bg-zinc-50")}>
+              <tr key={r.id} className={cx(trClass, selected.has(r.id) && "bg-surface")}>
                 {canWrite && (
                   <td className={tdClass}>
                     <input
@@ -159,18 +159,18 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
                     {r.title}
                   </Link>
                   {r.featured && <Star className="ml-1 inline h-3 w-3 fill-amber-400 text-amber-400" aria-label="메인 큐레이션" />}
-                  {r.category && <p className="mt-0.5 text-[11.5px] text-subtle">{r.category.name}</p>}
+                  {r.category && <p className="mt-0.5 text-micro text-subtle">{r.category.name}</p>}
                 </td>
-                <td className={cx(tdClass, "text-zinc-600")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
-                <td className={cx(tdClass, "text-zinc-600")}>{LEARNING_MODE_LABEL[r.learningMode].split(" ")[0]}</td>
-                <td className={cx(tdClass, "text-zinc-600")}>
+                <td className={cx(tdClass, "text-muted")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
+                <td className={cx(tdClass, "text-muted")}>{LEARNING_MODE_LABEL[r.learningMode].split(" ")[0]}</td>
+                <td className={cx(tdClass, "text-muted")}>
                   {r.audiences.length ? (
                     r.audiences.map((a) => JOB_ROLE_LABEL[a]).join(", ")
                   ) : (
-                    <span className="text-amber-700">미지정</span>
+                    <span className="text-warning">미지정</span>
                   )}
                 </td>
-                <td className={cx(tdClass, "text-zinc-600")}>{r.provider?.name ?? <span className="text-amber-700">미지정</span>}</td>
+                <td className={cx(tdClass, "text-muted")}>{r.provider?.name ?? <span className="text-warning">미지정</span>}</td>
                 <td className={tdClass}>
                   <Badge tone={COURSE_STATUS_TONE[r.status]} dot>
                     {COURSE_STATUS_LABEL[r.status]}
@@ -179,8 +179,8 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
                 <td className={tdClass}>
                   <VisibilityPill value={r.visibility} />
                 </td>
-                <td className={cx(tdClass, "tabular text-right text-zinc-700")}>{r._count.enrollments.toLocaleString()}</td>
-                <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDate(r.updatedAt)}</td>
+                <td className={cx(tdClass, "tabular text-right text-ink-soft")}>{r._count.enrollments.toLocaleString()}</td>
+                <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(r.updatedAt)}</td>
                 {canWrite && (
                   <td className={tdClass}>
                     <Button
@@ -199,7 +199,7 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-[12px] text-muted">{rows.length}개 프로그램</p>
+      <p className="mt-2 text-caption text-muted">{rows.length}개 프로그램</p>
     </>
   );
 }

@@ -109,11 +109,11 @@ export function Sidebar({
           <span
             aria-disabled="true"
             title={item.note ?? `${item.phase} 오픈 예정`}
-            className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-[13px] text-zinc-600"
+            className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-caption text-zinc-600"
           >
             <Icon className="h-4 w-4 shrink-0" aria-hidden />
             <span className="flex-1">{item.label}</span>
-            <span className="rounded-full bg-amber-500/90 px-1.5 py-px text-[10px] font-semibold text-white">{item.phase}</span>
+            <span className="rounded-full bg-amber-500/90 px-1.5 py-px text-micro font-semibold text-white">{item.phase}</span>
           </span>
         </li>
       );
@@ -126,7 +126,7 @@ export function Sidebar({
           href={base + item.path}
           aria-current={active ? "page" : undefined}
           className={cx(
-            "relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
+            "relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-caption transition-colors",
             active ? "bg-side-hover font-medium text-white" : "text-side-fg hover:bg-side-hover/60 hover:text-zinc-100",
           )}
         >
@@ -134,7 +134,7 @@ export function Sidebar({
           <Icon className="h-4 w-4 shrink-0" aria-hidden />
           <span className="flex-1">{item.label}</span>
           {count > 0 && (
-            <span className="tabular rounded-full bg-zinc-700 px-1.5 text-[11px] font-medium text-zinc-100">{count}</span>
+            <span className="tabular rounded-full bg-zinc-700 px-1.5 text-micro font-medium text-zinc-100">{count}</span>
           )}
         </Link>
       </li>
@@ -144,10 +144,10 @@ export function Sidebar({
   return (
     <aside className="flex h-screen w-[232px] shrink-0 flex-col bg-side text-side-fg">
       <div className="flex h-14 items-center gap-2.5 px-4">
-        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-[13px] font-bold text-white">B</span>
+        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-caption font-bold text-white">B</span>
         <div className="leading-tight">
-          <p className="text-[13px] font-semibold text-white">Bayada Academy</p>
-          <p className="text-[11px] text-zinc-500">{isPartner ? "Partner Console" : "Admin Console"}</p>
+          <p className="text-caption font-semibold text-white">Bayada Academy</p>
+          <p className="text-micro text-zinc-500">{isPartner ? "Partner Console" : "Admin Console"}</p>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ export function Sidebar({
         <ul className="flex flex-col gap-0.5">{primary.map(renderItem)}</ul>
         {commerce.length > 0 && (
           <>
-            <p className="mb-1 mt-5 px-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-600">B2B · 결제</p>
+            <p className="mb-1 mt-5 px-2.5 text-micro font-medium uppercase tracking-wider text-zinc-600">B2B · 결제</p>
             <ul className="flex flex-col gap-0.5">{commerce.map(renderItem)}</ul>
           </>
         )}
@@ -163,12 +163,12 @@ export function Sidebar({
 
       <div className="border-t border-side-line p-3">
         <div className="flex items-center gap-2.5 rounded-md px-1.5 py-1">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-[12px] font-semibold text-zinc-100">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-caption font-semibold text-zinc-100">
             {userName.slice(0, 1)}
           </span>
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="truncate text-[12.5px] font-medium text-zinc-100">{userName}</p>
-            <p className="truncate text-[11px] text-zinc-500" title={userEmail}>
+            <p className="truncate text-caption font-medium text-zinc-100">{userName}</p>
+            <p className="truncate text-micro text-zinc-500" title={userEmail}>
               {roleName}
             </p>
           </div>

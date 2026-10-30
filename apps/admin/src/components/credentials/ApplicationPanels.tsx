@@ -16,13 +16,13 @@ import { Badge, Button, Card, Field, cx, inputClass, textareaClass } from "@/com
 import { useAction } from "@/components/ui/feedback";
 
 function Verdict({ passed }: { passed: boolean | null }) {
-  if (passed === null) return <span className="text-[12.5px] text-subtle">점수를 입력하면 판정이 표시됩니다</span>;
+  if (passed === null) return <span className="text-caption text-subtle">점수를 입력하면 판정이 표시됩니다</span>;
   return <Badge tone={passed ? "blue" : "red"}>{passed ? "합격" : "불합격"}</Badge>;
 }
 
 function ScoreRow({ label, value, pass }: { label: string; value: number | null; pass: number }) {
   return (
-    <div className="flex items-baseline justify-between py-1.5 text-[13px]">
+    <div className="flex items-baseline justify-between py-1.5 text-caption">
       <dt className="text-muted">{label}</dt>
       <dd>
         <span className="tabular font-semibold text-fg">{value ?? "-"}</span>
@@ -59,17 +59,17 @@ export function EvaluationPanel({
   return (
     <Card
       title="심사위원 평가"
-      actions={evaluatorName && status !== "SUBMITTED" ? <span className="text-[11.5px] text-muted">{evaluatorName}</span> : undefined}
+      actions={evaluatorName && status !== "SUBMITTED" ? <span className="text-micro text-muted">{evaluatorName}</span> : undefined}
     >
       {status === "SUBMITTED" ? (
         <div className="flex flex-col gap-3">
-          <p className="text-[13px] text-zinc-600">아직 평가를 시작하지 않았습니다. 평가를 시작하면 담당 심사위원으로 기록됩니다.</p>
+          <p className="text-caption text-muted">아직 평가를 시작하지 않았습니다. 평가를 시작하면 담당 심사위원으로 기록됩니다.</p>
           {canEvaluate ? (
             <Button variant="primary" disabled={isPending} onClick={() => run(() => startEvaluation(id))}>
               평가 시작
             </Button>
           ) : (
-            <p className="text-[12px] text-muted">심사위원(임상 리뷰어·Super Admin)이 평가합니다.</p>
+            <p className="text-caption text-muted">심사위원(임상 리뷰어·Super Admin)이 평가합니다.</p>
           )}
         </div>
       ) : editing ? (
@@ -111,8 +111,8 @@ export function EvaluationPanel({
               onChange={(e) => setV({ ...v, evaluatorNote: e.target.value })}
             />
           </Field>
-          <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2">
-            <span className="text-[12.5px] text-muted">판정 미리보기</span>
+          <div className="flex items-center justify-between rounded-md bg-surface px-3 py-2">
+            <span className="text-caption text-muted">판정 미리보기</span>
             <Verdict passed={passed} />
           </div>
           <div className="flex gap-2">
@@ -141,21 +141,21 @@ export function EvaluationPanel({
         </fieldset>
       ) : (
         <div className="flex flex-col gap-3">
-          <dl className="divide-y divide-zinc-100">
+          <dl className="divide-y divide-line-soft">
             <ScoreRow label="시험" value={num(initial.examScore)} pass={thresholds.examPassingScore} />
             {thresholds.practicalRequired && (
               <ScoreRow label="실기" value={num(initial.practicalScore)} pass={thresholds.practicalPassingScore} />
             )}
           </dl>
-          {status === "EVALUATING" && <p className="text-[12px] text-violet-700">심사위원이 평가 중입니다.</p>}
+          {status === "EVALUATING" && <p className="text-caption text-info">심사위원이 평가 중입니다.</p>}
           {status !== "EVALUATING" && (
-            <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2">
-              <span className="text-[12.5px] text-muted">심사위원 판정</span>
+            <div className="flex items-center justify-between rounded-md bg-surface px-3 py-2">
+              <span className="text-caption text-muted">심사위원 판정</span>
               <Verdict passed={passed} />
             </div>
           )}
           {initial.evaluatorNote && (
-            <p className="whitespace-pre-wrap rounded-md border border-line px-3 py-2 text-[12.5px] leading-relaxed text-zinc-700">
+            <p className="whitespace-pre-wrap rounded-md border border-line px-3 py-2 text-caption leading-relaxed text-ink-soft">
               {initial.evaluatorNote}
             </p>
           )}
@@ -208,10 +208,10 @@ export function DecisionPanel({
   if (status === "APPROVED" || status === "REJECTED") {
     return (
       <Card title="운영자 승인">
-        <div className="flex flex-col gap-2.5 text-[13px]">
+        <div className="flex flex-col gap-2.5 text-caption">
           <div className="flex items-center justify-between">
             <Badge tone={status === "APPROVED" ? "green" : "slate"}>{status === "APPROVED" ? "발급 완료" : "반려"}</Badge>
-            {decidedAt && <span className="tabular text-[12px] text-muted">{decidedAt}</span>}
+            {decidedAt && <span className="tabular text-caption text-muted">{decidedAt}</span>}
           </div>
           {issuedNumber && (
             <p>
@@ -219,7 +219,7 @@ export function DecisionPanel({
             </p>
           )}
           {decisionNote && (
-            <p className="whitespace-pre-wrap rounded-md border border-line px-3 py-2 text-[12.5px] leading-relaxed text-zinc-700">
+            <p className="whitespace-pre-wrap rounded-md border border-line px-3 py-2 text-caption leading-relaxed text-ink-soft">
               {decisionNote}
             </p>
           )}
@@ -231,7 +231,7 @@ export function DecisionPanel({
   if (!canApprove) {
     return (
       <Card title="운영자 승인">
-        <p className="text-[12.5px] text-muted">평가가 끝나면 운영자(콘텐츠 운영자·Super Admin)가 승인해 발급합니다.</p>
+        <p className="text-caption text-muted">평가가 끝나면 운영자(콘텐츠 운영자·Super Admin)가 승인해 발급합니다.</p>
       </Card>
     );
   }
@@ -242,7 +242,7 @@ export function DecisionPanel({
     <Card title="운영자 승인">
       <fieldset disabled={isPending} className="flex flex-col gap-3">
         {status === "EVALUATED" && passed && (
-          <p className="text-[12.5px] leading-relaxed text-zinc-600">
+          <p className="text-caption leading-relaxed text-muted">
             승인하면 인증번호(BC-연도-일련번호)와 검증 QR이 자동 생성되고 학습자 인증서 지갑에 바로 표시됩니다. 유효기간 {validity}.
           </p>
         )}
@@ -261,7 +261,7 @@ export function DecisionPanel({
         >
           승인 · 발급
         </Button>
-        {blocked && <p className="-mt-1 text-center text-[11.5px] text-muted">{blocked}</p>}
+        {blocked && <p className="-mt-1 text-center text-micro text-muted">{blocked}</p>}
         <Button
           variant="danger"
           disabled={isPending || !note.trim()}

@@ -35,7 +35,7 @@ export function FeaturedManager({
           }}
         >
           <select
-            className={cx(selectClass, "h-7! w-[280px]! text-[12.5px]!")}
+            className={cx(selectClass, "h-7! w-[280px]! text-caption!")}
             value={pick}
             onChange={(e) => setPick(e.target.value)}
             aria-label="큐레이션에 추가할 프로그램"
@@ -57,16 +57,16 @@ export function FeaturedManager({
       {featured.length === 0 ? (
         <EmptyState title="큐레이션된 프로그램이 없습니다" description="오른쪽 위에서 게시된 프로그램을 골라 메인 신규·인기 영역에 노출하세요." />
       ) : (
-        <ul className="divide-y divide-zinc-100">
+        <ul className="divide-y divide-line-soft">
           {featured.map((f) => (
-            <li key={f.id} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
+            <li key={f.id} className="flex items-center gap-3 px-4 py-2.5 text-caption">
               <Link href={`/${locale}/programs/${f.id}`} className="flex-1 truncate font-medium hover:underline">
                 {f.title}
               </Link>
-              <span className="text-[12px] text-muted">{PRODUCT_TYPE_LABEL[f.productType]}</span>
+              <span className="text-caption text-muted">{PRODUCT_TYPE_LABEL[f.productType]}</span>
               <VisibilityPill value={f.visibility} />
               <Badge tone={COURSE_STATUS_TONE[f.status]}>{COURSE_STATUS_LABEL[f.status]}</Badge>
-              {f.status !== "PUBLISHED" && <span className="text-[11.5px] text-amber-700">게시 전이라 메인에 안 보임</span>}
+              {f.status !== "PUBLISHED" && <span className="text-micro text-warning">게시 전이라 메인에 안 보임</span>}
               <Button size="sm" variant="ghost" aria-label={`${f.title} 큐레이션에서 빼기`} disabled={isPending} onClick={() => run(() => setFeatured(f.id, false))}>
                 <X className="h-3.5 w-3.5" />
               </Button>

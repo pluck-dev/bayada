@@ -20,7 +20,7 @@ export default async function PageEditPage({ params }: { params: Promise<{ local
         title={page?.title ?? doc.title}
         description={
           <span className="flex items-center gap-2">
-            <span className="font-mono text-[12px]">{slug}</span>
+            <span className="font-mono text-caption">{slug}</span>
             <span className="text-subtle">·</span>
             {page ? <span>최종 수정 {formatDateTime(page.updatedAt)}</span> : <Badge tone="amber">아직 없는 문서 — 저장하면 만들어집니다</Badge>}
           </span>

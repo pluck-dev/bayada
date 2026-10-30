@@ -83,9 +83,9 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
                             r.user.name ?? "-"
                           )}
                         </td>
-                        <td className={cx(tdClass, "text-zinc-600")}>{r.user.email}</td>
-                        <td className={cx(tdClass, "tabular text-zinc-600")}>{r.user.phone ?? "-"}</td>
-                        <td className={cx(tdClass, "tabular text-zinc-500")}>{formatDateTime(r.createdAt)}</td>
+                        <td className={cx(tdClass, "text-muted")}>{r.user.email}</td>
+                        <td className={cx(tdClass, "tabular text-muted")}>{r.user.phone ?? "-"}</td>
+                        <td className={cx(tdClass, "tabular text-subtle")}>{formatDateTime(r.createdAt)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -93,7 +93,7 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
               </div>
             )}
           </Card>
-          <p className="px-1 text-[12px] text-muted">명단 내려받기는 개인정보 처리 기록으로 감사 로그에 남습니다.</p>
+          <p className="px-1 text-caption text-muted">명단 내려받기는 개인정보 처리 기록으로 감사 로그에 남습니다.</p>
         </div>
 
         <SessionForm

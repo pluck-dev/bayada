@@ -51,25 +51,25 @@ export function HistoryTimeline({ entries, publishedAt }: { entries: HistoryEntr
               )}
               aria-hidden
             />
-            <div className="flex flex-wrap items-center gap-2 text-[13px]">
+            <div className="flex flex-wrap items-center gap-2 text-caption">
               <span className="font-medium">{AUDIT_ACTION_LABEL[e.action] ?? e.action}</span>
               {from && to && (
-                <span className="flex items-center gap-1 text-[12px] text-muted">
+                <span className="flex items-center gap-1 text-caption text-muted">
                   <Badge tone={COURSE_STATUS_TONE[from]}>{COURSE_STATUS_LABEL[from]}</Badge>→
                   <Badge tone={COURSE_STATUS_TONE[to]}>{COURSE_STATUS_LABEL[to]}</Badge>
                 </span>
               )}
               {e.action === "course.visibility" && (
-                <span className="text-[12px] text-muted">
+                <span className="text-caption text-muted">
                   {d.from === "PUBLIC" ? "외부" : "사내"} → {d.to === "PUBLIC" ? "외부" : "사내"}
                 </span>
               )}
-              {e.action === "course.curriculum" && typeof d.op === "string" && <span className="text-[12px] text-muted">{d.op}</span>}
+              {e.action === "course.curriculum" && typeof d.op === "string" && <span className="text-caption text-muted">{d.op}</span>}
             </div>
-            <p className="mt-0.5 text-[12px] text-muted">
+            <p className="mt-0.5 text-caption text-muted">
               {e.actor ? `${e.actor.name ?? e.actor.email} · ${e.actor.roleLabel}` : "시스템"} · {formatDateTime(e.at)}
             </p>
-            {note && <p className="mt-1.5 whitespace-pre-wrap rounded-md bg-zinc-50 px-3 py-2 text-[12.5px] text-zinc-700">{note}</p>}
+            {note && <p className="mt-1.5 whitespace-pre-wrap rounded-md bg-surface px-3 py-2 text-caption text-ink-soft">{note}</p>}
           </li>
         );
       })}

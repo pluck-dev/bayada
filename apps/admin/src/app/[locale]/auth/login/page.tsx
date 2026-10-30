@@ -42,11 +42,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-canvas">
       <div className="hidden w-[420px] shrink-0 flex-col justify-between bg-side p-10 text-zinc-400 lg:flex">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand text-sm font-bold text-white">B</span>
-          <span className="text-[14px] font-semibold text-white">Bayada Academy</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand text-body-sm font-bold text-white">B</span>
+          <span className="text-body-sm font-semibold text-white">Bayada Academy</span>
         </div>
         <div>
           <p className="text-[22px] font-semibold leading-snug tracking-[-0.02em] text-white">
@@ -54,20 +54,20 @@ export default function AdminLoginPage() {
             <br />
             아카데미 운영 콘솔
           </p>
-          <p className="mt-3 text-[13px] leading-relaxed">
+          <p className="mt-3 text-caption leading-relaxed">
             Super Admin · 콘텐츠 운영자 · 임상 리뷰어 계정으로 로그인합니다.
           </p>
         </div>
-        <p className="text-[12px] text-zinc-600">&copy; BAYADA Home Health Care</p>
+        <p className="text-caption text-muted">&copy; BAYADA Home Health Care</p>
       </div>
 
       <div className="flex flex-1 items-center justify-center p-6">
         <form onSubmit={handleSubmit} className="w-full max-w-[340px]" noValidate={false}>
           <h1 className="text-[20px] font-semibold tracking-[-0.02em]">로그인</h1>
-          <p className="mt-1 text-[13px] text-muted">어드민 계정 이메일과 비밀번호를 입력하세요.</p>
+          <p className="mt-1 text-caption text-muted">어드민 계정 이메일과 비밀번호를 입력하세요.</p>
 
           {error && (
-            <div role="alert" className="mt-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[12.5px] text-red-800">
+            <div role="alert" className="mt-5 rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-caption text-danger">
               {error}
             </div>
           )}
@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
             <button type="submit" disabled={loading} className={cx(buttonClass("primary"), "h-9 w-full")}>
               {loading ? "로그인 중…" : "로그인"}
             </button>
-            <Link href={`/${locale ?? "ko"}/auth/forgot-password`} className="text-center text-[12.5px] text-muted hover:text-fg">
+            <Link href={`/${locale ?? "ko"}/auth/forgot-password`} className="text-center text-caption text-muted hover:text-fg">
               비밀번호를 잊으셨나요?
             </Link>
           </div>

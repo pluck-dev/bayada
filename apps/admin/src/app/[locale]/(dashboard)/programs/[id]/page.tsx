@@ -73,7 +73,7 @@ export default async function ProgramDetailPage({
             href={t.key === "basic" ? base : `${base}?tab=${t.key}`}
             aria-current={tab === t.key ? "page" : undefined}
             className={cx(
-              "-mb-px border-b-2 px-3 py-2 text-[13px] font-medium transition-colors",
+              "-mb-px border-b-2 px-3 py-2 text-caption font-medium transition-colors",
               tab === t.key ? "border-brand text-fg" : "border-transparent text-muted hover:text-fg",
             )}
           >
@@ -85,12 +85,12 @@ export default async function ProgramDetailPage({
       <div className="grid grid-cols-[minmax(0,1fr)_280px] items-start gap-6">
         <div className="min-w-0">
           {locked && canWrite && (
-            <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-[12.5px] text-blue-800">
+            <div className="mb-4 rounded-md border border-info-line bg-info-soft px-3 py-2 text-caption text-info">
               {COURSE_STATUS_LABEL[program.status]} 단계라 편집이 잠겨 있습니다. 내용을 고치려면 검토자가 수정 요청해야 합니다.
             </div>
           )}
           {program.status === "PUBLISHED" && canWrite && tab !== "history" && (
-            <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[12.5px] text-amber-900">
+            <div className="mb-4 rounded-md border border-warning-line bg-warning-soft px-3 py-2 text-caption text-warning">
               게시 중인 프로그램입니다. 저장하면 학습자 화면에 바로 반영됩니다.
             </div>
           )}
@@ -153,9 +153,9 @@ export default async function ProgramDetailPage({
 
         <aside className="sticky top-0 flex flex-col gap-4">
           {program.status === "CHANGES_REQUESTED" && program.reviewNote && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-[12px] font-semibold text-amber-900">수정 요청 사유</p>
-              <p className="mt-1 whitespace-pre-wrap text-[12.5px] text-amber-900">{program.reviewNote}</p>
+            <div className="rounded-lg border border-warning-line bg-warning-soft p-3">
+              <p className="text-caption font-semibold text-warning">수정 요청 사유</p>
+              <p className="mt-1 whitespace-pre-wrap text-caption text-warning">{program.reviewNote}</p>
             </div>
           )}
           <Card title="필수 항목 체크">
@@ -164,7 +164,7 @@ export default async function ProgramDetailPage({
           <Card title="워크플로우">
             <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} />
           </Card>
-          {program.publishedAt && <p className="px-1 text-[12px] text-muted">최초/최근 게시 {formatDateTime(program.publishedAt)}</p>}
+          {program.publishedAt && <p className="px-1 text-caption text-muted">최초/최근 게시 {formatDateTime(program.publishedAt)}</p>}
         </aside>
       </div>
     </>

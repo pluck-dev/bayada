@@ -30,7 +30,7 @@ export function RevokeButton({ id, number }: { id: string; number: string }) {
           e.preventDefault();
           setOpen(false);
         }}
-        className="m-auto w-[440px] max-w-[calc(100vw-32px)] rounded-xl border border-line bg-white p-0 text-fg shadow-[var(--shadow-pop)]"
+        className="m-auto w-[440px] max-w-[calc(100vw-32px)] rounded-xl border border-line bg-canvas p-0 text-fg shadow-[var(--shadow-pop)]"
         aria-labelledby={`revoke-${id}`}
       >
         {open && (
@@ -41,10 +41,10 @@ export function RevokeButton({ id, number }: { id: string; number: string }) {
               run(() => revokeCredential(id, reason), { onSuccess: () => setOpen(false) });
             }}
           >
-            <h2 id={`revoke-${id}`} className="text-[15px] font-semibold">
+            <h2 id={`revoke-${id}`} className="text-body font-semibold">
               인증 {number}을 취소할까요?
             </h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-zinc-600">
+            <p className="mt-2 text-caption leading-relaxed text-muted">
               공개 검증 페이지에 &lsquo;취소된 인증&rsquo;으로 표시되고 학습자 지갑에서도 무효로 바뀝니다. 되돌릴 수 없습니다.
             </p>
             <Field label="취소 사유" required htmlFor={`revoke-reason-${id}`} className="mt-4">
