@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { buttonClass, cx } from "./ui";
+import { Pagination } from "@bayada/ui";
 
+/** 목록 하단: 총 건수 + 페이지 번호 (URL ?page=) */
 export function Pager({ page, pages, total, unit = "건" }: { page: number; pages: number; total: number; unit?: string }) {
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -15,30 +16,12 @@ export function Pager({ page, pages, total, unit = "건" }: { page: number; page
     return s ? `${pathname}?${s}` : pathname;
   };
   return (
-    <div className="mt-3 flex items-center justify-between text-[12.5px] text-muted">
-      <span className="tabular">
+    <div className="mt-3 flex items-center justify-between gap-4">
+      <span className="tabular text-caption text-muted">
         총 {total.toLocaleString()}
         {unit}
-        {pages > 1 && ` · ${page} / ${pages} 페이지`}
       </span>
-      {pages > 1 && (
-        <div className="flex gap-1.5">
-          <Link
-            href={href(page - 1)}
-            aria-disabled={page <= 1}
-            className={cx(buttonClass("secondary", "sm"), page <= 1 && "pointer-events-none opacity-40")}
-          >
-            이전
-          </Link>
-          <Link
-            href={href(page + 1)}
-            aria-disabled={page >= pages}
-            className={cx(buttonClass("secondary", "sm"), page >= pages && "pointer-events-none opacity-40")}
-          >
-            다음
-          </Link>
-        </div>
-      )}
+      <Pagination page={page} totalPages={pages} hrefFor={href} LinkComponent={Link} size="sm" />
     </div>
   );
 }

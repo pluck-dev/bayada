@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import { Button, Input } from "@bayada/ui";
+import { Input, tagClass } from "@bayada/ui";
 
 interface FilterOption {
   label: string;
@@ -70,10 +70,12 @@ export function SearchFilter({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <div className="relative flex-1 sm:max-w-xs">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
+        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" aria-hidden />
         <Input
+          size="sm"
+          aria-label={searchPlaceholder}
           placeholder={searchPlaceholder}
-          className="pl-9"
+          className="pl-8"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => {
@@ -83,34 +85,40 @@ export function SearchFilter({
       </div>
 
       {filters && (
-        <div className="flex gap-2">
-          <Button
-            variant={currentFilter === "" ? "outline" : "ghost"}
-            size="sm"
-            onClick={() => updateParams({ [filterKey]: "" })}
+        <div className="flex flex-wrap gap-1.5">
+          <button
+              type="button"
+              aria-pressed={currentFilter === ""}
+              disabled={isPending}
+              className={tagClass({ active: currentFilter === "", size: "sm" })}
+              onClick={() => updateParams({ [filterKey]: "" })}
           >
             전체
-          </Button>
+          </button>
           {filters.map((f) => (
-            <Button
+            <button
+              type="button"
               key={f.value}
-              variant={currentFilter === f.value ? "outline" : "ghost"}
-              size="sm"
+              aria-pressed={currentFilter === f.value}
+              disabled={isPending}
+              className={tagClass({ active: currentFilter === f.value, size: "sm" })}
               onClick={() => updateParams({ [filterKey]: f.value })}
             >
               {f.label}
-            </Button>
+            </button>
           ))}
         </div>
       )}
 
       {secondFilters && secondFilterKey && (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {secondFilters.map((f) => (
-            <Button
+            <button
+              type="button"
               key={f.value}
-              variant={currentSecondFilter === f.value ? "outline" : "ghost"}
-              size="sm"
+              aria-pressed={currentSecondFilter === f.value}
+              disabled={isPending}
+              className={tagClass({ active: currentSecondFilter === f.value, size: "sm" })}
               onClick={() =>
                 updateParams({
                   [secondFilterKey]:
@@ -119,7 +127,7 @@ export function SearchFilter({
               }
             >
               {f.label}
-            </Button>
+            </button>
           ))}
         </div>
       )}

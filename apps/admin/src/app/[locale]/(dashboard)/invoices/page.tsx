@@ -1,8 +1,8 @@
-import { Button, Badge, DataTable, type Column } from "@bayada/ui";
+import { Badge, DataTable, PageHeader, buttonVariants, type BadgeTone, type Column } from "@bayada/ui";
 import { formatPrice } from "@bayada/shared";
 import { invoiceService } from "@/lib/services";
 import { SearchFilter } from "@/components/SearchFilter";
-import { Pagination } from "@/components/Pagination";
+import { Pager } from "@/components/Pager";
 import Link from "next/link";
 
 type InvoiceStatus = "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "CANCELLED";
@@ -15,12 +15,12 @@ const invoiceStatusLabels: Record<InvoiceStatus, string> = {
   CANCELLED: "취소",
 };
 
-const statusBadgeVariant: Record<InvoiceStatus, "secondary" | "info" | "success" | "error" | "warning"> = {
-  DRAFT: "secondary",
+const statusTone: Record<InvoiceStatus, BadgeTone> = {
+  DRAFT: "neutral",
   SENT: "info",
   PAID: "success",
-  OVERDUE: "error",
-  CANCELLED: "warning",
+  OVERDUE: "danger",
+  CANCELLED: "neutral",
 };
 
 const statusFilters = [
@@ -50,7 +50,7 @@ const columns: Column<InvoiceRow>[] = [
     key: "invoiceNo",
     header: "청구서번호",
     render: (row) => (
-      <span className="font-mono text-xs">{row.invoiceNo}</span>
+      <span className="font-mono text-micro">{row.invoiceNo}</span>
     ),
   },
   {
@@ -58,10 +58,10 @@ const columns: Column<InvoiceRow>[] = [
     header: "기관",
     render: (row) => (
       <div>
-        <p className="font-medium text-[color:var(--fg)]">
+        <p className="font-medium text-ink">
           {row.organization}
         </p>
-        <p className="text-xs text-[color:var(--muted)]">{row.contactEmail}</p>
+        <p className="text-micro text-muted">{row.contactEmail}</p>
       </div>
     ),
   },
@@ -69,7 +69,7 @@ const columns: Column<InvoiceRow>[] = [
     key: "items",
     header: "항목",
     render: (row) => (
-      <span className="text-sm text-[color:var(--muted)]">{row.items}</span>
+      <span className="text-muted">{row.items}</span>
     ),
   },
   {
@@ -78,7 +78,7 @@ const columns: Column<InvoiceRow>[] = [
     render: (row) => (
       <div>
         <p className="font-medium">{formatPrice(row.total)}</p>
-        <p className="text-xs text-[color:var(--muted)]">
+        <p className="text-micro text-muted">
           공급가 {formatPrice(row.amount)} + VAT {formatPrice(row.tax)}
         </p>
       </div>
@@ -88,7 +88,7 @@ const columns: Column<InvoiceRow>[] = [
     key: "status",
     header: "상태",
     render: (row) => (
-      <Badge variant={statusBadgeVariant[row.status]}>
+      <Badge tone={statusTone[row.status]} dot>
         {invoiceStatusLabels[row.status]}
       </Badge>
     ),
@@ -102,10 +102,8 @@ const columns: Column<InvoiceRow>[] = [
     header: "",
     render: (row) => (
       <div className="flex gap-1">
-        <Link href={`/invoices/${row.id}`}>
-          <Button variant="ghost" size="sm">
-            상세
-          </Button>
+        <Link href={`/invoices/${row.id}`} className={buttonVariants({ variant: "ghost", size: "xs" })}>
+          상세
         </Link>
       </div>
     ),
@@ -160,18 +158,8 @@ export default async function InvoicesPage({
   });
 
   return (
-    <div className="space-y-6">
-      {/* 페이지 헤더 */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-[color:var(--fg)]">
-            청구서 관리
-          </h1>
-          <p className="mt-1 text-sm text-[color:var(--muted)]">
-            B2B 기관 고객의 청구서를 관리합니다.
-          </p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      <PageHeader size="compact" title="청구서 관리" description="B2B 기관 고객의 청구서를 관리합니다." />
 
       {/* 필터/검색 */}
       <SearchFilter
@@ -187,13 +175,7 @@ export default async function InvoicesPage({
         keyField="id"
       />
 
-      {/* 페이지네이션 */}
-      <Pagination
-        total={result.total}
-        page={result.page}
-        limit={result.pageSize}
-        totalPages={result.totalPages}
-      />
+      <Pager page={result.page} pages={result.totalPages} total={result.total} />
     </div>
   );
 }
