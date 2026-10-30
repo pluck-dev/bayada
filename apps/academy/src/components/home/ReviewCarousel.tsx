@@ -28,7 +28,7 @@ export function ReviewCarousel({ children, count }: { children: ReactNode; count
   };
 
   const btn =
-    "flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white text-ink-soft transition-colors hover:border-ink hover:text-ink disabled:cursor-default disabled:opacity-40 disabled:hover:border-line";
+    "flex h-10 w-10 items-center justify-center rounded-full border border-line bg-canvas text-ink-soft transition-colors hover:border-ink hover:text-ink disabled:cursor-default disabled:opacity-40 disabled:hover:border-line";
 
   return (
     <div>

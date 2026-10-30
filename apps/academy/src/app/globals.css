@@ -76,11 +76,10 @@ html {
 }
 
 .legacy-content blockquote {
-  margin: 0 0 1em;
-  padding: 1rem 1.25rem;
-  border-radius: var(--radius-xl);
-  background: var(--color-surface);
-  border: 1px solid var(--color-line-soft);
+  /* 이관 본문의 [강의소개]·[교육목표] 묶음 — 회색 박스 대신 왼쪽 선 하나로 */
+  margin: 0 0 1.5em;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-left: 3px solid var(--color-line);
   white-space: pre-line;
 }
 .legacy-content blockquote strong {

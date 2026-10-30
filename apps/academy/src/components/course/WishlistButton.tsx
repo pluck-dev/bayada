@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import { buttonVariants, cn, iconButtonVariants } from "@bayada/ui";
 
 /**
  * 찜 토글. wished === null 이면 비로그인 → 로그인 후 지금 페이지로 돌아온다.
@@ -57,9 +58,7 @@ export function WishlistButton({
         onClick={toggle}
         aria-pressed={wished}
         aria-label={label}
-        className={`flex h-11 items-center justify-center gap-1.5 rounded-xl border text-sm font-semibold transition-colors ${
-          wished ? "border-brand/30 bg-brand-soft text-brand" : "border-line text-ink hover:border-ink"
-        } ${className}`}
+        className={cn(buttonVariants({ variant: "secondary", size: "lg", fullWidth: true }), wished && "text-brand", className)}
       >
         <Heart className={`h-4 w-4 ${wished ? "fill-current" : ""}`} aria-hidden />
         {wished ? "찜함" : "찜하기"}
@@ -74,11 +73,9 @@ export function WishlistButton({
       aria-pressed={wished}
       aria-label={label}
       title={label}
-      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-card ring-1 ring-black/5 backdrop-blur transition-transform hover:scale-105 ${
-        wished ? "text-brand" : "text-ink-soft hover:text-ink"
-      } ${className}`}
+      className={cn(iconButtonVariants({ variant: "overlay", size: "sm" }), "rounded-full", wished && "text-brand", className)}
     >
-      <Heart className={`h-[18px] w-[18px] ${wished ? "fill-current" : ""}`} aria-hidden />
+      <Heart className={cn("h-[18px] w-[18px]", wished && "fill-current")} aria-hidden />
     </button>
   );
 }

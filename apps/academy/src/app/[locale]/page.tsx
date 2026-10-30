@@ -13,6 +13,7 @@ import {
   Stethoscope,
   Infinity as InfinityIcon,
 } from "lucide-react";
+import { Accordion, EmptyState, SectionHeader, Tabs, buttonVariants, cn } from "@bayada/ui";
 import { getViewer } from "@/lib/viewer";
 import { getHomeData, getTaxonomy, type CourseCardData } from "@/lib/queries/courses";
 import { getImpactStats, getPartners, getRecentReviews } from "@/lib/queries/engagement";
@@ -26,9 +27,6 @@ import { BannerCarousel } from "@/components/home/BannerCarousel";
 import { CountUp } from "@/components/home/CountUp";
 import { ReviewCarousel } from "@/components/home/ReviewCarousel";
 import { ReviewCard } from "@/components/course/ReviewCard";
-import { Tabs } from "@/components/ui/Tabs";
-import { Faq } from "@/components/ui/Faq";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { listPublishedPathways } from "@/lib/queries/pathways";
 import { PathwayCard } from "@/components/pathway/PathwayCard";
 
@@ -43,28 +41,21 @@ function categoryIcon(name: string) {
   return <GraduationCap className={cls} aria-hidden />;
 }
 
-function SectionTitle({ title, desc, href }: { title: string; desc?: string; href?: string }) {
+/** 섹션 오른쪽 '전체 보기' — 텍스트 링크 하나 */
+function MoreLink({ href, children = "전체 보기" }: { href: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-8 flex items-end justify-between gap-4">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink md:text-[30px]">{title}</h2>
-        {desc && <p className="mt-2 text-[15px] text-muted">{desc}</p>}
-      </div>
-      {href && (
-        <Link
-          href={href}
-          className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink-soft hover:text-ink sm:flex"
-        >
-          전체 보기 <ArrowRight className="h-4 w-4" aria-hidden />
-        </Link>
-      )}
-    </div>
+    <Link
+      href={href}
+      className="hidden items-center gap-1 text-body-sm font-semibold text-ink-soft underline-offset-4 hover:text-ink hover:underline sm:inline-flex"
+    >
+      {children} <ArrowRight className="h-4 w-4" aria-hidden />
+    </Link>
   );
 }
 
 function CourseRow({ items, locale }: { items: CourseCardData[]; locale: string }) {
   return (
-    <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-5">
+    <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-6">
       {items.map((c) => (
         <div key={c.id} className="w-[78%] shrink-0 snap-start sm:w-[46%] md:w-auto">
           <CourseCard course={c} locale={locale} />
@@ -105,76 +96,77 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const hasCourses = home.popular.length > 0;
   const heroCourses = home.popular.slice(0, 3);
 
-  // 홈 섹션 — 표시 여부·순서는 어드민 사이트 설정(home.sections). 섹션별 데이터 노출 규칙(빈 데이터면 숨김)은 그대로
+  // 홈 섹션 — 표시 여부·순서는 어드민 사이트 설정(home.sections). 섹션별 데이터 노출 규칙(빈 데이터면 숨김)은 그대로.
+  // 섹션 리듬: 모두 section-y(56/88px), 배경 띠는 '인기 프로그램' 한 곳만 surface — 띠가 번갈아 나오면 어수선해진다.
   const sections: Record<HomeSectionKey, React.ReactNode> = {
     // ③ 직군 선택 (공개 프로그램이 없으면 안내 화면)
-    roles: hasCourses ? (
-      <section id="roles" className="scroll-mt-28 py-16 md:py-20">
+    roles: (
+      <section id="roles" className="section-y scroll-mt-20">
         <div className="container-page">
-          <SectionTitle title="어떤 일을 하시나요?" desc="직군을 고르면 꼭 맞는 프로그램을 추천해 드려요." />
-          <Tabs
-            variant="pill"
-            ariaLabel="직군 선택"
-            items={JOB_ROLES.map((role) => ({
-              key: role,
-              label: JOB_ROLE_LABEL[role],
-              content: (
-                <div>
-                  {home.byRole[role].fallback && (
-                    <p className="mb-4 text-sm text-muted">
-                      {JOB_ROLE_LABEL[role]} 대상 프로그램을 준비하고 있어요. 대신 많이 듣는 프로그램을 보여 드릴게요.
-                    </p>
-                  )}
-                  <CourseRow items={home.byRole[role].items} locale={locale} />
-                  {!home.byRole[role].fallback && (
-                    <Link
-                      href={`${catalog}?audience=${role}`}
-                      className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-ink-soft hover:text-ink"
-                    >
-                      {JOB_ROLE_LABEL[role]} 프로그램 모두 보기 <ArrowRight className="h-4 w-4" aria-hidden />
-                    </Link>
-                  )}
-                </div>
-              ),
-            }))}
+          <SectionHeader
+            size="lg"
+            title="어떤 일을 하시나요?"
+            description={hasCourses ? "직군을 고르면 꼭 맞는 프로그램을 추천해 드려요." : undefined}
           />
-        </div>
-      </section>
-    ) : (
-      <section id="roles" className="scroll-mt-28 py-16 md:py-20">
-        <div className="container-page">
-          <SectionTitle title="어떤 일을 하시나요?" />
-          <EmptyState
-            icon={<Lock className="h-5 w-5" />}
-            title={viewer ? "아직 공개된 프로그램이 없어요" : "지금은 임직원 전용 프로그램을 운영하고 있어요"}
-            description={
-              viewer
-                ? "새 프로그램이 공개되면 이곳에 바로 보여 드릴게요."
-                : "바야다홈헬스케어 임직원이라면 로그인 후 사내 교육 프로그램을 수강할 수 있어요. 일반 공개 프로그램도 곧 이곳에 소개됩니다."
-            }
-            action={viewer ? undefined : { label: "로그인", href: `${base}/auth/login` }}
-          />
+          {hasCourses ? (
+            <Tabs
+              variant="pill"
+              ariaLabel="직군 선택"
+              items={JOB_ROLES.map((role) => ({
+                key: role,
+                label: JOB_ROLE_LABEL[role],
+                content: (
+                  <div>
+                    {home.byRole[role].fallback && (
+                      <p className="mb-4 text-body-sm text-muted">
+                        {JOB_ROLE_LABEL[role]} 대상 프로그램을 준비하고 있어요. 대신 많이 듣는 프로그램을 보여 드릴게요.
+                      </p>
+                    )}
+                    <CourseRow items={home.byRole[role].items} locale={locale} />
+                    {!home.byRole[role].fallback && (
+                      <Link
+                        href={`${catalog}?audience=${role}`}
+                        className="mt-6 inline-flex items-center gap-1 text-body-sm font-semibold text-ink-soft underline-offset-4 hover:text-ink hover:underline"
+                      >
+                        {JOB_ROLE_LABEL[role]} 프로그램 모두 보기 <ArrowRight className="h-4 w-4" aria-hidden />
+                      </Link>
+                    )}
+                  </div>
+                ),
+              }))}
+            />
+          ) : (
+            <EmptyState
+              framed
+              icon={<Lock />}
+              title={viewer ? "아직 공개된 프로그램이 없어요" : "지금은 임직원 전용 프로그램을 운영하고 있어요"}
+              description={
+                viewer
+                  ? "새 프로그램이 공개되면 이곳에 바로 보여 드릴게요."
+                  : "바야다홈헬스케어 임직원이라면 로그인 후 사내 교육 프로그램을 수강할 수 있어요. 일반 공개 프로그램도 곧 이곳에 소개됩니다."
+              }
+              action={
+                viewer ? undefined : (
+                  <Link href={`${base}/auth/login`} className={buttonVariants({ variant: "secondary" })}>
+                    로그인
+                  </Link>
+                )
+              }
+            />
+          )}
         </div>
       </section>
     ),
     // ④ 신규·인기
     popular: hasCourses ? (
-      <section className="border-y border-line-soft bg-surface py-16 md:py-20">
+      <section className="section-y bg-surface">
         <div className="container-page">
-          <SectionTitle title="지금 많이 듣는 프로그램" href={catalog} />
+          <SectionHeader size="lg" title="지금 많이 듣는 프로그램" action={<MoreLink href={catalog} />} />
           <Tabs
             ariaLabel="프로그램 정렬"
             items={[
-              {
-                key: "popular",
-                label: "인기",
-                content: <CourseRow items={home.popular.slice(0, 4)} locale={locale} />,
-              },
-              {
-                key: "newest",
-                label: "신규",
-                content: <CourseRow items={home.newest.slice(0, 4)} locale={locale} />,
-              },
+              { key: "popular", label: "인기", content: <CourseRow items={home.popular.slice(0, 4)} locale={locale} /> },
+              { key: "newest", label: "신규", content: <CourseRow items={home.newest.slice(0, 4)} locale={locale} /> },
               {
                 key: "cert",
                 label: "인증 과정",
@@ -182,10 +174,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   <CourseRow items={home.certification.slice(0, 4)} locale={locale} />
                 ) : (
                   <EmptyState
-                    icon={<ShieldCheck className="h-5 w-5" />}
+                    icon={<ShieldCheck />}
                     title="열려 있는 인증 과정이 아직 없어요"
                     description="바야다 인증과정이 개설되면 이곳에서 가장 먼저 소개해 드릴게요."
-                    action={{ label: "전체 프로그램 보기", href: catalog }}
+                    action={
+                      <Link href={catalog} className={buttonVariants({ variant: "secondary" })}>
+                        전체 프로그램 보기
+                      </Link>
+                    }
                   />
                 ),
               },
@@ -197,14 +193,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     // ⑤ 커리어 패스웨이 — 게시된 패스웨이가 없으면 숨김
     pathways:
       pathways.length > 0 ? (
-        <section className="py-16 md:py-20">
+        <section className="section-y">
           <div className="container-page">
-            <SectionTitle
+            <SectionHeader
+              size="lg"
               title="해외 진출 · 국내 커리어"
-              desc="국가·직군별 커리어 경로를 단계별로 안내해 드려요."
-              href={`${base}/pathways`}
+              description="국가·직군별 커리어 경로를 단계별로 안내해 드려요."
+              action={<MoreLink href={`${base}/pathways`} />}
             />
-            <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-5">
+            <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-6">
               {pathways.slice(0, 8).map((p) => (
                 <div key={p.id} className="w-[78%] shrink-0 snap-start sm:w-[46%] md:w-auto">
                   <PathwayCard pathway={p} locale={locale} />
@@ -217,9 +214,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     // ⑥ 파트너 기관
     partners:
       partners.length > 0 ? (
-        <section aria-labelledby="partners-title" className="border-b border-line-soft py-12 md:py-14">
+        <section aria-labelledby="partners-title" className="py-12">
           <div className="container-page">
-            <p id="partners-title" className="text-center text-sm font-semibold text-muted">
+            <p id="partners-title" className="text-center text-body-sm font-semibold text-muted">
               함께하는 교육 기관
             </p>
             <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
@@ -243,22 +240,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     // ⑦ 주제별 찾아보기
     topics:
       taxonomy.categories.length > 0 ? (
-        <section className="py-16 md:py-20">
+        <section className="section-y">
           <div className="container-page">
-            <SectionTitle title="주제별로 찾아보기" />
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <SectionHeader size="lg" title="주제별로 찾아보기" action={<MoreLink href={catalog}>전체 프로그램</MoreLink>} />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
               {taxonomy.categories.map((c) => (
                 <Link
                   key={c.slug}
                   href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
-                  className="lift group flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-5"
+                  className="lift group flex items-center gap-3 rounded-xl border border-line bg-canvas p-4"
                 >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface text-ink-soft transition-colors group-hover:bg-brand-soft group-hover:text-brand">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface text-ink-soft [&_svg]:h-5 [&_svg]:w-5">
                     {categoryIcon(c.name)}
                   </span>
-                  <span>
-                    <span className="block text-[15px] font-semibold text-ink">{c.name}</span>
-                    {c.count > 0 && <span className="mt-0.5 block text-xs text-muted">{c.count}개 프로그램</span>}
+                  <span className="min-w-0">
+                    <span className="line-clamp-2 block text-body-sm font-semibold text-ink">{c.name}</span>
+                    {c.count > 0 && <span className="block text-caption text-muted">{c.count}개 프로그램</span>}
                   </span>
                 </Link>
               ))}
@@ -266,80 +263,68 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </section>
       ) : null,
-    // ⑧ 업셀 — 아카데미 패스(판매 중인 요금제가 있을 때만) + 기관 도입
+    // ⑧ 업셀 — 아카데미 패스(판매 중인 요금제가 있을 때만) + 기관 도입. 어두운 블록·블러 장식 대신 옅은 면 두 장
     upsell: (
-      <section id="org" className="scroll-mt-28 py-6">
-        <div className={`container-page ${passPromo ? "grid gap-5 lg:grid-cols-2" : ""}`}>
+      <section id="org" className="scroll-mt-20 py-8 md:py-10">
+        <div className={cn("container-page", passPromo && "grid gap-4 lg:grid-cols-2 lg:gap-6")}>
           {passPromo && (
-            <div className="relative flex flex-col justify-between gap-8 overflow-hidden rounded-3xl border border-brand/15 bg-brand-soft px-8 py-12 md:px-12 md:py-14">
+            <div className="flex flex-col justify-between gap-8 rounded-xl bg-surface px-7 py-9 md:px-10 md:py-11">
               <div className="max-w-xl">
-                <p className="inline-flex items-center gap-2 text-sm font-semibold text-brand">
+                <p className="inline-flex items-center gap-2 text-body-sm font-semibold text-muted">
                   <InfinityIcon className="h-4 w-4" aria-hidden /> 아카데미 패스
                 </p>
-                <h2 className="mt-3 text-2xl font-bold leading-snug tracking-tight text-ink md:text-[30px]">
-                  패스 하나로 마음껏 배우세요
-                </h2>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
+                <h2 className="mt-3 text-h2 text-ink">패스 하나로 마음껏 배우세요</h2>
+                <p className="mt-2 text-body text-muted">
                   {passPromo.includes} 무제한 수강 · {passPromo.minPrice.toLocaleString("ko-KR")}원부터
                 </p>
               </div>
-              <Link
-                href={`${base}/pass`}
-                className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-ink px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-ink-soft"
-              >
-                패스 알아보기 <ArrowRight className="h-4 w-4" aria-hidden />
+              <Link href={`${base}/pass`} className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "self-start")}>
+                패스 알아보기 <ArrowRight aria-hidden />
               </Link>
             </div>
           )}
-          <div className="relative overflow-hidden rounded-3xl bg-ink px-8 py-12 text-white md:px-14 md:py-14">
-            <div
-              className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/30 blur-3xl"
-              aria-hidden
-            />
-            <div
-              className={`relative flex h-full flex-col gap-8 ${passPromo ? "justify-between" : "md:flex-row md:items-center md:justify-between"}`}
-            >
-              <div className="max-w-xl">
-                <p className="inline-flex items-center gap-2 text-sm font-semibold text-white/70">
-                  <Building2 className="h-4 w-4" aria-hidden /> 기관·센터
-                </p>
-                <h2 className="mt-3 text-2xl font-bold leading-snug tracking-tight md:text-[30px]">
-                  우리 센터 직원 교육, 바야다 아카데미로
-                </h2>
-                <p className="mt-3 text-[15px] leading-relaxed text-white/70">
-                  직원 단체 수강과 교육 운영이 필요하신가요? 담당자가 기관 상황에 맞는 도입 방법을 안내해 드려요.
-                </p>
-              </div>
-              <a
-                href={inquiry}
-                className={`inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-white px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-line-soft ${passPromo ? "" : "md:self-auto"}`}
-              >
-                기관 도입 문의 <ArrowRight className="h-4 w-4" aria-hidden />
-              </a>
+          <div
+            className={cn(
+              "flex flex-col gap-8 rounded-xl bg-surface px-7 py-9 md:px-10 md:py-11",
+              !passPromo && "md:flex-row md:items-center md:justify-between",
+            )}
+          >
+            <div className="max-w-xl">
+              <p className="inline-flex items-center gap-2 text-body-sm font-semibold text-muted">
+                <Building2 className="h-4 w-4" aria-hidden /> 기관·센터
+              </p>
+              <h2 className="mt-3 text-h2 text-ink">우리 센터 직원 교육, 바야다 아카데미로</h2>
+              <p className="mt-2 text-body text-muted">
+                직원 단체 수강과 교육 운영이 필요하신가요? 담당자가 기관 상황에 맞는 도입 방법을 안내해 드려요.
+              </p>
             </div>
+            <a href={inquiry} className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "self-start md:self-auto")}>
+              기관 도입 문의 <ArrowRight aria-hidden />
+            </a>
           </div>
         </div>
       </section>
     ),
-    // ⑨ 성과 지표
+    // ⑨ 성과 지표 — 테두리 없이 큰 숫자
     stats:
       stats.length > 0 ? (
-        <section className="pt-16 md:pt-20">
+        <section className="section-y">
           <div className="container-page">
-            <SectionTitle title="숫자로 보는 바야다 아카데미" desc="지금까지 함께 배우고 수료한 기록이에요." />
+            <SectionHeader size="lg" title="숫자로 보는 바야다 아카데미" description="지금까지 함께 배우고 수료한 기록이에요." />
             <dl
-              className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line ${
-                stats.length >= 4 ? "lg:grid-cols-4" : stats.length === 3 ? "lg:grid-cols-3" : ""
-              }`}
+              className={cn(
+                "grid grid-cols-2 gap-x-6 gap-y-8 border-t border-line pt-8",
+                stats.length >= 4 ? "lg:grid-cols-4" : stats.length === 3 ? "lg:grid-cols-3" : "",
+              )}
             >
               {stats.map((st) => (
-                <div key={st.label} className="bg-white px-6 py-8 md:px-8 md:py-10">
-                  <dt className="text-sm font-medium text-muted">{st.label}</dt>
-                  <dd className="mt-3 flex items-baseline gap-1 text-ink">
-                    <span className="text-[34px] font-bold leading-none tracking-[-0.03em] md:text-[44px]">
+                <div key={st.label}>
+                  <dt className="text-body-sm font-medium text-muted">{st.label}</dt>
+                  <dd className="mt-2 flex items-baseline gap-1 text-ink">
+                    <span className="tabular text-[36px] font-bold leading-none tracking-[-0.03em] md:text-[44px]">
                       <CountUp value={st.value} />
                     </span>
-                    <span className="text-base font-semibold text-ink-soft">{st.unit}</span>
+                    <span className="text-body font-semibold text-ink-soft">{st.unit}</span>
                   </dd>
                 </div>
               ))}
@@ -350,9 +335,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     // ⑩ 후기
     reviews:
       reviews.length > 0 ? (
-        <section className="pt-16 md:pt-20">
+        <section className="section-y">
           <div className="container-page">
-            <SectionTitle title="수강생 후기" desc="진도 80% 이상 학습한 수강생이 직접 남긴 이야기예요." />
+            <SectionHeader size="lg" title="수강생 후기" description="진도 80% 이상 학습한 수강생이 직접 남긴 이야기예요." />
             <ReviewCarousel count={reviews.length}>
               {reviews.map((r) => (
                 <div key={r.id} className="w-[84%] shrink-0 snap-start sm:w-[46%] lg:w-[calc((100%-2.5rem)/3)]">
@@ -362,7 +347,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     heading={
                       <Link
                         href={`${catalog}/${encodeURIComponent(r.course.slug)}#reviews`}
-                        className="mb-3 line-clamp-1 text-xs font-semibold text-muted hover:text-brand"
+                        className="mb-3 line-clamp-1 text-caption font-semibold text-muted hover:text-ink"
                       >
                         {r.course.title}
                       </Link>
@@ -376,13 +361,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       ) : null,
     // ⑪ FAQ — 항목이 하나도 없으면 숨김
     faq: faq.items.length ? (
-      <section id="faq" className="scroll-mt-28 py-16 md:py-20">
-        <div className="container-page grid gap-10 lg:grid-cols-[1fr_2fr]">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-ink md:text-[30px]">{faq.title}</h2>
-            {faq.subtitle && <p className="mt-2 text-[15px] text-muted">{faq.subtitle}</p>}
-          </div>
-          <Faq items={faq.items} />
+      <section id="faq" className="section-y scroll-mt-20">
+        <div className="container-page grid gap-8 lg:grid-cols-[1fr_2fr] lg:gap-16">
+          <SectionHeader size="lg" title={faq.title} description={faq.subtitle || undefined} className="items-start" />
+          <Accordion
+            items={faq.items.map((it) => ({
+              title: it.q,
+              content: <p className="whitespace-pre-line leading-relaxed">{it.a}</p>,
+            }))}
+          />
         </div>
       </section>
     ) : null,
@@ -391,15 +378,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
-      {/* ② 히어로 */}
-      <section className="border-b border-line-soft bg-gradient-to-b from-surface to-white">
-        <div className="container-page grid items-center gap-12 py-14 md:py-20 lg:grid-cols-[1.05fr_1fr]">
+      {/* ② 히어로 — 문장 2줄 + 주요 버튼 1개 + 보조 버튼 1개. 배경 장식 없음 */}
+      <section className="border-b border-line">
+        <div className="container-page grid items-center gap-10 py-12 md:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-ink-soft">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden />
-              {hero.eyebrow}
-            </p>
-            <h1 className="mt-6 text-[40px] font-bold leading-[1.15] tracking-[-0.03em] text-ink md:text-[54px]">
+            {hero.eyebrow && <p className="text-body-sm font-semibold text-brand-700">{hero.eyebrow}</p>}
+            <h1 className="mt-4 text-[34px] font-bold leading-[1.2] tracking-[-0.03em] text-ink md:text-display">
               {hero.title.split(/\r?\n/).map((line, i) => (
                 <Fragment key={i}>
                   {i > 0 && <br />}
@@ -407,33 +391,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </Fragment>
               ))}
             </h1>
-            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-muted">{hero.subtitle}</p>
+            <p className="mt-5 max-w-md text-body-lg text-muted">{hero.subtitle}</p>
             {heroCtas.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-3">
-                {heroCtas.map((c) =>
-                  c.primary ? (
-                    <Link
-                      key="primary"
-                      href={resolveHref(c.href, locale)}
-                      className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_8px_20px_-8px_rgb(227_27_52/0.6)] transition-colors hover:bg-brand-strong"
-                    >
-                      {c.label} <ArrowRight className="h-4 w-4" aria-hidden />
-                    </Link>
-                  ) : (
-                    <Link
-                      key="secondary"
-                      href={resolveHref(c.href, locale)}
-                      className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:border-ink"
-                    >
-                      {c.label}
-                    </Link>
-                  ),
-                )}
+                {heroCtas.map((c) => (
+                  <Link
+                    key={c.primary ? "primary" : "secondary"}
+                    href={resolveHref(c.href, locale)}
+                    className={buttonVariants({ variant: c.primary ? "primary" : "secondary", size: "lg" })}
+                  >
+                    {c.label}
+                    {c.primary && <ArrowRight aria-hidden />}
+                  </Link>
+                ))}
               </div>
             )}
           </div>
 
-          <div className="lg:h-[420px]">
+          <div className="lg:h-[400px]">
             {home.banners.length > 0 ? (
               <BannerCarousel
                 banners={home.banners.map((b) => ({
@@ -445,10 +420,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 }))}
               />
             ) : heroCourses.length > 0 ? (
-              <div className="flex h-full flex-col rounded-3xl border border-line bg-white p-3 shadow-[0_24px_48px_-24px_rgb(24_24_27/0.18)]">
-                <p className="flex items-center justify-between px-3 pb-2 pt-2 text-sm font-bold text-ink">
+              <div className="flex h-full flex-col rounded-xl border border-line bg-canvas p-3">
+                <p className="flex items-center justify-between px-3 pb-2 pt-2 text-body-sm font-semibold text-ink">
                   지금 많이 듣는 프로그램
-                  <Link href={`${catalog}?sort=popular`} className="text-xs font-semibold text-muted hover:text-ink">
+                  <Link href={`${catalog}?sort=popular`} className="text-caption font-semibold text-muted hover:text-ink">
                     더 보기
                   </Link>
                 </p>
@@ -457,17 +432,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     <li key={c.id} className="flex-1">
                       <Link
                         href={`${catalog}/${encodeURIComponent(c.slug)}`}
-                        className="group flex h-full items-center gap-4 rounded-2xl p-3 transition-colors hover:bg-surface"
+                        className="group flex h-full items-center gap-4 rounded-xl p-3 transition-colors hover:bg-surface"
                       >
-                        <span className="w-4 shrink-0 text-center text-lg font-bold text-brand">{i + 1}</span>
-                        <span className="block aspect-[16/9] w-32 shrink-0 overflow-hidden rounded-xl border border-line-soft bg-line-soft sm:w-40">
+                        <span className="tabular w-4 shrink-0 text-center text-title font-bold text-ink-soft">{i + 1}</span>
+                        <span className="block aspect-video w-28 shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-36">
                           <CourseThumb src={c.thumbnail} title={c.title} label={c.category?.name} />
                         </span>
                         <span className="min-w-0">
-                          <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink group-hover:text-brand">
+                          <span className="line-clamp-2 text-body font-semibold leading-snug text-ink underline-offset-4 group-hover:underline">
                             {c.title}
                           </span>
-                          <span className="mt-1 block text-xs text-muted">
+                          <span className="mt-1 block text-caption text-muted">
                             {[
                               c.category?.name,
                               c._count.enrollments > 0 ? `${c._count.enrollments.toLocaleString()}명 수강` : null,
@@ -482,17 +457,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </ol>
               </div>
             ) : (
-              <div className="grid h-full grid-cols-2 gap-4">
-                {taxonomy.categories.slice(0, 4).map((c, i) => (
+              <div className="grid h-full grid-cols-2 gap-3">
+                {taxonomy.categories.slice(0, 4).map((c) => (
                   <Link
                     key={c.slug}
                     href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
-                    className={`flex min-h-[150px] flex-col justify-between rounded-3xl border border-line p-6 transition-colors hover:border-ink ${
-                      i === 0 ? "bg-ink text-white" : "bg-white text-ink"
-                    }`}
+                    className="lift flex min-h-[140px] flex-col justify-between rounded-xl border border-line bg-canvas p-6 text-ink"
                   >
-                    <span className={i === 0 ? "text-white/80" : "text-brand"}>{categoryIcon(c.name)}</span>
-                    <span className="text-lg font-bold tracking-tight">{c.name}</span>
+                    <span className="text-ink-soft">{categoryIcon(c.name)}</span>
+                    <span className="text-title font-bold">{c.name}</span>
                   </Link>
                 ))}
               </div>

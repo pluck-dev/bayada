@@ -1,3 +1,4 @@
+import { buttonVariants } from "@bayada/ui";
 import Link from "next/link";
 import { prisma } from "@bayada/db";
 import { JOB_ROLES, JOB_ROLE_LABEL, PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
@@ -49,14 +50,14 @@ export async function SiteFooter({ locale }: { locale: string }) {
   ];
 
   return (
-    <footer className="mt-24 border-t border-line bg-surface print:hidden">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-[1.3fr_repeat(4,1fr)]">
-        <div>
+    <footer className="border-t border-line bg-surface print:hidden">
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 md:grid-cols-[1.3fr_repeat(4,1fr)]">
+        <div className="col-span-2 md:col-span-1">
           <Link href={base} className="flex items-baseline gap-1.5">
-            <span className="text-lg font-extrabold tracking-tight text-brand">BAYADA</span>
-            <span className="text-sm font-semibold text-ink">Academy</span>
+            <span className="text-title font-extrabold tracking-tight text-brand">BAYADA</span>
+            <span className="text-body-sm font-semibold text-ink">Academy</span>
           </Link>
-          {footer.tagline && <p className="mt-3 max-w-[240px] text-sm leading-relaxed text-muted">{footer.tagline}</p>}
+          {footer.tagline && <p className="mt-3 max-w-[240px] text-body-sm leading-relaxed text-muted">{footer.tagline}</p>}
           {footer.sns.length > 0 && (
             <ul className="mt-5 flex flex-wrap gap-2" aria-label="SNS">
               {footer.sns.map((l) => (
@@ -65,7 +66,7 @@ export async function SiteFooter({ locale }: { locale: string }) {
                     href={l.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-8 items-center rounded-full border border-line bg-white px-3 text-xs font-semibold text-ink-soft transition-colors hover:border-ink hover:text-ink"
+                    className={buttonVariants({ variant: "secondary", size: "sm" })}
                   >
                     {l.label}
                   </a>
@@ -76,11 +77,11 @@ export async function SiteFooter({ locale }: { locale: string }) {
         </div>
         {columns.map((col) => (
           <div key={col.title}>
-            <p className="text-sm font-semibold text-ink">{col.title}</p>
+            <p className="text-body-sm font-semibold text-ink">{col.title}</p>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-sm text-muted transition-colors hover:text-ink">
+                  <Link href={l.href} className="text-body-sm text-muted transition-colors hover:text-ink">
                     {l.label}
                   </Link>
                 </li>
@@ -90,14 +91,14 @@ export async function SiteFooter({ locale }: { locale: string }) {
         ))}
       </div>
       <div className="border-t border-line">
-        <div className="container-page flex flex-col gap-2 py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
+        <div className="container-page flex flex-col gap-2 py-6 text-caption text-muted md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-5">
             <nav aria-label="약관 및 정책" className="flex items-center gap-2">
               <Link href={`${base}/terms`} className="font-medium text-ink-soft hover:text-ink">
                 이용약관
               </Link>
               <span aria-hidden className="text-line">·</span>
-              <Link href={`${base}/privacy`} className="font-semibold text-ink hover:text-brand">
+              <Link href={`${base}/privacy`} className="font-semibold text-ink underline-offset-4 hover:underline">
                 개인정보처리방침
               </Link>
               {refundPage && (
@@ -130,7 +131,7 @@ export async function SiteFooter({ locale }: { locale: string }) {
           )}
         </div>
         {(footer.companyInfo || footer.businessLine) && (
-          <div className="container-page space-y-1 pb-6 text-xs leading-relaxed text-subtle">
+          <div className="container-page space-y-1 pb-6 text-caption leading-relaxed text-subtle">
             {footer.companyInfo
               .split(/\r?\n/)
               .filter((l) => l.trim())

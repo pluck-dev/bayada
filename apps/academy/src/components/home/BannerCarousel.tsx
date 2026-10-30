@@ -25,17 +25,17 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
 
   const b = banners[index];
   const body = (
-    <div className="relative h-full overflow-hidden rounded-3xl bg-ink">
+    <div className="relative h-full overflow-hidden rounded-2xl bg-neutral-800">
       {b.image && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={b.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-80" />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 p-8 text-white">
-        <p className="text-2xl font-bold leading-snug tracking-tight">{b.title}</p>
-        {b.subtitle && <p className="mt-2 text-sm text-white/80">{b.subtitle}</p>}
+        <p className="text-h2 font-bold leading-snug tracking-tight">{b.title}</p>
+        {b.subtitle && <p className="mt-2 text-body-sm text-white/80">{b.subtitle}</p>}
         {b.linkUrl && (
-          <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold">
+          <span className="mt-4 inline-flex items-center gap-1 text-body-sm font-semibold">
             자세히 보기 <ArrowRight className="h-4 w-4" aria-hidden />
           </span>
         )}
