@@ -1,0 +1,353 @@
+/* ==========================================================================
+   BAYADA Design System — 단일 토큰 소스 (academy · admin 공용)
+   문서: packages/ui/DESIGN-SYSTEM.md
+
+   사용: 앱 globals.css 에서
+     @import "tailwindcss";
+     @import "@bayada/ui/theme.css";
+
+   - 원시 팔레트(brand-*, neutral-*)는 직접 쓰지 말고 의미 토큰(ink, muted, line,
+     surface, brand, success …)을 쓴다. 원시 값은 의미 토큰을 정의할 때만 쓴다.
+   - BAYADA 레드는 "화면당 하나의 주요 행동 + 현재 위치 + 핵심 강조"에만.
+   ========================================================================== */
+
+/* packages/ui 컴포넌트의 클래스도 각 앱 빌드에서 생성되도록 스캔 */
+@source "./components";
+
+@theme static {
+  /* ── 서체 ── */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+
+  /* ── 원시 팔레트: 브랜드 (#E31B34 = 500) ── */
+  --color-brand-50: #fef2f3;
+  --color-brand-100: #fde3e6;
+  --color-brand-200: #fbc9cf;
+  --color-brand-300: #f59aa5;
+  --color-brand-400: #ee5d70;
+  --color-brand-500: #e31b34;
+  --color-brand-600: #c8102b;
+  --color-brand-700: #a50d24;
+  --color-brand-800: #870f22;
+  --color-brand-900: #6e1020;
+
+  /* ── 원시 팔레트: 중립 (zinc 계열, 따뜻함·차가움 없는 회색) ── */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f4f4f5;
+  --color-neutral-200: #e4e4e7;
+  --color-neutral-300: #d4d4d8;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-500: #71717a;
+  --color-neutral-600: #52525b;
+  --color-neutral-700: #3f3f46;
+  --color-neutral-800: #27272a;
+  --color-neutral-900: #18181b;
+
+  /* ── 의미 토큰: 글자 ──
+     muted 는 neutral-600(대비 7.7:1). 고령 학습자 가독성 때문에 보조 문구도 500 보다 진하게. */
+  --color-ink: var(--color-neutral-900);
+  --color-ink-soft: var(--color-neutral-700);
+  --color-muted: var(--color-neutral-600);
+  --color-subtle: var(--color-neutral-500);
+  --color-disabled: var(--color-neutral-400);
+  /* admin 호환 별칭 */
+  --color-fg: var(--color-neutral-900);
+
+  /* ── 의미 토큰: 면 ── */
+  --color-canvas: #ffffff; /* 페이지 바탕 */
+  --color-surface: var(--color-neutral-50); /* 묶음 배경(섹션 띠, 사이드 패널) */
+  --color-surface-sunken: var(--color-neutral-100); /* 트랙·스켈레톤·입력 비활성 */
+  --color-surface-inverse: var(--color-neutral-900);
+
+  /* ── 의미 토큰: 선 ── */
+  --color-line: var(--color-neutral-200);
+  --color-line-soft: var(--color-neutral-100);
+  --color-line-strong: var(--color-neutral-300);
+
+  /* ── 의미 토큰: 브랜드 ── */
+  --color-brand: var(--color-brand-500);
+  --color-brand-hover: var(--color-brand-600);
+  --color-brand-strong: var(--color-brand-600);
+  --color-brand-soft: var(--color-brand-50);
+  --color-brand-bg: var(--color-brand-50);
+
+  /* ── 의미 토큰: 상태 (글자색 / 옅은 배경 / 테두리) ──
+     danger 는 브랜드 레드와 구분되도록 한 단계 어두운 진홍. 항상 문구·아이콘과 함께 쓴다. */
+  --color-success: #15803d;
+  --color-success-soft: #f0fdf4;
+  --color-success-line: #bbf7d0;
+  --color-warning: #b45309;
+  --color-warning-soft: #fffbeb;
+  --color-warning-line: #fde68a;
+  --color-info: #1d4ed8;
+  --color-info-soft: #eff6ff;
+  --color-info-line: #bfdbfe;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+  --color-danger-line: #fecaca;
+
+  /* ── 타입 스케일 (text-*) ──
+     본문 16px / 행간 1.7 — 한국어는 라틴보다 행간을 넉넉히. 제목은 행간 1.3 내외, 자간 살짝 좁게. */
+  --text-display: 2.75rem; /* 44 */
+  --text-display--line-height: 1.2;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 700;
+  --text-h1: 2rem; /* 32 */
+  --text-h1--line-height: 1.3;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h1--font-weight: 700;
+  --text-h2: 1.5rem; /* 24 */
+  --text-h2--line-height: 1.35;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h2--font-weight: 700;
+  --text-h3: 1.25rem; /* 20 */
+  --text-h3--line-height: 1.4;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 600;
+  --text-title: 1.0625rem; /* 17 */
+  --text-title--line-height: 1.45;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 600;
+  --text-body-lg: 1.0625rem; /* 17 */
+  --text-body-lg--line-height: 1.7;
+  --text-body: 1rem; /* 16 */
+  --text-body--line-height: 1.7;
+  --text-body-sm: 0.875rem; /* 14 */
+  --text-body-sm--line-height: 1.6;
+  --text-caption: 0.8125rem; /* 13 */
+  --text-caption--line-height: 1.5;
+  --text-micro: 0.75rem; /* 12 — 배지·표 머리글 전용 */
+  --text-micro--line-height: 1.4;
+
+  /* ── 모서리 ──
+     기본 스케일을 덮어 기존 rounded-3xl·2xl 이 큰 원형 덩어리로 보이지 않게 수렴시킨다.
+     컨트롤(버튼·입력) = lg, 카드 = xl, 큰 패널 = 2xl, 배지·아바타 = full. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 18px;
+
+  /* ── 그림자(높이) ── 선 하나로 충분한 곳엔 쓰지 않는다. 떠 있는 것(메뉴·대화상자·토스트)에만. */
+  --shadow-xs: 0 1px 2px rgb(24 24 27 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(24 24 27 / 0.06), 0 1px 2px rgb(24 24 27 / 0.04);
+  --shadow-md: 0 8px 24px -8px rgb(24 24 27 / 0.14), 0 2px 6px rgb(24 24 27 / 0.05);
+  --shadow-lg: 0 20px 48px -12px rgb(24 24 27 / 0.22), 0 4px 12px rgb(24 24 27 / 0.06);
+  /* 옛 이름 호환 */
+  --shadow-card: var(--shadow-xs);
+  --shadow-lift: var(--shadow-md);
+  --shadow-pop: var(--shadow-lg);
+
+  /* ── 움직임 ── */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --default-transition-duration: 160ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ── 콘텐츠 폭 (max-w-*) ── */
+  --container-page: 1200px; /* 일반 페이지 */
+  --container-content: 1200px; /* 옛 이름 */
+  --container-reading: 760px; /* 본문·약관·폼 */
+  --container-auth: 440px; /* 로그인·가입 카드 */
+
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+/* 시간·z-index 는 테마 네임스페이스가 없어 :root 변수 + 유틸리티로 둔다 */
+:root {
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+
+  --z-sticky: 20; /* 페이지 내 고정 요소(탭 바, 사이드 요약) */
+  --z-header: 40;
+  --z-dropdown: 50;
+  --z-overlay: 60;
+  --z-dialog: 70;
+  --z-toast: 80;
+
+  --focus-ring: var(--color-brand-600);
+
+  /* 옛 @bayada/ui 변수 이름 → 새 토큰 (남은 화면 호환) */
+  --bg: var(--color-canvas);
+  --fg: var(--color-ink);
+  --muted: var(--color-muted);
+  --subtle: var(--color-subtle);
+  --surface: var(--color-surface);
+  --surface-2: var(--color-canvas);
+  --surface-3: var(--color-surface-sunken);
+  --border: var(--color-line);
+  --border-strong: var(--color-line-strong);
+  --brand: var(--color-brand);
+  --brand-hover: var(--color-brand-hover);
+  --brand-foreground: #ffffff;
+  --brand-bg: var(--color-brand-soft);
+  --ring: rgb(227 27 52 / 0.35);
+  --success: var(--color-success);
+  --success-bg: var(--color-success-soft);
+  --warning: var(--color-warning);
+  --warning-bg: var(--color-warning-soft);
+  --error: var(--color-danger);
+  --error-bg: var(--color-danger-soft);
+  --info: var(--color-info);
+  --info-bg: var(--color-info-soft);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 한국어 어절 단위 줄바꿈 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+  }
+  details > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  dialog::backdrop {
+    background: rgb(24 24 27 / 0.45);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ── 레이아웃 유틸리티 ── */
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+@utility container-reading {
+  width: 100%;
+  max-width: calc(var(--container-reading) + 2.5rem);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+/* 섹션 세로 리듬: 모바일 56 · 데스크톱 88 */
+@utility section-y {
+  padding-block: 3.5rem;
+  @media (width >= 48rem) {
+    padding-block: 5.5rem;
+  }
+}
+/* 페이지 머리글 아래 본문 시작 간격 */
+@utility page-y {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+  @media (width >= 48rem) {
+    padding-top: 2.5rem;
+    padding-bottom: 6rem;
+  }
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-100) 0%,
+    var(--color-neutral-200) 50%,
+    var(--color-neutral-100) 100%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: var(--radius-md);
+}
+/* 카드 hover: 테두리만 진해진다 (움직임·그림자 없이 차분하게) */
+@utility lift {
+  transition: border-color var(--duration-base) var(--ease-standard);
+  &:hover {
+    border-color: var(--color-line-strong);
+  }
+}
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-header {
+  z-index: var(--z-header);
+}
+@utility z-dropdown {
+  z-index: var(--z-dropdown);
+}
+@utility z-overlay {
+  z-index: var(--z-overlay);
+}
+@utility z-dialog {
+  z-index: var(--z-dialog);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
+}
+
+/* 네이티브 select 화살표 · 체크박스 표시 (form.tsx) */
+@utility select-chevron {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath d='M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z'/%3E%3C/svg%3E");
+  background-size: 1.1em;
+  background-position: right 0.65em center;
+  background-repeat: no-repeat;
+}
+@utility checkbox-mark {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@utility toast-in {
+  animation: toast-in var(--duration-base) var(--ease-out);
+}

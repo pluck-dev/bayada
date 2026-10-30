@@ -1,103 +1,19 @@
 @import "tailwindcss";
-/* @bayada/ui 컴포넌트(주문·청구서 등 기존 화면)가 쓰는 클래스도 생성되게 소스를 스캔한다 */
-@source "../../../../packages/ui/src";
+/* 디자인 토큰·기본 스타일·공용 유틸리티는 아카데미와 같은 파일 — packages/ui/DESIGN-SYSTEM.md
+   어드민은 같은 토큰을 쓰고 밀도만 다르다(본문 14px, 컨트롤 sm/xs, 표 compact). */
+@import "@bayada/ui/theme.css";
 
-/* ─── BAYADA Admin 디자인 토큰 ───
-   zinc 중립색 + BAYADA 레드는 강조(주요 버튼, 활성 메뉴)에만.
-   --brand/--surface/--border 등 이름은 @bayada/ui 컴포넌트와 공유한다. */
-:root {
-  --bg: #ffffff;
-  --fg: #18181b;
-  --muted: #71717a;
-  --subtle: #a1a1aa;
-  --surface: #fafafa;
-  --surface-2: #ffffff;
-  --surface-3: #f4f4f5;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-
-  --brand: #e31b34;
-  --brand-hover: #c4142b;
-  --brand-foreground: #ffffff;
-  --brand-bg: #fdecee;
-
-  --secondary: #f4f4f5;
-  --secondary-hover: #e4e4e7;
-  --secondary-foreground: #18181b;
-
-  --success: #15803d;
-  --success-bg: #f0fdf4;
-  --warning: #b45309;
-  --warning-bg: #fffbeb;
-  --error: #b91c1c;
-  --error-bg: #fef2f2;
-  --info: #1d4ed8;
-  --info-bg: #eff6ff;
-
-  --ring: rgba(227, 27, 52, 0.35);
-  --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.04);
-  --shadow-pop: 0 12px 32px -8px rgba(24, 24, 27, 0.18), 0 2px 6px rgba(24, 24, 27, 0.06);
-
-  /* 사이드바 */
-  --side-bg: #18181b;
-  --side-fg: #a1a1aa;
-  --side-fg-strong: #fafafa;
-  --side-hover: #27272a;
-  --side-border: #27272a;
-}
-
-@theme inline {
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-  --color-brand: var(--brand);
-  --color-brand-hover: var(--brand-hover);
-  --color-brand-bg: var(--brand-bg);
-  --color-fg: var(--fg);
-  --color-muted: var(--muted);
-  --color-subtle: var(--subtle);
-  --color-surface: var(--surface);
-  --color-line: var(--border);
-  --color-line-strong: var(--border-strong);
-  --color-side: var(--side-bg);
-  --color-side-hover: var(--side-hover);
-  --color-side-fg: var(--side-fg);
-}
-
-html {
-  font-family: var(--font-sans);
-  font-feature-settings: "tnum" 0;
-  -webkit-font-smoothing: antialiased;
+/* 사이드바 — 어드민 전용 어두운 면 (중립 900 계열) */
+@theme {
+  --color-side: var(--color-neutral-900);
+  --color-side-hover: var(--color-neutral-800);
+  --color-side-fg: var(--color-neutral-400);
+  --color-side-fg-strong: var(--color-neutral-50);
+  --color-side-line: var(--color-neutral-800);
 }
 
 body {
-  background: var(--surface);
-  color: var(--fg);
+  background: var(--color-surface);
   font-size: 14px;
   letter-spacing: -0.005em;
-}
-
-.tabular {
-  font-variant-numeric: tabular-nums;
-}
-
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-dialog::backdrop {
-  background: rgba(24, 24, 27, 0.4);
-}
-
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.toast-in {
-  animation: toast-in 160ms ease-out;
 }

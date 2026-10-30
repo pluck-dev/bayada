@@ -1,109 +1,9 @@
 @import "tailwindcss";
-/* 로그인·장바구니 등 @bayada/ui 컴포넌트가 쓰는 변수. 아래 :root 에서 아카데미 톤으로 덮어쓴다 */
-@import "@bayada/ui/styles.css";
-
-/* ============================================================
-   BAYADA Academy 디자인 토큰
-   - 중립 zinc 팔레트 + BAYADA 레드 단일 강조색
-   - Tailwind 유틸리티: bg-brand, text-ink, text-muted, border-line, bg-surface ...
-   ============================================================ */
-@theme {
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
-    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-
-  --color-ink: #18181b;
-  --color-ink-soft: #3f3f46;
-  --color-muted: #71717a;
-  --color-subtle: #a1a1aa;
-  --color-line: #e4e4e7;
-  --color-line-soft: #f4f4f5;
-  --color-surface: #fafafa;
-  --color-brand: #e31b34;
-  --color-brand-strong: #c3112a;
-  --color-brand-soft: #fff1f2;
-  --color-success: #15803d;
-  --color-success-soft: #f0fdf4;
-
-  --shadow-card: 0 1px 2px rgb(24 24 27 / 0.04);
-  --shadow-lift: 0 12px 32px -12px rgb(24 24 27 / 0.18);
-
-  --container-content: 1200px;
-}
-
-:root {
-  /* @bayada/ui 변수 정렬 */
-  --bg: #ffffff;
-  --fg: #18181b;
-  --muted: #71717a;
-  --surface: #fafafa;
-  --border: #e4e4e7;
-  --brand: #e31b34;
-  --brand-hover: #c3112a;
-  --brand-bg: #fff1f2;
-  --accent: #18181b;
-  --ring: rgb(227 27 52 / 0.35);
-}
+/* 디자인 토큰·기본 스타일·공용 유틸리티(container-page, section-y, skeleton …)는 전부 여기 — packages/ui/DESIGN-SYSTEM.md */
+@import "@bayada/ui/theme.css";
 
 html {
   scroll-behavior: smooth;
-}
-
-body {
-  font-family: var(--font-sans);
-  background: #ffffff;
-  color: var(--color-ink);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  word-break: keep-all;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-}
-
-@utility container-page {
-  width: 100%;
-  max-width: var(--container-content);
-  margin-inline: auto;
-  padding-inline: 1.25rem;
-  @media (width >= 64rem) {
-    padding-inline: 2rem;
-  }
-}
-
-@utility no-scrollbar {
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-/* 카드 hover: 살짝 떠오르기 */
-@utility lift {
-  transition:
-    transform 200ms ease,
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lift);
-  }
-}
-
-/* details/summary 아코디언 */
-details > summary {
-  list-style: none;
-  cursor: pointer;
-}
-details > summary::-webkit-details-marker {
-  display: none;
-}
-details[open] .accordion-icon {
-  transform: rotate(45deg);
-}
-details[open] .accordion-chevron {
-  transform: rotate(180deg);
 }
 
 /* 옮겨 온 WordPress 본문(TEXT 레슨) */
@@ -150,7 +50,7 @@ details[open] .accordion-chevron {
 .legacy-content iframe {
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   margin: 1em 0;
 }
 .legacy-content table {
@@ -163,21 +63,6 @@ details[open] .accordion-chevron {
 .legacy-content td {
   border: 1px solid var(--color-line);
   padding: 0.5em 0.75em;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-@utility skeleton {
-  background: linear-gradient(90deg, #f4f4f5 0%, #ececee 50%, #f4f4f5 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
-  border-radius: 0.75rem;
 }
 
 @media print {
@@ -193,7 +78,7 @@ details[open] .accordion-chevron {
 .legacy-content blockquote {
   margin: 0 0 1em;
   padding: 1rem 1.25rem;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: var(--color-surface);
   border: 1px solid var(--color-line-soft);
   white-space: pre-line;

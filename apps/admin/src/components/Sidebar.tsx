@@ -161,7 +161,7 @@ export function Sidebar({
         )}
       </nav>
 
-      <div className="border-t border-[color:var(--side-border)] p-3">
+      <div className="border-t border-side-line p-3">
         <div className="flex items-center gap-2.5 rounded-md px-1.5 py-1">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-[12px] font-semibold text-zinc-100">
             {userName.slice(0, 1)}
