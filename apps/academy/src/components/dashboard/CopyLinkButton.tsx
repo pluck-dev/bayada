@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@bayada/ui";
 import { useState } from "react";
 import { Check, Link2 } from "lucide-react";
 
@@ -20,7 +21,7 @@ export function CopyLinkButton({ path }: { path: string }) {
     <button
       type="button"
       onClick={copy}
-      className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-line px-4 text-sm font-semibold text-ink hover:border-ink"
+      className={buttonVariants({ variant: "secondary", size: "md" })}
     >
       {copied ? <Check className="h-4 w-4 text-success" aria-hidden /> : <Link2 className="h-4 w-4" aria-hidden />}
       {copied ? "복사했어요" : "검증 링크"}

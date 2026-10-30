@@ -1,3 +1,4 @@
+import { buttonVariants, cn } from "@bayada/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, MailWarning } from "lucide-react";
@@ -23,19 +24,19 @@ export default async function VerifyEmailPage({
     <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
       <div className="w-full max-w-[400px]">
         <span
-          className={`flex h-12 w-12 items-center justify-center rounded-2xl ${ok ? "bg-success-soft text-success" : "bg-brand-soft text-brand"}`}
+          className={`flex h-12 w-12 items-center justify-center rounded-full ${ok ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}
         >
           {ok ? <CheckCircle2 className="h-6 w-6" aria-hidden /> : <MailWarning className="h-6 w-6" aria-hidden />}
         </span>
         <h1 className="mt-5 text-[28px] font-bold tracking-tight text-ink">{title}</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted">
+        <p className="mt-3 text-body leading-relaxed text-muted">
           {ok
             ? "이제 비밀번호 찾기·기관 초대·인증 갱신 안내 메일을 이 주소로 받을 수 있어요."
             : "인증 링크가 만료됐거나(24시간) 이미 사용됐어요. 마이 러닝 상단의 '인증 메일 다시 보내기'로 새 링크를 받아 주세요."}
         </p>
         <Link
           href={`/${locale}/dashboard`}
-          className="mt-8 flex h-12 w-full items-center justify-center rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong"
+          className={cn(buttonVariants({ variant: "primary", size: "lg", fullWidth: true }), "mt-8")}
         >
           마이 러닝으로
         </Link>

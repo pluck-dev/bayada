@@ -1,11 +1,11 @@
 "use client";
 
+import { Badge, Dialog, buttonVariants, controlClass, tagClass, textareaClass } from "@bayada/ui";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { CheckCircle2, ClipboardList, Loader2, Search, UserPlus } from "lucide-react";
 import type { JobRole } from "@bayada/db";
 import { JOB_ROLE_LABEL } from "@/lib/labels";
-import { Modal } from "./Modal";
 import { InviteLink } from "./InviteLink";
 
 interface CourseOption {
@@ -20,10 +20,8 @@ interface MemberOption {
   jobRole: JobRole | null;
 }
 
-const btnOutline =
-  "inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 text-sm font-semibold text-ink transition-colors hover:border-ink";
-const btnPrimary =
-  "inline-flex h-11 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:opacity-60";
+const btnOutline = buttonVariants({ variant: "secondary" });
+const btnPrimary = buttonVariants({ variant: "primary" });
 
 /** 기관 대시보드 상단 버튼: 직원 초대 · 과정 배정 (모달) */
 export function BusinessActions({
@@ -91,15 +89,15 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
   }
 
   return (
-    <Modal open={open} onClose={close} title="직원 초대">
+    <Dialog open={open} onClose={close} title="직원 초대">
       {result ? (
         <div>
-          <p className="flex items-center gap-2 text-[15px] font-semibold text-ink">
+          <p className="flex items-center gap-2 text-body font-semibold text-ink">
             <CheckCircle2 className="h-5 w-5 text-success" aria-hidden />
             초대 {result.invites.length}건을 만들었어요
             {result.emailed && result.emailed.length > 0 && ` · 메일 ${result.emailed.length}통 발송`}
           </p>
-          <p className="mt-1.5 text-sm text-muted">
+          <p className="mt-1.5 text-body-sm text-muted">
             {result.emailed && result.emailed.length > 0
               ? "초대 메일을 보냈어요. 메일을 못 받았다면 아래 링크를 메신저로 전달해 주세요."
               : "메일을 보내지 못했어요. 아래 링크를 직원에게 메신저·메일로 전달해 주세요."}{" "}
@@ -108,12 +106,12 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
           <ul className="mt-4 space-y-3">
             {result.invites.map((i) => (
               <li key={i.id}>
-                <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
+                <p className="mb-1 flex items-center gap-1.5 text-caption font-semibold text-ink-soft">
                   {i.email}
                   {result.emailed?.includes(i.email) ? (
-                    <span className="rounded-full bg-success-soft px-1.5 py-0.5 text-[11px] font-medium text-success">메일 발송</span>
+                    <Badge tone="success">메일 발송</Badge>
                   ) : (
-                    <span className="rounded-full bg-line-soft px-1.5 py-0.5 text-[11px] font-medium text-muted">메일 미발송</span>
+                    <Badge>메일 미발송</Badge>
                   )}
                 </p>
                 <InviteLink path={`/${locale}/invite/${i.token}`} />
@@ -121,7 +119,7 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
             ))}
           </ul>
           {(result.alreadyMembers.length > 0 || result.invalid.length > 0) && (
-            <div className="mt-4 space-y-1 rounded-xl bg-surface p-3 text-xs text-muted">
+            <div className="mt-4 space-y-1 rounded-lg bg-surface p-3 text-caption text-muted">
               {result.alreadyMembers.length > 0 && (
                 <p>이미 소속된 직원이라 건너뜀: {result.alreadyMembers.join(", ")}</p>
               )}
@@ -136,10 +134,10 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
         </div>
       ) : (
         <form onSubmit={submit}>
-          <label htmlFor="invite-emails" className="text-sm font-semibold text-ink">
+          <label htmlFor="invite-emails" className="text-body-sm font-semibold text-ink">
             직원 이메일
           </label>
-          <p className="mt-1 text-xs text-muted">쉼표·줄바꿈으로 여러 명을 한 번에 넣을 수 있어요. (최대 100명)</p>
+          <p className="mt-1 text-caption text-muted">쉼표·줄바꿈으로 여러 명을 한 번에 넣을 수 있어요. (최대 100명)</p>
           <textarea
             id="invite-emails"
             value={emails}
@@ -147,13 +145,13 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
             rows={5}
             required
             placeholder={"kim@center.kr\nlee@center.kr"}
-            className="mt-3 w-full resize-y rounded-xl border border-line px-4 py-3 font-mono text-sm text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
+            className={textareaClass("md", "mt-3 resize-y font-mono text-body-sm")}
           />
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-2 text-caption text-muted">
             입력한 주소로 초대 메일을 보내고, 직접 전달할 수 있게 링크도 보여 드려요. 링크는 받은 사람의 이메일 계정에서만 쓸 수 있어요.
           </p>
           {error && (
-            <p role="alert" className="mt-3 text-sm text-brand">
+            <p role="alert" className="mt-3 text-body-sm text-danger">
               {error}
             </p>
           )}
@@ -168,7 +166,7 @@ function InviteModal({ locale, open, onClose }: { locale: string; open: boolean;
           </div>
         </form>
       )}
-    </Modal>
+    </Dialog>
   );
 }
 
@@ -248,20 +246,19 @@ function AssignModal({
   }
 
   const today = new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10);
-  const listCls = "mt-2 max-h-56 space-y-0.5 overflow-y-auto rounded-xl border border-line p-1.5";
-  const rowCls = "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm hover:bg-surface";
-  const searchCls =
-    "h-10 w-full rounded-xl border border-line bg-white pl-9 pr-3 text-sm text-ink placeholder:text-subtle focus:border-ink focus:outline-none";
+  const listCls = "mt-2 max-h-56 space-y-0.5 overflow-y-auto rounded-lg border border-line p-1.5";
+  const rowCls = "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-body-sm hover:bg-surface";
+  const searchCls = controlClass("md", "h-10 pl-9 text-body-sm");
 
   return (
-    <Modal open={open} onClose={close} title="과정 배정" wide>
+    <Dialog open={open} onClose={close} title="과정 배정" size="lg">
       {done ? (
         <div>
-          <p className="flex items-center gap-2 text-[15px] font-semibold text-ink">
+          <p className="flex items-center gap-2 text-body font-semibold text-ink">
             <CheckCircle2 className="h-5 w-5 text-success" aria-hidden />
             배정을 마쳤어요
           </p>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-body-sm text-muted">
             {done.pairs}건 배정 (새 배정 {done.newAssignments}건 · 새로 수강 등록 {done.newEnrollments}건). 직원의 마이
             러닝에 바로 표시돼요.
           </p>
@@ -274,7 +271,7 @@ function AssignModal({
       ) : (
         <form onSubmit={submit} className="space-y-6">
           <div>
-            <p className="text-sm font-semibold text-ink">
+            <p className="text-body-sm font-semibold text-ink">
               과정 <span className="font-normal text-muted">· {courseIds.size}개 선택</span>
             </p>
             <label className="relative mt-2 block">
@@ -298,20 +295,20 @@ function AssignModal({
                       type="checkbox"
                       checked={courseIds.has(c.id)}
                       onChange={() => setCourseIds((s) => toggle(s, c.id))}
-                      className="h-4 w-4 accent-[#e31b34]"
+                      className="h-4 w-4 accent-ink"
                     />
                     <span className="min-w-0 flex-1 truncate text-ink">{c.title}</span>
-                    {c.category && <span className="shrink-0 text-xs text-muted">{c.category}</span>}
+                    {c.category && <span className="shrink-0 text-caption text-muted">{c.category}</span>}
                   </label>
                 </li>
               ))}
-              {shownCourses.length === 0 && <li className="px-2.5 py-3 text-sm text-muted">검색 결과가 없어요</li>}
+              {shownCourses.length === 0 && <li className="px-2.5 py-3 text-body-sm text-muted">검색 결과가 없어요</li>}
             </ul>
           </div>
 
           <div>
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-ink">
+              <p className="text-body-sm font-semibold text-ink">
                 대상 직원 <span className="font-normal text-muted">· {userIds.size}명 선택</span>
               </p>
               <button
@@ -323,7 +320,7 @@ function AssignModal({
                     return next;
                   })
                 }
-                className="text-xs font-semibold text-ink-soft hover:text-ink"
+                className="text-caption font-semibold text-ink-soft hover:text-ink"
               >
                 {allShownSelected ? "보이는 직원 선택 해제" : `보이는 직원 모두 선택 (${shownMembers.length})`}
               </button>
@@ -341,7 +338,7 @@ function AssignModal({
                         return next;
                       })
                     }
-                    className="rounded-full border border-line px-3 py-1 text-xs font-medium text-ink-soft hover:border-ink hover:text-ink"
+                    className={tagClass({ size: "sm" })}
                   >
                     + {JOB_ROLE_LABEL[r]} 전체
                   </button>
@@ -369,20 +366,20 @@ function AssignModal({
                       type="checkbox"
                       checked={userIds.has(m.id)}
                       onChange={() => setUserIds((s) => toggle(s, m.id))}
-                      className="h-4 w-4 accent-[#e31b34]"
+                      className="h-4 w-4 accent-ink"
                     />
                     <span className="shrink-0 font-medium text-ink">{m.name}</span>
-                    <span className="min-w-0 flex-1 truncate text-xs text-muted">{m.email}</span>
-                    {m.jobRole && <span className="shrink-0 text-xs text-muted">{JOB_ROLE_LABEL[m.jobRole]}</span>}
+                    <span className="min-w-0 flex-1 truncate text-caption text-muted">{m.email}</span>
+                    {m.jobRole && <span className="shrink-0 text-caption text-muted">{JOB_ROLE_LABEL[m.jobRole]}</span>}
                   </label>
                 </li>
               ))}
-              {shownMembers.length === 0 && <li className="px-2.5 py-3 text-sm text-muted">검색 결과가 없어요</li>}
+              {shownMembers.length === 0 && <li className="px-2.5 py-3 text-body-sm text-muted">검색 결과가 없어요</li>}
             </ul>
           </div>
 
           <div>
-            <label htmlFor="assign-due" className="text-sm font-semibold text-ink">
+            <label htmlFor="assign-due" className="text-body-sm font-semibold text-ink">
               이수 기한 <span className="font-normal text-muted">(선택)</span>
             </label>
             <input
@@ -391,17 +388,17 @@ function AssignModal({
               min={today}
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="mt-2 block h-10 rounded-xl border border-line px-3 text-sm text-ink focus:border-ink focus:outline-none"
+              className={controlClass("md", "mt-2 h-10 w-auto")}
             />
           </div>
 
           {error && (
-            <p role="alert" className="text-sm text-brand">
+            <p role="alert" className="text-body-sm text-danger">
               {error}
             </p>
           )}
-          <div className="flex items-center justify-between gap-3 border-t border-line-soft pt-5">
-            <p className="text-xs text-muted">
+          <div className="flex items-center justify-between gap-3 border-t border-line pt-5">
+            <p className="text-caption text-muted">
               {courseIds.size && userIds.size
                 ? `${courseIds.size * userIds.size}건이 배정되고, 수강 등록이 함께 돼요.`
                 : "과정과 직원을 골라 주세요."}
@@ -418,6 +415,6 @@ function AssignModal({
           </div>
         </form>
       )}
-    </Modal>
+    </Dialog>
   );
 }

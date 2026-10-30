@@ -1,3 +1,4 @@
+import { Notice, PageHeader } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -110,47 +111,52 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
   const isPlan = "planId" in item.target;
 
   return (
-    <div className="container-page py-10 md:py-14">
+    <div className="container-page page-y">
       <div className="mx-auto max-w-[960px]">
-        <Link href={item.back.href} className="text-sm text-muted hover:text-ink">
-          ← {item.back.label}
-        </Link>
-        <h1 className="mt-3 text-[28px] font-bold tracking-[-0.02em] text-ink md:text-[34px]">결제하기</h1>
+        <PageHeader
+          className="mb-6 md:mb-8"
+          back={
+            <Link href={item.back.href} className="text-body-sm text-muted hover:text-ink">
+              ← {item.back.label}
+            </Link>
+          }
+          title="결제하기"
+        />
         {isTossTestMode() && (
-          <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
+          <Notice tone="warning" className="mb-6">
             테스트 결제 환경이에요. 결제창에서 결제해도 실제로 돈이 빠져나가지 않아요.
-          </p>
+          </Notice>
         )}
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
-          <section aria-labelledby="order-title" className="rounded-2xl border border-line bg-white p-6">
-            <h2 id="order-title" className="text-base font-bold text-ink">
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          <section aria-labelledby="order-title" className="rounded-xl border border-line bg-canvas p-6">
+            <h2 id="order-title" className="text-title text-ink">
               주문 상품
             </h2>
             <div className="mt-5 flex gap-4">
-              <div className="aspect-[16/9] w-36 shrink-0 overflow-hidden rounded-xl bg-line-soft sm:w-44">
+              <div className="aspect-video w-36 shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-44">
                 {item.thumb ? (
                   <CourseThumb src={item.thumb.src} title={item.title} label={item.thumb.label} />
                 ) : (
-                  <div className="flex h-full items-center justify-center bg-ink text-white">
+                  <div className="flex h-full items-center justify-center bg-surface-sunken text-ink-soft">
                     <InfinityIcon className="h-8 w-8" aria-hidden />
                   </div>
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-brand">{item.kind}</p>
-                <p className="mt-1 text-[17px] font-bold leading-snug text-ink">{item.title}</p>
-                <p className="mt-2 text-lg font-bold text-ink">{formatPrice(item.price)}</p>
+                <p className="text-caption font-medium text-muted">{item.kind}</p>
+                <p className="mt-1 text-title text-ink">{item.title}</p>
+                <p className="mt-2 text-title font-bold text-ink">{formatPrice(item.price)}</p>
               </div>
             </div>
-            <ul className="mt-6 space-y-2 border-t border-line-soft pt-5 text-sm text-ink-soft">
+            <ul className="mt-6 space-y-2 border-t border-line pt-5 text-body-sm text-ink-soft">
               {item.lines.map((l) => (
                 <li key={l} className="flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden /> {l}
                 </li>
               ))}
             </ul>
-            <dl className="mt-6 grid grid-cols-[88px_1fr] gap-y-2 border-t border-line-soft pt-5 text-sm">
+            <dl className="mt-6 grid grid-cols-[88px_1fr] gap-y-2 border-t border-line pt-5 text-body-sm">
               <dt className="text-muted">주문자</dt>
               <dd className="text-ink">{viewer.name ?? viewer.email.split("@")[0]}</dd>
               <dt className="text-muted">이메일</dt>
@@ -159,16 +165,16 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
           </section>
 
           <aside>
-            <div className="rounded-2xl border border-line bg-white p-6 shadow-card lg:sticky lg:top-[124px]">
-              <h2 className="text-base font-bold text-ink">결제 금액</h2>
-              <dl className="mt-4 space-y-2 text-sm">
+            <div className="rounded-xl border border-line bg-canvas p-6 lg:sticky lg:top-24">
+              <h2 className="text-title text-ink">결제 금액</h2>
+              <dl className="mt-4 space-y-2 text-body-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted">상품 금액</dt>
                   <dd className="text-ink">{formatPrice(item.price)}</dd>
                 </div>
-                <div className="flex items-baseline justify-between border-t border-line-soft pt-3">
+                <div className="flex items-baseline justify-between border-t border-line pt-3">
                   <dt className="font-semibold text-ink">총 결제 금액</dt>
-                  <dd className="text-2xl font-bold tracking-tight text-ink">{formatPrice(item.price)}</dd>
+                  <dd className="text-h2 text-ink">{formatPrice(item.price)}</dd>
                 </div>
               </dl>
               <div className="mt-6">
@@ -184,12 +190,10 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
                     refundHref={refundHref}
                   />
                 ) : (
-                  <p className="rounded-xl bg-surface px-4 py-3 text-sm text-muted">
-                    지금은 온라인 결제를 받을 수 없어요. 잠시 후 다시 시도해 주세요.
-                  </p>
+                  <Notice>지금은 온라인 결제를 받을 수 없어요. 잠시 후 다시 시도해 주세요.</Notice>
                 )}
               </div>
-              <p className="mt-4 flex items-center gap-1.5 text-xs text-muted">
+              <p className="mt-4 flex items-center gap-1.5 text-caption text-muted">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> 토스페이먼츠 결제창에서 카드·간편결제로 안전하게 결제돼요.
               </p>
             </div>

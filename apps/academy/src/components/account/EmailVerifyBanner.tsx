@@ -17,11 +17,11 @@ export async function EmailVerifyBanner({ userId, locale }: { userId: string; lo
   return (
     <div
       role="status"
-      className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+      className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
     >
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-ink">이메일 인증을 완료해 주세요</p>
-        <p className="mt-0.5 text-[13px] text-muted">
+        <p className="text-body-sm font-semibold text-ink">이메일 인증을 완료해 주세요</p>
+        <p className="mt-0.5 text-caption text-muted">
           <span className="font-medium text-ink-soft">{user.email}</span> 로 보낸 링크를 누르면 끝나요. 비밀번호 찾기·기관 초대
           메일을 놓치지 않게 도와줘요.
         </p>

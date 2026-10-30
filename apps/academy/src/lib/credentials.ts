@@ -10,12 +10,13 @@ export const APP_STATUS_LABEL: Record<CredentialAppStatus, string> = {
   REJECTED: "반려",
 };
 
-export const APP_STATUS_CLASS: Record<CredentialAppStatus, string> = {
-  SUBMITTED: "bg-line-soft text-ink-soft",
-  EVALUATING: "bg-line-soft text-ink-soft",
-  EVALUATED: "bg-line-soft text-ink-soft",
-  APPROVED: "bg-success-soft text-success",
-  REJECTED: "bg-brand-soft text-brand",
+/** 신청 상태 배지 색 (@bayada/ui Badge tone) — 대기=warning, 심사 중=info, 발급=success, 반려=danger */
+export const APP_STATUS_TONE: Record<CredentialAppStatus, "warning" | "info" | "success" | "danger"> = {
+  SUBMITTED: "warning",
+  EVALUATING: "info",
+  EVALUATED: "info",
+  APPROVED: "success",
+  REJECTED: "danger",
 };
 
 export const OPEN_APP_STATUSES: CredentialAppStatus[] = ["SUBMITTED", "EVALUATING", "EVALUATED"];

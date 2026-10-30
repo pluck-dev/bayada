@@ -31,36 +31,36 @@ export default async function CertificatePrintPage({
   const duration = formatMinutes(cert.course.durationMin);
 
   return (
-    <div className="bg-surface py-10 print:bg-white print:py-0">
+    <div className="bg-surface py-10 print:bg-canvas print:py-0">
       <div className="mx-auto mb-6 flex max-w-[1000px] items-center justify-between px-5 print:hidden">
-        <Link href={`/${locale}/dashboard/certificates`} className="flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink">
+        <Link href={`/${locale}/dashboard/certificates`} className="flex items-center gap-1.5 text-body-sm font-semibold text-ink-soft hover:text-ink">
           <ArrowLeft className="h-4 w-4" aria-hidden /> 인증서 목록
         </Link>
         <PrintButton />
       </div>
 
       {/* A4 가로 비율 */}
-      <div className="mx-auto aspect-[297/210] w-full max-w-[1000px] bg-white shadow-card print:h-[210mm] print:w-[297mm] print:max-w-none print:shadow-none">
+      <div className="mx-auto aspect-[297/210] w-full max-w-[1000px] bg-canvas shadow-xs print:h-[210mm] print:w-[297mm] print:max-w-none print:shadow-none">
         <div className="flex h-full flex-col p-[4%]">
           <div className="flex h-full flex-col rounded-sm border-[3px] border-ink p-[5%]">
             <div className="flex items-start justify-between">
               <div className="flex items-baseline gap-2">
                 <span className="text-[28px] font-extrabold tracking-tight text-brand">BAYADA</span>
-                <span className="text-lg font-semibold text-ink">Academy</span>
+                <span className="text-title font-semibold text-ink">Academy</span>
               </div>
-              <p className="text-right text-xs text-muted">
+              <p className="text-right text-caption text-muted">
                 수료번호
                 <br />
-                <span className="font-mono text-sm font-semibold text-ink">{cert.number}</span>
+                <span className="font-mono text-body-sm font-semibold text-ink">{cert.number}</span>
               </p>
             </div>
 
             <div className="flex flex-1 flex-col items-center justify-center text-center">
-              <p className="text-sm font-semibold tracking-[0.5em] text-muted">CERTIFICATE OF COMPLETION</p>
+              <p className="text-body-sm font-semibold tracking-[0.5em] text-muted">CERTIFICATE OF COMPLETION</p>
               <h1 className="mt-3 text-[44px] font-bold tracking-[0.3em] text-ink">수 료 증</h1>
               <p className="mt-8 text-[32px] font-bold text-ink">{holder}</p>
               <div className="mt-6 h-px w-24 bg-brand" />
-              <p className="mt-6 max-w-[70%] text-lg leading-relaxed text-ink-soft">
+              <p className="mt-6 max-w-[70%] text-title leading-relaxed text-ink-soft">
                 위 사람은 바야다 아카데미에서 운영하는
                 <br />
                 <strong className="text-ink">「{cert.course.title}」</strong>
@@ -73,15 +73,15 @@ export default async function CertificatePrintPage({
             <div className="flex items-end justify-between gap-6">
               <div className="flex items-end gap-4">
                 <CertificateQr url={verifyUrl} className="h-[84px] w-[84px] shrink-0" />
-                <div className="text-sm text-muted">
+                <div className="text-body-sm text-muted">
                   <p>발급일 {formatDate(cert.issuedAt)}</p>
                   <p className="mt-1">유효기간 {cert.expiresAt ? `${formatDate(cert.expiresAt)}까지` : "없음"}</p>
                   <p className="mt-1 break-all">검증 {verifyUrl}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xl font-bold text-ink">바야다홈헬스케어</p>
-                <p className="mt-1 text-sm text-muted">{cert.course.provider?.name ?? "BAYADA Home Health Care"}</p>
+                <p className="text-h3 font-bold text-ink">바야다홈헬스케어</p>
+                <p className="mt-1 text-body-sm text-muted">{cert.course.provider?.name ?? "BAYADA Home Health Care"}</p>
               </div>
             </div>
           </div>

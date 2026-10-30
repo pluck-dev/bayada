@@ -3,16 +3,8 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  User,
-  Phone,
-  CheckCircle,
-} from "lucide-react";
-import { Button, Input, Card, CardContent } from "@bayada/ui";
+import { Eye, EyeOff } from "lucide-react";
+import { Button, Checkbox, Field, Input, Notice, Select, controlClass } from "@bayada/ui";
 import { useDictionary } from "@/components/DictionaryProvider";
 import { useParams, useRouter } from "next/navigation";
 import { JOB_ROLE_OPTIONS, PASSWORD_RULE, passwordError } from "@/lib/signup-policy";
@@ -109,251 +101,139 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-64px-200px)] items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* 로고 */}
-        <div className="mb-8 text-center">
-          <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-            <span className="text-2xl font-extrabold tracking-tight text-[color:var(--brand)]">BAYADA</span>
-            <span className="text-xl font-semibold text-[color:var(--fg)]">Academy</span>
-          </Link>
-          <h1 className="mt-4 text-2xl font-bold text-[color:var(--fg)]">
-            {dict.auth.registerTitle}
-          </h1>
-          <p className="mt-2 text-sm text-[color:var(--muted)]">
-            {dict.auth.registerDescription}
-          </p>
-        </div>
+    <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
+      <div className="w-full max-w-auth">
+        <h1 className="text-[28px] font-bold tracking-tight text-ink">{dict.auth.registerTitle}</h1>
+        <p className="mt-2 text-body text-muted">{dict.auth.registerDescription}</p>
 
-        {/* 회원가입 폼 */}
-        <Card>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-                  {error}
-                </div>
-              )}
-              {/* 이름 */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.name} <span className="text-[color:var(--error)]">*</span>
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    placeholder="홍길동"
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-3 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                </div>
-              </div>
-
-              {/* 이메일 */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.email} <span className="text-[color:var(--error)]">*</span>
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-3 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                </div>
-              </div>
-
-              {/* 연락처 */}
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.phone}
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="010-0000-0000"
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-3 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                </div>
-              </div>
-
-              {/* 직군 — 맞춤 추천에 사용 */}
-              <div>
-                <label
-                  htmlFor="jobRole"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  직군 <span className="text-[color:var(--error)]">*</span>
-                </label>
-                <select
-                  id="jobRole"
-                  name="jobRole"
-                  required
-                  defaultValue=""
-                  className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] px-3 text-sm text-[color:var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                >
-                  <option value="" disabled>
-                    하시는 일을 선택해 주세요
-                  </option>
-                  {JOB_ROLE_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 비밀번호 */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.password} <span className="text-[color:var(--error)]">*</span>
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    placeholder={PASSWORD_RULE}
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-10 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--muted)] hover:text-[color:var(--fg)]"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* 비밀번호 확인 */}
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="mb-1.5 block text-sm font-medium text-[color:var(--fg)]"
-                >
-                  {dict.auth.passwordConfirm}{" "}
-                  <span className="text-[color:var(--error)]">*</span>
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    required
-                    placeholder="비밀번호를 다시 입력하세요"
-                    className="flex h-10 w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)] pl-10 pr-10 py-2 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--muted)] hover:text-[color:var(--fg)]"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* 약관 동의 */}
-              <div className="space-y-2 rounded-lg bg-[color:var(--surface)] p-4">
-                <label className="flex items-start gap-2">
-                  <input
-                    type="checkbox"
-                    required
-                    checked={agreedTerms}
-                    onChange={(e) => setAgreedTerms(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-[color:var(--border)] text-[color:var(--brand)] focus:ring-[color:var(--ring)]"
-                  />
-                  <span className="text-sm text-[color:var(--fg)]">
-                    <span className="text-[color:var(--error)]">[필수]</span>{" "}
-                    <a
-                      href={`/${locale}/terms`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium underline underline-offset-2 hover:text-[color:var(--brand)]"
-                    >
-                      이용약관
-                    </a>
-                    에 동의합니다
-                  </span>
-                </label>
-                <label className="flex items-start gap-2">
-                  <input
-                    type="checkbox"
-                    required
-                    checked={agreedPrivacy}
-                    onChange={(e) => setAgreedPrivacy(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-[color:var(--border)] text-[color:var(--brand)] focus:ring-[color:var(--ring)]"
-                  />
-                  <span className="text-sm text-[color:var(--fg)]">
-                    <span className="text-[color:var(--error)]">[필수]</span>{" "}
-                    <a
-                      href={`/${locale}/privacy`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium underline underline-offset-2 hover:text-[color:var(--brand)]"
-                    >
-                      개인정보 수집 및 이용
-                    </a>
-                    에 동의합니다
-                  </span>
-                </label>
-              </div>
-
-              {/* 회원가입 버튼 */}
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={isLoading || !agreedTerms || !agreedPrivacy}
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          {error && (
+            <Notice tone="danger" role="alert">
+              {error}
+            </Notice>
+          )}
+          <Input id="name" name="name" type="text" required autoComplete="name" placeholder="홍길동" label={dict.auth.name} />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="name@example.com"
+            label={dict.auth.email}
+          />
+          <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="010-0000-0000" label={dict.auth.phone} />
+          {/* 직군 — 맞춤 추천에 사용 */}
+          <Select
+            id="jobRole"
+            name="jobRole"
+            required
+            defaultValue=""
+            label="직군"
+            help="직군에 맞는 프로그램을 추천해 드려요."
+          >
+            <option value="" disabled>
+              하시는 일을 선택해 주세요
+            </option>
+            {JOB_ROLE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </Select>
+          <Field label={dict.auth.password} required htmlFor="password" help={PASSWORD_RULE}>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                autoComplete="new-password"
+                aria-describedby="password-help"
+                className={controlClass("md", "pr-12")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-ink"
               >
-                {isLoading ? dict.common.loading : dict.auth.registerButton}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </Field>
+          <Field label={dict.auth.passwordConfirm} required htmlFor="confirmPassword">
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                autoComplete="new-password"
+                placeholder="비밀번호를 다시 입력하세요"
+                className={controlClass("md", "pr-12")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-ink"
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </Field>
+
+          {/* 약관 동의 */}
+          <div className="space-y-3 border-t border-line pt-5">
+            <Checkbox
+              required
+              checked={agreedTerms}
+              onChange={(e) => setAgreedTerms(e.target.checked)}
+              label={
+                <>
+                  <span className="font-semibold text-ink">[필수]</span>{" "}
+                  <a href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                    이용약관
+                  </a>
+                  에 동의합니다
+                </>
+              }
+            />
+            <Checkbox
+              required
+              checked={agreedPrivacy}
+              onChange={(e) => setAgreedPrivacy(e.target.checked)}
+              label={
+                <>
+                  <span className="font-semibold text-ink">[필수]</span>{" "}
+                  <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                    개인정보 수집 및 이용
+                  </a>
+                  에 동의합니다
+                </>
+              }
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            fullWidth
+            loading={isLoading}
+            disabled={!agreedTerms || !agreedPrivacy}
+          >
+            {isLoading ? dict.common.loading : dict.auth.registerButton}
+          </Button>
+        </form>
 
         {/* 로그인 안내 */}
-        <p className="mt-6 text-center text-sm text-[color:var(--muted)]">
+        <p className="mt-8 text-center text-body-sm text-muted">
           {dict.auth.hasAccount}{" "}
           <Link
             href={`/${locale}/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
-            className="font-medium text-[color:var(--brand)] hover:underline"
+            className="font-semibold text-ink underline-offset-4 hover:underline"
           >
             {dict.common.login}
           </Link>

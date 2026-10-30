@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants, controlClass, tagClass } from "@bayada/ui";
 import { useActionState } from "react";
 import { Check, Loader2 } from "lucide-react";
 import type { JobRole } from "@bayada/db";
@@ -12,7 +13,7 @@ export function ProfileForm({ name, jobRole }: { name: string; jobRole: JobRole 
   return (
     <form action={action} className="space-y-6">
       <div>
-        <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-ink">
+        <label htmlFor="name" className="mb-2 block text-body-sm font-semibold text-ink-soft">
           이름
         </label>
         <input
@@ -21,40 +22,40 @@ export function ProfileForm({ name, jobRole }: { name: string; jobRole: JobRole 
           defaultValue={name}
           required
           maxLength={40}
-          className="h-12 w-full max-w-sm rounded-xl border border-line px-4 text-[15px] text-ink focus:border-ink focus:outline-none"
+          className={controlClass("md", "max-w-sm")}
         />
-        <p className="mt-1.5 text-xs text-muted">수료증에 이 이름이 표시돼요.</p>
+        <p className="mt-1.5 text-caption text-muted">수료증에 이 이름이 표시돼요.</p>
       </div>
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-ink">직군</legend>
+        <legend className="mb-2 text-body-sm font-semibold text-ink-soft">직군</legend>
         <div className="flex flex-wrap gap-2">
           {roles.map((r) => (
             <label key={r} className="cursor-pointer">
               <input type="radio" name="jobRole" value={r} defaultChecked={jobRole === r} className="peer sr-only" />
-              <span className="inline-flex rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-soft transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-brand hover:border-ink-soft">
+              <span className={`${tagClass()} peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600`}>
                 {JOB_ROLE_LABEL[r]}
               </span>
             </label>
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted">직군에 맞는 프로그램을 추천하는 데 써요.</p>
+        <p className="mt-2 text-caption text-muted">직군에 맞는 프로그램을 추천하는 데 써요.</p>
       </fieldset>
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-11 items-center gap-2 rounded-xl bg-ink px-5 text-sm font-semibold text-white hover:bg-ink-soft disabled:opacity-70"
+          className={buttonVariants({ variant: "primary", size: "lg" })}
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
           저장
         </button>
         {state.ok && !pending && (
-          <span role="status" className="inline-flex items-center gap-1 text-sm font-medium text-success">
+          <span role="status" className="inline-flex items-center gap-1 text-body-sm font-medium text-success">
             <Check className="h-4 w-4" aria-hidden /> 저장했어요
           </span>
         )}
         {state.error && (
-          <span role="alert" className="text-sm text-brand">
+          <span role="alert" className="text-body-sm text-danger">
             {state.error}
           </span>
         )}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Award, BookOpen, Compass, Receipt, UserRound } from "lucide-react";
+import { cn } from "@bayada/ui";
 
 export function DashboardNav({ locale }: { locale: string }) {
   const pathname = usePathname();
@@ -15,7 +16,7 @@ export function DashboardNav({ locale }: { locale: string }) {
     { href: `${base}/profile`, label: "프로필", icon: UserRound },
   ];
   return (
-    <nav aria-label="마이 메뉴" className="no-scrollbar flex gap-1 overflow-x-auto lg:flex-col">
+    <nav aria-label="마이 메뉴" className="no-scrollbar -mx-5 flex gap-1 overflow-x-auto border-b border-line px-5 lg:mx-0 lg:mt-4 lg:flex-col lg:border-0 lg:px-0">
       {items.map((it) => {
         // 결제 내역은 상세(/orders/[id])에서도 활성
         const active = pathname === it.href || (it.icon === Receipt && pathname.startsWith(`${it.href}/`));
@@ -24,11 +25,12 @@ export function DashboardNav({ locale }: { locale: string }) {
             key={it.href}
             href={it.href}
             aria-current={active ? "page" : undefined}
-            className={`flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
-              active ? "bg-white text-ink shadow-card ring-1 ring-line" : "text-ink-soft hover:bg-white hover:text-ink"
-            }`}
+            className={cn(
+              "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2.5 text-body-sm font-semibold transition-colors",
+              active ? "bg-surface-sunken text-ink" : "text-ink-soft hover:bg-surface hover:text-ink",
+            )}
           >
-            <it.icon className={`h-4 w-4 ${active ? "text-brand" : "text-subtle"}`} aria-hidden />
+            <it.icon className={cn("h-4 w-4", active ? "text-brand" : "text-subtle")} aria-hidden />
             {it.label}
           </Link>
         );

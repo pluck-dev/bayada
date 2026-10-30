@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/viewer";
 import { JOB_ROLE_LABEL } from "@/lib/labels";
+import { Avatar } from "@bayada/ui";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 
 export default async function DashboardLayout({
@@ -17,16 +18,14 @@ export default async function DashboardLayout({
   const sub = [viewer.jobRole ? JOB_ROLE_LABEL[viewer.jobRole] : null, viewer.organizationName].filter(Boolean).join(" · ");
 
   return (
-    <div className="container-page grid gap-8 py-10 lg:grid-cols-[248px_1fr] lg:gap-10">
+    <div className="container-page page-y grid gap-8 lg:grid-cols-[220px_1fr] lg:gap-12">
       <aside>
-        <div className="rounded-2xl border border-line bg-surface p-4 lg:sticky lg:top-[124px]">
-          <div className="flex items-center gap-3 px-1 pb-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink text-base font-bold text-white">
-              {name.charAt(0)}
-            </span>
+        <div className="lg:sticky lg:top-24">
+          <div className="flex items-center gap-3 pb-5 lg:border-b lg:border-line">
+            <Avatar name={name} size="lg" />
             <div className="min-w-0">
-              <p className="truncate text-[15px] font-bold text-ink">{name}</p>
-              <p className="truncate text-xs text-muted">{sub || viewer.email}</p>
+              <p className="truncate text-body font-semibold text-ink">{name}</p>
+              <p className="truncate text-caption text-muted">{sub || viewer.email}</p>
             </div>
           </div>
           <DashboardNav locale={locale} />

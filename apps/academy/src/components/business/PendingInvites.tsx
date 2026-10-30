@@ -29,12 +29,12 @@ export function PendingInvites({
   }
 
   return (
-    <ul className="divide-y divide-line-soft rounded-2xl border border-line bg-white">
+    <ul className="divide-y divide-line-soft rounded-xl border border-line bg-canvas">
       {invites.map((i) => (
         <li key={i.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-ink">{i.email}</p>
-            <p className="text-xs text-muted">{formatDate(i.createdAt)} 초대 · 수락 대기</p>
+            <p className="truncate text-body-sm font-semibold text-ink">{i.email}</p>
+            <p className="text-caption text-muted">{formatDate(i.createdAt)} 초대 · 수락 대기</p>
           </div>
           <div className="flex items-center gap-2">
             <InviteLink path={`/${locale}/invite/${i.token}`} compact />
@@ -42,7 +42,7 @@ export function PendingInvites({
               type="button"
               onClick={() => revoke(i.id, i.email)}
               disabled={busy === i.id}
-              className="inline-flex h-8 items-center rounded-lg px-3 text-xs font-semibold text-muted hover:bg-brand-soft hover:text-brand disabled:opacity-60"
+              className="inline-flex h-8 items-center rounded-lg px-3 text-caption font-semibold text-muted hover:bg-danger-soft hover:text-danger disabled:opacity-60"
             >
               초대 취소
             </button>

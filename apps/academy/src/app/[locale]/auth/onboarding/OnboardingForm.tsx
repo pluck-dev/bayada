@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants, cn } from "@bayada/ui";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -39,9 +40,9 @@ export default function OnboardingForm({
     <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
       <form onSubmit={submit} className="w-full max-w-[440px]">
         <h1 className="text-[28px] font-bold tracking-tight text-ink">{name ? `${name}님, 환영해요` : "환영해요"}</h1>
-        <p className="mt-2 text-[15px] text-muted">하시는 일을 알려 주시면 맞는 교육을 먼저 보여 드릴게요.</p>
+        <p className="mt-2 text-body text-muted">하시는 일을 알려 주시면 맞는 교육을 먼저 보여 드릴게요.</p>
         {error && (
-          <p role="alert" className="mt-6 rounded-xl bg-brand-soft px-4 py-3 text-sm text-brand">
+          <p role="alert" className="mt-6 rounded-xl bg-danger-soft px-4 py-3 text-body-sm text-danger">
             {error}
           </p>
         )}
@@ -51,7 +52,7 @@ export default function OnboardingForm({
             <label
               key={o.value}
               className={`flex h-14 cursor-pointer items-center justify-center rounded-xl border px-3 text-center text-[14px] font-semibold transition-colors ${
-                selected === o.value ? "border-brand bg-brand-soft text-brand" : "border-line text-ink hover:bg-surface"
+                selected === o.value ? "border-ink bg-surface text-ink ring-1 ring-ink" : "border-line text-ink hover:bg-surface"
               }`}
             >
               <input
@@ -69,7 +70,7 @@ export default function OnboardingForm({
         <button
           type="submit"
           disabled={loading}
-          className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70"
+          className={cn(buttonVariants({ variant: "primary", size: "lg", fullWidth: true }), "mt-6")}
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
           시작하기

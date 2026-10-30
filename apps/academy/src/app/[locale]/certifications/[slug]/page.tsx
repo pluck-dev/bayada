@@ -1,3 +1,4 @@
+import { Badge, Breadcrumb, Notice, ProgressBar, cn } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -5,7 +6,7 @@ import { BadgeCheck, CheckCircle2, CircleDashed, ClipboardCheck, Lock, RefreshCw
 import { prisma } from "@bayada/db";
 import { getViewer } from "@/lib/viewer";
 import { getProgramDetail } from "@/lib/queries/credentials";
-import { APP_STATUS_CLASS, APP_STATUS_LABEL, credentialState, daysLeft, validityText } from "@/lib/credentials";
+import { APP_STATUS_TONE, APP_STATUS_LABEL, credentialState, daysLeft, validityText } from "@/lib/credentials";
 import { formatDate, formatMinutes } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
 import { ApplyForm } from "@/components/credentials/ApplyForm";
@@ -43,58 +44,48 @@ export default async function CertificationDetailPage({ params }: { params: Para
           : "유효한 인증을 보유하고 있어요. 만료가 가까워지면 갱신 신청할 수 있어요.";
 
   return (
-    <div className="container-page pb-24 pt-8 md:pt-10">
-      <nav aria-label="현재 위치" className="text-xs text-muted">
-        <Link href={`/${locale}`} className="hover:text-ink">
-          홈
-        </Link>
-        <span className="mx-1.5">/</span>
-        <Link href={`/${locale}/certifications`} className="hover:text-ink">
-          바야다 인증
-        </Link>
-        <span className="mx-1.5">/</span>
-        <span className="text-ink-soft">{p.title}</span>
-      </nav>
+    <div className="container-page page-y">
+      <Breadcrumb LinkComponent={Link} items={[{ label: "홈", href: `/${locale}` }, { label: "바야다 인증", href: `/${locale}/certifications` }, { label: p.title }]} />
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-14">
         <div className="min-w-0">
-          <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
-            <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> 바야다 인증
-          </span>
-          <h1 className="mt-4 text-[30px] font-bold leading-tight tracking-[-0.02em] text-ink md:text-[40px]">{p.title}</h1>
-          {p.summary && <p className="mt-4 text-[17px] leading-relaxed text-muted">{p.summary}</p>}
+          <Badge size="md" tone="brand" icon={<BadgeCheck aria-hidden />}>
+            바야다 인증
+          </Badge>
+          <h1 className="mt-3 text-[28px] font-bold leading-tight tracking-tight text-ink md:text-h1">{p.title}</h1>
+          {p.summary && <p className="mt-4 text-body-lg leading-relaxed text-muted">{p.summary}</p>}
 
-          <dl className="mt-8 grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-5">
+          <dl className="mt-8 grid grid-cols-3 gap-6 border-y border-line py-6">
             {[
               ["선수 프로그램", `${prerequisites.length}개`],
               ["평가", p.practicalRequired ? "시험 + 실기" : "시험"],
               ["유효기간", p.validityMonths == null ? "영구" : validityText(p.validityMonths).replace("발급일로부터 ", "")],
             ].map(([k, v]) => (
-              <div key={k} className="px-5">
-                <dt className="text-xs text-muted">{k}</dt>
-                <dd className="mt-1 text-lg font-bold tracking-tight text-ink">{v}</dd>
+              <div key={k}>
+                <dt className="text-caption text-muted">{k}</dt>
+                <dd className="mt-1 text-title text-ink">{v}</dd>
               </div>
             ))}
           </dl>
 
           {p.description && (
-            <section className="mt-12">
-              <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">인증 소개</h2>
-              <p className="mt-4 whitespace-pre-line text-[15px] leading-relaxed text-ink-soft">{p.description}</p>
+            <section className="mt-14">
+              <h2 className="text-h2 text-ink">인증 소개</h2>
+              <p className="mt-4 whitespace-pre-line text-body leading-relaxed text-ink-soft">{p.description}</p>
             </section>
           )}
 
-          <section className="mt-12">
+          <section className="mt-14">
             <div className="flex items-end justify-between gap-4">
-              <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">신청 자격 · 선수 프로그램</h2>
+              <h2 className="text-h2 text-ink">신청 자격 · 선수 프로그램</h2>
               {viewer && (
-                <span className={`text-sm font-semibold ${done === prerequisites.length ? "text-success" : "text-ink-soft"}`}>
+                <span className={`text-body-sm font-semibold ${done === prerequisites.length ? "text-success" : "text-ink-soft"}`}>
                   {done}/{prerequisites.length} 수료
                 </span>
               )}
             </div>
-            <p className="mt-2 text-sm text-muted">아래 프로그램을 모두 수료하면 인증을 신청할 수 있어요.</p>
-            <ul className="mt-5 divide-y divide-line-soft rounded-2xl border border-line">
+            <p className="mt-2 text-body-sm text-muted">아래 프로그램을 모두 수료하면 인증을 신청할 수 있어요.</p>
+            <ul className="mt-6 divide-y divide-line rounded-xl border border-line">
               {prerequisites.map((r, i) => (
                 <li key={r.courseId} className="flex items-center gap-4 px-5 py-4">
                   {viewer && r.completedAt ? (
@@ -106,22 +97,17 @@ export default async function CertificationDetailPage({ params }: { params: Para
                   )}
                   <div className="min-w-0 flex-1">
                     {r.title ? (
-                      <Link href={`/${locale}/courses/${encodeURIComponent(r.slug!)}`} className="text-[15px] font-semibold text-ink hover:text-brand">
+                      <Link href={`/${locale}/courses/${encodeURIComponent(r.slug!)}`} className="text-body font-semibold text-ink underline-offset-4 hover:underline">
                         {i + 1}. {r.title}
                       </Link>
                     ) : (
-                      <p className="text-[15px] font-semibold text-ink-soft">{i + 1}. 임직원 전용 프로그램</p>
+                      <p className="text-body font-semibold text-ink-soft">{i + 1}. 임직원 전용 프로그램</p>
                     )}
                     {viewer && r.enrolled && !r.completedAt && (
-                      <div className="mt-2 flex items-center gap-3">
-                        <div className="h-1.5 max-w-[240px] flex-1 overflow-hidden rounded-full bg-line-soft">
-                          <div className="h-full rounded-full bg-brand" style={{ width: `${r.progressPercent}%` }} />
-                        </div>
-                        <span className="text-xs font-bold text-ink">{r.progressPercent}%</span>
-                      </div>
+                      <ProgressBar className="mt-2 max-w-[280px]" size="sm" value={r.progressPercent} showValue />
                     )}
                   </div>
-                  <span className="shrink-0 text-xs text-muted">
+                  <span className="shrink-0 text-caption text-muted">
                     {viewer && r.completedAt
                       ? `${formatDate(r.completedAt)} 수료`
                       : viewer && r.enrolled
@@ -135,45 +121,45 @@ export default async function CertificationDetailPage({ params }: { params: Para
             </ul>
           </section>
 
-          <section className="mt-12">
-            <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">평가 기준</h2>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-line p-5">
-                <p className="text-xs text-muted">필기 시험</p>
-                <p className="mt-1 text-lg font-bold text-ink">{p.examPassingScore}점 이상 합격</p>
-                <p className="mt-1 text-xs text-muted">100점 만점</p>
+          <section className="mt-14">
+            <h2 className="text-h2 text-ink">평가 기준</h2>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-xl bg-surface p-5">
+                <p className="text-caption text-muted">필기 시험</p>
+                <p className="mt-1 text-title font-bold text-ink">{p.examPassingScore}점 이상 합격</p>
+                <p className="mt-1 text-caption text-muted">100점 만점</p>
               </div>
-              <div className="rounded-2xl border border-line p-5">
-                <p className="text-xs text-muted">실기 평가</p>
-                <p className="mt-1 text-lg font-bold text-ink">{p.practicalRequired ? `${p.practicalPassingScore}점 이상 합격` : "없음"}</p>
-                <p className="mt-1 text-xs text-muted">{p.practicalRequired ? "심사위원 현장 평가 · 100점 만점" : "필기 시험만으로 판정해요"}</p>
+              <div className="rounded-xl bg-surface p-5">
+                <p className="text-caption text-muted">실기 평가</p>
+                <p className="mt-1 text-title font-bold text-ink">{p.practicalRequired ? `${p.practicalPassingScore}점 이상 합격` : "없음"}</p>
+                <p className="mt-1 text-caption text-muted">{p.practicalRequired ? "심사위원 현장 평가 · 100점 만점" : "필기 시험만으로 판정해요"}</p>
               </div>
             </div>
             {p.criteria && (
-              <div className="mt-3 rounded-2xl bg-surface p-5">
-                <p className="flex items-center gap-1.5 text-sm font-semibold text-ink">
-                  <ClipboardCheck className="h-4 w-4 text-brand" aria-hidden /> 세부 평가 기준
+              <div className="mt-4 rounded-xl border border-line p-5">
+                <p className="flex items-center gap-1.5 text-body-sm font-semibold text-ink">
+                  <ClipboardCheck className="h-4 w-4 text-ink-soft" aria-hidden /> 세부 평가 기준
                 </p>
-                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft">{p.criteria}</p>
+                <p className="mt-2 whitespace-pre-line text-body-sm leading-relaxed text-ink-soft">{p.criteria}</p>
               </div>
             )}
           </section>
 
-          <section className="mt-12">
-            <h2 className="text-xl font-bold tracking-tight text-ink md:text-2xl">유효기간 · 갱신</h2>
-            <ul className="mt-5 space-y-2.5 text-[15px] leading-relaxed text-ink-soft">
+          <section className="mt-14">
+            <h2 className="text-h2 text-ink">유효기간 · 갱신</h2>
+            <ul className="mt-5 space-y-2.5 text-body leading-relaxed text-ink-soft">
               <li className="flex gap-2">
-                <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-success" aria-hidden />
                 유효기간: {validityText(p.validityMonths)}
               </li>
               {p.validityMonths != null && (
                 <li className="flex gap-2">
-                  <RefreshCw className="mt-1 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                  <RefreshCw className="mt-1 h-4 w-4 shrink-0 text-success" aria-hidden />
                   만료 {p.renewalNoticeDays}일 전부터 마이 러닝에서 갱신 안내를 드리고, 같은 페이지에서 갱신 신청할 수 있어요.
                 </li>
               )}
               <li className="flex gap-2">
-                <BadgeCheck className="mt-1 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                <BadgeCheck className="mt-1 h-4 w-4 shrink-0 text-success" aria-hidden />
                 인증번호와 QR로 누구나 공개 검증 페이지에서 유효 여부를 확인할 수 있어요.
               </li>
             </ul>
@@ -181,35 +167,35 @@ export default async function CertificationDetailPage({ params }: { params: Para
         </div>
 
         <aside>
-          <div className="space-y-4 lg:sticky lg:top-[124px]">
+          <div className="space-y-4 lg:sticky lg:top-24">
             {current && (
-              <div className={`rounded-2xl p-5 ${currentState === "expiring" ? "bg-amber-50" : "bg-success-soft"}`}>
-                <p className={`flex items-center gap-1.5 text-sm font-semibold ${currentState === "expiring" ? "text-amber-800" : "text-success"}`}>
+              <div className={cn("rounded-xl p-5", currentState === "expiring" ? "bg-warning-soft" : "bg-success-soft")}>
+                <p className={cn("flex items-center gap-1.5 text-body-sm font-semibold", currentState === "expiring" ? "text-warning" : "text-success")}>
                   <BadgeCheck className="h-4 w-4" aria-hidden />
                   {currentState === "expiring" && current.expiresAt ? `만료 ${daysLeft(current.expiresAt, now)}일 전` : "인증 보유 중"}
                 </p>
-                <p className="mt-2 font-mono text-sm font-semibold text-ink">{current.number}</p>
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-2 font-mono text-body-sm font-semibold text-ink">{current.number}</p>
+                <p className="mt-1 text-caption text-muted">
                   {formatDate(current.issuedAt)} 발급 · {current.expiresAt ? `${formatDate(current.expiresAt)}까지` : "영구"}
                 </p>
-                <Link href={`/${locale}/credentials/${current.number}/print`} className="mt-3 inline-flex text-sm font-semibold text-ink hover:text-brand">
+                <Link href={`/${locale}/credentials/${current.number}/print`} className="mt-3 inline-flex text-body-sm font-semibold text-ink underline-offset-4 hover:underline">
                   인증서 보기 →
                 </Link>
               </div>
             )}
 
-            <div className="rounded-2xl border border-line bg-white p-6 shadow-card">
-              <p className="text-lg font-bold text-ink">{eligibility.ok && eligibility.renewal ? "갱신 신청" : "인증 신청"}</p>
+            <div className="rounded-xl border border-line bg-canvas p-6">
+              <p className="text-h3 text-ink">{eligibility.ok && eligibility.renewal ? "갱신 신청" : "인증 신청"}</p>
               {latest && (
                 <div className="mt-4 rounded-xl bg-surface px-4 py-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs text-muted">{formatDate(latest.createdAt)} 신청</span>
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${APP_STATUS_CLASS[latest.status]}`}>
+                    <span className="text-caption text-muted">{formatDate(latest.createdAt)} 신청</span>
+                    <Badge tone={APP_STATUS_TONE[latest.status]} dot>
                       {APP_STATUS_LABEL[latest.status]}
-                    </span>
+                    </Badge>
                   </div>
                   {latest.status === "REJECTED" && latest.decisionNote && (
-                    <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-ink-soft">반려 사유: {latest.decisionNote}</p>
+                    <p className="mt-2 whitespace-pre-line text-caption leading-relaxed text-ink-soft">반려 사유: {latest.decisionNote}</p>
                   )}
                 </div>
               )}
@@ -223,7 +209,7 @@ export default async function CertificationDetailPage({ params }: { params: Para
                   renewal={eligibility.ok && eligibility.renewal}
                 />
               </div>
-              <p className="mt-4 text-xs leading-relaxed text-muted">신청 후 심사위원 평가와 운영자 승인을 거쳐 발급돼요. 진행 상황은 마이 러닝 › 인증서에서 볼 수 있어요.</p>
+              <p className="mt-4 text-caption leading-relaxed text-muted">신청 후 심사위원 평가와 운영자 승인을 거쳐 발급돼요. 진행 상황은 마이 러닝 › 인증서에서 볼 수 있어요.</p>
             </div>
           </div>
         </aside>

@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants, cn } from "@bayada/ui";
 import { useEffect, useState } from "react";
 import { Check, Copy } from "lucide-react";
 
@@ -23,14 +24,14 @@ export function InviteLink({ path, compact = false }: { path: string; compact?: 
   return (
     <div className="flex min-w-0 items-center gap-2">
       {!compact && (
-        <code className="min-w-0 flex-1 truncate rounded-lg bg-surface px-3 py-2 font-mono text-xs text-ink-soft ring-1 ring-line">
+        <code className="min-w-0 flex-1 truncate rounded-lg bg-surface px-3 py-2 font-mono text-caption text-ink-soft ring-1 ring-line">
           {url}
         </code>
       )}
       <button
         type="button"
         onClick={copy}
-        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-line bg-white px-3 text-xs font-semibold text-ink hover:border-ink"
+        className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "shrink-0")}
       >
         {copied ? (
           <Check className="h-3.5 w-3.5 text-success" aria-hidden />

@@ -1,3 +1,4 @@
+import { buttonVariants, cn } from "@bayada/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { isTokenUsable } from "@bayada/services/account";
@@ -25,12 +26,12 @@ export default async function ResetPasswordPage({
         ) : (
           <div>
             <h1 className="text-[28px] font-bold tracking-tight text-ink">링크를 쓸 수 없어요</h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-muted">
+            <p className="mt-3 text-body leading-relaxed text-muted">
               재설정 링크가 만료됐거나(30분) 이미 사용됐어요. 재설정 메일을 다시 요청해 주세요.
             </p>
             <Link
               href={`/${locale}/auth/forgot-password`}
-              className="mt-8 flex h-12 w-full items-center justify-center rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong"
+              className={cn(buttonVariants({ variant: "primary", size: "lg", fullWidth: true }), "mt-8")}
             >
               재설정 메일 다시 받기
             </Link>

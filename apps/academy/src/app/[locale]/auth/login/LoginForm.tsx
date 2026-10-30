@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants, controlClass } from "@bayada/ui";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -56,33 +57,32 @@ function Form({ social }: { social: SocialProviderId[] }) {
     }
   };
 
-  const inputCls =
-    "h-12 w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink placeholder:text-subtle focus:border-ink focus:outline-none";
+  const inputCls = controlClass("md");
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
       <div className="w-full max-w-[400px]">
         <h1 className="text-[28px] font-bold tracking-tight text-ink">로그인</h1>
-        <p className="mt-2 text-[15px] text-muted">바야다 아카데미 계정으로 학습을 이어가세요.</p>
+        <p className="mt-2 text-body text-muted">바야다 아카데미 계정으로 학습을 이어가세요.</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           {error && (
-            <p role="alert" className="rounded-xl bg-brand-soft px-4 py-3 text-sm text-brand">
+            <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-body-sm text-danger">
               {error}
             </p>
           )}
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-ink">
+            <label htmlFor="email" className="mb-2 block text-body-sm font-semibold text-ink-soft">
               이메일
             </label>
             <input id="email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" className={inputCls} />
           </div>
           <div>
             <div className="mb-1.5 flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-semibold text-ink">
+              <label htmlFor="password" className="block text-body-sm font-semibold text-ink">
                 비밀번호
               </label>
-              <Link href={`/${locale}/auth/forgot-password`} className="text-[13px] text-muted hover:text-ink">
+              <Link href={`/${locale}/auth/forgot-password`} className="text-caption text-muted hover:text-ink">
                 비밀번호를 잊으셨나요?
               </Link>
             </div>
@@ -109,7 +109,7 @@ function Form({ social }: { social: SocialProviderId[] }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70"
+            className={buttonVariants({ variant: "primary", size: "lg", fullWidth: true })}
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
             로그인
@@ -118,7 +118,7 @@ function Form({ social }: { social: SocialProviderId[] }) {
 
         {social.length > 0 && (
           <div className="mt-6">
-            <div className="flex items-center gap-3 text-[13px] text-subtle">
+            <div className="flex items-center gap-3 text-caption text-subtle">
               <span className="h-px flex-1 bg-line" />
               또는
               <span className="h-px flex-1 bg-line" />
@@ -131,11 +131,11 @@ function Form({ social }: { social: SocialProviderId[] }) {
           </div>
         )}
 
-        <p className="mt-8 text-center text-sm text-muted">
+        <p className="mt-8 text-center text-body-sm text-muted">
           아직 계정이 없나요?{" "}
           <Link
             href={`/${locale}/auth/register${raw === callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
-            className="font-semibold text-ink hover:text-brand">
+            className="font-semibold text-ink underline-offset-4 hover:underline">
             무료 가입
           </Link>
         </p>
@@ -160,8 +160,8 @@ function SocialButton({ id, callbackUrl, locale }: { id: SocialProviderId; callb
       disabled={busy}
       className={
         kakao
-          ? "flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-[15px] font-semibold text-black/85 transition-opacity hover:opacity-90 disabled:opacity-70"
-          : "flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-line bg-white text-[15px] font-semibold text-ink transition-colors hover:bg-surface disabled:opacity-70"
+          ? "flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-body font-semibold text-black/85 transition-opacity hover:opacity-90 disabled:opacity-70"
+          : "flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-line bg-canvas text-body font-semibold text-ink transition-colors hover:bg-surface disabled:opacity-70"
       }
     >
       {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : kakao ? <KakaoIcon /> : <GoogleIcon />}

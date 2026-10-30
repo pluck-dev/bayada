@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@bayada/ui";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -19,7 +20,7 @@ export function RefundRequestForm({ orderId }: { orderId: string }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="h-10 rounded-xl border border-line px-4 text-sm font-semibold text-ink hover:border-ink"
+          className="h-10 rounded-xl border border-line px-4 text-body-sm font-semibold text-ink hover:border-ink"
         >
           환불 요청
         </button>
@@ -52,7 +53,7 @@ export function RefundRequestForm({ orderId }: { orderId: string }) {
 
   return (
     <form onSubmit={submit}>
-      <label htmlFor="refund-reason" className="text-sm font-semibold text-ink">
+      <label htmlFor="refund-reason" className="text-body-sm font-semibold text-ink">
         환불 사유
       </label>
       <textarea
@@ -64,10 +65,10 @@ export function RefundRequestForm({ orderId }: { orderId: string }) {
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder="예) 수강 일정이 맞지 않아요"
-        className="mt-2 w-full rounded-xl border border-line px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
+        className="mt-2 w-full rounded-xl border border-line px-3.5 py-2.5 text-body-sm text-ink placeholder:text-subtle focus:border-ink focus:outline-none"
       />
       {error && (
-        <p role="alert" className="mt-2 text-sm text-brand">
+        <p role="alert" className="mt-2 text-body-sm text-danger">
           {error}
         </p>
       )}
@@ -75,14 +76,14 @@ export function RefundRequestForm({ orderId }: { orderId: string }) {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="h-10 rounded-xl px-4 text-sm font-semibold text-muted hover:text-ink"
+          className="h-10 rounded-xl px-4 text-body-sm font-semibold text-muted hover:text-ink"
         >
           닫기
         </button>
         <button
           type="submit"
           disabled={loading || reason.trim().length < 2}
-          className="flex h-10 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-semibold text-white hover:bg-ink-soft disabled:opacity-50"
+          className={buttonVariants({ variant: "primary" })}
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
           환불 요청하기

@@ -15,11 +15,12 @@ export function orderBadge(
   return { label: "결제 완료", tone: "success" };
 }
 
-export const BADGE_CLASS: Record<OrderBadge["tone"], string> = {
-  success: "bg-success-soft text-success",
-  brand: "bg-brand-soft text-brand",
-  muted: "bg-line-soft text-muted",
-  amber: "bg-amber-50 text-amber-800",
+/** 주문 배지 → @bayada/ui Badge tone (부분 환불은 정보성이라 info, 대기·요청 중은 warning) */
+export const BADGE_TONE: Record<OrderBadge["tone"], "success" | "info" | "neutral" | "warning"> = {
+  success: "success",
+  brand: "info",
+  muted: "neutral",
+  amber: "warning",
 };
 
 const KST_DATETIME = new Intl.DateTimeFormat("ko-KR", {

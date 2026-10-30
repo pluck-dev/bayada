@@ -1,3 +1,4 @@
+import { buttonVariants } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -42,19 +43,19 @@ export default async function CheckoutSuccessPage({ params, searchParams }: { pa
 
   if (error || !confirmedId) {
     return (
-      <div className="container-page py-20">
+      <div className="container-page section-y">
         <div className="mx-auto flex max-w-md flex-col items-center text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-danger-soft text-danger">
             <AlertCircle className="h-6 w-6" aria-hidden />
           </span>
-          <h1 className="mt-6 text-2xl font-bold tracking-tight text-ink">결제를 완료하지 못했어요</h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted">{error}</p>
-          <p className="mt-1 text-sm text-subtle">승인되지 않은 결제는 청구되지 않아요.</p>
+          <h1 className="mt-6 text-h2 text-ink">결제를 완료하지 못했어요</h1>
+          <p className="mt-3 text-body leading-relaxed text-muted">{error}</p>
+          <p className="mt-1 text-body-sm text-subtle">승인되지 않은 결제는 청구되지 않아요.</p>
           <div className="mt-8 flex gap-2">
-            <Link href={`${base}/orders`} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink">
+            <Link href={`${base}/orders`} className={buttonVariants({ variant: "secondary", size: "md" })}>
               결제 내역
             </Link>
-            <Link href={`${base}/courses`} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink-soft">
+            <Link href={`${base}/courses`} className={buttonVariants({ variant: "secondary", size: "md" })}>
               프로그램 둘러보기
             </Link>
           </div>
@@ -74,18 +75,18 @@ export default async function CheckoutSuccessPage({ params, searchParams }: { pa
   const course = item?.course;
 
   return (
-    <div className="container-page py-16 md:py-20">
+    <div className="container-page section-y">
       <div className="mx-auto max-w-[520px]">
         <div className="flex flex-col items-center text-center">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-success-soft text-success">
             <CheckCircle2 className="h-7 w-7" aria-hidden />
           </span>
-          <h1 className="mt-6 text-2xl font-bold tracking-tight text-ink md:text-[28px]">결제가 완료됐어요</h1>
-          <p className="mt-2 text-[15px] text-muted">
+          <h1 className="mt-6 text-[28px] font-bold leading-tight tracking-tight text-ink md:text-h1">결제가 완료됐어요</h1>
+          <p className="mt-2 text-body text-muted">
             {course ? "지금 바로 학습을 시작할 수 있어요." : "아카데미 패스를 바로 이용할 수 있어요."}
           </p>
         </div>
-        <dl className="mt-8 grid grid-cols-[96px_1fr] gap-y-3 rounded-2xl border border-line bg-white p-6 text-sm">
+        <dl className="mt-8 grid grid-cols-[96px_1fr] gap-y-3 rounded-xl bg-surface p-6 text-body-sm">
           <dt className="text-muted">상품</dt>
           <dd className="font-semibold text-ink">{course ? course.title : `아카데미 패스 · ${item?.passPlan?.name ?? ""}`}</dd>
           {order.subscription && (
@@ -99,18 +100,18 @@ export default async function CheckoutSuccessPage({ params, searchParams }: { pa
           <dt className="text-muted">결제 수단</dt>
           <dd className="text-ink">{order.paymentMethod ?? "-"}</dd>
           <dt className="text-muted">주문 번호</dt>
-          <dd className="font-mono text-[13px] text-ink">{order.orderNo}</dd>
+          <dd className="font-mono text-caption text-ink">{order.orderNo}</dd>
         </dl>
         <div className="mt-6 grid gap-2 sm:grid-cols-2">
           <Link
             href={`${base}/orders/${order.id}`}
-            className="flex h-12 items-center justify-center rounded-xl border border-line text-[15px] font-semibold text-ink hover:border-ink"
+            className={buttonVariants({ variant: "secondary", size: "lg" })}
           >
             결제 내역 보기
           </Link>
           <Link
             href={course ? `${base}/courses/${encodeURIComponent(course.slug)}` : `${base}/courses`}
-            className="flex h-12 items-center justify-center rounded-xl bg-brand text-[15px] font-semibold text-white hover:bg-brand-strong"
+            className={buttonVariants({ variant: "primary", size: "lg" })}
           >
             {course ? "학습 시작하기" : "프로그램 둘러보기"}
           </Link>

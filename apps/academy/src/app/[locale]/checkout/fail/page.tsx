@@ -1,3 +1,4 @@
+import { buttonVariants } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AlertCircle } from "lucide-react";
@@ -39,24 +40,24 @@ export default async function CheckoutFailPage({ params, searchParams }: { param
   }
 
   return (
-    <div className="container-page py-20">
+    <div className="container-page section-y">
       <div className="mx-auto flex max-w-md flex-col items-center text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-danger-soft text-danger">
           <AlertCircle className="h-6 w-6" aria-hidden />
         </span>
-        <h1 className="mt-6 text-2xl font-bold tracking-tight text-ink">
+        <h1 className="mt-6 text-h2 text-ink">
           {canceled ? "결제를 취소했어요" : "결제에 실패했어요"}
         </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted">
+        <p className="mt-3 text-body leading-relaxed text-muted">
           {canceled ? "결제가 진행되지 않았어요. 언제든 다시 시도할 수 있어요." : (message ?? "알 수 없는 오류가 발생했어요.")}
         </p>
-        {code && !canceled && <p className="mt-1 font-mono text-xs text-subtle">{code}</p>}
-        <p className="mt-1 text-sm text-subtle">청구된 금액은 없어요.</p>
+        {code && !canceled && <p className="mt-1 font-mono text-caption text-subtle">{code}</p>}
+        <p className="mt-1 text-body-sm text-subtle">청구된 금액은 없어요.</p>
         <div className="mt-8 flex gap-2">
-          <Link href={`${base}/pass`} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink">
+          <Link href={`${base}/pass`} className={buttonVariants({ variant: "secondary", size: "md" })}>
             아카데미 패스
           </Link>
-          <Link href={retry} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink-soft">
+          <Link href={retry} className={buttonVariants({ variant: "primary", size: "md" })}>
             다시 시도하기
           </Link>
         </div>

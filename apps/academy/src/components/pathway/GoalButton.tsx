@@ -45,7 +45,7 @@ export function GoalButton({ pathwayId, locale, isGoal: initial }: { pathwayId: 
         disabled={busy}
         aria-pressed={goal}
         title={goal ? "목표 해제" : undefined}
-        className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-semibold transition-colors disabled:opacity-60 ${
+        className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-body font-semibold transition-colors disabled:opacity-60 ${
           goal
             ? "border border-success/30 bg-success-soft text-success hover:border-success"
             : "bg-brand text-white shadow-[0_8px_20px_-8px_rgb(227_27_52/0.6)] hover:bg-brand-strong"
@@ -55,12 +55,12 @@ export function GoalButton({ pathwayId, locale, isGoal: initial }: { pathwayId: 
         {goal ? "내 커리어 목표" : "목표로 설정"}
       </button>
       {goal && (
-        <Link href={`/${locale}/dashboard/goals`} className="text-sm font-semibold text-ink-soft hover:text-ink">
+        <Link href={`/${locale}/dashboard/goals`} className="text-body-sm font-semibold text-ink-soft hover:text-ink">
           마이 러닝에서 진행 상황 보기 →
         </Link>
       )}
       {error && (
-        <p role="alert" className="w-full text-sm text-brand">
+        <p role="alert" className="w-full text-body-sm text-danger">
           {error}
         </p>
       )}

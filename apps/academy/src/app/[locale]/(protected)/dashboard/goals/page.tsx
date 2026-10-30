@@ -1,10 +1,10 @@
+import { Badge, EmptyState, PageHeader, buttonVariants, cn } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, Check, Compass, PartyPopper } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
 import { credentialHref, getMyPathwayGoals, type PathwayStepView } from "@/lib/queries/pathways";
 import { JOB_ROLE_LABEL } from "@/lib/labels";
-import { EmptyState } from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = { title: "커리어 목표" };
 
@@ -28,39 +28,43 @@ export default async function GoalsPage({ params }: { params: Promise<{ locale: 
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight text-ink md:text-[28px]">커리어 목표</h1>
-      <p className="mt-2 text-[15px] text-muted">목표로 설정한 커리어 패스웨이의 현재 위치와 다음 단계를 보여 드려요.</p>
+      <PageHeader title="커리어 목표" description="목표로 설정한 커리어 패스웨이의 현재 위치와 다음 단계를 보여 드려요." className="mb-6 md:mb-8" />
 
       {goals.length === 0 ? (
-        <div className="mt-8">
+        <div>
           <EmptyState
-            icon={<Compass className="h-5 w-5" />}
+            framed
+            icon={<Compass />}
             title="아직 설정한 커리어 목표가 없어요"
             description="커리어 패스웨이에서 원하는 경로를 ‘목표로 설정’하면 이곳에서 진행 상황을 확인할 수 있어요."
-            action={{ label: "커리어 패스웨이 보기", href: `/${locale}/pathways` }}
+            action={
+<Link href={`/${locale}/pathways`} className={buttonVariants({ variant: "secondary" })}>
+커리어 패스웨이 보기
+</Link>
+}
           />
         </div>
       ) : (
-        <ul className="mt-8 space-y-5">
+        <ul className="space-y-5">
           {goals.map((g) => {
             const { passed, current, doneCount } = g.progress;
             const next = current >= 0 ? g.steps[current] : null;
             const cta = next ? nextAction(next, current, locale, g.slug) : null;
             const detail = `/${locale}/pathways/${encodeURIComponent(g.slug)}`;
             return (
-              <li key={g.id} className="rounded-2xl border border-line bg-white p-5 sm:p-6">
+              <li key={g.id} className="rounded-xl border border-line bg-canvas p-5 sm:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-muted">
+                    <p className="text-caption font-semibold text-muted">
                       {[g.country, g.jobRole ? JOB_ROLE_LABEL[g.jobRole] : null].filter(Boolean).join(" · ")}
                     </p>
-                    <Link href={detail} className="mt-1 block text-[17px] font-bold text-ink hover:text-brand">
+                    <Link href={detail} className="mt-1 block text-h3 text-ink underline-offset-4 hover:underline">
                       {g.title}
                     </Link>
                   </div>
-                  <span className="shrink-0 rounded-full bg-surface px-3 py-1 text-xs font-semibold text-ink-soft ring-1 ring-line">
+                  <Badge size="md" className="shrink-0">
                     {doneCount}/{g.steps.length} 단계
-                  </span>
+                  </Badge>
                 </div>
 
                 {g.steps.length > 0 && (
@@ -78,24 +82,24 @@ export default async function GoalsPage({ params }: { params: Promise<{ locale: 
                               />
                             )}
                             <span
-                              className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${
+                              className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full text-body-sm font-bold ${
                                 isPassed
                                   ? "bg-ink text-white"
                                   : isCurrent
-                                    ? "bg-white text-brand ring-2 ring-brand"
-                                    : "bg-white text-subtle ring-2 ring-line"
+                                    ? "bg-canvas text-ink ring-2 ring-brand"
+                                    : "bg-canvas text-subtle ring-2 ring-line"
                               }`}
                             >
                               {isPassed ? <Check className="h-4 w-4" aria-hidden /> : i + 1}
                             </span>
                             <span
-                              className={`mt-2.5 line-clamp-2 px-1 text-[13px] font-semibold leading-snug ${
-                                isCurrent ? "text-brand" : isPassed ? "text-ink" : "text-muted"
+                              className={`mt-2.5 line-clamp-2 px-1 text-caption font-semibold leading-snug ${
+                                isCurrent ? "text-ink" : isPassed ? "text-ink-soft" : "text-muted"
                               }`}
                             >
                               {s.title}
                             </span>
-                            {isCurrent && <span className="mt-1 text-[11px] font-semibold text-brand">현재 위치</span>}
+                            {isCurrent && <span className="mt-1 text-micro font-semibold text-brand">현재 위치</span>}
                           </li>
                         );
                       })}
@@ -103,30 +107,30 @@ export default async function GoalsPage({ params }: { params: Promise<{ locale: 
                   </div>
                 )}
 
-                <div className="mt-6 flex flex-col gap-3 border-t border-line-soft pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-6 flex flex-col gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
                   {next && cta ? (
                     <>
-                      <p className="text-sm text-ink-soft">
+                      <p className="text-body-sm text-ink-soft">
                         <span className="font-semibold text-ink">다음 단계</span> · STEP {current + 1} {next.title}
                         {next.status.kind === "course" && next.status.state === "in_progress" && next.status.progress > 0 && (
-                          <span className="text-brand"> ({next.status.progress}% 학습 중)</span>
+                          <span className="text-muted"> ({next.status.progress}% 학습 중)</span>
                         )}
                       </p>
                       <Link
                         href={cta.href}
-                        className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-ink px-5 text-sm font-semibold text-white hover:bg-ink-soft"
+                        className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "shrink-0")}
                       >
                         {cta.label} <ArrowRight className="h-4 w-4" aria-hidden />
                       </Link>
                     </>
                   ) : g.steps.length === 0 ? (
-                    <p className="text-sm text-muted">단계 안내를 준비하고 있어요.</p>
+                    <p className="text-body-sm text-muted">단계 안내를 준비하고 있어요.</p>
                   ) : (
                     <>
-                      <p className="inline-flex items-center gap-2 text-sm font-semibold text-success">
+                      <p className="inline-flex items-center gap-2 text-body-sm font-semibold text-success">
                         <PartyPopper className="h-4 w-4" aria-hidden /> 모든 단계를 마쳤어요
                       </p>
-                      <Link href={detail} className="text-sm font-semibold text-ink-soft hover:text-ink">
+                      <Link href={detail} className="text-body-sm font-semibold text-ink-soft underline-offset-4 hover:text-ink hover:underline">
                         패스웨이 다시 보기 →
                       </Link>
                     </>

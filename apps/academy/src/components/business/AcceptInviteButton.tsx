@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@bayada/ui";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -32,13 +33,13 @@ export function AcceptInviteButton({ token, locale }: { token: string; locale: s
         type="button"
         onClick={accept}
         disabled={busy}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70"
+        className={buttonVariants({ variant: "primary", size: "lg", fullWidth: true })}
       >
         {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
         초대 수락하고 합류하기
       </button>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-brand">
+        <p role="alert" className="mt-3 text-body-sm text-danger">
           {error}
         </p>
       )}

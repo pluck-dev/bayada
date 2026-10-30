@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants, cn } from "@bayada/ui";
 import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
@@ -135,7 +136,7 @@ export function TossPayButton({
 
   return (
     <div>
-      <label className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-relaxed text-ink-soft">
+      <label className="flex cursor-pointer items-start gap-2.5 text-caption leading-relaxed text-ink-soft">
         <input
           type="checkbox"
           checked={agreed}
@@ -162,13 +163,13 @@ export function TossPayButton({
         type="button"
         onClick={pay}
         disabled={!agreed || loading}
-        className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(buttonVariants({ variant: "primary", size: "lg", fullWidth: true }), "mt-5")}
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Lock className="h-4 w-4" aria-hidden />}
         {amountLabel} 결제하기
       </button>
       {error && (
-        <p role="alert" className="mt-2 text-sm text-brand">
+        <p role="alert" className="mt-2 text-body-sm text-danger">
           {error}
         </p>
       )}

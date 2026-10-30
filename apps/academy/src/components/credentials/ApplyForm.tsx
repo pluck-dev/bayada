@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@bayada/ui";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -33,7 +34,7 @@ export function ApplyForm({
       <button
         type="button"
         onClick={() => router.push(`/${locale}/auth/login?callbackUrl=${encodeURIComponent(here)}`)}
-        className="flex h-12 w-full items-center justify-center rounded-xl bg-ink text-[15px] font-semibold text-white hover:bg-ink-soft"
+        className={buttonVariants({ variant: "primary", size: "lg", fullWidth: true })}
       >
         로그인 후 신청
       </button>
@@ -68,7 +69,7 @@ export function ApplyForm({
     <form onSubmit={submit} className="space-y-3">
       {canApply && (
         <label className="block">
-          <span className="text-sm font-semibold text-ink">
+          <span className="text-body-sm font-semibold text-ink">
             신청 동기 <span className="font-normal text-muted">(선택)</span>
           </span>
           <textarea
@@ -78,7 +79,7 @@ export function ApplyForm({
             value={motivation}
             onChange={(e) => setMotivation(e.target.value)}
             placeholder="현재 하고 있는 일, 인증을 받으려는 이유를 적어 주세요. 심사위원이 참고해요."
-            className="mt-2 w-full resize-none rounded-xl border border-line px-4 py-3 text-sm leading-relaxed text-ink placeholder:text-subtle focus:border-ink focus:outline-none disabled:bg-surface disabled:text-subtle"
+            className="mt-2 w-full resize-none rounded-xl border border-line px-4 py-3 text-body-sm leading-relaxed text-ink placeholder:text-subtle focus:border-ink focus:outline-none disabled:bg-surface disabled:text-subtle"
           />
         </label>
       )}
@@ -86,14 +87,14 @@ export function ApplyForm({
         type="submit"
         disabled={!canApply || busy}
         title={!canApply ? reason : undefined}
-        className="flex h-12 w-full items-center justify-center gap-1.5 rounded-xl bg-ink text-[15px] font-semibold text-white hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-soft disabled:text-subtle"
+        className={buttonVariants({ variant: "primary", size: "lg", fullWidth: true })}
       >
         {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
         {renewal ? "갱신 신청하기" : "인증 신청하기"}
       </button>
-      {!canApply && reason && <p className="text-center text-xs text-muted">{reason}</p>}
+      {!canApply && reason && <p className="text-center text-caption text-muted">{reason}</p>}
       {error && (
-        <p role="alert" className="text-center text-xs text-brand">
+        <p role="alert" className="text-center text-caption text-danger">
           {error}
         </p>
       )}

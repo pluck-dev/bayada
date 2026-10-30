@@ -1,13 +1,13 @@
 "use client";
 
+import { buttonVariants, cn, controlClass } from "@bayada/ui";
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { PASSWORD_RULE, passwordError } from "@bayada/shared/password-policy";
 
-const inputCls =
-  "h-12 w-full rounded-xl border border-line bg-white px-4 pr-12 text-[15px] text-ink placeholder:text-subtle focus:border-ink focus:outline-none";
+const inputCls = controlClass("md");
 
 export default function ResetPasswordForm({ token }: { token: string }) {
   const { locale } = useParams<{ locale: string }>();
@@ -44,16 +44,16 @@ export default function ResetPasswordForm({ token }: { token: string }) {
   if (done) {
     return (
       <div>
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success-soft text-success">
+        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-success-soft text-success">
           <CheckCircle2 className="h-6 w-6" aria-hidden />
         </span>
         <h1 className="mt-5 text-[28px] font-bold tracking-tight text-ink">비밀번호를 바꿨어요</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted">
+        <p className="mt-3 text-body leading-relaxed text-muted">
           안전을 위해 다른 기기에서 로그인된 세션은 모두 로그아웃됐어요. 새 비밀번호로 다시 로그인해 주세요.
         </p>
         <Link
           href={`/${locale}/auth/login`}
-          className="mt-8 flex h-12 w-full items-center justify-center rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong"
+          className={cn(buttonVariants({ variant: "primary", size: "lg", fullWidth: true }), "mt-8")}
         >
           로그인하기
         </Link>
@@ -64,15 +64,15 @@ export default function ResetPasswordForm({ token }: { token: string }) {
   return (
     <>
       <h1 className="text-[28px] font-bold tracking-tight text-ink">새 비밀번호 설정</h1>
-      <p className="mt-2 text-[15px] text-muted">{PASSWORD_RULE}으로 입력해 주세요.</p>
+      <p className="mt-2 text-body text-muted">{PASSWORD_RULE}으로 입력해 주세요.</p>
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {error && (
-          <p role="alert" className="rounded-xl bg-brand-soft px-4 py-3 text-sm text-brand">
+          <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-body-sm text-danger">
             {error}
           </p>
         )}
         <div>
-          <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-ink">
+          <label htmlFor="password" className="mb-2 block text-body-sm font-semibold text-ink-soft">
             새 비밀번호
           </label>
           <div className="relative">
@@ -96,7 +96,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
           </div>
         </div>
         <div>
-          <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-semibold text-ink">
+          <label htmlFor="confirmPassword" className="mb-2 block text-body-sm font-semibold text-ink-soft">
             새 비밀번호 확인
           </label>
           <input
@@ -112,7 +112,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-70"
+          className={buttonVariants({ variant: "primary", size: "lg", fullWidth: true })}
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
           비밀번호 변경

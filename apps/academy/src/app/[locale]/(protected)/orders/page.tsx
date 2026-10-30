@@ -1,3 +1,4 @@
+import { Badge, EmptyState, PageHeader, buttonVariants } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ChevronRight, Receipt } from "lucide-react";
@@ -5,8 +6,7 @@ import { prisma } from "@bayada/db";
 import { ORDER_AUDIT } from "@bayada/services";
 import { getViewer } from "@/lib/viewer";
 import { formatPrice } from "@/lib/labels";
-import { BADGE_CLASS, formatDateTimeKst, orderBadge } from "@/lib/orders";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { BADGE_TONE, formatDateTimeKst, orderBadge } from "@/lib/orders";
 
 export const metadata: Metadata = { title: "결제 내역" };
 
@@ -36,16 +36,24 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight text-ink md:text-[28px]">결제 내역</h1>
-      <p className="mt-2 text-sm text-muted">프로그램 구매와 아카데미 패스 결제 내역이에요. 환불 요청은 주문 상세에서 할 수 있어요.</p>
+      <PageHeader
+        title="결제 내역"
+        description="프로그램 구매와 아카데미 패스 결제 내역이에요. 환불 요청은 주문 상세에서 할 수 있어요."
+        className="mb-6 md:mb-8"
+      />
 
-      <div className="mt-6">
+      <div>
         {orders.length === 0 ? (
           <EmptyState
-            icon={<Receipt className="h-5 w-5" />}
+            framed
+            icon={<Receipt />}
             title="결제 내역이 없어요"
             description="유료 프로그램을 구매하거나 아카데미 패스를 구독하면 이곳에 표시돼요."
-            action={{ label: "프로그램 둘러보기", href: `/${locale}/courses` }}
+            action={
+<Link href={`/${locale}/courses`} className={buttonVariants({ variant: "secondary" })}>
+프로그램 둘러보기
+</Link>
+}
           />
         ) : (
           <ul className="space-y-3">
@@ -57,22 +65,22 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
                 <li key={o.id}>
                   <Link
                     href={`/${locale}/orders/${o.id}`}
-                    className="flex items-center gap-4 rounded-2xl border border-line bg-white p-5 transition-shadow hover:shadow-lift"
+                    className="flex items-center gap-4 rounded-xl border border-line bg-canvas p-5 transition-colors hover:border-line-strong"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${BADGE_CLASS[badge.tone]}`}>{badge.label}</span>
-                        <span className="text-xs text-muted">{formatDateTimeKst(o.paidAt ?? o.createdAt)}</span>
+                        <Badge tone={BADGE_TONE[badge.tone]} dot>{badge.label}</Badge>
+                        <span className="text-caption text-muted">{formatDateTimeKst(o.paidAt ?? o.createdAt)}</span>
                       </div>
-                      <p className="mt-2 line-clamp-1 text-[15px] font-semibold text-ink">
+                      <p className="mt-2 line-clamp-1 text-body font-semibold text-ink">
                         {title}
                         {o.items.length > 1 && ` 외 ${o.items.length - 1}건`}
                       </p>
-                      <p className="mt-1 font-mono text-xs text-subtle">{o.orderNo}</p>
+                      <p className="mt-1 font-mono text-caption text-subtle">{o.orderNo}</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-base font-bold text-ink">{formatPrice(o.totalAmount)}</p>
-                      {o.refundAmount ? <p className="mt-0.5 text-xs text-brand">환불 {formatPrice(o.refundAmount)}</p> : null}
+                      <p className="text-body font-bold text-ink">{formatPrice(o.totalAmount)}</p>
+                      {o.refundAmount ? <p className="mt-0.5 text-caption text-muted">환불 {formatPrice(o.refundAmount)}</p> : null}
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-subtle" aria-hidden />
                   </Link>
