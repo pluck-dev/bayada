@@ -271,3 +271,24 @@
 - OG 이미지 URL: file-based `opengraph-image.tsx` 가 config 메타데이터보다 우선이라 metadata.openGraph.images 로는 안 바뀐다 → opengraph-image 가 설정 URL 을 받아 그대로 내려준다(force-dynamic, 실패 시 생성 이미지). 그리고 원래 i18n 미들웨어가 `/opengraph-image` 를 `/ko/…` 로 보내 404 였다 → matcher 에서 제외. og:image:type 은 png 로 고정 표기(설정 이미지가 jpg 여도).
 - 검증(2026-10-29): Playwright 로 CM 후기 관리 끄기→메뉴·페이지 차단, 사용자 정의 역할(2권한) 지정→사이드바 2개·첫 화면 /programs, 커스텀 역할에 회원 관리 줘도 Super Admin 승격 거부, 히어로·FAQ·SEO 제목 수정→아카데미 반영 후 전부 원복·테스트 계정 삭제.
 - 함정(이 PC): Git Bash 의 python heredoc 에서 `"\n"`·`"\r"` 이 실제 개행/CR 로 들어갔다 — 백슬래시가 있는 코드는 Edit/Write 도구로 고칠 것. HeaderNav·SiteHeader 는 CRLF 파일.
+
+# 웹사이트(apps/web) 어드민 통합: 작업 영역 전환, 문의 CRM(WebInquiry), 콘텐츠 DB+폴백, ISR·/api/revalidate
+## 구조·WHY
+- 어드민 하나가 아카데미·웹사이트를 같이 관리. 사이드바 "아카데미 | 웹사이트" 전환은 **URL 로만** 정한다(`/[locale]/web/…` = 웹사이트). 상태·쿠키 없음. 한쪽 권한만 있으면 전환 버튼 없이 그쪽만.
+- 권한 `web.inquiries`(문의 CRM)·`web.content`(블로그·FAQ·후기·히어로)·`web.settings`(사이트 정보·알림 메일). ADMIN 자동 보유, 기존 역할 행은 역할·권한 화면에서 체크해야 생긴다.
+- 공용 정의(폼 종류·접두어·필수 필드·라벨·사이트 정보 기본값)는 `@bayada/shared/web-content`(순수). 사이트 정보는 아카데미와 같은 SiteSetting 테이블에 `web.site` / `web.inquiry` key.
+## 문의 접수 (apps/web `lib/inquiry.ts` 서버 액션 — 옛 lib/mock.ts 대체)
+- 접수번호 `접두어-YYYYMMDD(KST)-NNN`(접두어는 옛 mock prefixMap 그대로 + DC=DeiCloud). 같은 날·접두어 안 일련번호, unique 충돌 시 재시도.
+- 허니팟 `website` 필드에 값이 있으면 **저장 없이 성공처럼** 응답(-000 번호). 같은 IP(sha256 해시만 저장) 10분 5건 제한. 필수 필드·동의는 서버에서 다시 검사(WEB_FORM_REQUIRED·WEB_FORM_CONSENT_REQUIRED).
+- 알림 메일: 어드민 '사이트 정보'의 알림 주소로 `trySendMail`(SMTP 없으면 개발은 로그, 실패해도 접수는 성공). 메일 속 어드민 링크는 web 의 `ADMIN_PUBLIC_URL` 이 있을 때만.
+- 처리 이력은 WebInquiryNote(kind memo/status/assignee) + AuditLog `web.inquiry.*`. 삭제는 개인정보 파기용(이력까지 cascade).
+## 콘텐츠 읽기·폴백 (apps/web `lib/web-content.ts`)
+- DATABASE_URL 없음 / DB 오류 / 테이블 0행이면 `src/data/*` 하드코딩 값. 도커 빌드는 DB 없이 이 경로로 정적 생성되고, 실행 후 ISR(revalidate 300) 또는 어드민 저장 시 갱신. DB 오류 한 번 나면 30초간 DB 를 건너뛴다(빌드 타임아웃 누적 방지).
+- 히어로는 **보이는 슬라이드 0장**이면 기본 슬라이드(빈 히어로 방지). 후기는 숨김 포함 0행일 때만 폴백(전부 숨김 ≠ 가져오기 전).
+- 어드민 저장 → `revalidateWeb()` 가 `WEB_URL/api/revalidate`(헤더 x-revalidate-secret=WEB_REVALIDATE_SECRET) → `revalidatePath("/", "layout")`. 둘 중 하나라도 없으면 건너뜀(최대 5분 지연). 로컬 web 은 3000 이 이 PC 에서 막혀 있어(EADDRINUSE) **3001**, admin `.env.local` WEB_URL=http://localhost:3001.
+- `import:web` 은 없는 행만 만든다(slug·legacyKey). 어드민에서 **지운** 기본 항목은 다시 돌리면 되살아난다 → 지우지 말고 숨김. 블로그 기본 image 는 실제 파일이 없는 자리표시 경로라 비워서 넣는다.
+- FAQ 페이지는 원래 searchParams 를 써서 동적 렌더(매 요청 DB). 블로그·후기·홈·레이아웃(푸터)은 ISR.
+## 운영 반영 순서
+- 스키마 push(추가만) → `DATABASE_URL=… pnpm --filter @bayada/db import:web` → `.env` 에 WEB_REVALIDATE_SECRET 추가 → `up -d --build web admin`.
+## 다음 단계 (이번 범위 밖)
+- `data/service-page-details.ts`·`audiences.ts`·`platforms.ts`(서비스·대상·플랫폼 상세 문구)는 아직 하드코딩. 사이트 정보 설정은 푸터·문의 페이지 카드만 바꾼다 — 본문 문구 속 대표번호(1670-1379)는 FAQ·약관·기관 페이지 등 여러 곳에 하드코딩으로 남아 있음.
