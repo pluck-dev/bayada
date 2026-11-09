@@ -135,3 +135,11 @@ body {
   transition: background 0.3s ease-in-out;
 }
 .btn-secondary:hover { background: var(--bayada-secondary-hover); }
+
+/* 마이페이지 떠 있는 패널·대화상자 등장 */
+@keyframes member-pop {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.member-pop { animation: member-pop 0.16s cubic-bezier(0.16, 1, 0.3, 1); }
+@media (prefers-reduced-motion: reduce) { .member-pop { animation: none; } }

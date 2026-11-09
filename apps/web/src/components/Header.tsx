@@ -9,13 +9,24 @@ import { mainNavigation, utilityNavigation, getLabel } from "@/data/navigation";
 import { MegaMenu } from "./header/MegaMenu";
 import { MobileMenu } from "./header/MobileMenu";
 import { LanguageSwitcher } from "./header/LanguageSwitcher";
+import { SessionProvider } from "next-auth/react";
+import { AccountMenu } from "./header/AccountMenu";
 
 interface HeaderProps {
   dict: Dictionary;
   locale: string;
 }
 
-export function Header({ locale }: HeaderProps) {
+// 회원 메뉴가 로그인 상태를 브라우저에서 읽는다 (페이지 정적 생성 유지)
+export function Header(props: HeaderProps) {
+  return (
+    <SessionProvider refetchOnWindowFocus={false}>
+      <HeaderInner {...props} />
+    </SessionProvider>
+  );
+}
+
+function HeaderInner({ locale }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMega, setOpenMega] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -120,7 +131,7 @@ export function Header({ locale }: HeaderProps) {
         {/* 데스크톱 우측: 유틸리티 아이콘 + CTA */}
         <div className="hidden items-center gap-1 lg:flex">
           {/* 유틸리티 텍스트 메뉴 */}
-          {utilityNavigation.map((item) => (
+          {utilityNavigation.filter((item) => item.href !== "/my-page").map((item) => (
             <Link
               key={item.label}
               href={`/${locale}${item.href}`}
@@ -131,6 +142,9 @@ export function Header({ locale }: HeaderProps) {
           ))}
           <div className="mx-1 h-5 w-px bg-gray-200" />
           <LanguageSwitcher />
+          <div className="ml-1">
+            <AccountMenu locale={locale} />
+          </div>
         </div>
 
         {/* 모바일 메뉴 버튼 */}
