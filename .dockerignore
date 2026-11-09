@@ -12,7 +12,9 @@
 docs
 search
 LM
-data
+# web 이 빌드 때 import 하는 파일만 남기고 원본 수집 자료는 뺀다
+data/*
+!data/_enriched-content.json
 deploy/media
 deploy/db-init
 **/*.log
