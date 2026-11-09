@@ -50,7 +50,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
       />
 
       <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-6">
-        <div className="flex min-w-0 flex-col gap-4">
+        <div data-tour="approval-content" className="flex min-w-0 flex-col gap-4">
           <Card title="필수 필드 체크">
             <Checklist items={checklist} />
           </Card>
@@ -114,7 +114,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           </Card>
         </div>
 
-        <aside className="surface-card sticky top-6 rounded-[22px] bg-canvas p-5">
+        <aside data-tour="program-workflow" className="surface-card sticky top-6 rounded-[22px] bg-canvas p-5">
           <h2 className="mb-3 text-body-sm font-semibold">검토</h2>
           <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} afterHref={clinicalOnly ? `/${locale}/approvals` : undefined}
           />

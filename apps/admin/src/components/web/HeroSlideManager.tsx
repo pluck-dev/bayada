@@ -47,6 +47,7 @@ export function HeroSlideManager({ slides }: { slides: HeroSlideRow[] }) {
 
   return (
     <Card
+      tour="web-manager"
       title={`슬라이드 ${slides.length}장 · 노출 ${slides.filter((s) => s.visible).length}장`}
       padded={false}
       actions={

@@ -55,14 +55,14 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
 
       <div className="grid grid-cols-[minmax(0,1fr)_280px] items-start gap-6">
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="grid grid-cols-4 gap-3">
+          <div data-tour="member-stats" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="수강" value={m.enrollments.length} />
             <Stat label="수료" value={completed} />
             <Stat label="평균 진도" value={`${avg}%`} />
             <Stat label="수료증" value={m.certificates.length} />
           </div>
 
-          <Card title="수강 현황" padded={false}>
+          <Card tour="member-enrollments" title="수강 현황" padded={false}>
             {m.enrollments.length === 0 ? (
               <EmptyState title="수강 기록이 없습니다" />
             ) : (
@@ -154,7 +154,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
             </dl>
           </Card>
           {canWrite ? (
-            <Card title="관리">
+            <Card tour="member-controls" title="관리">
               <MemberControls id={m.id} status={m.status} roleKey={m.customRoleKey ?? m.role} options={roleOptions} />
             </Card>
           ) : (

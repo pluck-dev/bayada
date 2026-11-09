@@ -107,7 +107,7 @@ export default async function FeedbackDetailPage({
             </Disclosure>
           </Card>
 
-          <Card title={`댓글 ${row.replies.length}`}>
+          <Card tour="feedback-comments" title={`댓글 ${row.replies.length}`}>
             {roots.length === 0 && <p className="text-caption text-muted">아직 댓글이 없습니다.</p>}
             <ol className="grid gap-3">
               {roots.map((r) => (
@@ -138,7 +138,7 @@ export default async function FeedbackDetailPage({
           </Card>
         </div>
 
-        <aside className="grid content-start gap-4">
+        <aside data-tour="feedback-aside" className="grid content-start gap-4">
           <Card title="작성 정보">
             <dl className="grid grid-cols-[72px_minmax(0,1fr)] gap-y-1.5 text-caption">
               <dt className="text-subtle">작성자</dt>

@@ -66,7 +66,7 @@ export default async function ProgramDetailPage({
         }
       />
 
-      <nav className={tabBarClass} aria-label="프로그램 편집 탭">
+      <nav data-tour="program-tabs" className={tabBarClass} aria-label="프로그램 편집 탭">
         {TABS.map((t) => (
           <Link
             key={t.key}
@@ -155,10 +155,10 @@ export default async function ProgramDetailPage({
               <p className="mt-1 whitespace-pre-wrap text-caption text-warning">{program.reviewNote}</p>
             </div>
           )}
-          <Card title="필수 항목 체크">
+          <Card tour="program-checklist" title="필수 항목 체크">
             <Checklist items={checklist} />
           </Card>
-          <Card title="워크플로우">
+          <Card tour="program-workflow" title="워크플로우">
             <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} />
           </Card>
           {program.publishedAt && <p className="px-1 text-caption text-muted">최초/최근 게시 {formatDateTime(program.publishedAt)}</p>}

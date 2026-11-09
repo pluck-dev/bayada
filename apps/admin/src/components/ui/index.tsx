@@ -230,7 +230,7 @@ export function PageHeader({
   eyebrow?: React.ReactNode;
 }) {
   return (
-    <header className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <header data-tour="page-header" className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div className="min-w-0">
         {back && (
           <Link
@@ -245,7 +245,11 @@ export function PageHeader({
         <h1 className="text-[30px] font-extrabold leading-[1.25] tracking-[-0.035em] text-ink">{title}</h1>
         {description && <div className="mt-1.5 max-w-[760px] text-[14px] leading-[1.6] text-muted">{description}</div>}
       </div>
-      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+      {actions && (
+        <div data-tour="page-actions" className="flex shrink-0 flex-wrap items-center gap-2">
+          {actions}
+        </div>
+      )}
     </header>
   );
 }
@@ -259,6 +263,7 @@ export function Card({
   className,
   padded = true,
   tone = "paper",
+  tour,
 }: {
   title?: React.ReactNode;
   description?: React.ReactNode;
@@ -267,10 +272,12 @@ export function Card({
   className?: string;
   padded?: boolean;
   tone?: "paper" | "wash";
+  /** 화면 둘러보기 대상 이름 (components/help/tours.ts) */
+  tour?: string;
 }) {
   const head = title || actions;
   return (
-    <section className={cn("surface-card min-w-0 rounded-[22px]", tone === "paper" ? "bg-canvas" : "bg-wash", className)}>
+    <section data-tour={tour} className={cn("surface-card min-w-0 rounded-[22px]", tone === "paper" ? "bg-canvas" : "bg-wash", className)}>
       {head && (
         <div className={cn("flex items-start justify-between gap-3 px-6 pt-5", padded ? "pb-0" : "pb-3")}>
           <div className="min-w-0">

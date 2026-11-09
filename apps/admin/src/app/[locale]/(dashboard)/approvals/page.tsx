@@ -56,7 +56,7 @@ export default async function ApprovalsPage({
       />
 
       {!clinicalOnly && (
-        <div className="mb-4 flex flex-wrap gap-1.5">
+        <div data-tour="approval-filters" className="mb-4 flex flex-wrap gap-1.5">
           <FilterChip href={base} active={!filter} count={all.length}>
             전체
           </FilterChip>
@@ -68,7 +68,7 @@ export default async function ApprovalsPage({
         </div>
       )}
 
-      <div className={tableWrap}>
+      <div data-tour="approval-table" className={tableWrap}>
         {rows.length === 0 ? (
           <EmptyState
             title="대기 중인 프로그램이 없습니다"

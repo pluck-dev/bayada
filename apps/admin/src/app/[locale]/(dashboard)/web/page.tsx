@@ -20,7 +20,7 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
       <PageHeader title="웹사이트" description="홈페이지(bayada 기업 사이트) 문의와 콘텐츠 현황입니다. 모든 숫자는 실제 데이터 기준입니다." />
 
       {crm && (
-        <div className="grid grid-cols-4 gap-3">
+        <div data-tour="web-kpi" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Stat tone="brand" label="신규 문의" value={d.status.NEW ?? 0} hint="아직 처리 전" href={qs(`${base}/inquiries`, { status: "NEW" })} />
           <Stat tone="ink" label="진행 중" value={(d.status.CONTACTED ?? 0) + (d.status.IN_PROGRESS ?? 0)} hint="연락 완료 · 진행 중" href={`${base}/inquiries`} />
           <Stat label="최근 7일 접수" value={d.week} hint="스팸 제외" />
@@ -28,9 +28,10 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
+      <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {crm && (
           <Card
+            tour="web-recent"
             title="최근 문의"
             padded={false}
             actions={
@@ -62,7 +63,7 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
           </Card>
         )}
         {content && (
-          <Card title="홈페이지 콘텐츠">
+          <Card tour="web-content" title="홈페이지 콘텐츠">
             <ul className="flex flex-col gap-2 text-caption">
               {[
                 { href: `${base}/blog`, label: "블로그", value: `게시 ${d.content.posts} · 초안 ${d.content.drafts}` },

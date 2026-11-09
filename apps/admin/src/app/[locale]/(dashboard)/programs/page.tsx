@@ -36,6 +36,7 @@ export default async function ProgramsPage({
         }
       />
 
+      <div data-tour="program-filters">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchBox placeholder="프로그램명·slug 검색" />
         <div className="ml-auto flex items-center gap-1.5" role="group" aria-label="공개범위">
@@ -61,8 +62,11 @@ export default async function ProgramsPage({
           </FilterChip>
         ))}
       </div>
+      </div>
 
-      <ProgramTable rows={rows} locale={locale} canWrite={can(user, "program.write")} />
+      <div data-tour="program-table">
+        <ProgramTable rows={rows} locale={locale} canWrite={can(user, "program.write")} />
+      </div>
     </>
   );
 }

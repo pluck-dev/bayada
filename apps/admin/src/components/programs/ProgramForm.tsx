@@ -99,7 +99,7 @@ export function ProgramForm({
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <fieldset disabled={locked || isPending} className="flex flex-col gap-4 disabled:opacity-80">
-        <Card title="기본 정보">
+        <Card tour="program-form-basic" title="기본 정보">
           <div className="grid grid-cols-2 gap-4">
             <Field label="프로그램명" required htmlFor="title" className="col-span-2">
               <input
@@ -149,7 +149,7 @@ export function ProgramForm({
           </div>
         </Card>
 
-        <Card title="분류·대상">
+        <Card tour="program-form-meta" title="분류·대상">
           <div className="grid grid-cols-3 gap-4">
             <Field label="유형" htmlFor="productType">
               <Select
@@ -232,6 +232,7 @@ export function ProgramForm({
         </Card>
 
         <Card
+          tour="program-form-goals"
           title={
             <>
               학습목표 <span className="text-brand">*</span>
@@ -313,7 +314,7 @@ export function ProgramForm({
       </fieldset>
 
       {!locked && (
-        <div className={actionBarClass}>
+        <div data-tour="program-form-save" className={actionBarClass}>
           {dirty && <span className="mr-auto text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
           <Button type="submit" variant="primary" disabled={isPending || (!!programId && !dirty)}>
             {isPending ? "저장 중…" : programId ? "저장" : "만들고 커리큘럼 편집"}

@@ -48,6 +48,7 @@ export function WebReviewManager({ reviews }: { reviews: WebReviewRow[] }) {
 
   return (
     <Card
+      tour="web-manager"
       title={`후기 ${reviews.length}개 · 공개 ${reviews.filter((r) => r.visible).length}개`}
       padded={false}
       actions={

@@ -39,7 +39,7 @@ export default async function WebInquiryDetailPage({ params }: { params: Promise
 
       <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-4">
         <div className="flex flex-col gap-4">
-          <Card title="신청 내용">
+          <Card tour="inquiry-content" title="신청 내용">
             <dl className="grid grid-cols-[160px_minmax(0,1fr)] gap-x-4 gap-y-2.5 text-caption">
               {fields.map(([k, v]) => (
                 <div key={k} className="contents">
@@ -54,7 +54,7 @@ export default async function WebInquiryDetailPage({ params }: { params: Promise
             </dl>
           </Card>
 
-          <Card title={`처리 이력 · ${inq.notes.length}건`}>
+          <Card tour="inquiry-history" title={`처리 이력 · ${inq.notes.length}건`}>
             <InquiryNoteForm id={inq.id} />
             {inq.notes.length > 0 && (
               <ol className="mt-4 flex flex-col gap-3 border-t border-line pt-4">

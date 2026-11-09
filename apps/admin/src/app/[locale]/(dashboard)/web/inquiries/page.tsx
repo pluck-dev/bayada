@@ -63,7 +63,7 @@ export default async function WebInquiriesPage({ params, searchParams }: { param
         }
       />
 
-      <div className="mb-3 flex flex-wrap gap-1.5" role="group" aria-label="상태">
+      <div data-tour="inquiry-status" className="mb-3 flex flex-wrap gap-1.5" role="group" aria-label="상태">
         <FilterChip href={qs(base, keep)} active={!f.status} count={allCount}>
           전체
         </FilterChip>
@@ -74,7 +74,7 @@ export default async function WebInquiriesPage({ params, searchParams }: { param
         ))}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div data-tour="inquiry-filters" className="mb-4 flex flex-wrap items-center gap-2">
         <SelectFilter param="type" label="문의 유형" value={f.type ?? ""} options={typeOptions} />
         {/* 기간: GET 폼 — 다른 필터는 hidden 으로 유지 */}
         <form className="flex items-center gap-1.5" action={base}>
@@ -98,7 +98,7 @@ export default async function WebInquiriesPage({ params, searchParams }: { param
         </div>
       </div>
 
-      <div className={tableWrap}>
+      <div data-tour="inquiry-table" className={tableWrap}>
         {rows.length === 0 ? (
           <EmptyState
             title={allCount === 0 && !f.q && !f.type && !f.from && !f.to ? "아직 접수된 문의가 없습니다" : "조건에 맞는 문의가 없습니다"}

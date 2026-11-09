@@ -64,7 +64,7 @@ export default async function WebBlogPage({
           </FilterChip>
         ))}
       </div>
-      <div className={tableWrap}>
+      <div data-tour="blog-table" className={tableWrap}>
         {posts.length === 0 ? (
           <EmptyState
             title="글이 없습니다"

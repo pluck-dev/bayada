@@ -60,7 +60,7 @@ export default async function PartnerProgramPage({
         }
       />
 
-      <nav className={tabBarClass} aria-label="프로그램 편집 탭">
+      <nav data-tour="program-tabs" className={tabBarClass} aria-label="프로그램 편집 탭">
         {TABS.map((t) => (
           <Link
             key={t.key}
@@ -148,10 +148,10 @@ export default async function PartnerProgramPage({
               <p className="mt-1 whitespace-pre-wrap text-caption text-warning">{program.reviewNote}</p>
             </div>
           )}
-          <Card title="필수 항목 체크">
+          <Card tour="program-checklist" title="필수 항목 체크">
             <Checklist items={checklist} />
           </Card>
-          <Card title="승인 요청">
+          <Card tour="program-workflow" title="승인 요청">
             <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} />
           </Card>
           <p className="px-1 text-caption text-muted">검토·승인·게시는 바야다 운영자와 임상 리뷰어가 진행합니다.</p>

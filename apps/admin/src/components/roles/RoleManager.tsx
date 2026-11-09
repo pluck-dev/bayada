@@ -86,7 +86,7 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
 
   return (
     <div className="flex flex-col gap-5">
-      <div className={tableWrap}>
+      <div data-tour="roles-matrix" className={tableWrap}>
         <table className={cx(tableClass, "min-w-[880px]")}>
           <thead>
             <tr>
@@ -158,7 +158,7 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
         </table>
       </div>
 
-      <div className={cx(actionBarClass, "justify-between pl-5")}>
+      <div data-tour="roles-save" className={cx(actionBarClass, "justify-between pl-5")}>
         <div className="min-w-0 text-caption">
           {changeCount === 0 ? (
             <span className="text-muted">
@@ -208,7 +208,7 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5">
-      <Card title="사용자 정의 역할" padded={false}>
+      <Card tour="roles-custom" title="사용자 정의 역할" padded={false}>
         {custom.length === 0 ? (
           <p className="px-4 py-6 text-caption text-muted">
             아직 없습니다. 오른쪽에서 역할을 만들고 위 매트릭스에서 권한을 체크하세요. 회원·수강 화면에서 회원에게 지정합니다.
@@ -279,7 +279,7 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
         )}
       </Card>
 
-      <Card title="역할 추가">
+      <Card tour="roles-add" title="역할 추가">
         <form
           className="flex flex-col gap-3"
           onSubmit={(e) => {

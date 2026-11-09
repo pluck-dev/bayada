@@ -99,7 +99,7 @@ export function SiteSettingsForm({ settings, savedAt, academyUrl }: Props) {
   const at = (k: SiteSettingKey) => savedAt[k] ?? null;
   return (
     <div className="grid grid-cols-[180px_minmax(0,1fr)] items-start gap-6">
-      <nav aria-label="설정 섹션" className="sticky top-0 flex flex-col gap-0.5 text-caption">
+      <nav data-tour="settings-nav" aria-label="설정 섹션" className="sticky top-0 flex flex-col gap-0.5 text-caption">
         {NAV.map((n) => (
           <a key={n.key} href={`#${anchor(n.key)}`} className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-muted hover:bg-surface-sunken hover:text-ink">
             {n.label}
@@ -128,7 +128,7 @@ function HeroSection({ initial, savedAt }: { initial: SiteSettings["home.hero"];
   const { v, setV, isPending, footer } = useSection("home.hero", initial, savedAt);
   const set = <F extends keyof typeof v>(f: F, val: (typeof v)[F]) => setV({ ...v, [f]: val });
   return (
-    <section id={anchor("home.hero")} className="scroll-mt-4">
+    <section data-tour="settings-sections" id={anchor("home.hero")} className="scroll-mt-4">
       <Card title="홈 히어로">
         <fieldset disabled={isPending} className="grid grid-cols-2 gap-4">
           <Field label="상단 라벨" htmlFor="hero-eyebrow" className="col-span-2">

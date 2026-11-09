@@ -50,6 +50,7 @@ export default async function AuditPage({
     <>
       <PageHeader title="감사 로그" description="프로그램 상태 전이, 공개범위·큐레이션 변경, 가입 승인, 역할 변경 등 모든 운영 변경 기록입니다." />
 
+      <div data-tour="audit-filters">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchBox placeholder="대상 ID 검색 (예: Course:…)" />
         <SelectFilter
@@ -69,8 +70,9 @@ export default async function AuditPage({
           </FilterChip>
         ))}
       </div>
+      </div>
 
-      <div className={cx(tableWrap, "max-h-[calc(100vh-280px)]")}>
+      <div data-tour="audit-table" className={cx(tableWrap, "max-h-[calc(100vh-280px)]")}>
         {data.rows.length === 0 ? (
           <EmptyState title="기록이 없습니다" description="어드민에서 변경이 일어나면 여기에 쌓입니다." />
         ) : (

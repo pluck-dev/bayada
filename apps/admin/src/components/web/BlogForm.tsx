@@ -30,7 +30,7 @@ export function BlogForm({ locale, id, initial }: { locale: string; id: string |
   return (
     <form onSubmit={save}>
       <fieldset disabled={isPending} className="grid grid-cols-[minmax(0,1fr)_300px] items-start gap-4">
-        <Card title="본문">
+        <Card tour="blog-body" title="본문">
           <div className="flex flex-col gap-4">
             <Field label="제목" htmlFor="b-title" required>
               <input id="b-title" required maxLength={200} className={cx(inputClass, "font-semibold")} value={v.title} onChange={(e) => set("title", e.target.value)} />
@@ -44,7 +44,7 @@ export function BlogForm({ locale, id, initial }: { locale: string; id: string |
           </div>
         </Card>
         <div className="flex flex-col gap-4">
-          <Card title="게시">
+          <Card tour="blog-publish" title="게시">
             <div className="flex flex-col gap-3">
               <Switch checked={v.isPublished} onChange={(c) => set("isPublished", c)} label="홈페이지에 게시" desc={v.isPublished ? "저장하면 바로 공개됩니다" : "초안으로 저장됩니다"} />
               <Field label="게시일" htmlFor="b-date" required>
@@ -55,7 +55,7 @@ export function BlogForm({ locale, id, initial }: { locale: string; id: string |
               </Button>
             </div>
           </Card>
-          <Card title="정보">
+          <Card tour="blog-meta" title="정보">
             <div className="flex flex-col gap-3">
               <Field label="주소 (slug)" htmlFor="b-slug" required hint="/blog/ 뒤에 붙는 주소. 소문자·숫자·하이픈.">
                 <input id="b-slug" required maxLength={120} className={inputClass} value={v.slug} onChange={(e) => set("slug", e.target.value)} />

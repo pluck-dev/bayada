@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { prisma } from "@bayada/db";
 import { getAdminUser } from "@/lib/session";
 import { can } from "@/lib/rbac";
 import { QUEUE_STATUSES } from "@/lib/workflow";
 import { OPEN_REPORT_WHERE } from "@/lib/queries/reviews";
-import { Sidebar } from "@/components/Sidebar";
+import { AdminShell } from "@/components/AdminShell";
+import { SIDEBAR_COOKIE } from "@/lib/sidebar-pref";
 
 export default async function DashboardLayout({
   children,
@@ -36,21 +38,25 @@ export default async function DashboardLayout({
   // 홈페이지 문의 CRM: 아직 아무도 손대지 않은 신규 문의
   const inquiries = can(user, "web.inquiries") ? await prisma.webInquiry.count({ where: { status: "NEW" } }) : 0;
 
+  // 접힌 사이드바 — 쿠키로 서버에서 정해 첫 화면부터 같은 폭(깜빡임 없음)
+  const rail = (await cookies()).get(SIDEBAR_COOKIE)?.value === "rail";
+
   return (
-    <div className="flex min-h-screen bg-[linear-gradient(to_right,var(--color-side)_256px,var(--color-console)_256px)]">
-      <Sidebar
-        locale={locale}
-        permissions={user.permissions}
-        roleName={user.roleName}
-        isPartner={user.role === "PARTNER_ADMIN"}
-        isSuperAdmin={user.roleKey === "ADMIN"}
-        userName={user.name ?? user.email}
-        userEmail={user.email}
-        counts={{ queue, signups, reports, credentials, inquiries }}
-      />
-      <main className="min-w-0 flex-1">
-        <div className="mx-auto max-w-[1360px] px-10 pb-16 pt-9">{children}</div>
-      </main>
-    </div>
+    <AdminShell
+      userId={user.id}
+      initialRail={rail}
+      sidebar={{
+        locale,
+        permissions: user.permissions,
+        roleName: user.roleName,
+        isPartner: user.role === "PARTNER_ADMIN",
+        isSuperAdmin: user.roleKey === "ADMIN",
+        userName: user.name ?? user.email,
+        userEmail: user.email,
+        counts: { queue, signups, reports, credentials, inquiries },
+      }}
+    >
+      {children}
+    </AdminShell>
   );
 }

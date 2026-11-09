@@ -35,7 +35,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
     <>
       <PageHeader title={`안녕하세요, ${user.name ?? "관리자"}님`} description="아카데미 운영 현황입니다. 모든 숫자는 실제 데이터 기준입니다." />
 
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+      <div data-tour="dash-kpi" className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <Stat
           tone="brand"
           label="승인 대기"
@@ -51,7 +51,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-        <Card title="프로그램 상태" description={`전체 ${totalPrograms}개`} actions={<TextLink href={`${base}/programs`}>전체 보기</TextLink>}>
+        <Card tour="dash-status" title="프로그램 상태" description={`전체 ${totalPrograms}개`} actions={<TextLink href={`${base}/programs`}>전체 보기</TextLink>}>
           <ul className="flex flex-col gap-1">
             {COURSE_STATUSES.map((s) => {
               const n = d.statusCounts[s] ?? 0;
@@ -81,7 +81,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           </p>
         </Card>
 
-        <Card title="처리 대기">
+        <Card tour="dash-todo" title="처리 대기">
           <ul className="flex flex-col gap-2">
             {todo
               .filter((t) => t.show)
@@ -126,7 +126,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           )}
         </Card>
 
-        <Card title="최근 활동" padded={false} actions={can(user, "audit") && <TextLink href={`${base}/audit`}>감사 로그</TextLink>}>
+        <Card tour="dash-activity" title="최근 활동" padded={false} actions={can(user, "audit") && <TextLink href={`${base}/audit`}>감사 로그</TextLink>}>
           {d.recent.length === 0 ? (
             <EmptyState icon={<History />} title="아직 기록된 활동이 없습니다" description="프로그램·배너·회원 변경이 감사 로그에 쌓입니다." />
           ) : (

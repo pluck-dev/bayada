@@ -66,7 +66,7 @@ export default async function FeedbackPage({
         </Notice>
       )}
 
-      <section aria-labelledby="feedback-summary-title" className="mb-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <section data-tour="feedback-summary" aria-labelledby="feedback-summary-title" className="mb-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <Card title={<span id="feedback-summary-title">처리 현황{filter.site ? ` · ${reviewSites[filter.site].label}` : ""}</span>}>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="전체" value={summary.total} />
@@ -117,6 +117,7 @@ export default async function FeedbackPage({
         </Card>
       </section>
 
+      <div data-tour="feedback-filters">
       <div className="mb-3 flex flex-wrap gap-1.5" role="group" aria-label="사이트">
         <FilterChip href={qs(base, query({ site: "", section: "" }))} active={!filter.site}>
           전체 사이트
@@ -155,8 +156,9 @@ export default async function FeedbackPage({
           <SelectFilter param="section" label="화면 영역" value={filter.section} options={[{ value: "", label: "모든 화면 영역" }, ...reviewSites[filter.site].sections]} />
         )}
       </div>
+      </div>
 
-      <div className={tableWrap}>
+      <div data-tour="feedback-table" className={tableWrap}>
         {data.rows.length === 0 ? (
           <EmptyState
             title={filtered ? "조건에 맞는 피드백이 없습니다" : filter.status ? `${feedbackStatuses[filter.status]} 피드백이 없습니다` : "피드백이 없습니다"}

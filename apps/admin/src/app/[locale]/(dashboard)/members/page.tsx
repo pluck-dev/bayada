@@ -33,6 +33,7 @@ export default async function MembersPage({
         description="가입 신청을 승인·거절하고(기존 New User Approve 대체) 회원별 수강·수료 현황을 봅니다."
       />
 
+      <div data-tour="member-filters">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchBox placeholder="이름·이메일 검색" />
         <SelectFilter
@@ -71,7 +72,9 @@ export default async function MembersPage({
           거절
         </FilterChip>
       </div>
+      </div>
 
+      <div data-tour="member-table">
       <MemberTable
         rows={data.rows.map((r) => ({ ...r, createdAt: r.createdAt.toISOString() }))}
         locale={locale}
@@ -79,6 +82,7 @@ export default async function MembersPage({
         selfId={user.id}
         roleNames={Object.fromEntries(customRoles.map((r) => [r.key, r.name]))}
       />
+      </div>
       <Pager page={data.page} pages={data.pages} total={data.total} unit="명" />
     </>
   );

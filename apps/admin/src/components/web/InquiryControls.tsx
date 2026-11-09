@@ -29,7 +29,7 @@ export function InquiryControls({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div data-tour="inquiry-controls" className="flex flex-col gap-4">
       <Card title="연락처">
         <dl className="grid grid-cols-[64px_minmax(0,1fr)] gap-y-1.5 text-caption">
           <dt className="text-muted">이름</dt>

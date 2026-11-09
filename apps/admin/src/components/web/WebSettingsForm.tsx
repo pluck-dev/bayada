@@ -49,7 +49,7 @@ function useSection<K extends WebSettingKey>(key: K, initial: WebSettings[K], sa
 
 export function WebSettingsForm({ settings, savedAt }: { settings: WebSettings; savedAt: Record<string, string> }) {
   return (
-    <div className="flex max-w-[820px] flex-col gap-5">
+    <div data-tour="web-manager" className="flex max-w-[820px] flex-col gap-5">
       <SiteSection initial={settings["web.site"]} savedAt={savedAt["web.site"] ?? null} />
       <InquirySection initial={settings["web.inquiry"]} savedAt={savedAt["web.inquiry"] ?? null} />
     </div>

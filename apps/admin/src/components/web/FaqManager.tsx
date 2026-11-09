@@ -111,6 +111,7 @@ export function FaqManager({ categories }: { categories: Category[] }) {
 
   return (
     <Card
+      tour="web-manager"
       title={`카테고리 ${categories.length}개 · 질문 ${categories.reduce((n, c) => n + c.items.length, 0)}개`}
       padded={false}
       actions={

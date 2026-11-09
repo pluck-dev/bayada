@@ -330,3 +330,15 @@
 - 이 PC Git Bash 에서 Playwright 스크립트에 `/programs` 같은 인자를 주면 `C:/Program Files/Git/programs` 로 바뀐다 → `MSYS_NO_PATHCONV=1`. Playwright 는 boxon 레포 node_modules + ms-playwright chromium-1248 실행 파일로 돌렸다.
 - 피드백 테이블(ReviewFeedback)은 bayada_v2 에 없고 bayada_review 에만 있다(2026-11-09). 피드백 화면 확인은 `DATABASE_URL=…/bayada_review pnpm dev`(프로세스 env 가 .env.local 보다 우선). bayada_review 는 이때 db push 로 WebInquiry 등 최신 스키마를 맞춤.
 - Python 으로 파일을 쓸 때 `newline=''` 를 안 주면 윈도우에서 CRLF 로 바뀐다.
+
+# 어드민 셸·도움말: 사이드바 접기(쿠키)·서랍, 화면 둘러보기(data-tour), 운영 매뉴얼 /manual
+## 구조 (2026-11-09)
+- `(dashboard)/layout.tsx` → `components/AdminShell.tsx`(클라이언트) = HelpProvider + 사이드바 + 본문. 접힘 상태는 쿠키 `bayada-admin.sidebar`(rail|full)를 **서버 레이아웃이 읽어** 첫 렌더부터 72px — localStorage 로 하면 수화 전 256px 로 깜빡인다. 쿠키 이름은 순수 모듈 `lib/sidebar-pref.ts`("use client" 모듈의 상수를 서버에서 import 하면 문자열이 아니라 클라이언트 참조가 된다).
+- 1024px 미만은 서랍(상단 바 ≡). 서버·첫 렌더는 데스크톱 가정이라 데스크톱 사이드바에 `hidden lg:flex` — 휴대폰에서 수화 전 사이드바가 보이지 않게. Ctrl/⌘+B 는 입력칸·편집기 포커스 중엔 가로채지 않음.
+- 접힌 아이콘 툴팁은 TooltipLayer 확장: `data-tip-side="right"`, `data-tip-kbd="Ctrl B"`. pointermove 로도 다시 띄운다(접을 때 사이드바 스크롤이 바뀌어 scroll→hide 뒤 pointerover 가 다시 안 오던 문제).
+## 둘러보기·매뉴얼 규칙
+- 내용 원본은 `components/help/tours.ts`(화면별 단계, match=언어 경로 뗀 경로) · `manual.ts`(글, paths 로 도움말 패널 연결). 화면·버튼 이름을 바꾸면 둘 다 고칠 것. 대상은 `data-tour` — PageHeader 는 자동으로 `page-header`/`page-actions`, Card 는 `tour` prop.
+- 권한·상태 때문에 안 그려진 대상 단계는 시작 시 건너뜀(보이는지까지 검사: 숨은 서랍·display none 제외). "a|b" = 둘 중 보이는 쪽(사이드바 도움말 | 상단 바 도움말).
+- 처음 안내(welcome)는 localStorage `bayada-admin.tour.<userId>`="done" — 브라우저별(서버 기록 아님). 사용자가 700ms 안에 도움말을 먼저 열면 자동 시작 생략(열어 둔 패널을 닫던 경쟁 상태).
+- 둘러보기 스크롤은 scrollIntoView 금지(페이지까지 굴러감) → 가장 가까운 스크롤 상자만 굴리고 끝나면 원위치.
+- 검증 스크립트(Playwright, 임시 폴더)는 `button:has-text("완료")` 처럼 넓게 잡으면 페이지의 "처리 완료"·"개발완료" 칩을 누른다 → 둘러보기 대화상자 안으로 한정.
