@@ -10,6 +10,8 @@ export const EMPTY_PROGRAM: ProgramFormValue = {
   summary: "",
   description: "",
   thumbnail: "",
+  // 새 프로그램도 기본은 자동 표지 — 이미지를 올리면 운영자가 "업로드 이미지"로 바꾼다
+  coverMode: "AUTO",
   price: 0,
   productType: "COURSE",
   learningMode: "ONLINE",

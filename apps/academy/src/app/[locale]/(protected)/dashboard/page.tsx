@@ -10,7 +10,7 @@ import { EmailVerifyBanner } from "@/components/account/EmailVerifyBanner";
 import { RenewalBanner } from "@/components/credentials/RenewalBanner";
 import { formatDate, formatSessionRange } from "@/lib/labels";
 import { CourseCard } from "@/components/course/CourseCard";
-import { CourseThumb } from "@/components/course/CourseThumb";
+import { CourseMedia } from "@/components/course/CourseMedia";
 import { PassCard } from "@/components/dashboard/PassCard";
 
 export const metadata: Metadata = { title: "마이 러닝" };
@@ -24,7 +24,7 @@ function EnrollmentRow({ row, locale }: { row: Row; locale: string }) {
   return (
     <li className="flex flex-col gap-4 rounded-xl border border-line bg-canvas p-4 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:gap-5">
       <Link href={detail} className="block aspect-video shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-44">
-        <CourseThumb src={row.course.thumbnail} title={row.course.title} label={row.course.category} />
+        <CourseMedia course={row.course} />
       </Link>
       <div className="min-w-0 flex-1">
         <Link href={detail} className="line-clamp-2 text-title text-ink underline-offset-4 hover:underline">

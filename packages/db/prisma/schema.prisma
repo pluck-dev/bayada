@@ -96,6 +96,7 @@ model Course {
   description  String?            @db.Text
   summary      String? // 카드용 한 줄 소개
   thumbnail    String? // URL
+  coverMode    CoverMode          @default(AUTO) // 표지: AUTO=제목·분야로 자동 생성, UPLOAD=thumbnail 이미지
   price        Int                @default(0) // 원 단위
   status       CourseStatus       @default(DRAFT)
   visibility   Visibility         @default(PUBLIC)
@@ -124,6 +125,12 @@ model Course {
   publishedAt  DateTime?
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
+}
+
+// 프로그램 표지. 이관된 WP 배너는 작은 로고·글씨라 카드에서 안 읽혀 기본은 자동 생성 표지
+enum CoverMode {
+  AUTO
+  UPLOAD
 }
 
 // 사내 전용(직원 의무교육) vs 외부 공개

@@ -80,7 +80,7 @@ export function lectureCount(p: { sections: { lectures: unknown[] }[] }): number
 
 export async function getFormOptions() {
   const [categories, providers] = await Promise.all([
-    prisma.category.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }], select: { id: true, name: true } }),
+    prisma.category.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }], select: { id: true, name: true, slug: true } }),
     prisma.provider.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, isPartner: true } }),
   ]);
   return { categories, providers };

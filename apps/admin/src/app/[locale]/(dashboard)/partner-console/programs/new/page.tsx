@@ -8,7 +8,7 @@ export default async function PartnerNewProgramPage({ params }: { params: Promis
   const { locale } = await params;
   const user = await requirePage("partner.console", locale);
   const [categories, provider] = await Promise.all([
-    prisma.category.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }], select: { id: true, name: true } }),
+    prisma.category.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }], select: { id: true, name: true, slug: true } }),
     prisma.provider.findUnique({ where: { id: user.providerId! }, select: { id: true, name: true, isPartner: true } }),
   ]);
   const base = `/${locale}/partner-console`;

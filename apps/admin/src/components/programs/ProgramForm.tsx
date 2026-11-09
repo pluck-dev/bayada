@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X, ArrowUp, ArrowDown } from "lucide-react";
-import type { JobRole, LearningMode, Level, ProductType, Visibility } from "@bayada/db";
+import type { CoverMode, JobRole, LearningMode, Level, ProductType, Visibility } from "@bayada/db";
+import { CourseCover } from "@bayada/ui/cover";
 import { createProgram, updateProgram } from "@/lib/actions/programs";
 import {
   JOB_ROLES,
@@ -56,7 +57,7 @@ export function ProgramForm({
   locale: string;
   programId?: string;
   initial: ProgramFormValue;
-  categories: { id: string; name: string }[];
+  categories: { id: string; name: string; slug: string }[];
   providers: { id: string; name: string; isPartner: boolean }[];
   locked?: boolean;
   /** 파트너 콘솔 — 제공기관은 고정, 공개범위·메인 노출은 운영자 몫이라 숨긴다 */
@@ -113,7 +114,7 @@ export function ProgramForm({
                 }}
               />
             </Field>
-            <Field label="slug (URL)" required htmlFor="slug" hint="아카데미 주소에 쓰입니다. 글자·숫자·하이픈만.">
+            <Field label="slug (URL)" required htmlFor="slug" hint="아카데미 주소에 쓰입니다. 글자·숫자·하이픈만." className="col-span-2">
               <input
                 id="slug"
                 required
@@ -123,15 +124,6 @@ export function ProgramForm({
                   setSlugTouched(true);
                   set("slug", e.target.value);
                 }}
-              />
-            </Field>
-            <Field label="썸네일 URL" htmlFor="thumbnail">
-              <input
-                id="thumbnail"
-                className={inputClass}
-                placeholder="https://"
-                value={v.thumbnail}
-                onChange={(e) => set("thumbnail", e.target.value)}
               />
             </Field>
             <Field label="한 줄 소개" htmlFor="summary" className="col-span-2" hint="카탈로그 카드에 표시됩니다.">
@@ -146,6 +138,47 @@ export function ProgramForm({
                 onChange={(e) => set("description", e.target.value)}
               />
             </Field>
+          </div>
+        </Card>
+
+        <Card tour="program-form-cover" title="표지" description="아카데미 카드·상세·공유 이미지에 쓰입니다.">
+          <div className="grid grid-cols-[minmax(0,1fr)_320px] gap-6 max-lg:grid-cols-1">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <span className="mb-0.5 text-[13px] font-bold text-ink">표지 방식</span>
+                <Segmented
+                  aria-label="표지 방식"
+                  className="w-fit"
+                  value={v.coverMode}
+                  onChange={(m) => set("coverMode", m)}
+                  options={[
+                    { value: "AUTO" as CoverMode, label: "자동 생성" },
+                    { value: "UPLOAD" as CoverMode, label: "업로드 이미지" },
+                  ]}
+                />
+                <p className="text-micro text-muted">
+                  {v.coverMode === "AUTO"
+                    ? "제목·카테고리·유형·난이도·대상 직군으로 표지를 그립니다. 카테고리마다 색이 정해져 있어요."
+                    : "아래 이미지를 표지로 씁니다. 이미지를 불러오지 못하면 자동 표지로 대신 보입니다."}
+                </p>
+              </div>
+              {v.coverMode === "UPLOAD" && (
+                <Field label="표지 이미지 URL" required htmlFor="thumbnail" hint="16:9 비율 권장 (예: 1280×720). 글씨가 작은 배너는 카드에서 읽히지 않아요.">
+                  <input
+                    id="thumbnail"
+                    required
+                    className={inputClass}
+                    placeholder="https://"
+                    value={v.thumbnail}
+                    onChange={(e) => set("thumbnail", e.target.value)}
+                  />
+                </Field>
+              )}
+            </div>
+            <div>
+              <span className="mb-1.5 block text-[13px] font-bold text-ink">미리보기</span>
+              <CoverPreview value={v} categories={categories} />
+            </div>
           </div>
         </Card>
 
@@ -322,5 +355,40 @@ export function ProgramForm({
         </div>
       )}
     </form>
+  );
+}
+
+/** 표지 미리보기 — 아카데미와 같은 그리기 규칙(@bayada/ui/cover)이라 보이는 그대로 나간다 */
+function CoverPreview({ value: v, categories }: { value: ProgramFormValue; categories: { id: string; name: string; slug: string }[] }) {
+  const [broken, setBroken] = useState<string | null>(null);
+  const category = categories.find((c) => c.id === v.categoryId) ?? null;
+  const auto = (
+    <CourseCover
+      course={{
+        slug: v.slug || v.title,
+        title: v.title || "프로그램명",
+        category: category ? { name: category.name, slug: category.slug } : null,
+        typeLabel: PRODUCT_TYPE_LABEL[v.productType],
+        levelLabel: v.level ? LEVEL_LABEL[v.level] : null,
+        audienceLabel:
+          v.audiences.length === 0
+            ? "전 직군"
+            : v.audiences.length > 1
+              ? `${JOB_ROLE_LABEL[v.audiences[0]]} 외 ${v.audiences.length - 1}`
+              : JOB_ROLE_LABEL[v.audiences[0]],
+      }}
+    />
+  );
+  const src = v.coverMode === "UPLOAD" ? v.thumbnail.trim() : "";
+  return (
+    <div className="aspect-video w-full overflow-hidden rounded-[14px] bg-wash">
+      {src && broken !== src ? (
+        // 운영자가 입력한 원격 이미지 URL — next/image 최적화 대상 아님
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt="표지 이미지 미리보기" className="h-full w-full object-cover" onError={() => setBroken(src)} />
+      ) : (
+        auto
+      )}
+    </div>
   );
 }

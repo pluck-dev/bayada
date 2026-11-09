@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prisma, type JobRole, type LearningMode, type Level, type ProductType, type Visibility } from "@bayada/db";
+import { prisma, type CoverMode, type JobRole, type LearningMode, type Level, type ProductType, type Visibility } from "@bayada/db";
 import { ActionError, audit, runAction, type AdminUser } from "../session";
 import { JOB_ROLES, LEARNING_MODES, LEVELS, PRODUCT_TYPES } from "../labels";
 import { PROGRAM_EDIT, can, type Permission } from "../rbac";
@@ -14,6 +14,8 @@ export interface ProgramInput {
   summary: string;
   description: string;
   thumbnail: string;
+  /** 표지: AUTO=자동 생성, UPLOAD=thumbnail 이미지 */
+  coverMode: CoverMode;
   price: number;
   productType: ProductType;
   learningMode: LearningMode;
@@ -43,13 +45,16 @@ function clean(input: ProgramInput) {
   const price = Math.max(0, Math.round(Number(input.price) || 0));
   const durationMin = input.durationMin ? Math.max(0, Math.round(Number(input.durationMin))) || null : null;
   const thumbnail = input.thumbnail.trim();
-  if (thumbnail && !/^(https?:\/\/|\/)/.test(thumbnail)) throw new ActionError("썸네일은 http(s) URL 이어야 합니다.");
+  if (thumbnail && !/^(https?:\/\/|\/)/.test(thumbnail)) throw new ActionError("표지 이미지는 http(s) URL 이어야 합니다.");
+  if (input.coverMode !== "AUTO" && input.coverMode !== "UPLOAD") throw new ActionError("표지 방식이 올바르지 않습니다.");
+  if (input.coverMode === "UPLOAD" && !thumbnail) throw new ActionError("업로드 이미지 표지는 이미지 URL 이 필요합니다.");
   return {
     title,
     slug,
     summary: input.summary.trim() || null,
     description: input.description.trim() || null,
     thumbnail: thumbnail || null,
+    coverMode: input.coverMode,
     price,
     productType: input.productType,
     learningMode: input.learningMode,

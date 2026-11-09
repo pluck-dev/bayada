@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { BookOpen, Clock, Lock, Users } from "lucide-react";
 import { Badge, CourseCard as UiCourseCard, CourseCardSkeleton as UiCourseCardSkeleton } from "@bayada/ui";
 import type { CourseCardData } from "@/lib/queries/courses";
-import { JOB_ROLE_LABEL, LEVEL_LABEL, PRODUCT_TYPE_LABEL, formatMinutes, formatPrice } from "@/lib/labels";
-import { CourseThumb } from "./CourseThumb";
+import { audienceLabel } from "@/lib/cover";
+import { LEVEL_LABEL, PRODUCT_TYPE_LABEL, formatMinutes, formatPrice } from "@/lib/labels";
+import { CourseMedia } from "./CourseMedia";
 import { WishlistButton } from "./WishlistButton";
 
 /** 프로그램 데이터 → 공용 CourseCard (카드 모양은 @bayada/ui 한 곳에서만 정한다) */
@@ -19,13 +20,10 @@ export function CourseCard({
   progress?: number | null;
   layout?: "vertical" | "horizontal";
 }) {
-  const audience =
-    course.audiences.length === 0
-      ? "공통"
-      : course.audiences.length > 1
-        ? `${JOB_ROLE_LABEL[course.audiences[0]]} 외 ${course.audiences.length - 1}`
-        : JOB_ROLE_LABEL[course.audiences[0]];
+  const audience = audienceLabel(course.audiences);
   const done = typeof progress === "number" && progress >= 100;
+  const duration = formatMinutes(course.durationMin);
+  const learners = course._count.enrollments;
 
   return (
     <UiCourseCard
@@ -33,21 +31,27 @@ export function CourseCard({
       layout={layout}
       href={`/${locale}/courses/${encodeURIComponent(course.slug)}`}
       title={course.title}
+      provider={course.category?.name ?? course.provider?.name ?? "바야다"}
       typeLabel={PRODUCT_TYPE_LABEL[course.productType]}
-      provider={course.provider?.name ?? "바야다"}
-      meta={[audience, formatMinutes(course.durationMin), course.level ? LEVEL_LABEL[course.level] : null]}
+      tags={[
+        course.visibility === "INTERNAL" ? (
+          <Badge tone="inverse" size="md" icon={<Lock aria-hidden />} className="h-6 bg-ink">
+            사내 전용
+          </Badge>
+        ) : null,
+        course.level ? LEVEL_LABEL[course.level] : null,
+        audience,
+      ]}
+      stats={[
+        duration ? { icon: <Clock aria-hidden />, label: duration, srLabel: "총 학습 시간" } : null,
+        course.lectureCount > 0 ? { icon: <BookOpen aria-hidden />, label: `${course.lectureCount}강`, srLabel: "강의 수" } : null,
+        learners > 0 ? { icon: <Users aria-hidden />, label: `${learners.toLocaleString()}명`, srLabel: "수강자 수" } : null,
+      ]}
       rating={course.rating}
       price={formatPrice(course.price)}
       progress={progress}
       progressLabel={done ? "수료 완료" : "진도"}
-      media={<CourseThumb src={course.thumbnail} title={course.title} label={course.category?.name} />}
-      badge={
-        course.visibility === "INTERNAL" ? (
-          <Badge tone="inverse" icon={<Lock aria-hidden />}>
-            사내 전용
-          </Badge>
-        ) : undefined
-      }
+      media={<CourseMedia course={course} />}
       overlayAction={
         typeof progress === "number" ? undefined : (
           <WishlistButton courseId={course.id} locale={locale} wished={course.wished} />

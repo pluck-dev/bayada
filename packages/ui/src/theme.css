@@ -13,6 +13,7 @@
 
 /* packages/ui 컴포넌트의 클래스도 각 앱 빌드에서 생성되도록 스캔 */
 @source "./components";
+@source "./cover";
 
 @theme static {
   /* ── 서체 ── */

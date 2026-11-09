@@ -2,7 +2,7 @@ import { prisma } from "@bayada/db";
 import type { JobRole, Prisma } from "@bayada/db";
 import type { Viewer } from "@/lib/viewer";
 import { maskName } from "@/lib/params";
-import { visibleCourseWhere, withCardExtras } from "@/lib/queries/courses";
+import { cardSelect, visibleCourseWhere, withCardExtras } from "@/lib/queries/courses";
 
 // ─── 후기·평점 ───
 
@@ -185,26 +185,7 @@ export async function getMyWishlist(viewer: Viewer) {
     where: { userId: viewer.id },
     orderBy: { createdAt: "desc" },
     select: {
-      course: {
-        select: {
-          id: true,
-          slug: true,
-          title: true,
-          summary: true,
-          thumbnail: true,
-          price: true,
-          productType: true,
-          level: true,
-          learningMode: true,
-          durationMin: true,
-          audiences: true,
-          visibility: true,
-          status: true,
-          category: { select: { name: true, slug: true } },
-          provider: { select: { name: true } },
-          _count: { select: { enrollments: true } },
-        },
-      },
+      course: { select: { ...cardSelect, status: true } },
     },
   });
   // 찜한 뒤 비공개·보관된 강의는 목록에서 뺀다 (수강 중인 강의는 마이 러닝에 남아 있다)

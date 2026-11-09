@@ -35,7 +35,8 @@ import {
   formatSessionRange,
 } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
-import { CourseThumb } from "@/components/course/CourseThumb";
+import { CourseMedia } from "@/components/course/CourseMedia";
+import { coverImagePath } from "@/lib/cover";
 import { EnrollButton } from "@/components/course/EnrollButton";
 import { BuyButton } from "@/components/course/BuyButton";
 import { WishlistButton } from "@/components/course/WishlistButton";
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const viewer = await getViewer();
   const course = await prisma.course.findFirst({
     where: { slug: decodeParam(slug), ...visibleCourseWhere(viewer) },
-    select: { title: true, summary: true, thumbnail: true, visibility: true },
+    select: { slug: true, title: true, summary: true, thumbnail: true, coverMode: true, visibility: true },
   });
   if (!course) return { title: "프로그램" };
   return {
@@ -60,7 +61,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     description: course.summary ?? undefined,
     // 사내 전용 강의는 검색엔진에 노출하지 않는다
     robots: course.visibility === "INTERNAL" ? { index: false, follow: false } : undefined,
-    openGraph: course.thumbnail ? { images: [course.thumbnail] } : undefined,
+    // 공유 이미지: 업로드 표지 또는 자동 표지 PNG. 사내 전용은 표지 라우트가 그리지 않으므로 넣지 않는다
+    openGraph:
+      course.visibility === "PUBLIC"
+        ? { title: course.title, description: course.summary ?? undefined, images: [{ url: coverImagePath(course), width: 1200, height: 630 }] }
+        : undefined,
   };
 }
 
@@ -614,7 +619,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             <div className="lg:sticky lg:top-[136px]">
               <div className="overflow-hidden rounded-xl border border-line bg-canvas">
                 <div className="aspect-video bg-surface-sunken">
-                  <CourseThumb src={course.thumbnail} title={course.title} label={course.category?.name} />
+                  <CourseMedia course={course} />
                 </div>
                 <div className="p-6">
                   {enrollment ? (

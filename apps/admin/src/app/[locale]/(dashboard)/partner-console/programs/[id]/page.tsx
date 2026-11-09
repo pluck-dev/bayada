@@ -33,7 +33,7 @@ export default async function PartnerProgramPage({
   // 다른 기관 프로그램은 존재 여부도 드러내지 않는다
   if (!program || program.providerId !== user.providerId) notFound();
   const [categories, history] = await Promise.all([
-    prisma.category.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }], select: { id: true, name: true } }),
+    prisma.category.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }], select: { id: true, name: true, slug: true } }),
     tab === "history" ? getProgramHistory(id) : Promise.resolve([]),
   ]);
 
@@ -99,6 +99,7 @@ export default async function PartnerProgramPage({
                 summary: program.summary ?? "",
                 description: program.description ?? "",
                 thumbnail: program.thumbnail ?? "",
+                coverMode: program.coverMode,
                 price: program.price,
                 productType: program.productType,
                 learningMode: program.learningMode,

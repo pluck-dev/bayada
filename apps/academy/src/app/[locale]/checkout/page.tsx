@@ -11,7 +11,7 @@ import { formatPassDuration, getMyPass } from "@/lib/queries/pass";
 import { paymentService } from "@/lib/services";
 import { PRODUCT_TYPE_LABEL, formatDate, formatPrice } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
-import { CourseThumb } from "@/components/course/CourseThumb";
+import { CourseMedia, type CourseMediaSource } from "@/components/course/CourseMedia";
 import { TossPayButton } from "@/components/checkout/TossPayButton";
 
 export const metadata: Metadata = { title: "결제하기", robots: { index: false, follow: false } };
@@ -34,7 +34,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
     title: string;
     kind: string;
     price: number;
-    thumb?: { src: string | null; label?: string };
+    thumb?: CourseMediaSource;
     lines: string[];
     back: { href: string; label: string };
   };
@@ -51,7 +51,10 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
         visibility: true,
         productType: true,
         thumbnail: true,
-        category: { select: { name: true } },
+        coverMode: true,
+        level: true,
+        audiences: true,
+        category: { select: { name: true, slug: true } },
         provider: { select: { name: true } },
       },
     });
@@ -68,7 +71,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
       title: course.title,
       kind: PRODUCT_TYPE_LABEL[course.productType],
       price: course.price,
-      thumb: { src: course.thumbnail, label: course.category?.name },
+      thumb: course,
       lines: [course.provider?.name ? `제공 ${course.provider.name}` : null, "결제 즉시 수강 시작 · 수강 기간 제한 없음", "수료 시 수료증 발급"].filter(
         (l): l is string => !!l
       ),
@@ -136,7 +139,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
             <div className="mt-5 flex gap-4">
               <div className="aspect-video w-36 shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-44">
                 {item.thumb ? (
-                  <CourseThumb src={item.thumb.src} title={item.title} label={item.thumb.label} />
+                  <CourseMedia course={item.thumb} size="thumb" />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-surface-sunken text-ink-soft">
                     <InfinityIcon className="h-8 w-8" aria-hidden />

@@ -22,7 +22,7 @@ import { getActivePlans } from "@/lib/queries/pass";
 import { getSiteSettings } from "@/lib/site-settings";
 import { inquiryHref, resolveHref, type HomeSectionKey } from "@bayada/shared/site-settings";
 import { CourseCard } from "@/components/course/CourseCard";
-import { CourseThumb } from "@/components/course/CourseThumb";
+import { CourseMedia } from "@/components/course/CourseMedia";
 import { BannerCarousel } from "@/components/home/BannerCarousel";
 import { CountUp } from "@/components/home/CountUp";
 import { ReviewCarousel } from "@/components/home/ReviewCarousel";
@@ -436,7 +436,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                       >
                         <span className="tabular w-4 shrink-0 text-center text-title font-bold text-ink-soft">{i + 1}</span>
                         <span className="block aspect-video w-28 shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-36">
-                          <CourseThumb src={c.thumbnail} title={c.title} label={c.category?.name} />
+                          <CourseMedia course={c} size="thumb" />
                         </span>
                         <span className="min-w-0">
                           <span className="line-clamp-2 text-body font-semibold leading-snug text-ink underline-offset-4 group-hover:underline">

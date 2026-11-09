@@ -90,6 +90,7 @@ export const TOURS: TourDef[] = [
     steps: [
       { target: "page-header", title: "새 프로그램", body: "작성 중(draft) 상태로 만들어져요. 이 단계에서는 학습자에게 보이지 않아요." },
       { target: "program-form-basic", title: "기본 정보", body: "프로그램명과 slug(주소)는 필수예요. slug 는 영문·숫자·하이픈으로 짧게 써요." },
+      { target: "program-form-cover", title: "표지", body: "기본은 ‘자동 생성’ — 제목·카테고리로 아카데미 카드 표지를 그려요. 직접 만든 16:9 이미지가 있으면 ‘업로드 이미지’로 바꾸고 URL 을 넣어요." },
       { target: "program-form-meta", title: "분류·대상", body: "제공기관·소요시간·대상 직군은 승인 요청 전에 반드시 채워야 하는 필수 항목이에요." },
       { target: "program-form-goals", title: "학습목표", body: "1개 이상 있어야 승인 요청할 수 있어요." },
       { target: "program-form-save", title: "만들고 커리큘럼 편집", body: "저장하면 커리큘럼 탭으로 이동해요. 섹션과 레슨(영상·텍스트·퀴즈)을 1개 이상 넣어야 승인 요청할 수 있어요." },

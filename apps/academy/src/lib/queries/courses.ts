@@ -26,12 +26,13 @@ export function visibleCourseWhere(viewer: Viewer | null): Prisma.CourseWhereInp
   };
 }
 
-const cardSelect = {
+export const cardSelect = {
   id: true,
   slug: true,
   title: true,
   summary: true,
   thumbnail: true,
+  coverMode: true,
   price: true,
   productType: true,
   level: true,
@@ -42,12 +43,15 @@ const cardSelect = {
   category: { select: { name: true, slug: true } },
   provider: { select: { name: true } },
   _count: { select: { enrollments: true } },
+  // 카드의 "N강" — 섹션별 강의 수를 더한다 (Prisma 는 중첩 관계 _count 를 한 번에 못 센다)
+  sections: { select: { _count: { select: { lectures: true } } } },
 } satisfies Prisma.CourseSelect;
 
 type CourseCardRow = Prisma.CourseGetPayload<{ select: typeof cardSelect }>;
 
 /** 카드 데이터 + 공개 후기 평점(1건 이상일 때만) + 찜 여부(비로그인은 null) */
-export type CourseCardData = CourseCardRow & {
+export type CourseCardData = Omit<CourseCardRow, "sections"> & {
+  lectureCount: number;
   rating: { avg: number; count: number } | null;
   wished: boolean | null;
 };
@@ -69,8 +73,9 @@ export async function withCardExtras(rows: CourseCardRow[], viewer: Viewer | nul
   ]);
   const ratingBy = new Map(ratings.map((r) => [r.courseId, { avg: r._avg.rating ?? 0, count: r._count._all }]));
   const wished = wishes ? new Set(wishes.map((w) => w.courseId)) : null;
-  return rows.map((r) => ({
+  return rows.map(({ sections, ...r }) => ({
     ...r,
+    lectureCount: sections.reduce((sum, s) => sum + s._count.lectures, 0),
     rating: ratingBy.get(r.id) ?? null,
     wished: wished ? wished.has(r.id) : null,
   }));
