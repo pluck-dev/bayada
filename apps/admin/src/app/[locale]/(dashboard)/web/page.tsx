@@ -21,8 +21,8 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
 
       {crm && (
         <div className="grid grid-cols-4 gap-3">
-          <Stat label="신규 문의" value={d.status.NEW ?? 0} hint="아직 처리 전" href={qs(`${base}/inquiries`, { status: "NEW" })} />
-          <Stat label="진행 중" value={(d.status.CONTACTED ?? 0) + (d.status.IN_PROGRESS ?? 0)} hint="연락 완료 · 진행 중" href={`${base}/inquiries`} />
+          <Stat tone="brand" label="신규 문의" value={d.status.NEW ?? 0} hint="아직 처리 전" href={qs(`${base}/inquiries`, { status: "NEW" })} />
+          <Stat tone="ink" label="진행 중" value={(d.status.CONTACTED ?? 0) + (d.status.IN_PROGRESS ?? 0)} hint="연락 완료 · 진행 중" href={`${base}/inquiries`} />
           <Stat label="최근 7일 접수" value={d.week} hint="스팸 제외" />
           <Stat label="처리 완료" value={d.status.DONE ?? 0} hint="누적" href={qs(`${base}/inquiries`, { status: "DONE" })} />
         </div>
@@ -34,7 +34,7 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
             title="최근 문의"
             padded={false}
             actions={
-              <Link href={`${base}/inquiries`} className="text-caption text-muted hover:text-fg">
+              <Link href={`${base}/inquiries`} className="text-caption text-muted hover:text-ink">
                 전체 보기
               </Link>
             }
@@ -42,7 +42,7 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
             {d.recent.length === 0 ? (
               <EmptyState title="아직 접수된 문의가 없습니다" description="홈페이지 상담 신청·자격 신청·사전 신청이 여기에 쌓입니다." />
             ) : (
-              <ul className="divide-y divide-line-soft">
+              <ul className="divide-y divide-hairline">
                 {d.recent.map((r) => (
                   <li key={r.id}>
                     <Link href={`${base}/inquiries/${r.id}`} className="flex items-center gap-3 px-4 py-2.5 text-caption hover:bg-surface">

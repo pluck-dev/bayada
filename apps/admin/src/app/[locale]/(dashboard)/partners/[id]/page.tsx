@@ -47,7 +47,7 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
                 {p.courses.map((c) => (
                   <tr key={c.id} className={trClass}>
                     <td className={cx(tdClass, "whitespace-normal!")}>
-                      <Link href={`/${locale}/programs/${c.id}`} className="font-medium hover:underline">
+                      <Link href={`/${locale}/programs/${c.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                         {c.title}
                       </Link>
                     </td>
@@ -70,11 +70,11 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
             {p.admins.length === 0 ? (
               <p className="px-4 py-5 text-center text-caption text-muted">지정된 파트너 관리자가 없습니다.</p>
             ) : (
-              <ul className="divide-y divide-line-soft">
+              <ul className="divide-y divide-hairline">
                 {p.admins.map((a) => (
                   <li key={a.id} className="flex items-center gap-2 px-4 py-2 text-caption">
                     <span className="min-w-0 flex-1">
-                      <Link href={`/${locale}/members/${a.id}`} className="block truncate font-medium hover:underline">
+                      <Link href={`/${locale}/members/${a.id}`} className="block truncate font-medium transition-colors hover:text-brand">
                         {a.name ?? a.email}
                       </Link>
                       <span className="block truncate text-micro text-subtle">{a.email}</span>

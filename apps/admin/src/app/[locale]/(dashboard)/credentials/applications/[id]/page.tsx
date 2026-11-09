@@ -43,7 +43,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
               <dt className="text-muted">이름</dt>
               <dd className="font-medium">
                 {can(user, "member.read") ? (
-                  <Link href={`/${locale}/members/${app.user.id}`} className="hover:underline">
+                  <Link href={`/${locale}/members/${app.user.id}`} className="transition-colors hover:text-brand">
                     {app.user.name ?? "-"}
                   </Link>
                 ) : (
@@ -68,7 +68,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             }
             padded={false}
           >
-            <ul className="divide-y divide-line-soft">
+            <ul className="divide-y divide-hairline">
               {prerequisites.map((r) => (
                 <li key={r.courseId} className="flex items-center gap-3 px-4 py-2.5 text-caption">
                   {r.completedAt ? (
@@ -92,7 +92,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
 
           {credentials.length > 0 && (
             <Card title="이 과정의 발급 이력" padded={false}>
-              <ul className="divide-y divide-line-soft">
+              <ul className="divide-y divide-hairline">
                 {credentials.map((c) => {
                   const state = c.revokedAt ? "취소" : c.expiresAt && c.expiresAt <= now ? "만료" : "유효";
                   return (
@@ -115,7 +115,7 @@ export default async function CredentialApplicationPage({ params }: { params: Pr
             {history.length === 0 ? (
               <p className="px-4 py-3 text-caption text-muted">기록이 없습니다.</p>
             ) : (
-              <ol className="divide-y divide-line-soft">
+              <ol className="divide-y divide-hairline">
                 {history.map((h) => (
                   <li key={h.id} className="flex items-center gap-3 px-4 py-2.5 text-caption">
                     <span className="tabular w-[132px] shrink-0 text-caption text-subtle">{formatDateTime(h.at)}</span>

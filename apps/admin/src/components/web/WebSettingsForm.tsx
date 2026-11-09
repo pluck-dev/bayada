@@ -82,7 +82,7 @@ function SiteSection({ initial, savedAt }: { initial: Site; savedAt: string | nu
             <input id={`ws-${f.key}`} className={inputClass} value={v[f.key]} onChange={(e) => setV({ ...v, [f.key]: e.target.value })} />
           </Field>
         ))}
-        <p className="col-span-2 mt-2 text-caption font-medium text-fg">SNS 링크 — 비우거나 # 이면 아이콘만 보이고 이동하지 않습니다</p>
+        <p className="col-span-2 mt-2 text-caption font-medium text-ink">SNS 링크 — 비우거나 # 이면 아이콘만 보이고 이동하지 않습니다</p>
         {WEB_SNS_KEYS.map((k) => (
           <Field key={k} label={WEB_SNS_LABEL[k]} htmlFor={`ws-sns-${k}`}>
             <input

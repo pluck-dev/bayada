@@ -15,7 +15,20 @@ import {
   PRODUCT_TYPES,
   PRODUCT_TYPE_LABEL,
 } from "@/lib/labels";
-import { Button, Card, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Field,
+  NumberInput,
+  Segmented,
+  Select,
+  ToggleChip,
+  actionBarClass,
+  cx,
+  inputClass,
+  textareaClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 import type { ProgramFormValue } from "@/lib/program-defaults";
 
@@ -139,111 +152,78 @@ export function ProgramForm({
         <Card title="분류·대상">
           <div className="grid grid-cols-3 gap-4">
             <Field label="유형" htmlFor="productType">
-              <select
+              <Select
                 id="productType"
-                className={selectClass}
                 value={v.productType}
-                onChange={(e) => set("productType", e.target.value as ProductType)}
-              >
-                {PRODUCT_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {PRODUCT_TYPE_LABEL[t]}
-                  </option>
-                ))}
-              </select>
+                onChange={(x) => set("productType", x as ProductType)}
+                options={PRODUCT_TYPES.map((t) => ({ value: t, label: PRODUCT_TYPE_LABEL[t] }))}
+              />
             </Field>
             <Field label="학습 방식" htmlFor="learningMode" hint="블렌디드·오프라인은 실습 일정과 연결됩니다.">
-              <select
+              <Select
                 id="learningMode"
-                className={selectClass}
                 value={v.learningMode}
-                onChange={(e) => set("learningMode", e.target.value as LearningMode)}
-              >
-                {LEARNING_MODES.map((m) => (
-                  <option key={m} value={m}>
-                    {LEARNING_MODE_LABEL[m]}
-                  </option>
-                ))}
-              </select>
+                onChange={(x) => set("learningMode", x as LearningMode)}
+                options={LEARNING_MODES.map((m) => ({ value: m, label: LEARNING_MODE_LABEL[m] }))}
+              />
             </Field>
             <Field label="난이도" htmlFor="level">
-              <select id="level" className={selectClass} value={v.level} onChange={(e) => set("level", e.target.value as Level | "")}>
-                <option value="">선택 안 함</option>
-                {LEVELS.map((l) => (
-                  <option key={l} value={l}>
-                    {LEVEL_LABEL[l]}
-                  </option>
-                ))}
-              </select>
+              <Select
+                id="level"
+                value={v.level}
+                onChange={(x) => set("level", x as Level | "")}
+                options={[{ value: "", label: "선택 안 함" }, ...LEVELS.map((l) => ({ value: l, label: LEVEL_LABEL[l] }))]}
+              />
             </Field>
             <Field label="카테고리" htmlFor="categoryId">
-              <select id="categoryId" className={selectClass} value={v.categoryId} onChange={(e) => set("categoryId", e.target.value)}>
-                <option value="">미분류</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+              <Select
+                id="categoryId"
+                value={v.categoryId}
+                onChange={(x) => set("categoryId", x)}
+                options={[{ value: "", label: "미분류" }, ...categories.map((c) => ({ value: c.id, label: c.name }))]}
+              />
             </Field>
             <Field label="제공기관" required htmlFor="providerId">
-              <select
+              <Select
                 id="providerId"
-                className={selectClass}
                 value={v.providerId}
                 disabled={partner}
-                onChange={(e) => set("providerId", e.target.value)}
-              >
-                <option value="">선택</option>
-                {providers.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                    {p.isPartner ? " (파트너)" : ""}
-                  </option>
-                ))}
-              </select>
+                onChange={(x) => set("providerId", x)}
+                options={providers.map((p) => ({ value: p.id, label: p.name, text: p.name, hint: p.isPartner ? "파트너" : undefined }))}
+              />
             </Field>
             <Field label="소요시간 (분)" required htmlFor="durationMin">
-              <input
+              <NumberInput
                 id="durationMin"
-                type="number"
                 min={0}
-                className={cx(inputClass, "tabular")}
                 value={v.durationMin ?? ""}
                 onChange={(e) => set("durationMin", e.target.value ? Number(e.target.value) : null)}
               />
             </Field>
             <Field label="가격 (원)" htmlFor="price" hint="0 = 무료">
-              <input
+              <NumberInput
                 id="price"
-                type="number"
                 min={0}
                 step={1000}
-                className={cx(inputClass, "tabular")}
                 value={v.price}
                 onChange={(e) => set("price", Number(e.target.value) || 0)}
               />
             </Field>
             <div className="col-span-3 flex flex-col gap-1.5">
-              <span className="text-caption font-medium text-ink-soft" id="aud-label">
+              <span className="mb-0.5 text-[13px] font-bold text-ink" id="aud-label">
                 대상 직군<span className="ml-0.5 text-brand">*</span>
               </span>
               <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="aud-label">
                 {JOB_ROLES.map((r) => {
                   const on = v.audiences.includes(r);
                   return (
-                    <button
+                    <ToggleChip
                       key={r}
-                      type="button"
-                      aria-pressed={on}
-                      onClick={() => set("audiences", on ? v.audiences.filter((a) => a !== r) : [...v.audiences, r as JobRole])}
-                      className={cx(
-                        "h-7 rounded-full border px-3 text-caption transition-colors",
-                        on ? "border-ink bg-zinc-900 text-white" : "border-line text-muted hover:border-line-strong",
-                      )}
+                      on={on}
+                      onToggle={() => set("audiences", on ? v.audiences.filter((a) => a !== r) : [...v.audiences, r as JobRole])}
                     >
                       {JOB_ROLE_LABEL[r]}
-                    </button>
+                    </ToggleChip>
                   );
                 })}
               </div>
@@ -304,47 +284,36 @@ export function ProgramForm({
           <Card title="노출">
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-ink-soft" id="vis-label">
+                <span className="mb-0.5 text-[13px] font-bold text-ink" id="vis-label">
                   공개범위
                 </span>
-                <div className="inline-flex w-fit rounded-md border border-line p-0.5" role="radiogroup" aria-labelledby="vis-label">
-                  {(["INTERNAL", "PUBLIC"] as Visibility[]).map((vis) => (
-                    <button
-                      key={vis}
-                      type="button"
-                      role="radio"
-                      aria-checked={v.visibility === vis}
-                      onClick={() => set("visibility", vis)}
-                      className={cx(
-                        "h-7 rounded px-3 text-caption font-medium",
-                        v.visibility === vis ? "bg-zinc-900 text-white" : "text-muted hover:text-fg",
-                      )}
-                    >
-                      {vis === "INTERNAL" ? "사내 전용" : "외부 공개"}
-                    </button>
-                  ))}
-                </div>
+                <Segmented
+                  aria-label="공개범위"
+                  className="w-fit"
+                  value={v.visibility}
+                  onChange={(vis) => set("visibility", vis)}
+                  options={[
+                    { value: "INTERNAL" as Visibility, label: "사내 전용" },
+                    { value: "PUBLIC" as Visibility, label: "외부 공개" },
+                  ]}
+                />
                 <p className="text-micro text-muted">사내 전용은 바야다 사내 조직 소속 회원에게만 보입니다.</p>
               </div>
-              <label className="flex items-start gap-2 pt-6 text-caption">
-                <input
-                  type="checkbox"
+              <div className="pt-7">
+                <Checkbox
                   checked={v.featured}
-                  onChange={(e) => set("featured", e.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-zinc-900"
+                  onChange={(c) => set("featured", c)}
+                  label="메인 큐레이션(신규·인기)에 노출"
+                  desc="게시 상태일 때만 메인에 보입니다."
                 />
-                <span>
-                  메인 큐레이션(신규·인기)에 노출
-                  <span className="block text-micro text-muted">게시 상태일 때만 메인에 보입니다.</span>
-                </span>
-              </label>
+              </div>
             </div>
           </Card>
         )}
       </fieldset>
 
       {!locked && (
-        <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+        <div className={actionBarClass}>
           {dirty && <span className="mr-auto text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
           <Button type="submit" variant="primary" disabled={isPending || (!!programId && !dirty)}>
             {isPending ? "저장 중…" : programId ? "저장" : "만들고 커리큘럼 편집"}

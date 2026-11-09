@@ -44,7 +44,7 @@ export default async function WebInquiryDetailPage({ params }: { params: Promise
               {fields.map(([k, v]) => (
                 <div key={k} className="contents">
                   <dt className="text-muted">{WEB_FIELD_LABEL[k] ?? k}</dt>
-                  <dd className="whitespace-pre-line break-words text-fg">{formatWebFieldValue(k, v)}</dd>
+                  <dd className="whitespace-pre-line break-words text-ink">{formatWebFieldValue(k, v)}</dd>
                 </div>
               ))}
               <dt className="text-muted">개인정보 동의</dt>
@@ -65,7 +65,7 @@ export default async function WebInquiryDetailPage({ params }: { params: Promise
                       <span>{n.author ? (n.author.name ?? n.author.email) : "(삭제된 계정)"}</span>
                       <span className="tabular">{formatDateTime(n.createdAt)}</span>
                     </div>
-                    <p className="mt-1 whitespace-pre-line text-fg">{n.body}</p>
+                    <p className="mt-1 whitespace-pre-line text-ink">{n.body}</p>
                   </li>
                 ))}
               </ol>

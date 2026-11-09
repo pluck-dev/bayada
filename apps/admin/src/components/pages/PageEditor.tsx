@@ -4,7 +4,7 @@ import { useDeferredValue, useState } from "react";
 import { useRouter } from "next/navigation";
 import { savePage } from "@/lib/actions/pages";
 import { formatDateTime } from "@/lib/labels";
-import { Button, Field, cx, inputClass, textareaClass } from "@/components/ui";
+import { Button, Field, actionBarClass, cx, inputClass, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 // 미리보기는 아카데미의 .legacy-content(옛 WP 본문) 스타일에 맞춘다.
@@ -95,13 +95,13 @@ export function PageEditor({
             title="문서 미리보기"
             sandbox=""
             srcDoc={previewDoc(title, deferred)}
-            className="h-[calc(100vh-330px)] min-h-[420px] w-full rounded-md border border-line bg-canvas"
+            className="h-[calc(100vh-330px)] min-h-[420px] w-full rounded-2xl border border-hairline bg-canvas"
           />
           <p className="text-micro text-muted">아카데미 본문 스타일 기준입니다.</p>
         </div>
       </div>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+      <div className={actionBarClass}>
         <span className="mr-auto text-caption">
           {dirty ? (
             <span className="text-warning">저장하지 않은 변경 사항이 있습니다</span>

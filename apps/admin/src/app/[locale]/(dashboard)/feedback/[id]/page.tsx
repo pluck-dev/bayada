@@ -5,7 +5,7 @@ import { requirePage } from "@/lib/session";
 import { feedbackContext, feedbackLocationUrl, getFeedback } from "@/lib/queries/feedback";
 import { FEEDBACK_KIND_TONE, FEEDBACK_STATUS_TONE } from "@/lib/feedback-labels";
 import { formatDateTime } from "@/lib/labels";
-import { Badge, Card, PageHeader, buttonClass } from "@/components/ui";
+import { Badge, Card, Disclosure, PageHeader, buttonClass } from "@/components/ui";
 import { FeedbackStatusSelect } from "@/components/feedback/FeedbackStatusSelect";
 import { FeedbackReplyForm } from "@/components/feedback/FeedbackReplyForm";
 import { FeedbackReworkForm } from "@/components/feedback/FeedbackReworkForm";
@@ -95,8 +95,7 @@ export default async function FeedbackDetailPage({
                 <blockquote className="mt-1 border-l-2 border-line-strong pl-3 text-caption text-ink">{String(context.text)}</blockquote>
               </section>
             )}
-            <details className="mt-4 text-caption">
-              <summary className="cursor-pointer font-medium text-muted">요소·스타일 정보</summary>
+            <Disclosure className="mt-4 text-caption" summary="요소·스타일 정보">
               <dl className="mt-2 grid grid-cols-[88px_minmax(0,1fr)] gap-x-3 gap-y-1">
                 {TECH_FIELDS.map(([label, key]) => (
                   <div key={key} className="contents">
@@ -105,7 +104,7 @@ export default async function FeedbackDetailPage({
                   </div>
                 ))}
               </dl>
-            </details>
+            </Disclosure>
           </Card>
 
           <Card title={`댓글 ${row.replies.length}`}>

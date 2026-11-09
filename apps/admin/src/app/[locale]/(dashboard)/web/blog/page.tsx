@@ -4,7 +4,20 @@ import { prisma } from "@bayada/db";
 import { WEB_BLOG_CATEGORIES } from "@bayada/shared/web-content";
 import { requirePage } from "@/lib/session";
 import { formatDate, formatDateTime } from "@/lib/labels";
-import { Badge, EmptyState, FilterChip, LinkButton, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  LinkButton,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 export default async function WebBlogPage({
   params,
@@ -72,7 +85,7 @@ export default async function WebBlogPage({
               {posts.map((p) => (
                 <tr key={p.id} className={trClass}>
                   <td className={cx(tdClass, "min-w-[320px] whitespace-normal!")}>
-                    <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/${p.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {p.title}
                     </Link>
                     <p className="mt-0.5 text-micro text-subtle">

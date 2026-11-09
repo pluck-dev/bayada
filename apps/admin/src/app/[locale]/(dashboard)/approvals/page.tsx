@@ -5,7 +5,19 @@ import { can } from "@/lib/rbac";
 import { listQueue } from "@/lib/queries/admin";
 import { QUEUE_STATUSES } from "@/lib/workflow";
 import { COURSE_STATUS_LABEL, COURSE_STATUS_TONE, JOB_ROLE_LABEL, PRODUCT_TYPE_LABEL, formatDateTime } from "@/lib/labels";
-import { Badge, EmptyState, FilterChip, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 const STEP_HINT: Partial<Record<CourseStatus, string>> = {
   SUBMITTED: "검토 시작 대기",
@@ -79,7 +91,7 @@ export default async function ApprovalsPage({
               {rows.map((r) => (
                 <tr key={r.id} className={trClass}>
                   <td className={cx(tdClass, "whitespace-normal! font-medium")}>
-                    <Link href={`${base}/${r.id}`} className="hover:underline">
+                    <Link href={`${base}/${r.id}`} className="transition-colors hover:text-brand">
                       {r.title}
                     </Link>
                   </td>
@@ -94,7 +106,7 @@ export default async function ApprovalsPage({
                   </td>
                   <td className={cx(tdClass, "tabular text-subtle")}>{formatDateTime(r.updatedAt)}</td>
                   <td className={tdClass}>
-                    <Link href={`${base}/${r.id}`} className="text-caption font-medium text-fg underline-offset-2 hover:underline">
+                    <Link href={`${base}/${r.id}`} className="text-caption font-medium text-ink underline-offset-2 transition-colors hover:text-brand">
                       검토 →
                     </Link>
                   </td>

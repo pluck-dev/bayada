@@ -10,7 +10,19 @@ import {
   type CredentialProgramInput,
 } from "@/lib/actions/credentials";
 import { validityLabel } from "@/lib/credentials";
-import { Button, Card, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
+import {
+  Button,
+  Card,
+  Field,
+  NumberInput,
+  Select,
+  Switch,
+  Tooltip,
+  actionBarClass,
+  cx,
+  inputClass,
+  textareaClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export function CredentialProgramForm({
@@ -84,10 +96,9 @@ export function CredentialProgramForm({
               />
             </Field>
             <Field label="공개" htmlFor="cp-active" hint="공개하면 아카데미 인증 목록에 보이고 신청을 받습니다.">
-              <label className="flex h-8 items-center gap-2 text-caption">
-                <input id="cp-active" type="checkbox" className="h-4 w-4 accent-zinc-900" checked={v.active} onChange={(e) => set("active", e.target.checked)} />
-                {v.active ? "공개 중 (신청 받음)" : "비공개"}
-              </label>
+              <div className="flex h-11 items-center">
+                <Switch id="cp-active" checked={v.active} onChange={(on) => set("active", on)} label={v.active ? "공개 중 (신청 받음)" : "비공개"} />
+              </div>
             </Field>
             <Field label="한 줄 소개" htmlFor="cp-summary" className="col-span-2">
               <input id="cp-summary" className={inputClass} value={v.summary} onChange={(e) => set("summary", e.target.value)} />
@@ -102,7 +113,7 @@ export function CredentialProgramForm({
           <div className="flex flex-col gap-3">
             <p className="text-caption text-muted">모두 수료(수료일 기록)한 학습자만 신청할 수 있습니다. 게시 중인 프로그램에서 고릅니다.</p>
             {v.requiredCourseIds.length > 0 && (
-              <ul className="flex flex-col divide-y divide-line-soft rounded-md border border-line">
+              <ul className="flex flex-col divide-y divide-hairline rounded-2xl bg-wash px-1">
                 {v.requiredCourseIds.map((id, i) => {
                   const c = courseById.get(id);
                   return (
@@ -113,7 +124,7 @@ export function CredentialProgramForm({
                       <button
                         type="button"
                         aria-label={`${c?.title ?? "프로그램"} 빼기`}
-                        className="rounded p-1 text-zinc-400 hover:bg-surface-sunken hover:text-fg"
+                        className="flex size-7 items-center justify-center rounded-full text-subtle transition-colors hover:bg-canvas hover:text-ink"
                         onClick={() => set("requiredCourseIds", v.requiredCourseIds.filter((x) => x !== id))}
                       >
                         <X className="h-3.5 w-3.5" />
@@ -124,16 +135,18 @@ export function CredentialProgramForm({
               </ul>
             )}
             <div className="flex gap-2">
-              <select aria-label="선수 프로그램 추가" className={selectClass} value={pick} onChange={(e) => setPick(e.target.value)}>
-                <option value="">프로그램 선택…</option>
-                {remaining.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                    {c.note ? ` · ${c.note}` : ""}
-                  </option>
-                ))}
-              </select>
+              <Select
+                aria-label="선수 프로그램 추가"
+                className="flex-1"
+                placeholder="프로그램 선택…"
+                value={pick}
+                onChange={setPick}
+                options={remaining.map((c) => ({ value: c.id, label: c.title, hint: c.note || undefined, text: c.title }))}
+              />
               <Button
+                size="lg"
+                variant="primary"
+                className="h-11"
                 disabled={!pick}
                 onClick={() => {
                   set("requiredCourseIds", [...v.requiredCourseIds, pick]);
@@ -149,35 +162,31 @@ export function CredentialProgramForm({
         <Card title="평가 · 유효기간">
           <div className="grid grid-cols-2 gap-4">
             <Field label="시험 합격 점수" required htmlFor="cp-exam" hint="100점 만점">
-              <input
+              <NumberInput
                 id="cp-exam"
-                type="number"
                 required
                 min={0}
                 max={100}
-                className={cx(inputClass, "tabular")}
                 value={v.examPassingScore}
                 onChange={(e) => set("examPassingScore", Number(e.target.value))}
               />
             </Field>
             <Field label="실기 평가" htmlFor="cp-practical">
               <div className="flex gap-2">
-                <select
+                <Select
                   id="cp-practical"
-                  className={selectClass}
                   value={v.practicalRequired ? "1" : "0"}
-                  onChange={(e) => set("practicalRequired", e.target.value === "1")}
-                >
-                  <option value="1">실시</option>
-                  <option value="0">없음 (시험만)</option>
-                </select>
+                  onChange={(x) => set("practicalRequired", x === "1")}
+                  options={[
+                    { value: "1", label: "실시" },
+                    { value: "0", label: "없음 (시험만)" },
+                  ]}
+                />
                 {v.practicalRequired && (
-                  <input
+                  <NumberInput
                     aria-label="실기 합격 점수"
-                    type="number"
                     min={0}
-                    max={100}
-                    className={cx(inputClass, "tabular w-28!")}
+                    max={100} className="w-28!"
                     value={v.practicalPassingScore}
                     onChange={(e) => set("practicalPassingScore", Number(e.target.value))}
                   />
@@ -185,24 +194,20 @@ export function CredentialProgramForm({
               </div>
             </Field>
             <Field label="유효기간 (개월)" htmlFor="cp-validity" hint={`비우면 영구 · 현재 ${validityLabel(v.validityMonths.trim() ? Number(v.validityMonths) : null)}`}>
-              <input
+              <NumberInput
                 id="cp-validity"
-                type="number"
                 min={1}
                 max={600}
                 placeholder="영구"
-                className={cx(inputClass, "tabular")}
                 value={v.validityMonths}
                 onChange={(e) => set("validityMonths", e.target.value)}
               />
             </Field>
             <Field label="갱신 알림 (만료 전 일수)" htmlFor="cp-notice" hint="이 기간에 들어오면 학습자 인증서 지갑에 갱신 안내가 뜹니다.">
-              <input
+              <NumberInput
                 id="cp-notice"
-                type="number"
                 min={0}
                 max={365}
-                className={cx(inputClass, "tabular")}
                 value={v.renewalNoticeDays}
                 disabled={!v.validityMonths.trim()}
                 onChange={(e) => set("renewalNoticeDays", Number(e.target.value))}
@@ -213,20 +218,19 @@ export function CredentialProgramForm({
             </Field>
           </div>
           {thresholdChanged && pending > 0 && (
-            <p className="mt-3 rounded-md bg-warning-soft px-3 py-2 text-caption text-warning">
+            <p className="mt-4 rounded-2xl bg-pill-warning/70 px-4 py-3 text-caption font-medium text-warning">
               진행 중인 신청 {pending}건의 합격/불합격 판정이 새 기준으로 다시 계산됩니다.
             </p>
           )}
         </Card>
       </fieldset>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+      <div className={actionBarClass}>
         {programId && (
+          <Tooltip className="mr-auto" content={records > 0 ? "신청·발급 기록이 있는 과정은 삭제할 수 없습니다 (비공개로 전환)" : undefined}>
           <Button
             variant="danger"
-            className="mr-auto"
             disabled={isPending || records > 0}
-            title={records > 0 ? "신청·발급 기록이 있는 과정은 삭제할 수 없습니다 (비공개로 전환)" : undefined}
             onClick={() =>
               run(() => deleteCredentialProgram(programId), {
                 confirm: { title: "이 인증 과정을 삭제할까요?", body: "되돌릴 수 없습니다.", confirmLabel: "삭제", danger: true },
@@ -237,6 +241,7 @@ export function CredentialProgramForm({
           >
             과정 삭제
           </Button>
+          </Tooltip>
         )}
         {dirty && <span className="text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
         <Button type="submit" variant="primary" disabled={isPending || (!!programId && !dirty)}>

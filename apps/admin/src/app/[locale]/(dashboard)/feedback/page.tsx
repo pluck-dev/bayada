@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { Download } from "lucide-react";
-import { ProgressBar } from "@bayada/ui";
 import { feedbackKinds, feedbackStatusKeys, feedbackStatuses, reviewSites, sectionLabel } from "@bayada/review/config";
 import { requirePage } from "@/lib/session";
 import { feedbackSummary, listFeedback, parseFeedbackFilter, siteBaseUrl, type FeedbackFilter } from "@/lib/queries/feedback";
-import { Card, EmptyState, FilterChip, PageHeader, Stat, buttonClass, qs, tableWrap } from "@/components/ui";
+import {
+  Card,
+  EmptyState,
+  FilterChip,
+  Notice,
+  PageHeader,
+  ProgressBar,
+  Stat,
+  buttonClass,
+  qs,
+  tableWrap,
+} from "@/components/ui";
 import { Pager } from "@/components/Pager";
 import { SearchBox } from "@/components/SearchBox";
 import { SelectFilter } from "@/components/SelectFilter";
@@ -51,16 +61,16 @@ export default async function FeedbackPage({
       />
 
       {missingUrl.length > 0 && (
-        <p role="status" className="mb-4 rounded-md border border-line bg-surface-sunken px-3 py-2 text-caption text-muted">
+        <Notice className="mb-4">
           {missingUrl.map((s) => (s === "web" ? "WEB_PUBLIC_URL" : "ACADEMY_URL")).join(", ")} 환경변수가 없어 해당 사이트의 &lsquo;위치 보기&rsquo; 링크를 만들 수 없습니다.
-        </p>
+        </Notice>
       )}
 
       <section aria-labelledby="feedback-summary-title" className="mb-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <Card title={<span id="feedback-summary-title">처리 현황{filter.site ? ` · ${reviewSites[filter.site].label}` : ""}</span>}>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="전체" value={summary.total} />
-            <Stat label="미처리" value={summary.open} href={qs(base, { ...query({ status: "open" }), page: undefined })} />
+            <Stat tone="brand" label="미처리" value={summary.open} href={qs(base, { ...query({ status: "open" }), page: undefined })} />
             <Stat label="최근 7일" value={summary.recent} hint="새 피드백" />
             <Stat label="재수정 요청" value={summary.rework} hint="확인완료 전" />
           </div>
@@ -89,9 +99,9 @@ export default async function FeedbackPage({
                 <li key={`${s.site}:${s.section}`}>
                   <Link
                     href={qs(base, { site: s.site, section: s.section })}
-                    className="grid grid-cols-[minmax(0,140px)_minmax(0,1fr)_auto] items-center gap-3 rounded-md px-1.5 py-1 hover:bg-surface-sunken"
+                    className="grid grid-cols-[minmax(0,140px)_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-2.5 py-2 transition-colors hover:bg-wash"
                   >
-                    <span className="truncate text-caption text-ink">
+                    <span className="truncate text-[13px] font-semibold text-ink">
                       {filter.site ? "" : `${reviewSites[s.site].label} · `}
                       {sectionLabel(s.site, s.section)}
                     </span>

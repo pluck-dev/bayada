@@ -14,17 +14,17 @@ import {
   formatDate,
 } from "@/lib/labels";
 import { setVisibility } from "@/lib/actions/programs";
-import { Badge, Button, EmptyState, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import { Badge, Button, Checkbox, EmptyState, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export function VisibilityPill({ value }: { value: "INTERNAL" | "PUBLIC" }) {
   return value === "PUBLIC" ? (
-    <span className="inline-flex items-center gap-1 text-caption font-medium text-sky-700">
+    <span className="inline-flex items-center gap-1 text-[12.5px] font-bold text-info">
       <Globe className="h-3.5 w-3.5" aria-hidden />
       {VISIBILITY_LABEL.PUBLIC}
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 text-caption text-subtle">
+    <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-subtle">
       <Lock className="h-3.5 w-3.5" aria-hidden />
       {VISIBILITY_LABEL.INTERNAL}
     </span>
@@ -76,20 +76,20 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
       {canWrite && (
         <div
           className={cx(
-            "mb-2 flex h-10 items-center gap-2 rounded-lg border px-3 text-caption transition-colors",
-            visibleSelected.length ? "border-ink bg-zinc-900 text-white" : "border-dashed border-line text-muted",
+            "mb-3 flex h-12 items-center gap-2 rounded-2xl px-4 text-[13px] transition-colors",
+            visibleSelected.length ? "bg-ink text-white" : "bg-canvas/60 text-muted",
           )}
           aria-live="polite"
         >
           {visibleSelected.length ? (
             <>
-              <span className="font-medium">{visibleSelected.length}개 선택</span>
-              <span className="mx-1 h-4 w-px bg-zinc-700" aria-hidden />
+              <span className="font-bold">{visibleSelected.length}개 선택</span>
+              <span className="mx-1 h-4 w-px bg-white/15" aria-hidden />
               <button
                 type="button"
                 disabled={isPending}
                 onClick={() => apply(visibleSelected, "PUBLIC")}
-                className="inline-flex h-7 items-center gap-1 rounded-md bg-canvas px-2.5 font-medium text-ink hover:bg-surface-sunken disabled:opacity-50"
+                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-brand px-3.5 font-bold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
               >
                 <Globe className="h-3.5 w-3.5" aria-hidden />
                 외부 공개로 전환
@@ -98,12 +98,12 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
                 type="button"
                 disabled={isPending}
                 onClick={() => apply(visibleSelected, "INTERNAL")}
-                className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 font-medium text-zinc-200 ring-1 ring-zinc-700 hover:bg-zinc-800 disabled:opacity-50"
+                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-white/10 px-3.5 font-bold text-white transition-colors hover:bg-white/20 disabled:opacity-50"
               >
                 <Lock className="h-3.5 w-3.5" aria-hidden />
                 사내 전용으로 전환
               </button>
-              <button type="button" onClick={() => setSelected(new Set())} className="ml-auto text-zinc-400 hover:text-white">
+              <button type="button" onClick={() => setSelected(new Set())} className="ml-auto rounded-full px-3 py-1.5 font-bold text-white/60 transition-colors hover:bg-white/10 hover:text-white">
                 선택 해제
               </button>
             </>
@@ -119,12 +119,12 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
             <tr>
               {canWrite && (
                 <th className={cx(thClass, "w-9")}>
-                  <input
-                    type="checkbox"
+                  <Checkbox
+                    size="sm"
                     aria-label="전체 선택"
                     checked={allChecked}
+                    indeterminate={visibleSelected.length > 0}
                     onChange={() => setSelected(allChecked ? new Set() : new Set(ids))}
-                    className="h-3.5 w-3.5 accent-zinc-900"
                   />
                 </th>
               )}
@@ -145,20 +145,14 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
               <tr key={r.id} className={cx(trClass, selected.has(r.id) && "bg-surface")}>
                 {canWrite && (
                   <td className={tdClass}>
-                    <input
-                      type="checkbox"
-                      aria-label={`${r.title} 선택`}
-                      checked={selected.has(r.id)}
-                      onChange={() => toggle(r.id)}
-                      className="h-3.5 w-3.5 accent-zinc-900"
-                    />
+                    <Checkbox size="sm" aria-label={`${r.title} 선택`} checked={selected.has(r.id)} onChange={() => toggle(r.id)} />
                   </td>
                 )}
                 <td className={cx(tdClass, "min-w-[300px] max-w-[380px] whitespace-normal!")}>
-                  <Link href={`/${locale}/programs/${r.id}`} className="font-medium text-fg hover:underline">
+                  <Link href={`/${locale}/programs/${r.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                     {r.title}
                   </Link>
-                  {r.featured && <Star className="ml-1 inline h-3 w-3 fill-amber-400 text-amber-400" aria-label="메인 큐레이션" />}
+                  {r.featured && <Star className="ml-1 inline size-3.5 fill-brand text-brand" aria-label="메인 큐레이션" data-tip="메인 큐레이션 노출" />}
                   {r.category && <p className="mt-0.5 text-micro text-subtle">{r.category.name}</p>}
                 </td>
                 <td className={cx(tdClass, "text-muted")}>{PRODUCT_TYPE_LABEL[r.productType]}</td>
@@ -188,7 +182,7 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
                       variant="ghost"
                       disabled={isPending}
                       onClick={() => apply([r.id], r.visibility === "PUBLIC" ? "INTERNAL" : "PUBLIC")}
-                      title={r.visibility === "PUBLIC" ? "사내 전용으로 전환" : "외부 공개로 전환"}
+                      data-tip={r.visibility === "PUBLIC" ? "사내 전용으로 전환" : "외부 공개로 전환"}
                     >
                       {r.visibility === "PUBLIC" ? "사내로" : "외부 공개"}
                     </Button>
@@ -199,7 +193,9 @@ export function ProgramTable({ rows, locale, canWrite }: { rows: ProgramRow[]; l
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-caption text-muted">{rows.length}개 프로그램</p>
+      <p className="num mt-3 text-[13px] font-semibold text-muted">
+        <b className="font-extrabold text-ink">{rows.length}</b>개 프로그램
+      </p>
     </>
   );
 }

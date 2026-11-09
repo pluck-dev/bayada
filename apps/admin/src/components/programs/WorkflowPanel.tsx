@@ -8,7 +8,7 @@ import type { Permission } from "@/lib/rbac";
 import { availableTransitions, type ChecklistItem, type Transition } from "@/lib/workflow";
 import { transitionProgram } from "@/lib/actions/programs";
 import { COURSE_STATUS_LABEL } from "@/lib/labels";
-import { Button, cx, textareaClass } from "@/components/ui";
+import { Button, Tooltip, cx, textareaClass } from "@/components/ui";
 import { useAction, useFeedback } from "@/components/ui/feedback";
 
 export function Checklist({ items }: { items: ChecklistItem[] }) {
@@ -21,7 +21,7 @@ export function Checklist({ items }: { items: ChecklistItem[] }) {
           ) : (
             <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-label="미충족" />
           )}
-          <span className={cx("flex-1", c.ok ? "text-fg" : "text-danger")}>
+          <span className={cx("flex-1", c.ok ? "text-ink" : "text-danger")}>
             {c.label}
             <span className={cx("ml-1.5 text-caption", c.ok ? "text-muted" : "text-red-400")}>{c.detail}</span>
           </span>
@@ -84,7 +84,7 @@ export function WorkflowPanel({
   if (!transitions.length) {
     return (
       <p className="text-caption text-muted">
-        현재 상태(<b className="font-medium text-fg">{COURSE_STATUS_LABEL[status]}</b>)에서 이 계정이 할 수 있는 작업이 없습니다.
+        현재 상태(<b className="font-medium text-ink">{COURSE_STATUS_LABEL[status]}</b>)에서 이 계정이 할 수 있는 작업이 없습니다.
       </p>
     );
   }
@@ -113,16 +113,20 @@ export function WorkflowPanel({
           const blocked = t.action === "submit" && missing.length > 0;
           const isPrimary = t.action === primaryAction && t.action !== "request_changes" && t.action !== "archive";
           return (
-            <Button
+            <Tooltip
               key={t.action}
-              variant={t.action === "archive" ? "danger" : isPrimary ? "primary" : t.action === "to_clinical" ? "dark" : "secondary"}
-              className="h-9 w-full"
-              disabled={isPending || blocked}
-              title={blocked ? `필수 항목 미입력: ${missing.map((m) => m.label).join(", ")}` : undefined}
-              onClick={() => go(t)}
+              className="flex w-full [&>button]:flex-1"
+              content={blocked ? `필수 항목 미입력: ${missing.map((m) => m.label).join(", ")}` : undefined}
             >
-              {t.label}
-            </Button>
+              <Button
+                variant={t.action === "archive" ? "danger" : isPrimary ? "brand" : t.action === "to_clinical" ? "primary" : "secondary"}
+                className="w-full"
+                disabled={isPending || blocked}
+                onClick={() => go(t)}
+              >
+                {t.label}
+              </Button>
+            </Tooltip>
           );
         })}
       </div>

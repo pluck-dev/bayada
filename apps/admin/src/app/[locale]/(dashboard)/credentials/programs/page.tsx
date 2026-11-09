@@ -4,7 +4,18 @@ import { requirePage } from "@/lib/session";
 import { listCredentialPrograms } from "@/lib/queries/credentials";
 import { validityLabel } from "@/lib/credentials";
 import { formatDate } from "@/lib/labels";
-import { Badge, EmptyState, LinkButton, PageHeader, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  LinkButton,
+  PageHeader,
+  cx,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 export default async function CredentialProgramsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -45,7 +56,7 @@ export default async function CredentialProgramsPage({ params }: { params: Promi
               {rows.map((p) => (
                 <tr key={p.id} className={trClass}>
                   <td className={cx(tdClass, "min-w-[240px] whitespace-normal!")}>
-                    <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/${p.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {p.title}
                     </Link>
                     <p className="mt-0.5 font-mono text-micro text-subtle">/certifications/{p.slug}</p>

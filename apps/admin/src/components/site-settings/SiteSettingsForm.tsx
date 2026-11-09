@@ -101,12 +101,12 @@ export function SiteSettingsForm({ settings, savedAt, academyUrl }: Props) {
     <div className="grid grid-cols-[180px_minmax(0,1fr)] items-start gap-6">
       <nav aria-label="설정 섹션" className="sticky top-0 flex flex-col gap-0.5 text-caption">
         {NAV.map((n) => (
-          <a key={n.key} href={`#${anchor(n.key)}`} className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-muted hover:bg-surface-sunken hover:text-fg">
+          <a key={n.key} href={`#${anchor(n.key)}`} className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-muted hover:bg-surface-sunken hover:text-ink">
             {n.label}
-            {savedAt[n.key] && <span className="h-1.5 w-1.5 rounded-full bg-brand" title="기본값에서 바뀜" aria-label="변경됨" />}
+            {savedAt[n.key] && <span className="h-1.5 w-1.5 rounded-full bg-brand" data-tip="기본값에서 바뀜" aria-label="변경됨" />}
           </a>
         ))}
-        <a href={academyUrl} target="_blank" rel="noopener noreferrer" className="mt-3 px-2.5 text-caption text-muted underline-offset-2 hover:text-fg hover:underline">
+        <a href={academyUrl} target="_blank" rel="noopener noreferrer" className="mt-3 px-2.5 text-caption text-muted underline-offset-2 hover:text-ink transition-colors hover:text-brand">
           아카데미에서 보기 ↗
         </a>
       </nav>
@@ -169,13 +169,13 @@ function SectionsSection({ initial, savedAt }: { initial: SiteSettings["home.sec
         <p className="mb-3 text-caption text-muted">
           히어로 아래 섹션 순서입니다. 데이터가 없는 섹션(게시된 패스웨이 0건, 파트너 로고 없음 등)은 켜 두어도 보이지 않습니다. 업셀·FAQ 를 끄면 상단 메뉴의 바로가기도 숨겨집니다.
         </p>
-        <ol className="divide-y divide-line-soft rounded-md border border-line">
+        <ol className="divide-y divide-hairline rounded-2xl bg-wash px-1">
           {v.order.map((k, i) => {
             const off = v.hidden.includes(k);
             return (
               <li key={k} className={cx("flex items-center gap-3 px-3 py-2", off && "bg-surface")}>
                 <span className="tabular w-5 text-caption text-subtle">{i + 1}</span>
-                <span className={cx("flex-1 text-caption", off ? "text-muted line-through" : "font-medium text-fg")}>{HOME_SECTION_LABEL[k]}</span>
+                <span className={cx("flex-1 text-caption", off ? "text-muted line-through" : "font-medium text-ink")}>{HOME_SECTION_LABEL[k]}</span>
                 <Button size="sm" variant="ghost" disabled={isPending} onClick={() => toggle(k)} aria-label={`${HOME_SECTION_LABEL[k]} ${off ? "표시" : "숨김"}`}>
                   {off ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                   {off ? "숨김" : "표시"}
@@ -214,7 +214,7 @@ function FaqSection({ initial, savedAt }: { initial: SiteSettings["faq"]; savedA
           </div>
           <ol className="flex flex-col gap-3">
             {v.items.map((it, i) => (
-              <li key={i} className="rounded-md border border-line p-3">
+              <li key={i} className="panel-inset rounded-2xl p-4">
                 <div className="mb-2 flex items-center gap-1">
                   <span className="tabular flex-1 text-caption font-medium text-muted">질문 {i + 1}</span>
                   <Button size="sm" variant="ghost" disabled={i === 0} onClick={() => setV({ ...v, items: move(v.items, i, -1) })} aria-label={`질문 ${i + 1} 위로`}>
@@ -339,7 +339,7 @@ function SeoSection({ initial, savedAt }: { initial: SiteSettings["seo"]; savedA
           {/^https?:\/\//i.test(v.ogImageUrl) && (
             // 운영자가 입력한 원격 이미지 미리보기
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={v.ogImageUrl} alt="OG 이미지 미리보기" className="col-span-2 aspect-[1200/630] w-full max-w-[360px] rounded-md border border-line object-cover" />
+            <img src={v.ogImageUrl} alt="OG 이미지 미리보기" className="col-span-2 aspect-[1200/630] w-full max-w-[360px] rounded-2xl object-cover" />
           )}
         </fieldset>
         {footer}

@@ -16,7 +16,7 @@ import {
 import { requestFeedbackRework, setFeedbackStatus } from "@/lib/actions/feedback";
 import { FEEDBACK_KIND_TONE } from "@/lib/feedback-labels";
 import { formatDateTime } from "@/lib/labels";
-import { Badge, Button, cx, selectClass, tableClass, tdClass, textareaClass, thClass, trClass } from "@/components/ui";
+import { Badge, Button, Checkbox, Select, cx, tableClass, tdClass, textareaClass, thClass, trClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 import { FeedbackStatusSelect } from "./FeedbackStatusSelect";
 
@@ -81,23 +81,21 @@ export function FeedbackTable({ rows, detailBase, detailQuery }: { rows: Feedbac
   return (
     <>
       {selected.size > 0 && (
-        <div className="flex flex-wrap items-start gap-2 border-b border-line bg-surface-sunken px-3 py-2.5" role="region" aria-label="선택 항목 일괄 처리">
-          <span className="self-center text-caption font-semibold text-ink">{selected.size}건 선택</span>
-          <select
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-2xl bg-ink px-4 py-3 text-white" role="region" aria-label="선택 항목 일괄 처리">
+          <span className="mr-1 self-center text-[13px] font-bold text-white">{selected.size}건 선택</span>
+          <Select
+            size="sm"
             aria-label="일괄 처리"
-            className={cx(selectClass, "w-auto! min-w-[180px]")}
+            className="min-w-[200px] [&>button]:bg-canvas"
             value={target}
-            onChange={(e) => setTarget(e.target.value as FeedbackStatus | "rework" | "")}
+            placeholder="처리할 작업 선택"
+            onChange={(v) => setTarget(v as FeedbackStatus | "rework" | "")}
             disabled={isPending}
-          >
-            <option value="">처리할 작업 선택</option>
-            {feedbackStatusKeys.map((s) => (
-              <option key={s} value={s}>
-                {feedbackStatuses[s]}(으)로 변경
-              </option>
-            ))}
-            <option value="rework">재수정 요청 (개발완료 이후 항목)</option>
-          </select>
+            options={[
+              ...feedbackStatusKeys.map((s) => ({ value: s, label: `${feedbackStatuses[s]}(으)로 변경` })),
+              { value: "rework", label: "재수정 요청", hint: "개발완료 이후 항목" },
+            ]}
+          />
           {target === "rework" && (
             <textarea
               aria-label="재수정 사유"
@@ -110,10 +108,10 @@ export function FeedbackTable({ rows, detailBase, detailQuery }: { rows: Feedbac
               disabled={isPending}
             />
           )}
-          <Button size="sm" variant="primary" onClick={apply} disabled={isPending || !target || (target === "rework" && !reason.trim())}>
+          <Button size="sm" variant="brand" className="h-9 px-4" onClick={apply} disabled={isPending || !target || (target === "rework" && !reason.trim())}>
             적용
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())} disabled={isPending}>
+          <Button size="sm" variant="ghost" className="h-9 text-white/70 hover:bg-white/10 hover:text-white" onClick={() => setSelected(new Set())} disabled={isPending}>
             선택 해제
           </Button>
         </div>
@@ -122,10 +120,11 @@ export function FeedbackTable({ rows, detailBase, detailQuery }: { rows: Feedbac
         <thead>
           <tr>
             <th className={cx(thClass, "w-px")}>
-              <input
-                type="checkbox"
+              <Checkbox
+                size="sm"
                 aria-label="이 페이지 전체 선택"
                 checked={allChecked}
+                indeterminate={selected.size > 0}
                 onChange={() => setSelected(allChecked ? new Set() : new Set(ids))}
               />
             </th>
@@ -142,11 +141,11 @@ export function FeedbackTable({ rows, detailBase, detailQuery }: { rows: Feedbac
           {rows.map((r) => (
             <tr key={r.id} className={cx(trClass, selected.has(r.id) && "bg-surface-sunken")}>
               <td className={tdClass}>
-                <input type="checkbox" aria-label={`피드백 #${r.id} 선택`} checked={selected.has(r.id)} onChange={() => toggle(r.id)} />
+                <Checkbox size="sm" aria-label={`피드백 #${r.id} 선택`} checked={selected.has(r.id)} onChange={() => toggle(r.id)} />
               </td>
               <td className={cx(tdClass, "tabular text-muted")}>#{r.id}</td>
               <td className={cx(tdClass, "max-w-[360px] whitespace-normal!")}>
-                <Link href={`${detailBase}/${r.id}${detailQuery ? `?${detailQuery}` : ""}`} className="text-ink hover:underline" title={r.body}>
+                <Link href={`${detailBase}/${r.id}${detailQuery ? `?${detailQuery}` : ""}`} className="text-ink transition-colors hover:text-brand" data-tip={r.body}>
                   {excerpt(r.body)}
                 </Link>
                 <div className="mt-0.5 flex flex-wrap gap-x-2 text-micro text-subtle">
@@ -161,7 +160,7 @@ export function FeedbackTable({ rows, detailBase, detailQuery }: { rows: Feedbac
                 <span className="block text-caption font-medium text-ink">
                   {reviewSites[r.site].label} · {sectionLabel(r.site, r.section)}
                 </span>
-                <span className="block truncate text-micro text-subtle" title={r.pagePath}>
+                <span className="block truncate text-micro text-subtle" data-tip={r.pagePath}>
                   {r.pagePath}
                 </span>
               </td>

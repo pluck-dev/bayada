@@ -14,7 +14,20 @@ import {
 } from "@/lib/actions/pathways";
 import type { StepLinkOptions } from "@/lib/queries/pathways";
 import { JOB_ROLES, JOB_ROLE_LABEL, formatDateTime } from "@/lib/labels";
-import { Badge, Button, Card, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  DatePicker,
+  Field,
+  NumberInput,
+  Select,
+  Tooltip,
+  actionBarClass,
+  cx,
+  inputClass,
+  textareaClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 import { previewDoc } from "@/components/pages/PageEditor";
 
@@ -135,25 +148,16 @@ export function PathwayForm({
               />
             </Field>
             <Field label="대상 직군" htmlFor="pw-role">
-              <select
+              <Select
                 id="pw-role"
-                className={selectClass}
                 value={v.jobRole}
-                onChange={(e) => set("jobRole", e.target.value as JobRole | "")}
-              >
-                <option value="">지정 안 함</option>
-                {JOB_ROLES.map((r) => (
-                  <option key={r} value={r}>
-                    {JOB_ROLE_LABEL[r]}
-                  </option>
-                ))}
-              </select>
+                onChange={(x) => set("jobRole", x as JobRole | "")}
+                options={[{ value: "", label: "지정 안 함" }, ...JOB_ROLES.map((r) => ({ value: r, label: JOB_ROLE_LABEL[r] }))]}
+              />
             </Field>
             <Field label="정렬 순서" htmlFor="pw-order" hint="작을수록 먼저 (홈·목록)">
-              <input
+              <NumberInput
                 id="pw-order"
-                type="number"
-                className={cx(inputClass, "tabular")}
                 value={v.order}
                 onChange={(e) => set("order", Number(e.target.value))}
               />
@@ -173,7 +177,7 @@ export function PathwayForm({
                 {/^https?:\/\//i.test(v.coverImage.trim()) && (
                   // 어드민이 입력한 원격 표지 이미지 미리보기
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={v.coverImage.trim()} alt="표지 미리보기" className="h-10 w-16 shrink-0 rounded border border-line object-cover" />
+                  <img src={v.coverImage.trim()} alt="표지 미리보기" className="h-11 w-16 shrink-0 rounded-xl object-cover" />
                 )}
               </div>
             </Field>
@@ -183,13 +187,7 @@ export function PathwayForm({
         <Card title="정보 기준일 · 면책 고지">
           <div className="grid grid-cols-[200px_1fr] gap-4">
             <Field label="정보 기준일" htmlFor="pw-asof" hint="게시하려면 필수">
-              <input
-                id="pw-asof"
-                type="date"
-                className={cx(inputClass, "tabular")}
-                value={v.infoAsOf}
-                onChange={(e) => set("infoAsOf", e.target.value)}
-              />
+              <DatePicker id="pw-asof" value={v.infoAsOf} onChange={(x) => set("infoAsOf", x)} />
             </Field>
             <Field label="면책 고지" htmlFor="pw-disclaimer" hint="비워 두면 아래 기본 문구가 표시됩니다.">
               <textarea
@@ -202,7 +200,7 @@ export function PathwayForm({
               />
             </Field>
           </div>
-          <div className="mt-4 flex gap-2.5 rounded-md border border-warning-line bg-warning-soft px-3 py-2.5 text-caption leading-relaxed text-warning">
+          <div className="mt-4 flex gap-2.5 rounded-2xl bg-pill-warning/70 px-4 py-3 text-[13px] leading-relaxed text-warning">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
             <div>
               <p className="font-medium">작성 원칙 — 국가별 면허·비자 요건은 반드시 해당 국가 공식 기관 자료로 확인해 쓰고, 확인한 날짜를 정보 기준일에 넣으세요.</p>
@@ -214,9 +212,9 @@ export function PathwayForm({
           </div>
         </Card>
 
-        <div className="rounded-lg border border-line bg-canvas">
+        <div className="surface-card rounded-[22px] bg-canvas">
           <header className="border-b border-line px-4 py-2.5">
-            <h2 className="text-caption font-semibold text-fg">자격 경로 개요 (본문)</h2>
+            <h2 className="text-caption font-semibold text-ink">자격 경로 개요 (본문)</h2>
           </header>
           <div className="grid grid-cols-2 gap-4 p-4">
             <div className="flex min-w-0 flex-col gap-1.5">
@@ -240,7 +238,7 @@ export function PathwayForm({
                 title="본문 미리보기"
                 sandbox=""
                 srcDoc={previewDoc("자격 경로 개요", deferredContent)}
-                className="h-[420px] w-full rounded-md border border-line bg-canvas"
+                className="h-[420px] w-full rounded-2xl border border-hairline bg-canvas"
               />
               <p className="text-micro text-muted">아카데미 본문 스타일 기준입니다.</p>
             </div>
@@ -261,7 +259,7 @@ export function PathwayForm({
           ) : (
             <ol className="flex flex-col gap-3">
               {steps.map((s, i) => (
-                <li key={s.key} className="rounded-md border border-line bg-surface p-3">
+                <li key={s.key} className="panel-inset rounded-2xl p-4">
                   <div className="mb-2.5 flex items-center gap-2">
                     <span className="rounded bg-zinc-900 px-1.5 py-0.5 text-micro font-semibold text-white">STEP {i + 1}</span>
                     <span className="ml-auto flex items-center gap-1">
@@ -294,52 +292,33 @@ export function PathwayForm({
                     </Field>
                     <Field label="연결" htmlFor={`st-link-${s.key}`}>
                       <div className="grid grid-cols-[170px_minmax(0,1fr)] gap-2">
-                        <select
+                        <Select
                           id={`st-link-${s.key}`}
-                          className={cx(selectClass, s.link === "none" && "col-span-2")}
+                          className={cx(s.link === "none" && "col-span-2")}
                           value={s.link}
-                          onChange={(e) => setStep(i, { link: e.target.value as StepLinkKind })}
-                        >
-                          {(Object.keys(LINK_LABEL) as StepLinkKind[]).map((k) => (
-                            <option key={k} value={k}>
-                              {LINK_LABEL[k]}
-                            </option>
-                          ))}
-                        </select>
+                          onChange={(x) => setStep(i, { link: x as StepLinkKind })}
+                          options={(Object.keys(LINK_LABEL) as StepLinkKind[]).map((k) => ({ value: k, label: LINK_LABEL[k] }))}
+                        />
                         {s.link === "course" && (
-                          <select
+                          <Select
                             aria-label={`STEP ${i + 1} 연결 프로그램`}
-                            className={selectClass}
+                            placeholder="프로그램 선택"
                             value={s.courseId}
-                            onChange={(e) => setStep(i, { courseId: e.target.value })}
-                          >
-                            <option value="">프로그램 선택</option>
-                            {options.courses.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.title}
-                                {c.note ? ` · ${c.note}` : ""}
-                              </option>
-                            ))}
-                          </select>
+                            onChange={(x) => setStep(i, { courseId: x })}
+                            options={options.courses.map((c) => ({ value: c.id, label: c.title, text: c.title, hint: c.note || undefined }))}
+                          />
                         )}
                         {s.link === "credential" &&
                           (options.credentials.length === 0 ? (
                             <span className="flex items-center text-caption text-muted">운영 중인 인증 과정이 없습니다</span>
                           ) : (
-                            <select
+                            <Select
                               aria-label={`STEP ${i + 1} 연결 인증 과정`}
-                              className={selectClass}
+                              placeholder="인증 과정 선택"
                               value={s.credentialProgramId}
-                              onChange={(e) => setStep(i, { credentialProgramId: e.target.value })}
-                            >
-                              <option value="">인증 과정 선택</option>
-                              {options.credentials.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                  {c.title}
-                                  {c.note ? ` · ${c.note}` : ""}
-                                </option>
-                              ))}
-                            </select>
+                              onChange={(x) => setStep(i, { credentialProgramId: x })}
+                              options={options.credentials.map((c) => ({ value: c.id, label: c.title, text: c.title, hint: c.note || undefined }))}
+                            />
                           ))}
                       </div>
                     </Field>
@@ -363,13 +342,13 @@ export function PathwayForm({
         </Card>
       </fieldset>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+      <div className={actionBarClass}>
         {pathwayId && (
           <>
+            <Tooltip content={published ? "게시 중인 패스웨이는 삭제할 수 없습니다" : undefined}>
             <Button
               variant="danger"
               disabled={isPending || published}
-              title={published ? "게시 중인 패스웨이는 삭제할 수 없습니다" : undefined}
               onClick={() =>
                 run(() => deletePathway(pathwayId), {
                   confirm: {
@@ -385,6 +364,7 @@ export function PathwayForm({
             >
               삭제
             </Button>
+            </Tooltip>
             <span className="ml-2 flex items-center gap-2 text-caption">
               {published ? (
                 <Badge tone="green" dot>
@@ -393,11 +373,11 @@ export function PathwayForm({
               ) : (
                 <Badge tone="slate">비공개</Badge>
               )}
+              <Tooltip content={dirty ? "변경 사항을 먼저 저장하세요" : undefined}>
               <Button
                 size="sm"
                 variant={published ? "secondary" : "dark"}
                 disabled={isPending || dirty}
-                title={dirty ? "변경 사항을 먼저 저장하세요" : undefined}
                 onClick={() =>
                   run(() => setPathwayPublished(pathwayId, !published), {
                     confirm: published
@@ -408,6 +388,7 @@ export function PathwayForm({
               >
                 {published ? "게시 중단" : "게시"}
               </Button>
+              </Tooltip>
             </span>
           </>
         )}

@@ -3,7 +3,18 @@ import { Plus } from "lucide-react";
 import { requirePage } from "@/lib/session";
 import { listPathways } from "@/lib/queries/pathways";
 import { JOB_ROLE_LABEL, formatDate, formatDateTime } from "@/lib/labels";
-import { Badge, EmptyState, LinkButton, PageHeader, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  LinkButton,
+  PageHeader,
+  cx,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 export default async function PathwaysPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -48,7 +59,7 @@ export default async function PathwaysPage({ params }: { params: Promise<{ local
                 <tr key={p.id} className={trClass}>
                   <td className={cx(tdClass, "font-medium")}>{p.country}</td>
                   <td className={cx(tdClass, "min-w-[260px] whitespace-normal!")}>
-                    <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/${p.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {p.title}
                     </Link>
                     <p className="mt-0.5 font-mono text-micro text-subtle">{p.slug}</p>

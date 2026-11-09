@@ -14,19 +14,28 @@ export function CredentialTabs({ items }: { items: { href: string; label: string
   // 심사위원처럼 탭이 하나뿐이면 메뉴를 그리지 않는다
   if (items.length < 2) return null;
   return (
-    <nav aria-label="바야다 인증 메뉴" className="mb-5 flex gap-5 border-b border-line">
+    <nav aria-label="바야다 인증 메뉴" className="mb-6 inline-flex gap-1 rounded-full bg-canvas p-1">
       {items.map((i) => (
         <Link
           key={i.href}
           href={i.href}
           aria-current={active === i.href ? "page" : undefined}
           className={cx(
-            "-mb-px flex items-center gap-1.5 border-b-2 pb-2.5 text-caption font-medium transition-colors",
-            active === i.href ? "border-ink text-fg" : "border-transparent text-muted hover:text-fg",
+            "flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-bold transition-colors",
+            active === i.href ? "bg-ink text-white" : "text-muted hover:bg-wash hover:text-ink",
           )}
         >
           {i.label}
-          {!!i.count && <span className="tabular rounded-full bg-surface-sunken px-1.5 text-micro text-muted">{i.count}</span>}
+          {!!i.count && (
+            <span
+              className={cx(
+                "num inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-extrabold",
+                "bg-brand text-white",
+              )}
+            >
+              {i.count}
+            </span>
+          )}
         </Link>
       ))}
     </nav>

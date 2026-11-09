@@ -80,7 +80,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
                     <tr key={e.id} className={trClass}>
                       <td className={cx(tdClass, "whitespace-normal!")}>
                         {can(user, "program.read") ? (
-                          <Link href={`/${locale}/programs/${e.course.id}`} className="hover:underline">
+                          <Link href={`/${locale}/programs/${e.course.id}`} className="transition-colors hover:text-brand">
                             {e.course.title}
                           </Link>
                         ) : (

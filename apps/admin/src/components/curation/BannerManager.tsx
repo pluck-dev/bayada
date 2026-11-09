@@ -3,7 +3,21 @@
 import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { createBanner, deleteBanner, updateBanner, type BannerInput } from "@/lib/actions/curation";
-import { Badge, Button, Card, EmptyState, Field, cx, inputClass, tableClass, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  DatePicker,
+  EmptyState,
+  Field,
+  NumberInput,
+  cx,
+  inputClass,
+  tableClass,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 interface BannerRow {
@@ -79,7 +93,7 @@ export function BannerManager({ banners, now }: { banners: BannerRow[]; now: str
       }
     >
       {editing !== null && (
-        <form onSubmit={save} className="border-b border-line bg-surface p-4">
+        <form onSubmit={save} className="panel-inset mx-4 mb-4 rounded-2xl p-5">
           <fieldset disabled={isPending} className="grid grid-cols-4 gap-3">
             <Field label="제목" required className="col-span-2">
               <input required className={inputClass} value={form.title} onChange={(e) => set("title", e.target.value)} />
@@ -94,13 +108,13 @@ export function BannerManager({ banners, now }: { banners: BannerRow[]; now: str
               <input className={inputClass} value={form.linkUrl} onChange={(e) => set("linkUrl", e.target.value)} />
             </Field>
             <Field label="노출 시작 (KST)" required>
-              <input type="datetime-local" required className={inputClass} value={form.startsAt} onChange={(e) => set("startsAt", e.target.value)} />
+              <DatePicker mode="datetime" required clearable={false} aria-label="노출 시작" value={form.startsAt} onChange={(x) => set("startsAt", x)} />
             </Field>
             <Field label="노출 종료 (KST)" required>
-              <input type="datetime-local" required className={inputClass} value={form.endsAt} onChange={(e) => set("endsAt", e.target.value)} />
+              <DatePicker mode="datetime" required clearable={false} aria-label="노출 종료" value={form.endsAt} onChange={(x) => set("endsAt", x)} />
             </Field>
             <Field label="순서" hint="작을수록 먼저">
-              <input type="number" className={cx(inputClass, "tabular")} value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
+              <NumberInput value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
             </Field>
             <div className="flex items-end justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditing(null)}>

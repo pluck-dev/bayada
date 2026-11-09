@@ -12,7 +12,7 @@ import {
   type ScoreInput,
 } from "@/lib/actions/credentials";
 import { judge, type Thresholds } from "@/lib/credentials";
-import { Badge, Button, Card, Field, cx, inputClass, textareaClass } from "@/components/ui";
+import { Badge, Button, Card, Field, NumberInput, Tooltip, cx, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 function Verdict({ passed }: { passed: boolean | null }) {
@@ -25,7 +25,7 @@ function ScoreRow({ label, value, pass }: { label: string; value: number | null;
     <div className="flex items-baseline justify-between py-1.5 text-caption">
       <dt className="text-muted">{label}</dt>
       <dd>
-        <span className="tabular font-semibold text-fg">{value ?? "-"}</span>
+        <span className="tabular font-semibold text-ink">{value ?? "-"}</span>
         <span className="tabular text-subtle"> / 합격 {pass}점</span>
       </dd>
     </div>
@@ -76,26 +76,22 @@ export function EvaluationPanel({
         <fieldset disabled={isPending} className="flex flex-col gap-3.5">
           <div className={cx("grid gap-3", thresholds.practicalRequired ? "grid-cols-2" : "grid-cols-1")}>
             <Field label="시험 점수" htmlFor="ev-exam" hint={`합격 ${thresholds.examPassingScore}점 이상`}>
-              <input
+              <NumberInput
                 id="ev-exam"
-                type="number"
                 min={0}
                 max={100}
                 inputMode="numeric"
-                className={cx(inputClass, "tabular")}
                 value={v.examScore}
                 onChange={(e) => setV({ ...v, examScore: e.target.value })}
               />
             </Field>
             {thresholds.practicalRequired && (
               <Field label="실기 점수" htmlFor="ev-practical" hint={`합격 ${thresholds.practicalPassingScore}점 이상`}>
-                <input
+                <NumberInput
                   id="ev-practical"
-                  type="number"
                   min={0}
                   max={100}
                   inputMode="numeric"
-                  className={cx(inputClass, "tabular")}
                   value={v.practicalScore}
                   onChange={(e) => setV({ ...v, practicalScore: e.target.value })}
                 />
@@ -141,7 +137,7 @@ export function EvaluationPanel({
         </fieldset>
       ) : (
         <div className="flex flex-col gap-3">
-          <dl className="divide-y divide-line-soft">
+          <dl className="divide-y divide-hairline">
             <ScoreRow label="시험" value={num(initial.examScore)} pass={thresholds.examPassingScore} />
             {thresholds.practicalRequired && (
               <ScoreRow label="실기" value={num(initial.practicalScore)} pass={thresholds.practicalPassingScore} />
@@ -155,7 +151,7 @@ export function EvaluationPanel({
             </div>
           )}
           {initial.evaluatorNote && (
-            <p className="whitespace-pre-wrap rounded-md border border-line px-3 py-2 text-caption leading-relaxed text-ink-soft">
+            <p className="whitespace-pre-wrap rounded-2xl bg-wash px-4 py-3 text-caption leading-relaxed text-ink-soft">
               {initial.evaluatorNote}
             </p>
           )}
@@ -219,7 +215,7 @@ export function DecisionPanel({
             </p>
           )}
           {decisionNote && (
-            <p className="whitespace-pre-wrap rounded-md border border-line px-3 py-2 text-caption leading-relaxed text-ink-soft">
+            <p className="whitespace-pre-wrap rounded-2xl bg-wash px-4 py-3 text-caption leading-relaxed text-ink-soft">
               {decisionNote}
             </p>
           )}
@@ -249,10 +245,10 @@ export function DecisionPanel({
         <Field label="처리 메모" htmlFor="dc-note" hint="반려할 때는 필수 — 학습자에게 사유로 보입니다.">
           <textarea id="dc-note" rows={3} className={textareaClass} value={note} onChange={(e) => setNote(e.target.value)} />
         </Field>
+        <Tooltip content={blocked ?? undefined} className="flex [&>button]:flex-1">
         <Button
           variant="dark"
           disabled={isPending || !!blocked}
-          title={blocked ?? undefined}
           onClick={() =>
             run(() => approveApplication(id, note), {
               confirm: { title: "승인하고 인증을 발급할까요?", body: "인증번호가 발급되며 되돌리려면 '발급된 인증'에서 취소해야 합니다.", confirmLabel: "승인 · 발급" },
@@ -261,11 +257,12 @@ export function DecisionPanel({
         >
           승인 · 발급
         </Button>
+        </Tooltip>
         {blocked && <p className="-mt-1 text-center text-micro text-muted">{blocked}</p>}
+        <Tooltip content={!note.trim() ? "반려 사유를 입력하세요" : undefined} className="flex [&>button]:flex-1">
         <Button
           variant="danger"
           disabled={isPending || !note.trim()}
-          title={!note.trim() ? "반려 사유를 입력하세요" : undefined}
           onClick={() =>
             run(() => rejectApplication(id, note), {
               confirm: { title: "이 신청을 반려할까요?", body: "학습자는 사유를 확인한 뒤 다시 신청할 수 있습니다.", confirmLabel: "반려", danger: true },
@@ -274,6 +271,7 @@ export function DecisionPanel({
         >
           반려
         </Button>
+        </Tooltip>
       </fieldset>
     </Card>
   );

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createPassPlan, deletePassPlan, updatePassPlan, type PassPlanInput } from "@/lib/actions/pass-plans";
 import { PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
-import { Button, Card, Field, cx, inputClass, textareaClass } from "@/components/ui";
+import { Button, Card, Field, NumberInput, Switch, ToggleChip, inputClass, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export function PassPlanForm({
@@ -64,25 +64,21 @@ export function PassPlanForm({
             />
           </Field>
           <Field label="가격 (원)" required htmlFor="pp-price" hint="100원 이상 · 결제 시점 금액으로 고정">
-            <input
+            <NumberInput
               id="pp-price"
-              type="number"
               min={100}
               step={100}
               required
-              className={cx(inputClass, "tabular")}
               value={v.price || ""}
               onChange={(e) => set("price", Number(e.target.value) || 0)}
             />
           </Field>
           <Field label="이용 기간 (일)" required htmlFor="pp-days" hint="30 = 1개월 · 365 = 1년. 갱신하면 남은 기간에 이어 붙습니다.">
-            <input
+            <NumberInput
               id="pp-days"
-              type="number"
               min={1}
               max={3650}
               required
-              className={cx(inputClass, "tabular")}
               value={v.durationDays || ""}
               onChange={(e) => set("durationDays", Number(e.target.value) || 0)}
             />
@@ -95,21 +91,13 @@ export function PassPlanForm({
               {PRODUCT_TYPES.map((t) => {
                 const on = v.includes.includes(t);
                 return (
-                  <label
+                  <ToggleChip
                     key={t}
-                    className={cx(
-                      "inline-flex h-8 cursor-pointer items-center gap-2 rounded-md border px-3 text-caption transition-colors",
-                      on ? "border-ink bg-zinc-900 text-white" : "border-line bg-canvas text-ink-soft hover:border-line-strong",
-                    )}
+                    on={on}
+                    onToggle={() => set("includes", on ? v.includes.filter((x) => x !== t) : [...v.includes, t])}
                   >
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={on}
-                      onChange={() => set("includes", on ? v.includes.filter((x) => x !== t) : [...v.includes, t])}
-                    />
                     {PRODUCT_TYPE_LABEL[t]}
-                  </label>
+                  </ToggleChip>
                 );
               })}
             </div>
@@ -117,10 +105,13 @@ export function PassPlanForm({
               유료 프로그램 중 이 유형이면서 학습자에게 노출되는 프로그램을 패스로 수강할 수 있습니다. 사내 전용 노출 규칙은 그대로 적용됩니다.
             </p>
           </fieldset>
-          <label className="col-span-2 inline-flex items-center gap-2 text-caption text-ink-soft">
-            <input type="checkbox" checked={v.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-zinc-900" />
-            판매 중 (끄면 새 구독만 막히고, 이용 중인 구독은 만료일까지 유지)
-          </label>
+          <Switch
+            className="col-span-2"
+            checked={v.active}
+            onChange={(on) => set("active", on)}
+            label="판매 중"
+            desc="끄면 새 구독만 막히고, 이용 중인 구독은 만료일까지 유지됩니다."
+          />
         </fieldset>
       </Card>
 

@@ -41,7 +41,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
             </Badge>
             <VisibilityPill value={program.visibility} />
             {can(user, "program.read") && (
-              <Link href={`/${locale}/programs/${id}`} className="text-caption underline-offset-2 hover:underline">
+              <Link href={`/${locale}/programs/${id}`} className="text-caption underline-offset-2 transition-colors hover:text-brand">
                 프로그램 편집 화면 열기
               </Link>
             )}
@@ -114,7 +114,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           </Card>
         </div>
 
-        <aside className="sticky top-0 rounded-lg border border-line bg-surface p-4">
+        <aside className="surface-card sticky top-6 rounded-[22px] bg-canvas p-5">
           <h2 className="mb-3 text-body-sm font-semibold">검토</h2>
           <WorkflowPanel courseId={id} status={program.status} permissions={user.permissions} checklist={checklist} afterHref={clinicalOnly ? `/${locale}/approvals` : undefined}
           />

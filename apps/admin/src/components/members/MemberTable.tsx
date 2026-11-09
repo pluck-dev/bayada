@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { JobRole, Role, UserStatus } from "@bayada/db";
 import { decideSignup } from "@/lib/actions/members";
 import { JOB_ROLE_LABEL, ROLE_LABEL, USER_STATUS_LABEL, USER_STATUS_TONE, formatDate } from "@/lib/labels";
-import { Badge, Button, EmptyState, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import { Badge, Button, Checkbox, EmptyState, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 interface Row {
@@ -62,13 +62,13 @@ export function MemberTable({
   return (
     <>
       {canWrite && sel.length > 0 && (
-        <div className="mb-2 flex h-10 items-center gap-2 rounded-lg bg-zinc-900 px-3 text-caption text-white">
-          <span className="font-medium">승인 대기 {sel.length}명 선택</span>
+        <div className="mb-3 flex h-12 animate-pop-in items-center gap-2 rounded-2xl bg-ink px-4 text-[13px] text-white">
+          <span className="font-bold">승인 대기 {sel.length}명 선택</span>
           <button
             type="button"
             disabled={isPending}
             onClick={() => decide(sel, "APPROVED")}
-            className="ml-2 h-7 rounded-md bg-canvas px-2.5 font-medium text-ink hover:bg-surface-sunken"
+            className="ml-2 h-8 rounded-full bg-brand px-4 font-bold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
           >
             일괄 승인
           </button>
@@ -76,7 +76,7 @@ export function MemberTable({
             type="button"
             disabled={isPending}
             onClick={() => decide(sel, "REJECTED")}
-            className="h-7 rounded-md px-2.5 font-medium text-zinc-200 ring-1 ring-zinc-700 hover:bg-zinc-800"
+            className="h-8 rounded-full bg-white/10 px-4 font-bold text-white transition-colors hover:bg-white/20 disabled:opacity-50"
           >
             일괄 거절
           </button>
@@ -88,13 +88,13 @@ export function MemberTable({
             <tr>
               {canWrite && (
                 <th className={cx(thClass, "w-9")}>
-                  <input
-                    type="checkbox"
+                  <Checkbox
+                    size="sm"
                     aria-label="승인 대기 전체 선택"
                     disabled={!pendingIds.length}
                     checked={pendingIds.length > 0 && sel.length === pendingIds.length}
+                    indeterminate={sel.length > 0}
                     onChange={() => setSelected(sel.length === pendingIds.length ? new Set() : new Set(pendingIds))}
-                    className="h-3.5 w-3.5 accent-zinc-900"
                   />
                 </th>
               )}
@@ -111,12 +111,12 @@ export function MemberTable({
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className={cx(trClass, r.status === "PENDING" && "bg-amber-50/40")}>
+              <tr key={r.id} className={cx(trClass, r.status === "PENDING" && "bg-pill-warning/25")}>
                 {canWrite && (
                   <td className={tdClass}>
                     {r.status === "PENDING" && (
-                      <input
-                        type="checkbox"
+                      <Checkbox
+                        size="sm"
                         aria-label={`${r.email} 선택`}
                         checked={selected.has(r.id)}
                         onChange={() =>
@@ -127,13 +127,12 @@ export function MemberTable({
                             return n;
                           })
                         }
-                        className="h-3.5 w-3.5 accent-zinc-900"
                       />
                     )}
                   </td>
                 )}
                 <td className={tdClass}>
-                  <Link href={`/${locale}/members/${r.id}`} className="font-medium hover:underline">
+                  <Link href={`/${locale}/members/${r.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                     {r.name ?? "(이름 없음)"}
                   </Link>
                   <p className="text-caption text-muted">{r.email}</p>

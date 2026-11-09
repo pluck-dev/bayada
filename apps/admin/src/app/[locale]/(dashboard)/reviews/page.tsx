@@ -4,7 +4,19 @@ import { requirePage } from "@/lib/session";
 import { can } from "@/lib/rbac";
 import { listReviews, maskName, type ReviewFilter } from "@/lib/queries/reviews";
 import { formatDate } from "@/lib/labels";
-import { Badge, EmptyState, FilterChip, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { Pager } from "@/components/Pager";
 import { ReviewActions } from "@/components/reviews/ReviewActions";
 
@@ -71,7 +83,7 @@ export default async function ReviewsPage({
                 <tr key={r.id} className={cx(trClass, r.status === "PUBLISHED" && r.reportCount > 0 && "bg-danger-soft")}>
                   <td className={cx(tdClass, "max-w-[220px] truncate")}>
                     {can(user, "program.read") ? (
-                      <Link href={`/${locale}/programs/${r.course.id}`} className="hover:underline" title={r.course.title}>
+                      <Link href={`/${locale}/programs/${r.course.id}`} className="transition-colors hover:text-brand" data-tip={r.course.title}>
                         {r.course.title}
                       </Link>
                     ) : (
@@ -89,7 +101,7 @@ export default async function ReviewsPage({
                       ))}
                     </span>
                   </td>
-                  <td className={cx(tdClass, "max-w-[380px] whitespace-normal! text-ink-soft")} title={r.content}>
+                  <td className={cx(tdClass, "max-w-[380px] whitespace-normal! text-ink-soft")} data-tip={r.content}>
                     {excerpt(r.content)}
                   </td>
                   <td className={cx(tdClass, "text-muted")}>{maskName(r.user.name, r.user.email)}</td>

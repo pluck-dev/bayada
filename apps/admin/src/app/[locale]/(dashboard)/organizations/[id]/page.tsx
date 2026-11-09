@@ -62,7 +62,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
                     return (
                       <tr key={m.id} className={trClass}>
                         <td className={cx(tdClass, "font-medium")}>
-                          <Link href={`/${locale}/members/${m.id}`} className="hover:underline">
+                          <Link href={`/${locale}/members/${m.id}`} className="transition-colors hover:text-brand">
                             {m.name ?? "-"}
                           </Link>
                         </td>
@@ -94,7 +94,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
             {org.invites.length === 0 ? (
               <p className="px-4 py-6 text-center text-caption text-muted">수락 대기 중인 초대가 없습니다.</p>
             ) : (
-              <ul className="divide-y divide-line-soft">
+              <ul className="divide-y divide-hairline">
                 {org.invites.map((i) => (
                   <li key={i.id} className="flex items-center gap-2 px-4 py-2 text-caption">
                     <span className="flex-1 truncate">{i.email}</span>
@@ -120,7 +120,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
                   {org.courses.map((c) => (
                     <tr key={c.courseId} className={trClass}>
                       <td className={cx(tdClass, "max-w-[200px] whitespace-normal!")}>
-                        <Link href={`/${locale}/programs/${c.courseId}`} className="hover:underline">
+                        <Link href={`/${locale}/programs/${c.courseId}`} className="transition-colors hover:text-brand">
                           {c.title}
                         </Link>
                         {c.nextDue && <p className="tabular text-micro text-subtle">가장 빠른 기한 {formatDate(c.nextDue)}</p>}

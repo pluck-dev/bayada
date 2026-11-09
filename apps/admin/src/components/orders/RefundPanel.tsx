@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { refundOrder, rejectRefundRequest } from "@/lib/actions/orders";
-import { Button, Card, Field, cx, inputClass, textareaClass } from "@/components/ui";
+import { Button, Card, Field, NumberInput, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 /** 환불 처리 — 전액·부분 금액 + 사유 → 토스 결제 취소 API. 요청 반려도 여기서 */
@@ -31,7 +31,7 @@ export function RefundPanel({
   return (
     <Card title="환불 처리">
       {request && (
-        <div className="mb-4 rounded-md border border-danger-line bg-danger-soft px-3 py-2.5 text-caption text-danger">
+        <div className="mb-4 rounded-2xl bg-pill-danger/70 px-4 py-3 text-[13px] font-medium text-danger">
           <p className="font-medium">학습자 환불 요청 · {request.at}</p>
           <p className="mt-0.5">사유: {request.reason}</p>
         </div>
@@ -57,13 +57,11 @@ export function RefundPanel({
         >
           <Field label="환불 금액 (원)" htmlFor="rf-amount" hint={`환불 가능 ${remaining.toLocaleString()}원`}>
             <div className="flex gap-1.5">
-              <input
+              <NumberInput
                 id="rf-amount"
-                type="number"
                 min={1}
                 max={remaining}
                 required
-                className={cx(inputClass, "tabular")}
                 value={amount || ""}
                 onChange={(e) => setAmount(Math.min(remaining, Math.max(0, Math.round(Number(e.target.value) || 0))))}
               />

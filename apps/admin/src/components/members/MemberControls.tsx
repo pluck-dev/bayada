@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { UserStatus } from "@bayada/db";
 import { changeRole, decideSignup } from "@/lib/actions/members";
-import { Button, Field, selectClass } from "@/components/ui";
+import { Button, Field, Select } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export interface RoleOption {
@@ -75,27 +75,18 @@ export function MemberControls({
         }}
       >
         <Field label="역할" htmlFor="role">
-          <select id="role" className={selectClass} value={nextRole} onChange={(e) => setNextRole(e.target.value)}>
-            <optgroup label="시스템 역할">
-              {/* 파트너 관리자는 파트너 화면에서 제공기관과 함께 지정한다 */}
-              {system
+          <Select
+            id="role"
+            value={nextRole}
+            onChange={setNextRole}
+            options={[
+              // 파트너 관리자는 파트너 화면에서 제공기관과 함께 지정한다
+              ...system
                 .filter((o) => o.key !== "PARTNER_ADMIN" || o.key === roleKey)
-                .map((o) => (
-                  <option key={o.key} value={o.key}>
-                    {o.label}
-                  </option>
-                ))}
-            </optgroup>
-            {custom.length > 0 && (
-              <optgroup label="사용자 정의 역할">
-                {custom.map((o) => (
-                  <option key={o.key} value={o.key}>
-                    {o.label}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-          </select>
+                .map((o) => ({ value: o.key, label: o.label, group: "시스템 역할" })),
+              ...custom.map((o) => ({ value: o.key, label: o.label, group: "사용자 정의 역할" })),
+            ]}
+          />
         </Field>
         <Button type="submit" disabled={isPending || nextRole === roleKey}>
           역할 변경

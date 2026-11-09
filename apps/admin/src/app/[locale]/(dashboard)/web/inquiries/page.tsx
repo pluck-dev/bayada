@@ -17,12 +17,12 @@ import { SelectFilter } from "@/components/SelectFilter";
 import {
   Badge,
   Button,
+  DatePicker,
   EmptyState,
   FilterChip,
   PageHeader,
   buttonClass,
   cx,
-  inputClass,
   qs,
   tableClass,
   tableWrap,
@@ -81,14 +81,14 @@ export default async function WebInquiriesPage({ params, searchParams }: { param
           {f.type && <input type="hidden" name="type" value={f.type} />}
           {f.status && <input type="hidden" name="status" value={f.status} />}
           {f.q && <input type="hidden" name="q" value={f.q} />}
-          <input type="date" name="from" aria-label="접수일 시작" defaultValue={f.from} className={cx(inputClass, "w-auto!")} />
+          <DatePicker size="sm" name="from" aria-label="접수일 시작" placeholder="시작일" defaultValue={f.from} />
           <span className="text-caption text-subtle">~</span>
-          <input type="date" name="to" aria-label="접수일 끝" defaultValue={f.to} className={cx(inputClass, "w-auto!")} />
-          <Button type="submit" size="sm">
+          <DatePicker size="sm" name="to" aria-label="접수일 끝" placeholder="종료일" defaultValue={f.to} />
+          <Button type="submit" size="sm" variant="primary" className="h-9 px-4">
             기간 적용
           </Button>
           {(f.from || f.to) && (
-            <Link href={qs(base, { type: f.type, status: f.status, q: f.q })} className="text-caption text-muted hover:text-fg">
+            <Link href={qs(base, { type: f.type, status: f.status, q: f.q })} className="text-caption text-muted hover:text-ink">
               기간 해제
             </Link>
           )}
@@ -121,7 +121,7 @@ export default async function WebInquiriesPage({ params, searchParams }: { param
               {rows.map((r) => (
                 <tr key={r.id} className={trClass}>
                   <td className={cx(tdClass, "tabular")}>
-                    <Link href={`${base}/${r.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/${r.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {r.referenceNo}
                     </Link>
                   </td>

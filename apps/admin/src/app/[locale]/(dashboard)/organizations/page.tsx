@@ -50,7 +50,7 @@ export default async function OrganizationsPage({
               {rows.map((o) => (
                 <tr key={o.id} className={trClass}>
                   <td className={tdClass}>
-                    <Link href={`${base}/${o.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/${o.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {o.name}
                     </Link>
                     {o.isInternal && (

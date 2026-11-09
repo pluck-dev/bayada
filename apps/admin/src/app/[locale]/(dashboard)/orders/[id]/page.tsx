@@ -99,11 +99,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
                   <tr key={it.id}>
                     <td className={cx(tdClass, "whitespace-normal!")}>
                       {it.course ? (
-                        <Link href={`${base}/programs/${it.course.id}`} className="font-medium hover:underline">
+                        <Link href={`${base}/programs/${it.course.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                           {it.course.title}
                         </Link>
                       ) : it.passPlan ? (
-                        <Link href={`${base}/pass-plans/${it.passPlan.id}`} className="font-medium hover:underline">
+                        <Link href={`${base}/pass-plans/${it.passPlan.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                           아카데미 패스 · {it.passPlan.name}
                         </Link>
                       ) : (
@@ -168,7 +168,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
             {logs.length === 0 ? (
               <p className="px-4 py-6 text-center text-caption text-muted">기록이 없습니다.</p>
             ) : (
-              <ol className="divide-y divide-line-soft">
+              <ol className="divide-y divide-hairline">
                 {logs.map((l) => (
                   <li key={l.id} className="flex gap-3 px-4 py-2.5 text-caption">
                     <span className="tabular w-[118px] shrink-0 text-subtle">{formatDateTime(l.at)}</span>
@@ -189,7 +189,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ lo
         <div className="flex flex-col gap-4">
           <Card title="주문자">
             <p className="text-caption font-medium">
-              <Link href={`${base}/members/${order.user.id}`} className="hover:underline">
+              <Link href={`${base}/members/${order.user.id}`} className="transition-colors hover:text-brand">
                 {order.user.name ?? "-"}
               </Link>
             </p>

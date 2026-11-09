@@ -3,7 +3,18 @@ import { Plus } from "lucide-react";
 import { prisma } from "@bayada/db";
 import { requirePage } from "@/lib/session";
 import { PRODUCT_TYPE_LABEL, formatDate } from "@/lib/labels";
-import { Badge, EmptyState, LinkButton, PageHeader, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  LinkButton,
+  PageHeader,
+  cx,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 export default async function PassPlansPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -54,7 +65,7 @@ export default async function PassPlansPage({ params }: { params: Promise<{ loca
               {plans.map((p) => (
                 <tr key={p.id} className={trClass}>
                   <td className={cx(tdClass, "min-w-[200px] whitespace-normal!")}>
-                    <Link href={`${base}/${p.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/${p.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {p.name}
                     </Link>
                     {p.description && <p className="mt-0.5 line-clamp-1 text-micro text-subtle">{p.description}</p>}

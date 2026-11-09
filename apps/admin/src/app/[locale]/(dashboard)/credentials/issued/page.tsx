@@ -4,7 +4,19 @@ import { can } from "@/lib/rbac";
 import { listCredentials, type IssuedFilter } from "@/lib/queries/credentials";
 import { daysUntil } from "@/lib/credentials";
 import { formatDate } from "@/lib/labels";
-import { Badge, EmptyState, FilterChip, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { SelectFilter } from "@/components/SelectFilter";
 import { RevokeButton } from "@/components/credentials/RevokeButton";
 
@@ -91,7 +103,7 @@ export default async function IssuedCredentialsPage({
                     <td className={cx(tdClass, "font-mono font-medium")}>{c.number}</td>
                     <td className={tdClass}>
                       {can(user, "member.read") ? (
-                        <Link href={`/${locale}/members/${c.user.id}`} className="font-medium hover:underline">
+                        <Link href={`/${locale}/members/${c.user.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                           {c.user.name ?? c.user.email}
                         </Link>
                       ) : (
@@ -99,7 +111,7 @@ export default async function IssuedCredentialsPage({
                       )}
                       <p className="text-micro text-subtle">{c.user.email}</p>
                     </td>
-                    <td className={cx(tdClass, "max-w-[220px] truncate")} title={c.program.title}>
+                    <td className={cx(tdClass, "max-w-[220px] truncate")} data-tip={c.program.title}>
                       {c.program.title}
                     </td>
                     <td className={cx(tdClass, "tabular text-muted")}>{formatDate(c.issuedAt)}</td>

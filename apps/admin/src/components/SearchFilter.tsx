@@ -3,7 +3,13 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import { Input, tagClass } from "@bayada/ui";
+import { cx, inputSmClass } from "./ui";
+
+const chip = (active: boolean) =>
+  cx(
+    "inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-[13px] font-bold transition-colors disabled:opacity-50",
+    active ? "bg-ink text-white" : "bg-(--chip-bg) text-ink-soft hover:bg-(--chip-hover) hover:text-ink",
+  );
 
 interface FilterOption {
   label: string;
@@ -69,13 +75,13 @@ export function SearchFilter({
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div className="relative flex-1 sm:max-w-xs">
-        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" aria-hidden />
-        <Input
-          size="sm"
+      <div className="relative flex-1 sm:max-w-[300px]">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-subtle" aria-hidden />
+        <input
+          type="search"
           aria-label={searchPlaceholder}
           placeholder={searchPlaceholder}
-          className="pl-8"
+          className={cx(inputSmClass, "pl-10 font-medium")}
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => {
@@ -90,7 +96,7 @@ export function SearchFilter({
               type="button"
               aria-pressed={currentFilter === ""}
               disabled={isPending}
-              className={tagClass({ active: currentFilter === "", size: "sm" })}
+              className={chip(currentFilter === "")}
               onClick={() => updateParams({ [filterKey]: "" })}
           >
             전체
@@ -101,7 +107,7 @@ export function SearchFilter({
               key={f.value}
               aria-pressed={currentFilter === f.value}
               disabled={isPending}
-              className={tagClass({ active: currentFilter === f.value, size: "sm" })}
+              className={chip(currentFilter === f.value)}
               onClick={() => updateParams({ [filterKey]: f.value })}
             >
               {f.label}
@@ -118,7 +124,7 @@ export function SearchFilter({
               key={f.value}
               aria-pressed={currentSecondFilter === f.value}
               disabled={isPending}
-              className={tagClass({ active: currentSecondFilter === f.value, size: "sm" })}
+              className={chip(currentSecondFilter === f.value)}
               onClick={() =>
                 updateParams({
                   [secondFilterKey]:

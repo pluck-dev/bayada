@@ -4,7 +4,19 @@ import { Plus } from "lucide-react";
 import { requirePage } from "@/lib/session";
 import { getPartnerConsole } from "@/lib/queries/partners";
 import { COURSE_STATUS_LABEL, COURSE_STATUS_TONE, LEARNING_MODE_LABEL, PRODUCT_TYPE_LABEL, formatDate } from "@/lib/labels";
-import { Badge, EmptyState, LinkButton, PageHeader, Stat, cx, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  LinkButton,
+  PageHeader,
+  Stat,
+  cx,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { ProviderLogo } from "@/components/partners/ProviderLogo";
 
 function rate(done: number, total: number): string {
@@ -25,7 +37,7 @@ export default async function PartnerConsolePage({ params }: { params: Promise<{
     <>
       <PageHeader title="파트너 콘솔" description="우리 기관 프로그램을 작성하고 승인 요청합니다. 승인·게시와 메인 노출은 바야다 운영자가 결정합니다." />
 
-      <div className="mb-4 flex items-center gap-4 rounded-lg border border-line bg-surface px-5 py-4">
+      <div className="mb-4 flex items-center gap-4 surface-card rounded-[22px] bg-canvas px-6 py-5">
         <ProviderLogo name={provider.name} logo={provider.logo} size="lg" />
         <div className="min-w-0 flex-1">
           <p className="text-body font-semibold tracking-[-0.01em]">{provider.name}</p>
@@ -38,8 +50,8 @@ export default async function PartnerConsolePage({ params }: { params: Promise<{
       </div>
 
       <div className="mb-4 grid grid-cols-4 gap-3">
-        <Stat label="프로그램" value={rows.length} hint={changes ? `수정 요청 ${changes}개` : undefined} />
-        <Stat label="게시 중" value={published} />
+        <Stat tone="brand" label="프로그램" value={rows.length} hint={changes ? `수정 요청 ${changes}개` : undefined} />
+        <Stat tone="ink" label="게시 중" value={published} />
         <Stat label="누적 수강" value={totals.enrollments.toLocaleString()} hint="전체 프로그램 합계 (인원)" />
         <Stat label="수료율" value={rate(totals.completed, totals.enrollments)} hint={`수료 ${totals.completed.toLocaleString()}명`} />
       </div>
@@ -65,7 +77,7 @@ export default async function PartnerConsolePage({ params }: { params: Promise<{
               {rows.map((r) => (
                 <tr key={r.id} className={trClass}>
                   <td className={cx(tdClass, "min-w-[240px] whitespace-normal!")}>
-                    <Link href={`${base}/programs/${r.id}`} className="font-medium hover:underline">
+                    <Link href={`${base}/programs/${r.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                       {r.title}
                     </Link>
                   </td>
@@ -76,7 +88,7 @@ export default async function PartnerConsolePage({ params }: { params: Promise<{
                       {COURSE_STATUS_LABEL[r.status]}
                     </Badge>
                   </td>
-                  <td className={cx(tdClass, "max-w-[260px] truncate", r.status === "CHANGES_REQUESTED" ? "text-warning" : "text-zinc-400")} title={r.reviewNote ?? undefined}>
+                  <td className={cx(tdClass, "max-w-[260px] truncate", r.status === "CHANGES_REQUESTED" ? "text-warning" : "text-zinc-400")} data-tip={r.reviewNote ?? undefined}>
                     {r.status === "CHANGES_REQUESTED" && r.reviewNote ? r.reviewNote : "-"}
                   </td>
                   <td className={cx(tdClass, "tabular text-right")}>{r.enrollments ? r.enrollments.toLocaleString() : "-"}</td>

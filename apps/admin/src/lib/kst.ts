@@ -2,7 +2,7 @@
 // 클라이언트·서버 공용.
 const KST_MS = 9 * 3600_000;
 
-/** Date/ISO → <input type="datetime-local"> 값 (KST) */
+/** Date/ISO → DatePicker(mode="datetime") 값 YYYY-MM-DDTHH:mm (KST) */
 export function toKstInput(d: Date | string | null | undefined): string {
   if (!d) return "";
   const t = new Date(typeof d === "string" ? d : d.getTime()).getTime() + KST_MS;

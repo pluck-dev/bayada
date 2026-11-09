@@ -3,7 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSession, deleteSession, updateSession, type SessionInput } from "@/lib/actions/sessions";
-import { Button, Card, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Field,
+  NumberInput,
+  Select,
+  Tooltip,
+  actionBarClass,
+  inputClass,
+  textareaClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export function SessionForm({
@@ -54,14 +65,15 @@ export function SessionForm({
             />
           </Field>
           <Field label="연결 프로그램" htmlFor="s-course" className="col-span-2" hint="선택 사항. 블렌디드·오프라인 프로그램의 실습이면 연결하세요.">
-            <select id="s-course" className={selectClass} value={v.courseId} onChange={(e) => set("courseId", e.target.value)}>
-              <option value="">연결 안 함 (단독 실습)</option>
-              {courses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.title} · {c.mode}
-                </option>
-              ))}
-            </select>
+            <Select
+              id="s-course"
+              value={v.courseId}
+              onChange={(x) => set("courseId", x)}
+              options={[
+                { value: "", label: "연결 안 함 (단독 실습)" },
+                ...courses.map((c) => ({ value: c.id, label: c.title, text: c.title, hint: c.mode })),
+              ]}
+            />
           </Field>
           <Field label="지역" required htmlFor="s-region" hint="예) 서울, 부산, 경기 남부">
             <input id="s-region" required className={inputClass} value={v.region} onChange={(e) => set("region", e.target.value)} />
@@ -70,24 +82,17 @@ export function SessionForm({
             <input id="s-location" required className={inputClass} value={v.location} onChange={(e) => set("location", e.target.value)} />
           </Field>
           <Field label="시작 (한국 시간)" required htmlFor="s-start">
-            <input
-              id="s-start"
-              type="datetime-local"
-              required
-              className={cx(inputClass, "tabular")}
-              value={v.startsAt}
-              onChange={(e) => set("startsAt", e.target.value)}
-            />
+            <DatePicker id="s-start" mode="datetime" required clearable={false} value={v.startsAt} onChange={(x) => set("startsAt", x)} />
           </Field>
           <Field label="종료 (한국 시간)" required htmlFor="s-end">
-            <input
+            <DatePicker
               id="s-end"
-              type="datetime-local"
+              mode="datetime"
               required
-              min={v.startsAt || undefined}
-              className={cx(inputClass, "tabular")}
+              clearable={false}
+              min={v.startsAt ? v.startsAt.slice(0, 10) : undefined}
               value={v.endsAt}
-              onChange={(e) => set("endsAt", e.target.value)}
+              onChange={(x) => set("endsAt", x)}
             />
           </Field>
           <Field
@@ -96,12 +101,10 @@ export function SessionForm({
             htmlFor="s-capacity"
             hint={registrations ? `현재 신청 ${registrations}명 — 이보다 줄일 수 없습니다.` : undefined}
           >
-            <input
+            <NumberInput
               id="s-capacity"
-              type="number"
               required
               min={Math.max(1, registrations)}
-              className={cx(inputClass, "tabular")}
               value={v.capacity}
               onChange={(e) => set("capacity", Number(e.target.value))}
             />
@@ -112,13 +115,12 @@ export function SessionForm({
         </fieldset>
       </Card>
 
-      <div className="sticky bottom-0 -mx-1 flex items-center justify-end gap-2 border-t border-line bg-canvas/95 px-1 py-3 backdrop-blur">
+      <div className={actionBarClass}>
         {sessionId && (
+          <Tooltip className="mr-auto" content={registrations > 0 ? "신청자가 있는 일정은 삭제할 수 없습니다" : undefined}>
           <Button
             variant="danger"
-            className="mr-auto"
             disabled={isPending || registrations > 0}
-            title={registrations > 0 ? "신청자가 있는 일정은 삭제할 수 없습니다" : undefined}
             onClick={() =>
               run(() => deleteSession(sessionId), {
                 confirm: { title: "이 일정을 삭제할까요?", body: "되돌릴 수 없습니다.", confirmLabel: "삭제", danger: true },
@@ -129,6 +131,7 @@ export function SessionForm({
           >
             일정 삭제
           </Button>
+          </Tooltip>
         )}
         {dirty && <span className="text-caption text-warning">저장하지 않은 변경 사항이 있습니다</span>}
         <Button type="submit" variant="primary" disabled={isPending || (!!sessionId && !dirty)}>

@@ -3,7 +3,20 @@ import { Plus } from "lucide-react";
 import { requirePage } from "@/lib/session";
 import { listSessions, type SessionScope } from "@/lib/queries/sessions";
 import { formatDate, formatDateTime } from "@/lib/labels";
-import { Badge, EmptyState, FilterChip, LinkButton, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  LinkButton,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 export default async function SessionsPage({
   params,
@@ -71,13 +84,13 @@ export default async function SessionsPage({
                 return (
                   <tr key={s.id} className={trClass}>
                     <td className={cx(tdClass, "min-w-[260px] whitespace-normal!")}>
-                      <Link href={`${base}/${s.id}`} className="font-medium hover:underline">
+                      <Link href={`${base}/${s.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                         {s.title}
                       </Link>
                       {s.course && <p className="mt-0.5 text-micro text-subtle">{s.course.title}</p>}
                     </td>
-                    <td className={cx(tdClass, "max-w-[260px] truncate text-muted")} title={s.location}>
-                      <span className="font-medium text-fg">{s.region}</span> · {s.location}
+                    <td className={cx(tdClass, "max-w-[260px] truncate text-muted")} data-tip={s.location}>
+                      <span className="font-medium text-ink">{s.region}</span> · {s.location}
                     </td>
                     <td className={cx(tdClass, "tabular text-muted")}>
                       {formatDateTime(s.startsAt)}

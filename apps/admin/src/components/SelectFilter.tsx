@@ -1,9 +1,10 @@
 "use client";
 
+import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { cx, selectClass } from "./ui";
+import { Select } from "./ui/kit/Select";
 
-/** URL 쿼리 기반 select 필터 */
+/** URL 쿼리 기반 선택 필터 (알약 트리거 + 디자인된 목록) */
 export function SelectFilter({
   param,
   label,
@@ -18,24 +19,21 @@ export function SelectFilter({
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
+  const [pending, start] = useTransition();
   return (
-    <select
+    <Select
+      size="sm"
       aria-label={label}
       value={value}
-      className={cx(selectClass, "w-auto! min-w-[140px]")}
-      onChange={(e) => {
+      options={options}
+      className={pending ? "opacity-60" : undefined}
+      onChange={(v) => {
         const next = new URLSearchParams(sp.toString());
-        if (e.target.value) next.set(param, e.target.value);
+        if (v) next.set(param, v);
         else next.delete(param);
         next.delete("page");
-        router.push(`${pathname}?${next.toString()}`);
+        start(() => router.push(`${pathname}?${next.toString()}`));
       }}
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
-      ))}
-    </select>
+    />
   );
 }

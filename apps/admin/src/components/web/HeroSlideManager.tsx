@@ -3,7 +3,22 @@
 import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { deleteHeroSlide, saveHeroSlide, type HeroSlideInput } from "@/lib/actions/web-content";
-import { Badge, Button, Card, EmptyState, Field, cx, inputClass, tableClass, tdClass, textareaClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  Field,
+  NumberInput,
+  Switch,
+  cx,
+  inputClass,
+  tableClass,
+  tdClass,
+  textareaClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export interface HeroSlideRow extends HeroSlideInput {
@@ -49,7 +64,7 @@ export function HeroSlideManager({ slides }: { slides: HeroSlideRow[] }) {
             e.preventDefault();
             run(() => saveHeroSlide(editing === "new" ? null : editing, form), { onSuccess: (r) => r.ok && setEditing(null) });
           }}
-          className="border-b border-line bg-surface p-4"
+          className="panel-inset mx-4 mb-4 rounded-2xl p-5"
         >
           <fieldset disabled={isPending} className="grid grid-cols-4 gap-3">
             <Field label="배경 이미지" required className="col-span-2" hint="/images/hero/hero-1.webp 또는 https:// (가로형 큰 이미지)">
@@ -71,12 +86,11 @@ export function HeroSlideManager({ slides }: { slides: HeroSlideRow[] }) {
               <input maxLength={300} className={inputClass} value={form.ctaHref} onChange={(e) => set("ctaHref", e.target.value)} />
             </Field>
             <Field label="순서" hint="작을수록 먼저">
-              <input type="number" min={0} className={cx(inputClass, "tabular")} value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
+              <NumberInput min={0} value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
             </Field>
-            <label className="flex items-end gap-2 pb-2 text-caption">
-              <input type="checkbox" checked={form.visible} onChange={(e) => set("visible", e.target.checked)} />
-              노출
-            </label>
+            <div className="flex items-end pb-2.5">
+              <Switch checked={form.visible} onChange={(c) => set("visible", c)} label="노출" />
+            </div>
             <div className="col-span-4 flex justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditing(null)}>
                 취소

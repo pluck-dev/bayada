@@ -4,7 +4,24 @@ import { useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { WEB_SERVICE_OPTIONS, kstDate } from "@bayada/shared/web-content";
 import { deleteWebReview, saveWebReview, setWebReviewVisible, type WebReviewInput } from "@/lib/actions/web-content";
-import { Badge, Button, Card, EmptyState, Field, cx, inputClass, selectClass, tableClass, tdClass, textareaClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  DatePicker,
+  EmptyState,
+  Field,
+  NumberInput,
+  Select,
+  Switch,
+  cx,
+  inputClass,
+  tableClass,
+  tdClass,
+  textareaClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export interface WebReviewRow extends WebReviewInput {
@@ -48,7 +65,7 @@ export function WebReviewManager({ reviews }: { reviews: WebReviewRow[] }) {
             e.preventDefault();
             run(() => saveWebReview(editing === "new" ? null : editing, form), { onSuccess: (r) => r.ok && setEditing(null) });
           }}
-          className="border-b border-line bg-surface p-4"
+          className="panel-inset mx-4 mb-4 rounded-2xl p-5"
         >
           <fieldset disabled={isPending} className="grid grid-cols-4 gap-3">
             <Field label="후기 내용" required className="col-span-4">
@@ -58,34 +75,40 @@ export function WebReviewManager({ reviews }: { reviews: WebReviewRow[] }) {
               <input required maxLength={40} className={inputClass} value={form.author} onChange={(e) => set("author", e.target.value)} />
             </Field>
             <Field label="서비스" required>
-              <select required className={selectClass} value={form.serviceType} onChange={(e) => set("serviceType", e.target.value)}>
-                <option value="">선택</option>
-                {WEB_SERVICE_OPTIONS.map((s) => (
-                  <option key={s.slug} value={s.slug}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
+              <Select
+                aria-label="서비스"
+                required
+                value={form.serviceType}
+                onChange={(x) => set("serviceType", x)}
+                options={WEB_SERVICE_OPTIONS.map((s) => ({ value: s.slug, label: s.name }))}
+              />
             </Field>
             <Field label="별점" required>
-              <select className={selectClass} value={form.rating} onChange={(e) => set("rating", Number(e.target.value))}>
-                {[5, 4, 3, 2, 1].map((n) => (
-                  <option key={n} value={n}>
-                    {"★".repeat(n)} {n}점
-                  </option>
-                ))}
-              </select>
+              <Select
+                aria-label="별점"
+                value={String(form.rating)}
+                onChange={(x) => set("rating", Number(x))}
+                options={[5, 4, 3, 2, 1].map((n) => ({
+                  value: String(n),
+                  text: `${n}`,
+                  label: (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="tracking-[0.08em] text-brand">{"★".repeat(n)}<span className="text-line-strong">{"★".repeat(5 - n)}</span></span>
+                      {n}점
+                    </span>
+                  ),
+                }))}
+              />
             </Field>
             <Field label="작성일" required>
-              <input type="date" required className={inputClass} value={form.reviewedAt} onChange={(e) => set("reviewedAt", e.target.value)} />
+              <DatePicker aria-label="작성일" required clearable={false} value={form.reviewedAt} onChange={(x) => set("reviewedAt", x)} />
             </Field>
             <Field label="순서" hint="작을수록 먼저 (홈 캐러셀은 앞 8개)">
-              <input type="number" min={0} className={cx(inputClass, "tabular")} value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
+              <NumberInput min={0} value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
             </Field>
-            <label className="flex items-end gap-2 pb-2 text-caption">
-              <input type="checkbox" checked={form.visible} onChange={(e) => set("visible", e.target.checked)} />
-              홈페이지에 보이기
-            </label>
+            <div className="flex items-end pb-2.5">
+              <Switch checked={form.visible} onChange={(c) => set("visible", c)} label="홈페이지에 보이기" />
+            </div>
             <div className="col-span-2 flex items-end justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditing(null)}>
                 취소

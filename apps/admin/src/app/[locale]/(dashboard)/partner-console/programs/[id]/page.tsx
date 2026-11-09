@@ -5,7 +5,7 @@ import { requirePage } from "@/lib/session";
 import { getProgram, getProgramHistory, lectureCount } from "@/lib/queries/programs";
 import { LOCKED_STATUSES, requiredChecklist } from "@/lib/workflow";
 import { COURSE_STATUS_LABEL, COURSE_STATUS_TONE, PRODUCT_TYPE_LABEL, formatDateTime } from "@/lib/labels";
-import { Badge, Card, PageHeader, cx } from "@/components/ui";
+import { Badge, Card, PageHeader, tabBarClass, tabClass } from "@/components/ui";
 import { ProgramForm } from "@/components/programs/ProgramForm";
 import { CurriculumEditor } from "@/components/programs/CurriculumEditor";
 import { HistoryTimeline } from "@/components/programs/HistoryTimeline";
@@ -60,16 +60,13 @@ export default async function PartnerProgramPage({
         }
       />
 
-      <nav className="mb-5 flex gap-1 border-b border-line" aria-label="프로그램 편집 탭">
+      <nav className={tabBarClass} aria-label="프로그램 편집 탭">
         {TABS.map((t) => (
           <Link
             key={t.key}
             href={t.key === "basic" ? base : `${base}?tab=${t.key}`}
             aria-current={tab === t.key ? "page" : undefined}
-            className={cx(
-              "-mb-px border-b-2 px-3 py-2 text-caption font-medium transition-colors",
-              tab === t.key ? "border-brand text-fg" : "border-transparent text-muted hover:text-fg",
-            )}
+            className={tabClass(tab === t.key)}
           >
             {t.label}
           </Link>
@@ -79,7 +76,7 @@ export default async function PartnerProgramPage({
       <div className="grid grid-cols-[minmax(0,1fr)_280px] items-start gap-6">
         <div className="min-w-0">
           {locked && tab !== "history" && (
-            <div className="mb-4 rounded-md border border-info-line bg-info-soft px-3 py-2 text-caption text-info">
+            <div className="mb-4 rounded-2xl bg-pill-info/70 px-4 py-3 text-[13px] font-medium text-info">
               {program.status === "PUBLISHED" || program.status === "ARCHIVED"
                 ? `${COURSE_STATUS_LABEL[program.status]} 상태라 파트너 콘솔에서는 고칠 수 없습니다. 변경이 필요하면 바야다 운영자에게 요청하세요.`
                 : `${COURSE_STATUS_LABEL[program.status]} 단계라 편집이 잠겨 있습니다. 검토자가 수정 요청하면 다시 고칠 수 있습니다.`}
@@ -146,7 +143,7 @@ export default async function PartnerProgramPage({
 
         <aside className="sticky top-0 flex flex-col gap-4">
           {program.status === "CHANGES_REQUESTED" && program.reviewNote && (
-            <div className="rounded-lg border border-warning-line bg-warning-soft p-3">
+            <div className="rounded-2xl bg-pill-warning/60 p-4">
               <p className="text-caption font-semibold text-warning">수정 요청 사유</p>
               <p className="mt-1 whitespace-pre-wrap text-caption text-warning">{program.reviewNote}</p>
             </div>

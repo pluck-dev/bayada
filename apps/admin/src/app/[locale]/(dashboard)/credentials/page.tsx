@@ -10,7 +10,19 @@ import {
   judge,
 } from "@/lib/credentials";
 import { formatDate } from "@/lib/labels";
-import { Badge, EmptyState, FilterChip, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { SelectFilter } from "@/components/SelectFilter";
 
 export default async function CredentialQueuePage({
@@ -83,12 +95,12 @@ export default async function CredentialQueuePage({
                 return (
                   <tr key={r.id} className={trClass}>
                     <td className={tdClass}>
-                      <Link href={`${base}/applications/${r.id}`} className="font-medium hover:underline">
+                      <Link href={`${base}/applications/${r.id}`} className="font-bold text-ink transition-colors hover:text-brand">
                         {r.user.name ?? r.user.email}
                       </Link>
                       <p className="text-micro text-subtle">{r.user.email}</p>
                     </td>
-                    <td className={cx(tdClass, "max-w-[240px] truncate")} title={r.program.title}>
+                    <td className={cx(tdClass, "max-w-[240px] truncate")} data-tip={r.program.title}>
                       {r.program.title}
                     </td>
                     <td className={cx(tdClass, "text-muted")}>{r.program.practicalRequired ? "시험 + 실기" : "시험"}</td>

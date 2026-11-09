@@ -1,4 +1,16 @@
-import { Badge, DataTable, PageHeader, buttonVariants, type BadgeTone, type Column } from "@bayada/ui";
+import {
+  Badge,
+  EmptyState,
+  PageHeader,
+  buttonClass,
+  cx,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
+import type { Tone } from "@/lib/labels";
 import { formatPrice } from "@bayada/shared";
 import { invoiceService } from "@/lib/services";
 import { SearchFilter } from "@/components/SearchFilter";
@@ -15,12 +27,12 @@ const invoiceStatusLabels: Record<InvoiceStatus, string> = {
   CANCELLED: "취소",
 };
 
-const statusTone: Record<InvoiceStatus, BadgeTone> = {
-  DRAFT: "neutral",
-  SENT: "info",
-  PAID: "success",
-  OVERDUE: "danger",
-  CANCELLED: "neutral",
+const statusTone: Record<InvoiceStatus, Tone> = {
+  DRAFT: "zinc",
+  SENT: "blue",
+  PAID: "green",
+  OVERDUE: "red",
+  CANCELLED: "zinc",
 };
 
 const statusFilters = [
@@ -44,71 +56,6 @@ interface InvoiceRow {
   dueDate: string;
   issuedAt: string;
 }
-
-const columns: Column<InvoiceRow>[] = [
-  {
-    key: "invoiceNo",
-    header: "청구서번호",
-    render: (row) => (
-      <span className="font-mono text-micro">{row.invoiceNo}</span>
-    ),
-  },
-  {
-    key: "organization",
-    header: "기관",
-    render: (row) => (
-      <div>
-        <p className="font-medium text-ink">
-          {row.organization}
-        </p>
-        <p className="text-micro text-muted">{row.contactEmail}</p>
-      </div>
-    ),
-  },
-  {
-    key: "items",
-    header: "항목",
-    render: (row) => (
-      <span className="text-muted">{row.items}</span>
-    ),
-  },
-  {
-    key: "total",
-    header: "총액 (VAT 포함)",
-    render: (row) => (
-      <div>
-        <p className="font-medium">{formatPrice(row.total)}</p>
-        <p className="text-micro text-muted">
-          공급가 {formatPrice(row.amount)} + VAT {formatPrice(row.tax)}
-        </p>
-      </div>
-    ),
-  },
-  {
-    key: "status",
-    header: "상태",
-    render: (row) => (
-      <Badge tone={statusTone[row.status]} dot>
-        {invoiceStatusLabels[row.status]}
-      </Badge>
-    ),
-  },
-  {
-    key: "dueDate",
-    header: "납부기한",
-  },
-  {
-    key: "actions",
-    header: "",
-    render: (row) => (
-      <div className="flex gap-1">
-        <Link href={`/invoices/${row.id}`} className={buttonVariants({ variant: "ghost", size: "xs" })}>
-          상세
-        </Link>
-      </div>
-    ),
-  },
-];
 
 export default async function InvoicesPage({
   searchParams,
@@ -158,24 +105,63 @@ export default async function InvoicesPage({
   });
 
   return (
-    <div className="space-y-4">
-      <PageHeader size="compact" title="청구서 관리" description="B2B 기관 고객의 청구서를 관리합니다." />
+    <>
+      <PageHeader title="청구서 관리" description="B2B 기관 고객의 청구서를 관리합니다." />
 
-      {/* 필터/검색 */}
-      <SearchFilter
-        searchPlaceholder="청구서번호 또는 기관명으로 검색..."
-        filterKey="status"
-        filters={statusFilters}
-      />
+      <div className="mb-4">
+        <SearchFilter searchPlaceholder="청구서번호 또는 기관명으로 검색" filterKey="status" filters={statusFilters} />
+      </div>
 
-      {/* 데이터 테이블 */}
-      <DataTable<InvoiceRow>
-        columns={columns}
-        data={invoices}
-        keyField="id"
-      />
+      <div className={tableWrap}>
+        {invoices.length === 0 ? (
+          <EmptyState title="청구서가 없습니다" description="기관 주문에서 청구서를 발행하면 여기에 쌓입니다." />
+        ) : (
+          <table className={tableClass}>
+            <thead>
+              <tr>
+                <th className={thClass}>청구서번호</th>
+                <th className={thClass}>기관</th>
+                <th className={thClass}>항목</th>
+                <th className={cx(thClass, "text-right")}>총액 (VAT 포함)</th>
+                <th className={thClass}>상태</th>
+                <th className={thClass}>납부기한</th>
+                <th className={cx(thClass, "w-px")} aria-label="작업" />
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.map((row) => (
+                <tr key={row.id} className={trClass}>
+                  <td className={cx(tdClass, "font-mono text-[12px] font-semibold")}>{row.invoiceNo}</td>
+                  <td className={tdClass}>
+                    <p className="font-bold text-ink">{row.organization}</p>
+                    <p className="text-[12px] text-muted">{row.contactEmail}</p>
+                  </td>
+                  <td className={cx(tdClass, "text-muted")}>{row.items}</td>
+                  <td className={cx(tdClass, "num text-right")}>
+                    <p className="font-bold">{formatPrice(row.total)}</p>
+                    <p className="text-[12px] text-muted">
+                      공급가 {formatPrice(row.amount)} + VAT {formatPrice(row.tax)}
+                    </p>
+                  </td>
+                  <td className={tdClass}>
+                    <Badge tone={statusTone[row.status]} dot>
+                      {invoiceStatusLabels[row.status]}
+                    </Badge>
+                  </td>
+                  <td className={cx(tdClass, "num text-muted")}>{row.dueDate}</td>
+                  <td className={tdClass}>
+                    <Link href={`/invoices/${row.id}`} className={buttonClass("secondary", "sm")}>
+                      상세
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       <Pager page={result.page} pages={result.totalPages} total={result.total} />
-    </div>
+    </>
   );
 }

@@ -76,7 +76,7 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
                         <td className={cx(tdClass, "tabular text-zinc-400")}>{i + 1}</td>
                         <td className={cx(tdClass, "font-medium")}>
                           {can(user, "member.read") ? (
-                            <Link href={`/${locale}/members/${r.user.id}`} className="hover:underline">
+                            <Link href={`/${locale}/members/${r.user.id}`} className="transition-colors hover:text-brand">
                               {r.user.name ?? "-"}
                             </Link>
                           ) : (

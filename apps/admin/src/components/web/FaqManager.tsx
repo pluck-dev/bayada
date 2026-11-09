@@ -11,7 +11,7 @@ import {
   saveFaqItem,
   type FaqItemInput,
 } from "@/lib/actions/web-content";
-import { Badge, Button, Card, EmptyState, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, Field, Select, Switch, cx, inputClass, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 interface Item {
@@ -52,7 +52,7 @@ export function FaqManager({ categories }: { categories: Category[] }) {
           e.preventDefault();
           run(() => saveFaqCategory(editing.id, cat), { onSuccess: (r) => r.ok && close() });
         }}
-        className="border-b border-line bg-surface p-4"
+        className="panel-inset mx-4 mb-4 rounded-2xl p-5"
       >
         <fieldset disabled={isPending} className="grid grid-cols-[1fr_1fr_auto] items-end gap-3">
           <Field label="카테고리 이름" required>
@@ -77,28 +77,26 @@ export function FaqManager({ categories }: { categories: Category[] }) {
           e.preventDefault();
           run(() => saveFaqItem(editing.id, item), { onSuccess: (r) => r.ok && close() });
         }}
-        className="border-b border-line bg-surface p-4"
+        className="panel-inset mx-4 mb-4 rounded-2xl p-5"
       >
         <fieldset disabled={isPending} className="grid grid-cols-4 gap-3">
           <Field label="질문" required className="col-span-3">
             <input required maxLength={300} className={inputClass} value={item.question} onChange={(e) => setItem({ ...item, question: e.target.value })} />
           </Field>
           <Field label="카테고리" required>
-            <select className={selectClass} value={item.categoryId} onChange={(e) => setItem({ ...item, categoryId: e.target.value })}>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <Select
+              aria-label="카테고리"
+              value={item.categoryId}
+              onChange={(x) => setItem({ ...item, categoryId: x })}
+              options={categories.map((c) => ({ value: c.id, label: c.name }))}
+            />
           </Field>
           <Field label="답변" required className="col-span-4">
             <textarea required rows={4} maxLength={5000} className={textareaClass} value={item.answer} onChange={(e) => setItem({ ...item, answer: e.target.value })} />
           </Field>
-          <label className="col-span-2 flex items-center gap-2 text-caption">
-            <input type="checkbox" checked={item.visible} onChange={(e) => setItem({ ...item, visible: e.target.checked })} />
-            홈페이지에 보이기
-          </label>
+          <div className="col-span-2 flex items-center">
+            <Switch checked={item.visible} onChange={(c) => setItem({ ...item, visible: c })} label="홈페이지에 보이기" />
+          </div>
           <div className="col-span-2 flex justify-end gap-2">
             <Button variant="ghost" onClick={close}>
               취소
@@ -175,7 +173,7 @@ export function FaqManager({ categories }: { categories: Category[] }) {
               {c.items.length === 0 ? (
                 <p className="text-caption text-subtle">질문이 없습니다 — 홈페이지 탭에 나오지 않습니다.</p>
               ) : (
-                <ul className="flex flex-col divide-y divide-line-soft rounded-md border border-line">
+                <ul className="flex flex-col divide-y divide-hairline rounded-2xl bg-wash px-1">
                   {c.items.map((it, ii) => (
                     <li key={it.id} className={cx("flex items-start gap-3 px-3 py-2", !it.visible && "opacity-60")}>
                       <div className="min-w-0 flex-1">

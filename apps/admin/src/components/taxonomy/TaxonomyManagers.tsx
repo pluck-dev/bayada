@@ -12,7 +12,21 @@ import {
   type CategoryInput,
   type ProviderInput,
 } from "@/lib/actions/taxonomy";
-import { Badge, Button, Card, EmptyState, Field, cx, inputClass, tableClass, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  EmptyState,
+  Field,
+  NumberInput,
+  cx,
+  inputClass,
+  tableClass,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 interface CategoryRow extends CategoryInput {
@@ -52,7 +66,7 @@ export function CategoryManager({ rows }: { rows: CategoryRow[] }) {
       }
     >
       {editing !== null && (
-        <form onSubmit={save} className="grid grid-cols-[1fr_1fr_72px] gap-3 border-b border-line bg-surface p-4">
+        <form onSubmit={save} className="grid grid-cols-[1fr_1fr_72px] gap-3 panel-inset mx-4 mb-4 rounded-2xl p-5">
           <Field label="이름" required>
             <input required autoFocus className={inputClass} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
@@ -60,7 +74,7 @@ export function CategoryManager({ rows }: { rows: CategoryRow[] }) {
             <input required className={cx(inputClass, "font-mono text-caption!")} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
           </Field>
           <Field label="순서">
-            <input type="number" className={cx(inputClass, "tabular")} value={form.order} onChange={(e) => setForm({ ...form, order: Number(e.target.value) })} />
+            <NumberInput value={form.order} onChange={(e) => setForm({ ...form, order: Number(e.target.value) })} />
           </Field>
           <div className="col-span-3 flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setEditing(null)}>
@@ -169,7 +183,7 @@ export function ProviderManager({ rows }: { rows: ProviderRow[] }) {
       }
     >
       {editing !== null && (
-        <form onSubmit={save} className="grid grid-cols-2 gap-3 border-b border-line bg-surface p-4">
+        <form onSubmit={save} className="grid grid-cols-2 gap-3 panel-inset mx-4 mb-4 rounded-2xl p-5">
           <Field label="이름" required>
             <input required autoFocus className={inputClass} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
@@ -179,10 +193,9 @@ export function ProviderManager({ rows }: { rows: ProviderRow[] }) {
           <Field label="로고 URL" className="col-span-2">
             <input className={inputClass} placeholder="https://" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} />
           </Field>
-          <label className="flex items-center gap-2 text-caption">
-            <input type="checkbox" className="h-4 w-4 accent-zinc-900" checked={form.isPartner} onChange={(e) => setForm({ ...form, isPartner: e.target.checked })} />
-            외부 파트너 기관
-          </label>
+          <div className="flex items-center">
+            <Checkbox checked={form.isPartner} onChange={(c) => setForm({ ...form, isPartner: c })} label="외부 파트너 기관" />
+          </div>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setEditing(null)}>
               취소

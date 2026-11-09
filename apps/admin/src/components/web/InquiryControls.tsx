@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { WEB_INQUIRY_STATUSES, WEB_INQUIRY_STATUS_LABEL } from "@bayada/shared/web-content";
 import { addInquiryNote, deleteInquiry, setInquiryAssignee, setInquiryStatus } from "@/lib/actions/web-inquiries";
-import { Button, Card, Field, cx, selectClass, textareaClass } from "@/components/ui";
+import { Button, Card, Field, Select, cx, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export function InquiryControls({
@@ -41,37 +41,31 @@ export function InquiryControls({
             </>
           )}
           <dt className="text-muted">전화</dt>
-          <dd className="tabular">{contact.phone ? <a href={`tel:${contact.phone}`} className="hover:underline">{contact.phone}</a> : "-"}</dd>
+          <dd className="tabular">{contact.phone ? <a href={`tel:${contact.phone}`} className="transition-colors hover:text-brand">{contact.phone}</a> : "-"}</dd>
           <dt className="text-muted">이메일</dt>
-          <dd className="break-all">{contact.email ? <a href={`mailto:${contact.email}`} className="hover:underline">{contact.email}</a> : "-"}</dd>
+          <dd className="break-all">{contact.email ? <a href={`mailto:${contact.email}`} className="transition-colors hover:text-brand">{contact.email}</a> : "-"}</dd>
         </dl>
       </Card>
 
       <Card title="처리">
         <fieldset disabled={isPending} className="flex flex-col gap-3">
           <Field label="상태" htmlFor="inq-status">
-            <select id="inq-status" className={selectClass} value={status} onChange={(e) => run(() => setInquiryStatus(id, e.target.value))}>
-              {WEB_INQUIRY_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {WEB_INQUIRY_STATUS_LABEL[s]}
-                </option>
-              ))}
-            </select>
+            <Select
+              id="inq-status"
+              value={status}
+              disabled={isPending}
+              onChange={(x) => run(() => setInquiryStatus(id, x))}
+              options={WEB_INQUIRY_STATUSES.map((s) => ({ value: s, label: WEB_INQUIRY_STATUS_LABEL[s] }))}
+            />
           </Field>
           <Field label="담당자" htmlFor="inq-assignee">
-            <select
+            <Select
               id="inq-assignee"
-              className={selectClass}
               value={assigneeId ?? ""}
-              onChange={(e) => run(() => setInquiryAssignee(id, e.target.value || null))}
-            >
-              <option value="">지정 안 함</option>
-              {assignees.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.label}
-                </option>
-              ))}
-            </select>
+              disabled={isPending}
+              onChange={(x) => run(() => setInquiryAssignee(id, x || null))}
+              options={[{ value: "", label: "지정 안 함" }, ...assignees.map((u) => ({ value: u.id, label: u.label }))]}
+            />
           </Field>
         </fieldset>
         <div className="mt-4 border-t border-line pt-3">

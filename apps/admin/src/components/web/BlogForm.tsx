@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { WEB_BLOG_CATEGORIES } from "@bayada/shared/web-content";
 import { createBlogPost, deleteBlogPost, updateBlogPost, type BlogInput } from "@/lib/actions/web-content";
-import { Button, Card, Field, cx, inputClass, selectClass, textareaClass } from "@/components/ui";
+import { Button, Card, DatePicker, Field, NumberInput, Select, Switch, cx, inputClass, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 export function BlogForm({ locale, id, initial }: { locale: string; id: string | null; initial: BlogInput }) {
@@ -46,12 +46,9 @@ export function BlogForm({ locale, id, initial }: { locale: string; id: string |
         <div className="flex flex-col gap-4">
           <Card title="게시">
             <div className="flex flex-col gap-3">
-              <label className="flex items-center gap-2 text-caption">
-                <input type="checkbox" checked={v.isPublished} onChange={(e) => set("isPublished", e.target.checked)} />
-                홈페이지에 게시
-              </label>
+              <Switch checked={v.isPublished} onChange={(c) => set("isPublished", c)} label="홈페이지에 게시" desc={v.isPublished ? "저장하면 바로 공개됩니다" : "초안으로 저장됩니다"} />
               <Field label="게시일" htmlFor="b-date" required>
-                <input id="b-date" type="date" required className={inputClass} value={v.publishedAt} onChange={(e) => set("publishedAt", e.target.value)} />
+                <DatePicker id="b-date" required clearable={false} value={v.publishedAt} onChange={(x) => set("publishedAt", x)} />
               </Field>
               <Button type="submit" variant="primary">
                 {id ? "저장" : "만들기"}
@@ -64,20 +61,19 @@ export function BlogForm({ locale, id, initial }: { locale: string; id: string |
                 <input id="b-slug" required maxLength={120} className={inputClass} value={v.slug} onChange={(e) => set("slug", e.target.value)} />
               </Field>
               <Field label="카테고리" htmlFor="b-cat" required>
-                <select id="b-cat" required className={selectClass} value={v.category} onChange={(e) => set("category", e.target.value)}>
-                  <option value="">선택</option>
-                  {WEB_BLOG_CATEGORIES.map((c) => (
-                    <option key={c.slug} value={c.slug}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  id="b-cat"
+                  required
+                  value={v.category}
+                  onChange={(x) => set("category", x)}
+                  options={WEB_BLOG_CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
+                />
               </Field>
               <Field label="작성자" htmlFor="b-author">
                 <input id="b-author" maxLength={60} className={inputClass} value={v.author} onChange={(e) => set("author", e.target.value)} />
               </Field>
               <Field label="읽는 시간 (분)" htmlFor="b-read">
-                <input id="b-read" type="number" min={1} max={120} className={cx(inputClass, "tabular")} value={v.readTime} onChange={(e) => set("readTime", Number(e.target.value))} />
+                <NumberInput id="b-read" min={1} max={120} value={v.readTime} onChange={(e) => set("readTime", Number(e.target.value))} />
               </Field>
               <Field label="태그" htmlFor="b-tags" hint="쉼표로 구분">
                 <input id="b-tags" className={inputClass} value={v.tags} onChange={(e) => set("tags", e.target.value)} />

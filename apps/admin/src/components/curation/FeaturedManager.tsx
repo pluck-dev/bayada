@@ -6,7 +6,7 @@ import { Plus, X } from "lucide-react";
 import type { CourseStatus, ProductType, Visibility } from "@bayada/db";
 import { setFeatured } from "@/lib/actions/programs";
 import { COURSE_STATUS_LABEL, COURSE_STATUS_TONE, PRODUCT_TYPE_LABEL } from "@/lib/labels";
-import { Badge, Button, Card, EmptyState, selectClass, cx } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, Select } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 import { VisibilityPill } from "@/components/programs/ProgramTable";
 
@@ -34,20 +34,16 @@ export function FeaturedManager({
             if (pick) run(() => setFeatured(pick, true), { onSuccess: () => setPick("") });
           }}
         >
-          <select
-            className={cx(selectClass, "h-7! w-[280px]! text-caption!")}
+          <Select
+            size="sm"
+            className="w-[300px]"
             value={pick}
-            onChange={(e) => setPick(e.target.value)}
+            onChange={setPick}
             aria-label="큐레이션에 추가할 프로그램"
-          >
-            <option value="">게시된 프로그램 선택…</option>
-            {candidates.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.title} ({c.visibility === "PUBLIC" ? "외부" : "사내"})
-              </option>
-            ))}
-          </select>
-          <Button size="sm" type="submit" variant="secondary" disabled={!pick || isPending}>
+            placeholder="게시된 프로그램 선택…"
+            options={candidates.map((c) => ({ value: c.id, label: c.title, text: c.title, hint: c.visibility === "PUBLIC" ? "외부 공개" : "사내 전용" }))}
+          />
+          <Button size="sm" type="submit" variant="primary" className="h-9" disabled={!pick || isPending}>
             <Plus className="h-3.5 w-3.5" aria-hidden />
             추가
           </Button>
@@ -57,10 +53,10 @@ export function FeaturedManager({
       {featured.length === 0 ? (
         <EmptyState title="큐레이션된 프로그램이 없습니다" description="오른쪽 위에서 게시된 프로그램을 골라 메인 신규·인기 영역에 노출하세요." />
       ) : (
-        <ul className="divide-y divide-line-soft">
+        <ul className="divide-y divide-hairline">
           {featured.map((f) => (
             <li key={f.id} className="flex items-center gap-3 px-4 py-2.5 text-caption">
-              <Link href={`/${locale}/programs/${f.id}`} className="flex-1 truncate font-medium hover:underline">
+              <Link href={`/${locale}/programs/${f.id}`} className="flex-1 truncate font-medium transition-colors hover:text-brand">
                 {f.title}
               </Link>
               <span className="text-caption text-muted">{PRODUCT_TYPE_LABEL[f.productType]}</span>

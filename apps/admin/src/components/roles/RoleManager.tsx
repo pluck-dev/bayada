@@ -5,7 +5,23 @@ import Link from "next/link";
 import { Lock } from "lucide-react";
 import { createRole, deleteRole, saveRolePermissions, updateRole } from "@/lib/actions/roles";
 import { FIXED_PERMISSIONS, PERMISSION_DEFS, type Permission } from "@/lib/rbac";
-import { Badge, Button, Card, Field, cx, inputClass, selectClass, tableClass, tableWrap, tdClass, thClass } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  Field,
+  Select,
+  Tooltip,
+  actionBarClass,
+  cx,
+  inputClass,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 
 interface RoleRow {
@@ -78,11 +94,11 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
               {roles.map((r) => (
                 <th key={r.key} className={cx(thClass, "min-w-[104px] text-center align-bottom")}>
                   <span className="flex flex-col items-center gap-0.5">
-                    <span className="flex items-center gap-1 text-caption font-semibold text-fg">
+                    <span className="flex items-center gap-1 text-caption font-semibold text-ink">
                       {r.key === "ADMIN" && <Lock className="h-3 w-3 text-zinc-400" aria-label="잠금" />}
                       {r.name}
                     </span>
-                    <Link href={`/${locale}/members?role=${encodeURIComponent(r.key)}`} className="tabular font-normal hover:text-fg">
+                    <Link href={`/${locale}/members?role=${encodeURIComponent(r.key)}`} className="tabular font-normal hover:text-ink">
                       {r.users}명
                     </Link>
                     {!r.isSystem && <Badge tone="violet">사용자 정의</Badge>}
@@ -102,9 +118,9 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
                 {PERMISSION_DEFS.filter((p) => p.group === g).map((p) => {
                   const fixedTo = FIXED_PERMISSIONS[p.key];
                   return (
-                    <tr key={p.key} className="hover:bg-surface">
+                    <tr key={p.key} className={trClass}>
                       <td className={cx(tdClass, "whitespace-normal")}>
-                        <p className="font-medium text-fg">{p.label}</p>
+                        <p className="font-bold text-ink">{p.label}</p>
                         <p className="mt-0.5 text-micro leading-snug text-muted">{p.desc}</p>
                       </td>
                       {roles.map((r) => {
@@ -112,22 +128,24 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
                         const checked = (draft[r.key] ?? []).includes(p.key);
                         const changed = checked !== (base[r.key] ?? []).includes(p.key);
                         return (
-                          <td key={r.key} className={cx(tdClass, "text-center", changed && "bg-warning-soft")}>
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 accent-zinc-900 disabled:cursor-not-allowed disabled:opacity-40"
-                              checked={checked}
-                              disabled={locked || isPending}
-                              onChange={() => toggle(r.key, p.key)}
-                              aria-label={`${r.name} — ${p.label}`}
-                              title={
+                          <td key={r.key} className={cx(tdClass, "text-center", changed && "bg-pill-warning/60")}>
+                            <Tooltip
+                              className="justify-center"
+                              content={
                                 r.key === "ADMIN"
                                   ? "Super Admin 은 항상 모든 권한을 가집니다 (잠금)"
                                   : fixedTo
                                     ? "파트너 관리자 전용 권한입니다 (변경 불가)"
                                     : undefined
                               }
-                            />
+                            >
+                              <Checkbox
+                                checked={checked}
+                                disabled={locked || isPending}
+                                onChange={() => toggle(r.key, p.key)}
+                                aria-label={`${r.name} — ${p.label}`}
+                              />
+                            </Tooltip>
                           </td>
                         );
                       })}
@@ -140,7 +158,7 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
         </table>
       </div>
 
-      <div className="sticky bottom-0 z-10 -mx-1 flex items-center justify-between gap-3 rounded-lg border border-line bg-canvas/95 px-4 py-3 shadow-[var(--shadow-pop)] backdrop-blur">
+      <div className={cx(actionBarClass, "justify-between pl-5")}>
         <div className="min-w-0 text-caption">
           {changeCount === 0 ? (
             <span className="text-muted">
@@ -150,7 +168,7 @@ export function RoleManager({ roles, selfRoleKey, locale }: { roles: RoleRow[]; 
             <ul className="flex flex-col gap-0.5">
               {diff.map((d) => (
                 <li key={d.role.key} className="truncate">
-                  <span className="font-medium text-fg">{d.role.name}</span>
+                  <span className="font-medium text-ink">{d.role.name}</span>
                   <span className="text-muted"> · </span>
                   {d.added.map((p) => (
                     <span key={p} className="mr-1.5 text-success">+{LABEL[p]}</span>
@@ -196,7 +214,7 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
             아직 없습니다. 오른쪽에서 역할을 만들고 위 매트릭스에서 권한을 체크하세요. 회원·수강 화면에서 회원에게 지정합니다.
           </p>
         ) : (
-          <ul className="divide-y divide-line-soft">
+          <ul className="divide-y divide-hairline">
             {custom.map((r) => (
               <li key={r.key} className="flex items-center gap-3 px-4 py-3">
                 {editing === r.key ? (
@@ -221,7 +239,7 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
                 ) : (
                   <>
                     <div className="min-w-0 flex-1">
-                      <p className="text-caption font-medium text-fg">
+                      <p className="text-caption font-medium text-ink">
                         {r.name}
                         {r.key === selfRoleKey && <span className="ml-1.5 text-micro font-normal text-muted">(내 역할)</span>}
                       </p>
@@ -285,16 +303,15 @@ function CustomRoles({ roles, selfRoleKey }: { roles: RoleRow[]; selfRoleKey: st
               <input id="role-desc" className={inputClass} maxLength={200} value={description} onChange={(e) => setDescription(e.target.value)} />
             </Field>
             <Field label="권한 복사" htmlFor="role-copy" hint="비워 두면 권한 없이 만들어집니다. 권한이 없는 역할은 로그인할 수 없습니다.">
-              <select id="role-copy" className={selectClass} value={copyFrom} onChange={(e) => setCopyFrom(e.target.value)}>
-                <option value="">복사하지 않음</option>
-                {roles
-                  .filter((r) => r.key !== "PARTNER_ADMIN")
-                  .map((r) => (
-                    <option key={r.key} value={r.key}>
-                      {r.name}
-                    </option>
-                  ))}
-              </select>
+              <Select
+                id="role-copy"
+                value={copyFrom}
+                onChange={setCopyFrom}
+                options={[
+                  { value: "", label: "복사하지 않음" },
+                  ...roles.filter((r) => r.key !== "PARTNER_ADMIN").map((r) => ({ value: r.key, label: r.name })),
+                ]}
+              />
             </Field>
             <Button type="submit" variant="dark">
               역할 만들기

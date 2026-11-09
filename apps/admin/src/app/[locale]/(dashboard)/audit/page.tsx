@@ -99,14 +99,14 @@ export default async function AuditPage({
                     </td>
                     <td className={cx(tdClass, "max-w-[280px] truncate")}>
                       {href && name ? (
-                        <Link href={href} className="hover:underline">
+                        <Link href={href} className="transition-colors hover:text-brand">
                           {name}
                         </Link>
                       ) : (
                         <span className="text-subtle">{name ?? r.target}</span>
                       )}
                     </td>
-                    <td className={cx(tdClass, "max-w-[320px] truncate text-caption text-muted")} title={summarize(r.detail)}>
+                    <td className={cx(tdClass, "max-w-[320px] truncate text-caption text-muted")} data-tip={summarize(r.detail)}>
                       {summarize(r.detail)}
                     </td>
                   </tr>

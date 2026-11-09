@@ -36,7 +36,7 @@ export default async function PagesPage({ params }: { params: Promise<{ locale: 
                 <tr key={d.slug} className={trClass}>
                   <td className={tdClass}>
                     {p ? (
-                      <Link href={`${base}/${d.slug}`} className="font-medium hover:underline">
+                      <Link href={`${base}/${d.slug}`} className="font-bold text-ink transition-colors hover:text-brand">
                         {p.title}
                       </Link>
                     ) : (

@@ -44,7 +44,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
                     <Link href={`${base}/${p.id}`} className="flex items-center gap-2.5">
                       <ProviderLogo name={p.name} logo={p.logo} />
                       <span>
-                        <span className="block font-medium hover:underline">{p.name}</span>
+                        <span className="block font-medium transition-colors hover:text-brand">{p.name}</span>
                         <span className="block font-mono text-micro text-subtle">{p.slug}</span>
                       </span>
                     </Link>

@@ -5,7 +5,19 @@ import { formatDateTime } from "@/lib/labels";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_TONE, ORDER_TYPE_LABEL, orderTitle } from "@/lib/order-labels";
 import { SearchBox } from "@/components/SearchBox";
 import { Pager } from "@/components/Pager";
-import { Badge, EmptyState, FilterChip, PageHeader, cx, qs, tableClass, tableWrap, tdClass, thClass, trClass } from "@/components/ui";
+import {
+  Badge,
+  EmptyState,
+  FilterChip,
+  PageHeader,
+  cx,
+  qs,
+  tableClass,
+  tableWrap,
+  tdClass,
+  thClass,
+  trClass,
+} from "@/components/ui";
 
 export default async function OrdersPage({
   params,
@@ -66,7 +78,7 @@ export default async function OrdersPage({
               {data.rows.map((o) => (
                 <tr key={o.id} className={trClass}>
                   <td className={tdClass}>
-                    <Link href={`${base}/${o.id}`} className="font-mono text-caption font-medium hover:underline">
+                    <Link href={`${base}/${o.id}`} className="font-mono text-caption font-medium transition-colors hover:text-brand">
                       {o.orderNo}
                     </Link>
                     {o.type === "B2B" && <span className="ml-1.5 text-micro text-subtle">{ORDER_TYPE_LABEL.B2B}</span>}
@@ -75,7 +87,7 @@ export default async function OrdersPage({
                     <p className="font-medium">{o.user.name ?? "-"}</p>
                     <p className="text-micro text-subtle">{o.organization?.name ?? o.user.email}</p>
                   </td>
-                  <td className={cx(tdClass, "max-w-[320px] truncate")} title={orderTitle(o.items)}>
+                  <td className={cx(tdClass, "max-w-[320px] truncate")} data-tip={orderTitle(o.items)}>
                     {orderTitle(o.items)}
                   </td>
                   <td className={cx(tdClass, "tabular text-right")}>

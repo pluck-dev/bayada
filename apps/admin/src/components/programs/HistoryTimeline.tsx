@@ -22,7 +22,7 @@ const STATUS_ACTIONS = new Set([
 export function HistoryTimeline({ entries, publishedAt }: { entries: HistoryEntry[]; publishedAt: Date | null }) {
   if (!entries.length) {
     return (
-      <div className="rounded-lg border border-line">
+      <div className="surface-card rounded-[22px] bg-canvas">
         <EmptyState
           title="기록된 이력이 없습니다"
           description={
