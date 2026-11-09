@@ -35,6 +35,9 @@ export const PERMISSION_DEFS = [
   { key: "site.manage", group: "사이트 운영", label: "사이트 설정", desc: "아카데미 홈 문구·섹션·FAQ·푸터·SEO 기본값을 바꿉니다." },
   { key: "audit", group: "사이트 운영", label: "감사 로그", desc: "누가 언제 무엇을 바꿨는지 봅니다." },
   { key: "role.manage", group: "사이트 운영", label: "역할·권한", desc: "역할별 권한을 바꾸고 사용자 정의 역할을 만듭니다." },
+  { key: "web.inquiries", group: "웹사이트", label: "문의 CRM", desc: "홈페이지 상담·신청 문의를 보고 상태·담당자·메모를 처리하고 CSV 로 내려받습니다." },
+  { key: "web.content", group: "웹사이트", label: "홈페이지 콘텐츠", desc: "홈페이지 블로그·FAQ·이용자 후기·메인 히어로를 작성·수정합니다." },
+  { key: "web.settings", group: "웹사이트", label: "홈페이지 사이트 정보", desc: "푸터·문의 페이지의 회사·연락처 정보, SNS 링크, 문의 알림 메일을 바꿉니다." },
 ] as const;
 
 export type Permission = (typeof PERMISSION_DEFS)[number]["key"];
@@ -70,6 +73,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> 
     "credential.read",
     "credential.approve",
     "credential.program",
+    "web.content",
   ],
   // 임상 리뷰어 — 승인 대기 큐 중 CLINICAL_REVIEW 항목만 + 바야다 인증 심사위원(평가만, 발급은 운영자)
   CLINICAL_REVIEWER: ["approval.queue", "workflow.clinical", "credential.read", "credential.evaluate"],
@@ -123,6 +127,9 @@ const HOME_ORDER: [Permission, string][] = [
   ["role.manage", "/roles"],
   ["audit", "/audit"],
   ["commerce", "/organizations"],
+  ["web.inquiries", "/web"],
+  ["web.content", "/web"],
+  ["web.settings", "/web/settings"],
 ];
 
 /** 사용자별 첫 화면 — 가진 권한 중 사이드바 순서로 첫 번째 (권한이 하나도 없으면 로그인 자체가 막힌다) */

@@ -34,6 +34,8 @@ export default async function DashboardLayout({
   const credentials = credentialTodo.length
     ? await prisma.credentialApplication.count({ where: { status: { in: credentialTodo } } })
     : 0;
+  // 홈페이지 문의 CRM: 아직 아무도 손대지 않은 신규 문의
+  const inquiries = can(user, "web.inquiries") ? await prisma.webInquiry.count({ where: { status: "NEW" } }) : 0;
 
   return (
     <FeedbackProvider>
@@ -45,7 +47,7 @@ export default async function DashboardLayout({
           isPartner={user.role === "PARTNER_ADMIN"}
           userName={user.name ?? user.email}
           userEmail={user.email}
-          counts={{ queue, signups, reports, credentials }}
+          counts={{ queue, signups, reports, credentials, inquiries }}
         />
         <main className="flex-1 overflow-y-auto bg-canvas">
           <div className="mx-auto max-w-[1280px] px-8 py-7">{children}</div>

@@ -213,7 +213,7 @@ async function withActors<T extends { actorId: string | null }>(rows: T[]) {
 /** target "Course:id" → 표시용 이름 */
 export async function resolveTargets(targets: string[]) {
   const ids = (type: string) => targets.filter((t) => t.startsWith(`${type}:`)).map((t) => t.slice(type.length + 1));
-  const [courses, users, banners, pages, sessions, orgs, reviews] = await Promise.all([
+  const [courses, users, banners, pages, sessions, orgs, reviews, inquiries, posts, faqs] = await Promise.all([
     prisma.course.findMany({ where: { id: { in: ids("Course") } }, select: { id: true, title: true } }),
     prisma.user.findMany({ where: { id: { in: ids("User") } }, select: { id: true, email: true } }),
     prisma.banner.findMany({ where: { id: { in: ids("Banner") } }, select: { id: true, title: true } }),
@@ -221,6 +221,9 @@ export async function resolveTargets(targets: string[]) {
     prisma.trainingSession.findMany({ where: { id: { in: ids("TrainingSession") } }, select: { id: true, title: true } }),
     prisma.organization.findMany({ where: { id: { in: ids("Organization") } }, select: { id: true, name: true } }),
     prisma.review.findMany({ where: { id: { in: ids("Review") } }, select: { id: true, course: { select: { title: true } } } }),
+    prisma.webInquiry.findMany({ where: { id: { in: ids("WebInquiry") } }, select: { id: true, referenceNo: true } }),
+    prisma.webBlogPost.findMany({ where: { id: { in: ids("WebBlogPost") } }, select: { id: true, title: true } }),
+    prisma.webFaqItem.findMany({ where: { id: { in: ids("WebFaqItem") } }, select: { id: true, question: true } }),
   ]);
   const map = new Map<string, string>();
   courses.forEach((c) => map.set(`Course:${c.id}`, c.title));
@@ -230,6 +233,9 @@ export async function resolveTargets(targets: string[]) {
   sessions.forEach((s) => map.set(`TrainingSession:${s.id}`, s.title));
   orgs.forEach((o) => map.set(`Organization:${o.id}`, o.name));
   reviews.forEach((r) => map.set(`Review:${r.id}`, `${r.course.title} 후기`));
+  inquiries.forEach((i) => map.set(`WebInquiry:${i.id}`, `홈페이지 문의 ${i.referenceNo}`));
+  posts.forEach((p) => map.set(`WebBlogPost:${p.id}`, p.title));
+  faqs.forEach((f) => map.set(`WebFaqItem:${f.id}`, f.question));
   return map;
 }
 

@@ -24,6 +24,12 @@ import {
   Route,
   ShieldCheck,
   Settings2,
+  Inbox,
+  Newspaper,
+  HelpCircle,
+  MessageSquareQuote,
+  Images,
+  Globe,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -34,12 +40,13 @@ interface NavItem {
   path: string;
   label: string;
   icon: LucideIcon;
-  permission?: Permission;
+  /** 배열이면 그중 하나만 있어도 보인다 */
+  permission?: Permission | Permission[];
   /** 2차 이후 기능 — 라우트 없이 비활성 표시 */
   phase?: string;
   /** 비활성 항목 툴팁 (기본: "{phase} 오픈 예정") */
   note?: string;
-  badgeKey?: "queue" | "signups" | "reports" | "credentials";
+  badgeKey?: "queue" | "signups" | "reports" | "credentials" | "inquiries";
 }
 
 const PRIMARY: NavItem[] = [
@@ -69,6 +76,17 @@ const COMMERCE: NavItem[] = [
   { path: "/invoices", label: "청구서", icon: FileText, permission: "commerce" },
 ];
 
+// 웹사이트(홈페이지 apps/web) 작업 영역 — 경로는 /web/…
+const WEBSITE: NavItem[] = [
+  { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content"] },
+  { path: "/web/inquiries", label: "문의 CRM", icon: Inbox, permission: "web.inquiries", badgeKey: "inquiries" },
+  { path: "/web/blog", label: "블로그", icon: Newspaper, permission: "web.content" },
+  { path: "/web/faq", label: "자주 묻는 질문", icon: HelpCircle, permission: "web.content" },
+  { path: "/web/reviews", label: "이용자 후기", icon: MessageSquareQuote, permission: "web.content" },
+  { path: "/web/hero", label: "메인 히어로", icon: Images, permission: "web.content" },
+  { path: "/web/settings", label: "사이트 정보", icon: Settings2, permission: "web.settings" },
+];
+
 export function Sidebar({
   locale,
   permissions,
@@ -85,21 +103,31 @@ export function Sidebar({
   isPartner: boolean;
   userName: string;
   userEmail: string;
-  counts: { queue: number; signups: number; reports: number; credentials?: number };
+  counts: { queue: number; signups: number; reports: number; credentials?: number; inquiries?: number };
 }) {
   const pathname = usePathname();
   const base = `/${locale}`;
 
   const isActive = (path: string) => {
     const href = base + path;
-    return path === "" ? pathname === base : pathname === href || pathname.startsWith(href + "/");
+    // /web 은 하위 메뉴(/web/inquiries …)가 따로 있어 정확히 같을 때만 활성
+    return path === "" || path === "/web" ? pathname === href : pathname === href || pathname.startsWith(href + "/");
   };
 
+  const allowed = (perm: NavItem["permission"]) =>
+    !!perm && (Array.isArray(perm) ? perm : [perm]).some((p) => can({ permissions }, p));
   // 2차 예정 항목은 운영 역할에게만 보여 준다 (파트너 콘솔에는 불필요)
-  const visible = (items: NavItem[]) =>
-    items.filter((i) => (i.phase ? !isPartner : !!i.permission && can({ permissions }, i.permission)));
+  const visible = (items: NavItem[]) => items.filter((i) => (i.phase ? !isPartner : allowed(i.permission)));
   const primary = visible(PRIMARY);
   const commerce = visible(COMMERCE);
+  const website = visible(WEBSITE);
+
+  // 작업 영역은 URL 로 정한다 (/web/… = 웹사이트). 한쪽 권한만 있으면 그쪽만 보인다
+  const hasAcademy = primary.length + commerce.length > 0;
+  const onWeb = pathname === `${base}/web` || pathname.startsWith(`${base}/web/`);
+  const workspace: "academy" | "web" = website.length > 0 && (onWeb || !hasAcademy) ? "web" : "academy";
+  const academyHome = base + ([...primary, ...commerce].find((i) => !i.phase)?.path ?? "");
+  const webHome = base + (website[0]?.path ?? "/web");
 
   const renderItem = (item: NavItem) => {
     const Icon = item.icon;
@@ -146,17 +174,46 @@ export function Sidebar({
       <div className="flex h-14 items-center gap-2.5 px-4">
         <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-caption font-bold text-white">B</span>
         <div className="leading-tight">
-          <p className="text-caption font-semibold text-white">Bayada Academy</p>
+          <p className="text-caption font-semibold text-white">{workspace === "web" ? "Bayada Website" : "Bayada Academy"}</p>
           <p className="text-micro text-zinc-500">{isPartner ? "Partner Console" : "Admin Console"}</p>
         </div>
       </div>
 
+      {hasAcademy && website.length > 0 && (
+        <div className="mx-3 mb-2 grid grid-cols-2 gap-0.5 rounded-md bg-side-hover/60 p-0.5" role="group" aria-label="작업 영역">
+          {(
+            [
+              { key: "academy", label: "아카데미", href: academyHome },
+              { key: "web", label: "웹사이트", href: webHome },
+            ] as const
+          ).map((w) => (
+            <Link
+              key={w.key}
+              href={w.href}
+              aria-current={workspace === w.key ? "true" : undefined}
+              className={cx(
+                "flex h-7 items-center justify-center rounded text-caption transition-colors",
+                workspace === w.key ? "bg-zinc-700 font-medium text-white" : "text-zinc-500 hover:text-zinc-100",
+              )}
+            >
+              {w.label}
+            </Link>
+          ))}
+        </div>
+      )}
+
       <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="주 메뉴">
-        <ul className="flex flex-col gap-0.5">{primary.map(renderItem)}</ul>
-        {commerce.length > 0 && (
+        {workspace === "web" ? (
+          <ul className="flex flex-col gap-0.5">{website.map(renderItem)}</ul>
+        ) : (
           <>
-            <p className="mb-1 mt-5 px-2.5 text-micro font-medium uppercase tracking-wider text-zinc-600">B2B · 결제</p>
-            <ul className="flex flex-col gap-0.5">{commerce.map(renderItem)}</ul>
+            <ul className="flex flex-col gap-0.5">{primary.map(renderItem)}</ul>
+            {commerce.length > 0 && (
+              <>
+                <p className="mb-1 mt-5 px-2.5 text-micro font-medium uppercase tracking-wider text-zinc-600">B2B · 결제</p>
+                <ul className="flex flex-col gap-0.5">{commerce.map(renderItem)}</ul>
+              </>
+            )}
           </>
         )}
       </nav>

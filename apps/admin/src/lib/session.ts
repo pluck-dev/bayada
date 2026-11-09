@@ -51,11 +51,12 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
   };
 });
 
-/** 페이지 가드 — 비로그인은 로그인으로, 권한 없으면 사용자별 첫 화면으로 */
-export async function requirePage(permission: Permission, locale: string): Promise<AdminUser> {
+/** 페이지 가드 — 비로그인은 로그인으로, 권한 없으면 사용자별 첫 화면으로. 배열이면 그중 하나 */
+export async function requirePage(permission: Permission | Permission[], locale: string): Promise<AdminUser> {
   const user = await getAdminUser();
   if (!user) redirect(`/${locale}/auth/login`);
-  if (!can(user, permission)) redirect(homePath(user, locale));
+  const perms = Array.isArray(permission) ? permission : [permission];
+  if (!perms.some((p) => can(user, p))) redirect(homePath(user, locale));
   return user;
 }
 
