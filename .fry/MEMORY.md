@@ -310,6 +310,6 @@
 - `/review-access` 는 언어 경로 밖 → web·academy middleware matcher 에서 제외해 둠. 다시 matcher 를 고칠 때 빠뜨리면 /ko/review-access 로 가서 404.
 - 작성자 = 소속(바야다 client / 제작팀 agency) + 이름 직접 입력, 브라우저 localStorage 에 기억. 계정 인증이 아니다. 수정은 작성 브라우저 토큰(sha256 만 DB) + 같은 소속·이름 + 미처리 상태일 때만.
 - 사이트 도구의 상태 전환은 `manualFeedbackTransitions` 만 허용(배포완료는 어드민 전용). 어드민은 모든 상태로 변경 가능 + 재수정 요청(개발완료 이후만 → 미처리 + 사유).
-- 어드민 댓글은 department="admin" → 사이트 카드에 "이름 · 관리자". "위치 보기"는 WEB_URL / ACADEMY_URL + `#feedback=<selector>&text=…&review=<id>&scope=page` — 리뷰 모드가 켜진 브라우저에서만 요소를 찾아 강조한다.
+- 어드민 댓글은 department="admin" → 사이트 카드에 "이름 · 관리자". "위치 보기"는 WEB_PUBLIC_URL(없으면 WEB_URL) / ACADEMY_URL — 운영 admin 의 WEB_URL 은 웹사이트 재생성용 내부 주소(http://web:3000)라 공개 주소를 따로 둔다 + `#feedback=<selector>&text=…&review=<id>&scope=page` — 리뷰 모드가 켜진 브라우저에서만 요소를 찾아 강조한다.
 - 원본의 페이지별 selector 이전 규칙·배포 검증(deployment)·담당자 고정 명단은 다른 사이트 전용이라 옮기지 않았다.
 - 로컬 검증 DB 는 `bayada_review`(5433). 어드민 권한 코드는 `feedback`(ADMIN 은 자동 포함, 다른 역할은 역할·권한 화면에서 부여).
