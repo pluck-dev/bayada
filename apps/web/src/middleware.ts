@@ -7,5 +7,6 @@ export function middleware(request: any) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|.*\\..*).*)"],
+  // review-access 는 언어 경로 밖의 리뷰 모드 화면
+  matcher: ["/((?!_next|api|review-access|.*\\..*).*)"],
 };
