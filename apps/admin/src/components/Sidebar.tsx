@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
+  GraduationCap,
   LayoutDashboard,
   BookOpen,
   ClipboardCheck,
@@ -195,25 +196,29 @@ export function Sidebar({
       </div>
 
       {hasAcademy && website.length > 0 && (
-        <div className="mx-3 mb-2 grid grid-cols-2 gap-0.5 rounded-md bg-side-hover/60 p-0.5" role="group" aria-label="작업 영역">
-          {(
-            [
-              { key: "academy", label: "아카데미", href: academyHome },
-              { key: "web", label: "웹사이트", href: webHome },
-            ] as const
-          ).map((w) => (
-            <Link
-              key={w.key}
-              href={w.href}
-              aria-current={workspace === w.key ? "true" : undefined}
-              className={cx(
-                "flex h-7 items-center justify-center rounded text-caption transition-colors",
-                workspace === w.key ? "bg-zinc-700 font-medium text-white" : "text-zinc-500 hover:text-zinc-100",
-              )}
-            >
-              {w.label}
-            </Link>
-          ))}
+        <div className="mx-3 mb-3 mt-1">
+          <p className="mb-1.5 px-1 text-micro font-medium text-zinc-400">관리할 사이트</p>
+          <div className="grid grid-cols-2 gap-1 rounded-lg bg-black/30 p-1 ring-1 ring-white/10" role="group" aria-label="관리할 사이트">
+            {(
+              [
+                { key: "academy", label: "아카데미", href: academyHome, icon: GraduationCap },
+                { key: "web", label: "웹사이트", href: webHome, icon: Globe },
+              ] as const
+            ).map((w) => (
+              <Link
+                key={w.key}
+                href={w.href}
+                aria-current={workspace === w.key ? "true" : undefined}
+                className={cx(
+                  "flex h-10 items-center justify-center gap-1.5 rounded-md text-body-sm font-semibold transition-colors",
+                  workspace === w.key ? "bg-brand text-white shadow-sm" : "text-zinc-300 hover:bg-white/10 hover:text-white",
+                )}
+              >
+                <w.icon className="h-4 w-4" aria-hidden />
+                {w.label}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 
