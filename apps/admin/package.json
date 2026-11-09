@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@bayada/db": "workspace:*",
+    "@bayada/review": "workspace:*",
     "@bayada/services": "workspace:*",
     "@bayada/shared": "workspace:*",
     "@bayada/ui": "workspace:*",

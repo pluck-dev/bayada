@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ReviewGate } from "@bayada/review-ui/gate";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/site-settings";
 
@@ -78,7 +79,10 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
       </head>
-      <body className="min-h-screen bg-canvas text-ink antialiased">{children}</body>
+      <body className="min-h-screen bg-canvas text-ink antialiased">
+        {children}
+        <ReviewGate site="academy" />
+      </body>
     </html>
   );
 }

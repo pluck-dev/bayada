@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**": ["node_modules/.pnpm/**/.prisma/client/*"],
   },
-  transpilePackages: ["@bayada/ui", "@bayada/shared"],
+  transpilePackages: ["@bayada/ui", "@bayada/shared", "@bayada/review"],
 };
 
 export default nextConfig;

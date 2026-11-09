@@ -292,3 +292,24 @@
 - 스키마 push(추가만) → `DATABASE_URL=… pnpm --filter @bayada/db import:web` → `.env` 에 WEB_REVALIDATE_SECRET 추가 → `up -d --build web admin`.
 ## 다음 단계 (이번 범위 밖)
 - `data/service-page-details.ts`·`audiences.ts`·`platforms.ts`(서비스·대상·플랫폼 상세 문구)는 아직 하드코딩. 사이트 정보 설정은 푸터·문의 페이지 카드만 바꾼다 — 본문 문구 속 대표번호(1670-1379)는 FAQ·약관·기관 페이지 등 여러 곳에 하드코딩으로 남아 있음.
+
+# 클라이언트 리뷰·피드백 도구: review-access 잠금, 힌트 쿠키 + 세션 API, site 스코프, 어드민 /feedback
+
+## 구조 (2026-11-09, 원본 review-tools-portable 이식 — Supabase → Prisma)
+- `packages/review` = 서버 로직(config 순수 모듈 / access 서명 쿠키 / server 라우트 팩토리). web·academy 의 `app/api/review/{feedback,replies,session}` 은 사이트 키만 넘겨 export.
+- `packages/review-ui` = 사이트에 뜨는 도구(요소 검사·VIEW MODE·런처 5종 부채꼴·마커·목록·댓글·상태). 루트 레이아웃의 `<ReviewGate site>` 하나로 붙는다.
+- DB: `ReviewFeedback`/`ReviewFeedbackReply` 한 쌍을 두 사이트가 같이 쓴다 → **모든 쿼리에 site 조건 필수**. section(언어 경로 다음 첫 세그먼트, 홈=home)은 저장 시 계산해 둔다(필터·현황용).
+
+## WHY: 루트 레이아웃에서 cookies() 를 읽지 않는다
+- 웹사이트는 정적 렌더링이라 루트에서 cookies() 를 읽으면 전 페이지가 동적으로 바뀐다. 그래서 잠금 해제 시 httpOnly 서명 쿠키(`bayada_review_<site>`)와 JS 가 읽는 힌트 쿠키(`bayada_review_ui_<site>`)를 같이 굽고,
+  게이트는 힌트가 있을 때만 `GET /api/review/session`(서버가 서명 검증) → unlocked 면 `next/dynamic` 으로 도구 JS·CSS·글꼴을 불러온다. 힌트는 권한이 아니다(API 가 매번 서명 쿠키를 검사).
+- 일반 방문자는 도구 코드·CSS 를 아예 받지 않는다. CSS 도 토큰을 `.foundation-theme`(도구 루트) 안에만 두고 글꼴 이름을 "Review Figtree/Pretendard" 로 바꿔 사이트와 안 겹치게 했다.
+- 서명에 사이트 키가 들어가 웹 쿠키로 아카데미 API 를 못 쓴다. REVIEW_ACCESS_PASSWORD·SECRET 둘 중 하나라도 없으면 도구·API 전부 꺼짐(503).
+
+## 함정
+- `/review-access` 는 언어 경로 밖 → web·academy middleware matcher 에서 제외해 둠. 다시 matcher 를 고칠 때 빠뜨리면 /ko/review-access 로 가서 404.
+- 작성자 = 소속(바야다 client / 제작팀 agency) + 이름 직접 입력, 브라우저 localStorage 에 기억. 계정 인증이 아니다. 수정은 작성 브라우저 토큰(sha256 만 DB) + 같은 소속·이름 + 미처리 상태일 때만.
+- 사이트 도구의 상태 전환은 `manualFeedbackTransitions` 만 허용(배포완료는 어드민 전용). 어드민은 모든 상태로 변경 가능 + 재수정 요청(개발완료 이후만 → 미처리 + 사유).
+- 어드민 댓글은 department="admin" → 사이트 카드에 "이름 · 관리자". "위치 보기"는 WEB_URL / ACADEMY_URL + `#feedback=<selector>&text=…&review=<id>&scope=page` — 리뷰 모드가 켜진 브라우저에서만 요소를 찾아 강조한다.
+- 원본의 페이지별 selector 이전 규칙·배포 검증(deployment)·담당자 고정 명단은 다른 사이트 전용이라 옮기지 않았다.
+- 로컬 검증 DB 는 `bayada_review`(5433). 어드민 권한 코드는 `feedback`(ADMIN 은 자동 포함, 다른 역할은 역할·권한 화면에서 부여).

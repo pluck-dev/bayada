@@ -1,0 +1,16 @@
+/* /review-access 화면 (원본 access.css 를 이 화면 전용 클래스로) */
+.review-access-page { display: grid; min-height: 100dvh; place-items: center; padding: 24px; background: #f7f8fa; color: #101114; font-family: "Pretendard", system-ui, sans-serif; }
+.review-access-card { width: min(100%, 420px); padding: 32px; border: 1px solid #e2e5e9; border-radius: 12px; background: #fff; box-shadow: 0 8px 32px rgb(16 17 20 / 8%); }
+.review-access-eyebrow { color: #666d7c; font-size: 13px; font-weight: 600; }
+.review-access-card h1 { margin-top: 4px; font-size: 24px; line-height: 1.4; font-weight: 700; letter-spacing: -.03em; }
+.review-access-card > p { margin-top: 8px; color: #666d7c; font-size: 14px; line-height: 1.6; }
+.review-access-form { display: grid; gap: 10px; margin-top: 24px; }
+.review-access-form label { font-size: 14px; font-weight: 600; }
+.review-access-form input { width: 100%; height: 48px; padding-inline: 14px; border: 1px solid #cbd2df; border-radius: 8px; background: #fff; color: #101114; font-size: 16px; }
+.review-access-form input:focus-visible { outline: 2px solid #101114; outline-offset: 2px; }
+.review-access-form button, .review-access-actions > * { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 4px; padding-inline: 16px; border: 0; border-radius: 8px; background: #111827; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.review-access-actions { display: grid; gap: 8px; margin-top: 24px; }
+.review-access-actions button { background: #f2f4f6; color: #101114; }
+.review-access-form button:disabled, .review-access-actions button:disabled { cursor: wait; opacity: .65; }
+.review-access-error { color: #b42318; font-size: 14px; }
+@media (max-width: 480px) { .review-access-card { padding: 24px; } }

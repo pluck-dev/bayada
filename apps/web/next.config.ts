@@ -5,11 +5,11 @@ const nextConfig: NextConfig = {
   // Docker 이미지(deploy/)에서 node server.js 로 실행한다
   output: "standalone",
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
-  // 콘텐츠·문의 CRM 을 DB(@bayada/db)에서 읽는다 — standalone 이미지에 Prisma 엔진 포함
+  // 콘텐츠·문의 CRM·리뷰 피드백 API 가 Prisma 를 쓴다 — standalone 이미지에 엔진 포함 (academy 와 같은 설정)
   outputFileTracingIncludes: {
     "/**": ["node_modules/.pnpm/**/.prisma/client/*"],
   },
-  transpilePackages: ["@bayada/ui", "@bayada/shared"],
+  transpilePackages: ["@bayada/ui", "@bayada/shared", "@bayada/review", "@bayada/review-ui"],
   async redirects() {
     return [
       // 기존 URL → 새 URL 리다이렉트

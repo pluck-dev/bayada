@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/seo";
+import { ReviewGate } from "@bayada/review-ui/gate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -90,6 +91,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className="min-h-screen bg-[color:var(--bg)] text-[color:var(--fg)] antialiased">
         {children}
+        <ReviewGate site="web" />
       </body>
     </html>
   );

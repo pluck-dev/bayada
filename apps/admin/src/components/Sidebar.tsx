@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   BookOpen,
@@ -18,6 +19,7 @@ import {
   FileText,
   LogOut,
   MessageSquareWarning,
+  MessageSquareText,
   CalendarDays,
   FileSignature,
   LayoutGrid,
@@ -65,6 +67,7 @@ const PRIMARY: NavItem[] = [
   { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console" },
   { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages" },
   { path: "/site-settings", label: "사이트 설정", icon: Settings2, permission: "site.manage" },
+  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback" },
   { path: "/roles", label: "역할·권한", icon: ShieldCheck, permission: "role.manage" },
   { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit" },
 ];
@@ -85,6 +88,7 @@ const WEBSITE: NavItem[] = [
   { path: "/web/reviews", label: "이용자 후기", icon: MessageSquareQuote, permission: "web.content" },
   { path: "/web/hero", label: "메인 히어로", icon: Images, permission: "web.content" },
   { path: "/web/settings", label: "사이트 정보", icon: Settings2, permission: "web.settings" },
+  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback" },
 ];
 
 export function Sidebar({
@@ -125,7 +129,18 @@ export function Sidebar({
   // 작업 영역은 URL 로 정한다 (/web/… = 웹사이트). 한쪽 권한만 있으면 그쪽만 보인다
   const hasAcademy = primary.length + commerce.length > 0;
   const onWeb = pathname === `${base}/web` || pathname.startsWith(`${base}/web/`);
-  const workspace: "academy" | "web" = website.length > 0 && (onWeb || !hasAcademy) ? "web" : "academy";
+  // 피드백(/feedback)은 두 작업 영역 공용 메뉴 → 들어오기 직전 작업 영역을 유지한다
+  const onShared = pathname === `${base}/feedback` || pathname.startsWith(`${base}/feedback/`);
+  const [lastWorkspace, setLastWorkspace] = useState<"academy" | "web">("academy");
+  useEffect(() => {
+    if (onShared) {
+      if (sessionStorage.getItem("bayada-admin.workspace") === "web") setLastWorkspace("web");
+    } else {
+      sessionStorage.setItem("bayada-admin.workspace", onWeb ? "web" : "academy");
+    }
+  }, [onShared, onWeb]);
+  const workspace: "academy" | "web" =
+    website.length > 0 && (onWeb || !hasAcademy || (onShared && lastWorkspace === "web")) ? "web" : "academy";
   const academyHome = base + ([...primary, ...commerce].find((i) => !i.phase)?.path ?? "");
   const webHome = base + (website[0]?.path ?? "/web");
 
