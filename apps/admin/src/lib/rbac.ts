@@ -39,6 +39,8 @@ export const PERMISSION_DEFS = [
   { key: "web.inquiries", group: "웹사이트", label: "문의 CRM", desc: "홈페이지 상담·신청 문의를 보고 상태·담당자·메모를 처리하고 CSV 로 내려받습니다." },
   { key: "web.content", group: "웹사이트", label: "홈페이지 콘텐츠", desc: "홈페이지 블로그·FAQ·이용자 후기·메인 히어로를 작성·수정합니다." },
   { key: "web.settings", group: "웹사이트", label: "홈페이지 사이트 정보", desc: "푸터·문의 페이지의 회사·연락처 정보, SNS 링크, 문의 알림 메일을 바꿉니다." },
+  { key: "web.members", group: "웹사이트", label: "홈페이지 회원", desc: "홈페이지 회원(이용자·보호자·제공자·기관) 목록·상세를 보고 회원 유형·방문 인력 지정·탈퇴 처리를 합니다." },
+  { key: "web.bookings", group: "웹사이트", label: "서비스 예약·방문 기록", desc: "방문 서비스 예약을 확정·담당자 배정·완료·취소하고 방문 기록과 만족도를 봅니다." },
 ] as const;
 
 export type Permission = (typeof PERMISSION_DEFS)[number]["key"];
@@ -131,6 +133,8 @@ const HOME_ORDER: [Permission, string][] = [
   ["commerce", "/organizations"],
   ["web.inquiries", "/web"],
   ["web.content", "/web"],
+  ["web.bookings", "/web/bookings"],
+  ["web.members", "/web/members"],
   ["web.settings", "/web/settings"],
 ];
 

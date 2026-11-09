@@ -33,6 +33,9 @@ import {
   MessageSquareQuote,
   Images,
   Globe,
+  CalendarCheck,
+  ClipboardList,
+  UserRound,
   Palette,
   PanelLeftClose,
   PanelLeftOpen,
@@ -56,7 +59,7 @@ interface NavItem {
   phase?: string;
   /** 비활성 항목 툴팁 (기본: "{phase} 오픈 예정") */
   note?: string;
-  badgeKey?: "queue" | "signups" | "reports" | "credentials" | "inquiries";
+  badgeKey?: "queue" | "signups" | "reports" | "credentials" | "inquiries" | "bookings" | "withdrawals";
   /** 사이드바 묶음 제목 (같은 group 끼리 연속으로 둔다) */
   group?: string;
 }
@@ -94,8 +97,11 @@ const SYSTEM: NavItem[] = [
 
 // 웹사이트(홈페이지 apps/web) 작업 영역 — 경로는 /web/…
 const WEBSITE: NavItem[] = [
-  { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content"] },
+  { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content", "web.bookings", "web.members"] },
   { path: "/web/inquiries", label: "문의 CRM", icon: Inbox, permission: "web.inquiries", badgeKey: "inquiries", group: "고객" },
+  { path: "/web/bookings", label: "서비스 예약", icon: CalendarCheck, permission: "web.bookings", badgeKey: "bookings", group: "고객" },
+  { path: "/web/visits", label: "방문 기록", icon: ClipboardList, permission: "web.bookings", group: "고객" },
+  { path: "/web/members", label: "홈페이지 회원", icon: UserRound, permission: "web.members", badgeKey: "withdrawals", group: "고객" },
   { path: "/web/blog", label: "블로그", icon: Newspaper, permission: "web.content", group: "콘텐츠" },
   { path: "/web/faq", label: "자주 묻는 질문", icon: HelpCircle, permission: "web.content", group: "콘텐츠" },
   { path: "/web/reviews", label: "이용자 후기", icon: MessageSquareQuote, permission: "web.content", group: "콘텐츠" },
@@ -126,7 +132,7 @@ export interface SidebarProps {
   isSuperAdmin?: boolean;
   userName: string;
   userEmail: string;
-  counts: { queue: number; signups: number; reports: number; credentials?: number; inquiries?: number };
+  counts: { queue: number; signups: number; reports: number; credentials?: number; inquiries?: number; bookings?: number; withdrawals?: number };
 }
 
 /** 접기 단축키 표기 — 맥은 ⌘, 그 밖은 Ctrl */

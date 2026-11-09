@@ -37,6 +37,9 @@ export default async function DashboardLayout({
     : 0;
   // 홈페이지 문의 CRM: 아직 아무도 손대지 않은 신규 문의
   const inquiries = can(user, "web.inquiries") ? await prisma.webInquiry.count({ where: { status: "NEW" } }) : 0;
+  // 홈페이지 서비스 예약: 확정 전 신청 / 회원: 처리 전 탈퇴 요청
+  const bookings = can(user, "web.bookings") ? await prisma.booking.count({ where: { status: "REQUESTED" } }) : 0;
+  const withdrawals = can(user, "web.members") ? await prisma.webMemberProfile.count({ where: { withdrawalRequestedAt: { not: null }, withdrawnAt: null } }) : 0;
 
   // 접힌 사이드바 — 쿠키로 서버에서 정해 첫 화면부터 같은 폭(깜빡임 없음)
   const rail = (await cookies()).get(SIDEBAR_COOKIE)?.value === "rail";
@@ -53,7 +56,7 @@ export default async function DashboardLayout({
         isSuperAdmin: user.roleKey === "ADMIN",
         userName: user.name ?? user.email,
         userEmail: user.email,
-        counts: { queue, signups, reports, credentials, inquiries },
+        counts: { queue, signups, reports, credentials, inquiries, bookings, withdrawals },
       }}
     >
       {children}

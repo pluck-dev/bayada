@@ -3,21 +3,24 @@ import { WEB_INQUIRY_STATUS_LABEL, webFormLabel } from "@bayada/shared/web-conte
 import { requirePage } from "@/lib/session";
 import { can } from "@/lib/rbac";
 import { getWebDashboard } from "@/lib/queries/web";
+import { getBookingDashboard } from "@/lib/queries/web-members";
 import { formatDateTime } from "@/lib/labels";
 import { INQUIRY_STATUS_TONE } from "@/lib/web-labels";
 import { Badge, Card, EmptyState, PageHeader, Stat, qs } from "@/components/ui";
 
 export default async function WebDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const user = await requirePage(["web.inquiries", "web.content"], locale);
-  const d = await getWebDashboard();
+  const user = await requirePage(["web.inquiries", "web.content", "web.bookings", "web.members"], locale);
+  const bookingsOn = can(user, "web.bookings");
+  const membersOn = can(user, "web.members");
+  const [d, bk] = await Promise.all([getWebDashboard(), bookingsOn || membersOn ? getBookingDashboard() : null]);
   const base = `/${locale}/web`;
   const crm = can(user, "web.inquiries");
   const content = can(user, "web.content");
 
   return (
     <>
-      <PageHeader title="웹사이트" description="홈페이지(bayada 기업 사이트) 문의와 콘텐츠 현황입니다. 모든 숫자는 실제 데이터 기준입니다." />
+      <PageHeader title="웹사이트" description="홈페이지(bayada 기업 사이트) 문의·서비스 예약·회원·콘텐츠 현황입니다. 모든 숫자는 실제 데이터 기준입니다." />
 
       {crm && (
         <div data-tour="web-kpi" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -25,6 +28,19 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
           <Stat tone="ink" label="진행 중" value={(d.status.CONTACTED ?? 0) + (d.status.IN_PROGRESS ?? 0)} hint="연락 완료 · 진행 중" href={`${base}/inquiries`} />
           <Stat label="최근 7일 접수" value={d.week} hint="스팸 제외" />
           <Stat label="처리 완료" value={d.status.DONE ?? 0} hint="누적" href={qs(`${base}/inquiries`, { status: "DONE" })} />
+        </div>
+      )}
+
+      {bk && (bookingsOn || membersOn) && (
+        <div data-tour="web-bookings-kpi" className={`${crm ? "mt-3" : ""} grid grid-cols-2 gap-3 lg:grid-cols-4`}>
+          {bookingsOn && (
+            <>
+              <Stat tone={bk.requested ? "brand" : "paper"} label="예약 신청 대기" value={bk.requested} hint="확정·담당자 배정 전" href={qs(`${base}/bookings`, { status: "REQUESTED" })} />
+              <Stat label="다가오는 확정 예약" value={bk.upcoming} hint={`오늘 방문 ${bk.today}건`} href={qs(`${base}/bookings`, { status: "CONFIRMED" })} />
+              <Stat label="긴급 상태 방문" value={bk.urgent} hint="최근 7일 방문 기록" href={qs(`${base}/visits`, { condition: "URGENT" })} />
+            </>
+          )}
+          {membersOn && <Stat label="홈페이지 회원" value={bk.members} hint={bk.withdrawals ? `탈퇴 요청 ${bk.withdrawals}건` : bk.avgRating ? `평균 만족도 ${bk.avgRating.toFixed(1)}` : "이용 중"} href={`${base}/members`} />}
         </div>
       )}
 

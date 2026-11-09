@@ -154,6 +154,7 @@ export const TOURS: TourDef[] = [
     steps: [
       { target: "page-header", title: "웹사이트", body: "홈페이지(바야다홈헬스케어 웹사이트) 운영 현황이에요." },
       { target: "web-kpi", title: "문의 현황", body: "신규·진행 중·최근 7일 접수·처리 완료 문의 수예요. 신규 문의는 메뉴 '문의 CRM'에도 빨간 숫자로 보여요." },
+      { target: "web-bookings-kpi", title: "서비스 예약·회원", body: "확정을 기다리는 예약 신청, 다가오는 확정 예약, 최근 7일 '긴급' 상태 방문 기록, 홈페이지 회원 수예요. 누르면 해당 목록으로 가요." },
       { target: "web-recent", title: "최근 문의", body: "가장 최근 접수된 문의예요. 누르면 상세 화면으로 가요." },
       { target: "web-content", title: "홈페이지 콘텐츠", body: "블로그·FAQ·이용자 후기·메인 히어로 개수예요. 내릴 때는 지우기보다 숨김을 쓰세요." },
     ],
@@ -178,6 +179,57 @@ export const TOURS: TourDef[] = [
       { target: "inquiry-content", title: "신청 내용", body: "신청자가 폼에 쓴 내용과 개인정보 동의, 접수 페이지예요." },
       { target: "inquiry-history", title: "처리 이력·메모", body: "통화 내용, 다음 연락 예정 같은 내부 메모를 남겨요(신청자에게 보이지 않아요). 상태·담당자 변경도 여기 기록돼요." },
       { target: "inquiry-controls", title: "상태·담당자", body: "고르는 즉시 저장돼요. '문의 삭제'는 개인정보 파기 요청 때만 — 이력까지 지워지고 되돌릴 수 없어요." },
+    ],
+  },
+  {
+    id: "web-bookings",
+    title: "서비스 예약",
+    match: /^\/web\/bookings$/,
+    steps: [
+      { target: "page-header", title: "서비스 예약", body: "홈페이지 회원(이용자·보호자)이 마이페이지에서 신청한 방문 서비스 예약이에요." },
+      { target: "booking-status", title: "상태별 보기", body: "신청 접수 → 예약 확정 → 방문 완료 순서예요. '신청 접수'가 처리할 일이고, 메뉴의 빨간 숫자도 이 건수예요." },
+      { target: "booking-filters", title: "담당자·방문일·검색", body: "담당자(배정 전 포함), 방문일 기간, 예약번호·이용자·연락처·주소로 찾아요." },
+      { target: "booking-table", title: "예약 목록", body: "예약번호를 누르면 상세에서 확정·담당자 배정·취소를 해요." },
+    ],
+  },
+  {
+    id: "booking-detail",
+    title: "예약 상세",
+    match: /^\/web\/bookings\/[^/]+$/,
+    steps: [
+      { target: "booking-content", title: "예약 내용", body: "이용자·연락처·주소·요청 사항이에요. 보호자가 대신 신청했으면 신청자가 따로 보여요." },
+      { target: "booking-controls", title: "확정·담당자 배정", body: "담당자(방문 인력)·방문일·시간대·방문 시각을 고르고 '예약 확정'. 확정 뒤에도 담당자·일정을 바꿀 수 있어요. 취소 사유는 회원에게 그대로 보여요." },
+      { target: "booking-visit", title: "방문 기록", body: "담당자가 방문 후 홈페이지 마이페이지에서 쓴 기록이에요. 기록이 올라오면 예약이 자동으로 '방문 완료'가 돼요." },
+      { target: "booking-history", title: "진행 이력·메모", body: "확정·변경·취소가 회원 마이페이지 진행 이력에 그대로 보여요. '메모'만 내부용이에요." },
+    ],
+  },
+  {
+    id: "web-visits",
+    title: "방문 기록",
+    match: /^\/web\/visits$/,
+    steps: [
+      { target: "visit-kpi", title: "방문 기록·만족도", body: "누적 방문 기록 수와 회원이 남긴 만족도 평균이에요." },
+      { target: "visit-filter", title: "이용자 상태", body: "담당자가 고른 이용자 상태(안정·관찰 필요·긴급)로 걸러요. '긴급'은 먼저 확인하세요." },
+      { target: "visit-table", title: "기록 목록", body: "예약번호를 누르면 기록 전문·활력징후·만족도를 봐요. 기록은 작성한 담당자만 쓰고 어드민은 열람만 해요." },
+    ],
+  },
+  {
+    id: "web-members",
+    title: "홈페이지 회원",
+    match: /^\/web\/members$/,
+    steps: [
+      { target: "page-header", title: "홈페이지 회원", body: "홈페이지 마이페이지를 쓰는 회원이에요. 아카데미와 같은 계정이에요." },
+      { target: "member-type", title: "유형·방문 인력·탈퇴 요청", body: "서비스 이용자·보호자·제공자·기관별로 보고, 방문 인력으로 지정한 제공자와 처리할 탈퇴 요청을 따로 모아 봐요." },
+      { target: "member-table", title: "회원 목록", body: "이름을 누르면 상세에서 회원 유형 변경·방문 인력 지정·탈퇴 처리를 해요." },
+    ],
+  },
+  {
+    id: "web-member-detail",
+    title: "회원 상세",
+    match: /^\/web\/members\/[^/]+$/,
+    steps: [
+      { target: "member-profile", title: "회원 정보", body: "연락처·알림 수신 동의·아카데미 수강 요약이에요. 건강·복약 기록 내용은 회원과 연결된 보호자만 볼 수 있어 여기엔 건수만 보여요." },
+      { target: "member-controls", title: "관리", body: "회원 유형을 바꾸거나, 자격을 확인한 제공자를 '방문 인력'으로 지정해요. 탈퇴 요청이 있으면 여기서 처리해요(진행 중 예약이 있으면 거부)." },
     ],
   },
   {
