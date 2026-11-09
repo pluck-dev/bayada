@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  // Docker 이미지(deploy/)에서 node server.js 로 실행한다
+  output: "standalone",
+  outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
   transpilePackages: ["@bayada/ui", "@bayada/shared"],
   async redirects() {
     return [

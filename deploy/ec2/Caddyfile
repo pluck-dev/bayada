@@ -1,0 +1,36 @@
+# 호스트 이름은 .env 의 *_HOST 로 정한다. Caddy 가 Let's Encrypt 인증서를 자동 발급·갱신한다.
+{
+	email {$ACME_EMAIL}
+}
+
+{$WEB_HOST} {
+	encode zstd gzip
+	reverse_proxy web:3000
+}
+
+{$ACADEMY_HOST} {
+	encode zstd gzip
+	reverse_proxy academy:3000
+}
+
+{$ADMIN_HOST} {
+	encode zstd gzip
+	reverse_proxy admin:3000
+}
+
+# 레슨 영상(mp4, 범위 요청 지원)과 옛 사이트 업로드 이미지
+{$MEDIA_HOST} {
+	header Access-Control-Allow-Origin *
+	header Cache-Control "public, max-age=604800"
+	handle_path /videos/* {
+		root * /srv/media/videos
+		file_server
+	}
+	handle_path /uploads/* {
+		root * /srv/media/uploads
+		file_server
+	}
+	handle {
+		respond 404
+	}
+}
