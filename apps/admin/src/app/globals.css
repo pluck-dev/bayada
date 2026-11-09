@@ -1,19 +1,169 @@
 @import "tailwindcss";
-/* 디자인 토큰·기본 스타일·공용 유틸리티는 아카데미와 같은 파일 — packages/ui/DESIGN-SYSTEM.md
-   어드민은 같은 토큰을 쓰고 밀도만 다르다(본문 14px, 컨트롤 sm/xs, 표 compact). */
+/* 디자인 토큰은 아카데미와 같은 파일(packages/ui/src/theme.css) — 어드민 콘솔 토큰(console·wash·side·kpi-*·pill-*)도 거기 있다.
+   어드민 컴포넌트·규칙: src/components/ui (스타일 가이드 화면 /[locale]/style-guide).
+   원칙: 시스템(브라우저 기본) UI 0 — select·checkbox·date·file·confirm·title 툴팁·스크롤바·포커스 링 전부 직접 디자인. */
 @import "@bayada/ui/theme.css";
 
-/* 사이드바 — 어드민 전용 어두운 면 (중립 900 계열) */
+/* 사이드바 글자색 — 어두운 면 위 투명도 단계 */
 @theme {
-  --color-side: var(--color-neutral-900);
-  --color-side-hover: var(--color-neutral-800);
-  --color-side-fg: var(--color-neutral-400);
-  --color-side-fg-strong: var(--color-neutral-50);
-  --color-side-line: var(--color-neutral-800);
+  --color-side-fg: rgb(255 255 255 / 0.62);
+  --color-side-fg-strong: #ffffff;
+  --color-side-label: rgb(255 255 255 / 0.36);
+  --color-side-line: rgb(255 255 255 / 0.08);
+  --color-side-hover: rgb(255 255 255 / 0.07);
+
+  --shadow-pop: 0 18px 44px -14px rgb(21 20 20 / 0.32), 0 0 0 1px rgb(21 20 20 / 0.06);
+  --shadow-float: 0 10px 30px -12px rgb(21 20 20 / 0.28);
+
+  --animate-pop-in: pop-in 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-pop-up: pop-up 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-sheet-in: sheet-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-toast-up: toast-up 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-check-in: check-in 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-body {
-  background: var(--color-surface);
-  font-size: 14px;
-  letter-spacing: -0.005em;
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+@keyframes pop-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+}
+@keyframes toast-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+@keyframes check-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* 필터 알약(검색칸·선택 필터·필터 칩·흰 지표 타일)의 바탕은 놓인 면에 따라 바뀐다:
+   콘솔 회색 바탕 위 = 흰색, 흰 카드(.surface-card) 안 = wash. 컴포넌트는 bg-(--chip-bg) 만 쓴다. */
+:root {
+  --chip-bg: var(--color-canvas);
+  --chip-hover: var(--color-wash-strong);
+}
+.surface-card {
+  --chip-bg: var(--color-wash);
+  --chip-hover: var(--color-wash-strong);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-console);
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+    color: var(--color-ink);
+  }
+
+  /* 포커스: 브라우저 기본 링 대신 잉크 2px + 3px 간격, 둥근 모서리 */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+  /* 텍스트 입력은 바깥 링 대신 안쪽 테두리로 (kit 의 fieldClass) */
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+  }
+
+  /* 숫자 입력 스피너 · 검색 지우기 버튼 · 자동완성 노란 배경 제거 → NumberInput / SearchBox 가 직접 그린다 */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 40px var(--color-wash) inset;
+    -webkit-text-fill-color: var(--color-ink);
+  }
+  ::placeholder {
+    color: var(--color-subtle);
+    opacity: 1;
+  }
+
+  /* 스크롤바: 얇은 잉크 막대 + 투명 트랙 */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(21 20 20 / 0.24) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: rgb(21 20 20 / 0.22);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(21 20 20 / 0.42);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  /* 사이드바 위 스크롤바는 흰 막대 */
+  .scroll-dark {
+    scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+  }
+  .scroll-dark::-webkit-scrollbar-thumb {
+    background: rgb(255 255 255 / 0.16);
+    background-clip: padding-box;
+  }
+}
+
+/* 숫자 열·지표: 고정폭 숫자 + 살짝 좁은 자간 */
+@utility num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* 카드 안에 들어간 편집 패널(인라인 추가·수정 폼): 패널은 콘솔 회색, 그 안 입력·칩은 흰색 */
+.panel-inset {
+  background: var(--color-console);
+  --color-wash: var(--color-canvas);
+  --color-wash-strong: var(--color-hairline);
+  --chip-bg: var(--color-canvas);
+  --chip-hover: var(--color-hairline);
 }

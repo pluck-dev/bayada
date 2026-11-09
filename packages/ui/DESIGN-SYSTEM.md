@@ -1,6 +1,6 @@
 # BAYADA Academy 디자인 시스템
 
-> 적용 범위: `apps/academy`(학습자 사이트) · `apps/admin`(운영 콘솔).
+> 적용 범위: `apps/academy`(학습자 사이트). 토큰은 `apps/admin`(운영 콘솔)과 공용이지만 **어드민 컴포넌트는 `apps/admin/src/components/ui`** 가 따로 그린다(2026-11 재디자인 — 규칙·상태는 어드민 `/style-guide` 화면).
 > 단일 소스: 토큰 `packages/ui/src/theme.css`, 컴포넌트 `packages/ui/src/components/*`.
 > 참고 사이트 조사 원문·스크린샷 위치: `apps/academy/design/REFERENCES.md`.
 
