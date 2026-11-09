@@ -313,3 +313,20 @@
 - 어드민 댓글은 department="admin" → 사이트 카드에 "이름 · 관리자". "위치 보기"는 WEB_PUBLIC_URL(없으면 WEB_URL) / ACADEMY_URL — 운영 admin 의 WEB_URL 은 웹사이트 재생성용 내부 주소(http://web:3000)라 공개 주소를 따로 둔다 + `#feedback=<selector>&text=…&review=<id>&scope=page` — 리뷰 모드가 켜진 브라우저에서만 요소를 찾아 강조한다.
 - 원본의 페이지별 selector 이전 규칙·배포 검증(deployment)·담당자 고정 명단은 다른 사이트 전용이라 옮기지 않았다.
 - 로컬 검증 DB 는 `bayada_review`(5433). 어드민 권한 코드는 `feedback`(ADMIN 은 자동 포함, 다른 역할은 역할·권한 화면에서 부여).
+
+# 어드민 디자인 시스템(콘솔): components/ui 키트, 네이티브 컨트롤 금지, --chip-bg 면 규칙, 스타일 가이드 /style-guide
+## WHY: 어드민은 @bayada/ui 가 아니라 자체 조각 (2026-11-09 재디자인, Boxon 어드민 품질 기준)
+- 고객 피드백 "관리자 스타일이 허접" → Boxon 어드민 구조(검정 사이드바·묶음 제목·알약 메뉴, 따뜻한 회색 바탕, 테두리 없는 흰 카드 22px, 알약 버튼, 채운 KPI 카드)를 BAYADA 레드로 옮김. Boxon 노랑·로고는 쓰지 않음.
+- 옛 어댑터(`components/ui` → @bayada/ui)는 학습자용 모양이라 어드민을 바꾸면 아카데미·웹도 바뀐다 → 어드민 모양은 `apps/admin/src/components/ui/index.tsx` + `ui/kit/*` 에서 직접 그린다. @bayada/ui 에서는 `cn` 만 쓴다. 토큰만 공용: theme.css 의 "어드민 콘솔 전용 토큰" 블록(console·wash·hairline·side·kpi-*·pill-*).
+- DESIGN-SYSTEM.md §7 "검정 채운 버튼 금지"는 학습자 화면 규칙. 어드민은 primary=잉크 알약, brand=레드 알약(화면당 1개·결정적 행동), 레드는 현재 메뉴 알약·핵심 KPI·선택 표시.
+## 규칙 (새 화면 만들 때)
+- 네이티브 UI 금지: `<select>`→Select(optgroup 은 option.group) · checkbox→Checkbox/ToggleChip · radio→Radio/Segmented · date/datetime-local→DatePicker(mode="datetime", 값 형식 네이티브와 동일) · number→NumberInput(스피너 숨김+−/+) · file→FileDrop · `<details>`→Disclosure · `<dialog>`/confirm/alert→Dialog·useFeedback().confirm/toast · `title=` 툴팁→`data-tip`(TooltipLayer)·`<Tooltip>`(비활성 버튼은 감싸야 이벤트를 받음; Button 의 title prop 은 자동 변환).
+- 폼 값: 커스텀 컨트롤에 name 을 주면 숨은 input 으로 FormData 에 실린다. required 면 화면 밖 텍스트 input(data-proxy-for)이 제약 검증에 참여 → FormGuard 가 invalid 이벤트를 가로채 디자인된 말풍선. 브라우저 검증 말풍선이 안 뜨는 이유가 이것.
+- FeedbackProvider 는 루트 레이아웃(로그인 화면 포함)에 있고 TooltipLayer·FormGuard 를 같이 띄운다.
+- 면 규칙: 필터 알약·검색칸(sm)·secondary 버튼·흰 Stat 은 `bg-(--chip-bg)` — 콘솔 바탕 위 흰색, `.surface-card`(Card·tableWrap·Dialog·Popover) 안 wash. 카드 안 인라인 편집 패널은 `.panel-inset`(패널 회색, 안의 입력 흰색). 새 흰 면을 만들면 surface-card 를 붙여야 버튼·칩이 안 사라진다.
+- 표: tableWrap(흰 카드) + th 는 wash 알약 띠, td 기본 nowrap(긴 글은 `whitespace-normal!`), 첫 열 링크는 font-bold. 폼 하단 저장 줄은 `actionBarClass`(떠 있는 흰 알약, sticky).
+- 스타일 가이드 `/[locale]/style-guide`(Super Admin=roleKey ADMIN 만, 사이드바 시스템 묶음). 새 조각을 만들면 여기에도 상태를 추가.
+## 함정
+- 이 PC Git Bash 에서 Playwright 스크립트에 `/programs` 같은 인자를 주면 `C:/Program Files/Git/programs` 로 바뀐다 → `MSYS_NO_PATHCONV=1`. Playwright 는 boxon 레포 node_modules + ms-playwright chromium-1248 실행 파일로 돌렸다.
+- 피드백 테이블(ReviewFeedback)은 bayada_v2 에 없고 bayada_review 에만 있다(2026-11-09). 피드백 화면 확인은 `DATABASE_URL=…/bayada_review pnpm dev`(프로세스 env 가 .env.local 보다 우선). bayada_review 는 이때 db push 로 WebInquiry 등 최신 스키마를 맞춤.
+- Python 으로 파일을 쓸 때 `newline=''` 를 안 주면 윈도우에서 CRLF 로 바뀐다.
