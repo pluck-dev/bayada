@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PASSWORD_RULE, passwordError } from "@bayada/shared/password-policy";
-import { buttonClass, inputClass, Field, cx } from "@/components/ui";
+import { Field, buttonClass, cx, inputClass } from "@/components/ui";
+import { AuthError, AuthTitle } from "../AuthShell";
 
 export function ResetPasswordForm({ token, locale }: { token: string; locale: string }) {
   const [loading, setLoading] = useState(false);
@@ -38,11 +39,11 @@ export function ResetPasswordForm({ token, locale }: { token: string; locale: st
   if (done) {
     return (
       <div>
-        <h1 className="text-[20px] font-semibold tracking-[-0.02em]">비밀번호를 변경했습니다</h1>
-        <p className="mt-2 text-caption leading-relaxed text-muted">
+        <AuthTitle title="비밀번호를 변경했습니다" />
+        <p className="mt-2 text-[13.5px] leading-[1.65] text-muted">
           기존에 로그인된 모든 세션은 로그아웃됐습니다. 새 비밀번호로 다시 로그인하세요.
         </p>
-        <Link href={`/${locale}/auth/login`} className={cx(buttonClass("primary"), "mt-5 h-9 w-full")}>
+        <Link href={`/${locale}/auth/login`} className={cx(buttonClass("primary", "lg"), "mt-6 w-full")}>
           로그인하기
         </Link>
       </div>
@@ -51,16 +52,13 @@ export function ResetPasswordForm({ token, locale }: { token: string; locale: st
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1 className="text-[20px] font-semibold tracking-[-0.02em]">새 비밀번호 설정</h1>
-      <p className="mt-1 text-caption text-muted">{PASSWORD_RULE}</p>
+      <AuthTitle title="새 비밀번호 설정" description={<>{PASSWORD_RULE}</>} />
       {error && (
-        <div role="alert" className="mt-5 rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-caption text-danger">
-          {error}
-        </div>
+        <AuthError>{error}</AuthError>
       )}
-      <div className="mt-5 flex flex-col gap-4">
+      <div className="mt-7 flex flex-col gap-4">
         <Field label="새 비밀번호" htmlFor="password">
-          <input id="password" name="password" type="password" required autoComplete="new-password" className={cx(inputClass, "h-9!")} />
+          <input id="password" name="password" type="password" required autoComplete="new-password" className={inputClass} />
         </Field>
         <Field label="새 비밀번호 확인" htmlFor="confirmPassword">
           <input
@@ -69,10 +67,10 @@ export function ResetPasswordForm({ token, locale }: { token: string; locale: st
             type="password"
             required
             autoComplete="new-password"
-            className={cx(inputClass, "h-9!")}
+            className={inputClass}
           />
         </Field>
-        <button type="submit" disabled={loading} className={cx(buttonClass("primary"), "h-9 w-full")}>
+        <button type="submit" disabled={loading} className={cx(buttonClass("primary", "lg"), "mt-1 w-full")}>
           {loading ? "변경 중…" : "비밀번호 변경"}
         </button>
       </div>

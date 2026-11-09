@@ -5,7 +5,6 @@ import { can } from "@/lib/rbac";
 import { QUEUE_STATUSES } from "@/lib/workflow";
 import { OPEN_REPORT_WHERE } from "@/lib/queries/reviews";
 import { Sidebar } from "@/components/Sidebar";
-import { FeedbackProvider } from "@/components/ui/feedback";
 
 export default async function DashboardLayout({
   children,
@@ -38,21 +37,20 @@ export default async function DashboardLayout({
   const inquiries = can(user, "web.inquiries") ? await prisma.webInquiry.count({ where: { status: "NEW" } }) : 0;
 
   return (
-    <FeedbackProvider>
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar
-          locale={locale}
-          permissions={user.permissions}
-          roleName={user.roleName}
-          isPartner={user.role === "PARTNER_ADMIN"}
-          userName={user.name ?? user.email}
-          userEmail={user.email}
-          counts={{ queue, signups, reports, credentials, inquiries }}
-        />
-        <main className="flex-1 overflow-y-auto bg-canvas">
-          <div className="mx-auto max-w-[1280px] px-8 py-7">{children}</div>
-        </main>
-      </div>
-    </FeedbackProvider>
+    <div className="flex min-h-screen bg-[linear-gradient(to_right,var(--color-side)_256px,var(--color-console)_256px)]">
+      <Sidebar
+        locale={locale}
+        permissions={user.permissions}
+        roleName={user.roleName}
+        isPartner={user.role === "PARTNER_ADMIN"}
+        isSuperAdmin={user.roleKey === "ADMIN"}
+        userName={user.name ?? user.email}
+        userEmail={user.email}
+        counts={{ queue, signups, reports, credentials, inquiries }}
+      />
+      <main className="min-w-0 flex-1">
+        <div className="mx-auto max-w-[1360px] px-10 pb-16 pt-9">{children}</div>
+      </main>
+    </div>
   );
 }

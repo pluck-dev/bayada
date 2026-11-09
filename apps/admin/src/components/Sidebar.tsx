@@ -33,11 +33,13 @@ import {
   MessageSquareQuote,
   Images,
   Globe,
+  Palette,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { can, type Permission } from "@/lib/rbac";
 import { cx } from "./ui";
+import { Segmented } from "./ui/kit/Segmented";
 
 interface NavItem {
   path: string;
@@ -50,53 +52,71 @@ interface NavItem {
   /** 비활성 항목 툴팁 (기본: "{phase} 오픈 예정") */
   note?: string;
   badgeKey?: "queue" | "signups" | "reports" | "credentials" | "inquiries";
+  /** 사이드바 묶음 제목 (같은 group 끼리 연속으로 둔다) */
+  group?: string;
 }
 
 const PRIMARY: NavItem[] = [
   { path: "", label: "대시보드", icon: LayoutDashboard, permission: "dashboard" },
-  { path: "/programs", label: "프로그램", icon: BookOpen, permission: "program.read" },
-  { path: "/approvals", label: "승인 대기", icon: ClipboardCheck, permission: "approval.queue", badgeKey: "queue" },
-  { path: "/curation", label: "배너·메인 큐레이션", icon: GalleryHorizontalEnd, permission: "curation" },
-  { path: "/taxonomy", label: "택소노미", icon: Tags, permission: "taxonomy" },
-  { path: "/members", label: "회원·수강", icon: Users, permission: "member.read", badgeKey: "signups" },
-  { path: "/reviews", label: "후기 관리", icon: MessageSquareWarning, permission: "review", badgeKey: "reports" },
-  { path: "/sessions", label: "실습·오프라인 일정", icon: CalendarDays, permission: "session" },
-  { path: "/pathways", label: "커리어 패스웨이", icon: Route, permission: "pathway" },
+  { path: "/programs", label: "프로그램", icon: BookOpen, permission: "program.read", group: "콘텐츠" },
+  { path: "/approvals", label: "승인 대기", icon: ClipboardCheck, permission: "approval.queue", badgeKey: "queue", group: "콘텐츠" },
+  { path: "/curation", label: "배너·메인 큐레이션", icon: GalleryHorizontalEnd, permission: "curation", group: "콘텐츠" },
+  { path: "/taxonomy", label: "택소노미", icon: Tags, permission: "taxonomy", group: "콘텐츠" },
+  { path: "/pathways", label: "커리어 패스웨이", icon: Route, permission: "pathway", group: "콘텐츠" },
+  { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages", group: "콘텐츠" },
+  { path: "/members", label: "회원·수강", icon: Users, permission: "member.read", badgeKey: "signups", group: "학습자 운영" },
+  { path: "/reviews", label: "후기 관리", icon: MessageSquareWarning, permission: "review", badgeKey: "reports", group: "학습자 운영" },
+  { path: "/sessions", label: "실습·오프라인 일정", icon: CalendarDays, permission: "session", group: "학습자 운영" },
   // 인증 정책(효력·평가 기준)은 미확정 — 정책 값은 전부 인증 과정 데이터로 어드민에서 설정
-  { path: "/credentials", label: "인증 심사", icon: BadgeCheck, permission: "credential.read", badgeKey: "credentials" },
-  { path: "/partners", label: "파트너", icon: Handshake, permission: "partner.manage" },
-  { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console" },
-  { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages" },
-  { path: "/site-settings", label: "사이트 설정", icon: Settings2, permission: "site.manage" },
-  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback" },
-  { path: "/roles", label: "역할·권한", icon: ShieldCheck, permission: "role.manage" },
-  { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit" },
+  { path: "/credentials", label: "인증 심사", icon: BadgeCheck, permission: "credential.read", badgeKey: "credentials", group: "학습자 운영" },
+  { path: "/partners", label: "파트너", icon: Handshake, permission: "partner.manage", group: "파트너" },
+  { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console", group: "파트너" },
 ];
 
 const COMMERCE: NavItem[] = [
-  { path: "/organizations", label: "기관", icon: Building2, permission: "commerce" },
-  { path: "/orders", label: "주문", icon: ShoppingCart, permission: "commerce" },
-  { path: "/pass-plans", label: "패스 요금제", icon: Ticket, permission: "commerce" },
-  { path: "/invoices", label: "청구서", icon: FileText, permission: "commerce" },
+  { path: "/organizations", label: "기관", icon: Building2, permission: "commerce", group: "B2B · 결제" },
+  { path: "/orders", label: "주문", icon: ShoppingCart, permission: "commerce", group: "B2B · 결제" },
+  { path: "/pass-plans", label: "패스 요금제", icon: Ticket, permission: "commerce", group: "B2B · 결제" },
+  { path: "/invoices", label: "청구서", icon: FileText, permission: "commerce", group: "B2B · 결제" },
+];
+
+const SYSTEM: NavItem[] = [
+  { path: "/site-settings", label: "사이트 설정", icon: Settings2, permission: "site.manage", group: "시스템" },
+  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback", group: "시스템" },
+  { path: "/roles", label: "역할·권한", icon: ShieldCheck, permission: "role.manage", group: "시스템" },
+  { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit", group: "시스템" },
 ];
 
 // 웹사이트(홈페이지 apps/web) 작업 영역 — 경로는 /web/…
 const WEBSITE: NavItem[] = [
   { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content"] },
-  { path: "/web/inquiries", label: "문의 CRM", icon: Inbox, permission: "web.inquiries", badgeKey: "inquiries" },
-  { path: "/web/blog", label: "블로그", icon: Newspaper, permission: "web.content" },
-  { path: "/web/faq", label: "자주 묻는 질문", icon: HelpCircle, permission: "web.content" },
-  { path: "/web/reviews", label: "이용자 후기", icon: MessageSquareQuote, permission: "web.content" },
-  { path: "/web/hero", label: "메인 히어로", icon: Images, permission: "web.content" },
-  { path: "/web/settings", label: "사이트 정보", icon: Settings2, permission: "web.settings" },
-  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback" },
+  { path: "/web/inquiries", label: "문의 CRM", icon: Inbox, permission: "web.inquiries", badgeKey: "inquiries", group: "고객" },
+  { path: "/web/blog", label: "블로그", icon: Newspaper, permission: "web.content", group: "콘텐츠" },
+  { path: "/web/faq", label: "자주 묻는 질문", icon: HelpCircle, permission: "web.content", group: "콘텐츠" },
+  { path: "/web/reviews", label: "이용자 후기", icon: MessageSquareQuote, permission: "web.content", group: "콘텐츠" },
+  { path: "/web/hero", label: "메인 히어로", icon: Images, permission: "web.content", group: "콘텐츠" },
+  { path: "/web/settings", label: "사이트 정보", icon: Settings2, permission: "web.settings", group: "설정" },
+  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback", group: "설정" },
 ];
+
+/** 연속된 같은 group 끼리 묶는다 */
+function groupItems(items: NavItem[]) {
+  const out: { group: string; items: NavItem[] }[] = [];
+  for (const it of items) {
+    const g = it.group ?? "";
+    const last = out[out.length - 1];
+    if (last && last.group === g) last.items.push(it);
+    else out.push({ group: g, items: [it] });
+  }
+  return out;
+}
 
 export function Sidebar({
   locale,
   permissions,
   roleName,
   isPartner,
+  isSuperAdmin,
   userName,
   userEmail,
   counts,
@@ -106,6 +126,8 @@ export function Sidebar({
   permissions: Permission[];
   roleName: string;
   isPartner: boolean;
+  /** 스타일 가이드는 Super Admin(ADMIN)에게만 */
+  isSuperAdmin?: boolean;
   userName: string;
   userEmail: string;
   counts: { queue: number; signups: number; reports: number; credentials?: number; inquiries?: number };
@@ -125,10 +147,14 @@ export function Sidebar({
   const visible = (items: NavItem[]) => items.filter((i) => (i.phase ? !isPartner : allowed(i.permission)));
   const primary = visible(PRIMARY);
   const commerce = visible(COMMERCE);
+  const system = [
+    ...visible(SYSTEM),
+    ...(isSuperAdmin ? [{ path: "/style-guide", label: "스타일 가이드", icon: Palette, group: "시스템" } satisfies NavItem] : []),
+  ];
   const website = visible(WEBSITE);
 
   // 작업 영역은 URL 로 정한다 (/web/… = 웹사이트). 한쪽 권한만 있으면 그쪽만 보인다
-  const hasAcademy = primary.length + commerce.length > 0;
+  const hasAcademy = primary.length + commerce.length + system.length > 0;
   const onWeb = pathname === `${base}/web` || pathname.startsWith(`${base}/web/`);
   // 피드백(/feedback)은 두 작업 영역 공용 메뉴 → 들어오기 직전 작업 영역을 유지한다
   const onShared = pathname === `${base}/feedback` || pathname.startsWith(`${base}/feedback/`);
@@ -142,26 +168,12 @@ export function Sidebar({
   }, [onShared, onWeb]);
   const workspace: "academy" | "web" =
     website.length > 0 && (onWeb || !hasAcademy || (onShared && lastWorkspace === "web")) ? "web" : "academy";
-  const academyHome = base + ([...primary, ...commerce].find((i) => !i.phase)?.path ?? "");
+  // 첫 화면 순서는 예전 메뉴 순서(운영 메뉴 → 시스템 → B2B) 그대로
+  const academyHome = base + ([...primary, ...system, ...commerce].find((i) => !i.phase)?.path ?? "");
   const webHome = base + (website[0]?.path ?? "/web");
 
   const renderItem = (item: NavItem) => {
     const Icon = item.icon;
-    if (item.phase) {
-      return (
-        <li key={item.label}>
-          <span
-            aria-disabled="true"
-            title={item.note ?? `${item.phase} 오픈 예정`}
-            className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-caption text-zinc-600"
-          >
-            <Icon className="h-4 w-4 shrink-0" aria-hidden />
-            <span className="flex-1">{item.label}</span>
-            <span className="rounded-full bg-amber-500/90 px-1.5 py-px text-micro font-semibold text-white">{item.phase}</span>
-          </span>
-        </li>
-      );
-    }
     const active = isActive(item.path);
     const count = item.badgeKey ? (counts[item.badgeKey] ?? 0) : 0;
     return (
@@ -170,93 +182,92 @@ export function Sidebar({
           href={base + item.path}
           aria-current={active ? "page" : undefined}
           className={cx(
-            "relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-caption transition-colors",
-            active ? "bg-side-hover font-medium text-white" : "text-side-fg hover:bg-side-hover/60 hover:text-zinc-100",
+            "group/nav relative flex h-10 items-center gap-2.5 rounded-full px-3.5 text-[13.5px] font-bold tracking-[-0.01em] transition-colors duration-150",
+            active
+              ? "bg-brand text-white shadow-[0_8px_20px_-10px_rgb(227_27_52/0.9)]"
+              : "text-side-fg hover:bg-side-hover hover:text-white",
           )}
         >
-          {active && <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r bg-brand" aria-hidden />}
-          <Icon className="h-4 w-4 shrink-0" aria-hidden />
-          <span className="flex-1">{item.label}</span>
+          <Icon className={cx("size-[18px] shrink-0", active ? "text-white" : "text-white/45 group-hover/nav:text-white/85")} strokeWidth={2.1} aria-hidden />
+          <span className="flex-1 truncate">{item.label}</span>
           {count > 0 && (
-            <span className="tabular rounded-full bg-zinc-700 px-1.5 text-micro font-medium text-zinc-100">{count}</span>
+            <span
+              className={cx(
+                "num inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-extrabold",
+                active ? "bg-white text-brand" : "bg-brand text-white",
+              )}
+            >
+              {count > 99 ? "99+" : count}
+            </span>
           )}
         </Link>
       </li>
     );
   };
 
-  return (
-    <aside className="flex h-screen w-[232px] shrink-0 flex-col bg-side text-side-fg">
-      <div className="flex h-14 items-center gap-2.5 px-4">
-        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-caption font-bold text-white">B</span>
-        <div className="leading-tight">
-          <p className="text-caption font-semibold text-white">{workspace === "web" ? "Bayada Website" : "Bayada Academy"}</p>
-          <p className="text-micro text-zinc-500">{isPartner ? "Partner Console" : "Admin Console"}</p>
-        </div>
+  const renderGroups = (items: NavItem[]) =>
+    groupItems(items).map((g, i) => (
+      <div key={`${g.group}-${i}`}>
+        {g.group && <p className="mb-1.5 px-3.5 text-[11px] font-bold tracking-[0.02em] text-side-label">{g.group}</p>}
+        <ul className="flex flex-col gap-0.5">{g.items.map(renderItem)}</ul>
       </div>
+    ));
+
+  return (
+    <aside className="scroll-dark sticky top-0 flex h-screen w-[256px] shrink-0 flex-col overflow-y-auto bg-side px-3 pb-4 pt-6 text-side-fg">
+      <Link href={workspace === "web" ? webHome : academyHome} className="mb-6 flex items-center gap-2 px-3.5" aria-label="BAYADA 관리자 홈">
+        <span className="text-[22px] font-black leading-none tracking-[-0.045em] text-white">
+          BAYADA<span className="text-brand">.</span>
+        </span>
+        <span className="rounded-full bg-brand px-2 py-[3px] text-[10.5px] font-extrabold leading-none tracking-[0.02em] text-white">
+          {isPartner ? "PARTNER" : "ADMIN"}
+        </span>
+      </Link>
 
       {hasAcademy && website.length > 0 && (
-        <div className="mx-3 mb-3 mt-1">
-          <p className="mb-1.5 px-1 text-micro font-medium text-zinc-400">관리할 사이트</p>
-          <div className="grid grid-cols-2 gap-1 rounded-lg bg-black/30 p-1 ring-1 ring-white/10" role="group" aria-label="관리할 사이트">
-            {(
-              [
-                { key: "academy", label: "아카데미", href: academyHome, icon: GraduationCap },
-                { key: "web", label: "웹사이트", href: webHome, icon: Globe },
-              ] as const
-            ).map((w) => (
-              <Link
-                key={w.key}
-                href={w.href}
-                aria-current={workspace === w.key ? "true" : undefined}
-                className={cx(
-                  "flex h-10 items-center justify-center gap-1.5 rounded-md text-body-sm font-semibold transition-colors",
-                  workspace === w.key ? "bg-brand text-white shadow-sm" : "text-zinc-300 hover:bg-white/10 hover:text-white",
-                )}
-              >
-                <w.icon className="h-4 w-4" aria-hidden />
-                {w.label}
-              </Link>
-            ))}
-          </div>
+        <div className="mb-6 px-1">
+          <p className="mb-2 px-2.5 text-[11px] font-bold tracking-[0.02em] text-side-label" id="workspace-label">
+            관리할 사이트
+          </p>
+          <Segmented
+            aria-label="관리할 사이트"
+            tone="dark"
+            size="lg"
+            fullWidth
+            value={workspace}
+            options={[
+              { value: "academy", label: "아카데미", href: academyHome, icon: <GraduationCap aria-hidden /> },
+              { value: "web", label: "웹사이트", href: webHome, icon: <Globe aria-hidden /> },
+            ]}
+          />
         </div>
       )}
 
-      <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="주 메뉴">
-        {workspace === "web" ? (
-          <ul className="flex flex-col gap-0.5">{website.map(renderItem)}</ul>
-        ) : (
-          <>
-            <ul className="flex flex-col gap-0.5">{primary.map(renderItem)}</ul>
-            {commerce.length > 0 && (
-              <>
-                <p className="mb-1 mt-5 px-2.5 text-micro font-medium uppercase tracking-wider text-zinc-600">B2B · 결제</p>
-                <ul className="flex flex-col gap-0.5">{commerce.map(renderItem)}</ul>
-              </>
-            )}
-          </>
-        )}
+      <nav className="flex flex-1 flex-col gap-5" aria-label="주 메뉴">
+        {workspace === "web" ? renderGroups(website) : renderGroups([...primary, ...commerce, ...system])}
       </nav>
 
-      <div className="border-t border-side-line p-3">
-        <div className="flex items-center gap-2.5 rounded-md px-1.5 py-1">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-caption font-semibold text-zinc-100">
+      <div className="mt-6 border-t border-side-line pt-4">
+        <div className="flex items-center gap-2.5 rounded-2xl px-2 py-1.5">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-side-raised text-[13px] font-extrabold text-white">
             {userName.slice(0, 1)}
           </span>
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="truncate text-caption font-medium text-zinc-100">{userName}</p>
-            <p className="truncate text-micro text-zinc-500" title={userEmail}>
+            <p className="truncate text-[13px] font-bold text-white">
+              {userName} <span className="font-medium text-side-label">님</span>
+            </p>
+            <p className="mt-0.5 truncate text-[11.5px] text-side-label" data-tip={userEmail}>
               {roleName}
             </p>
           </div>
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: `/${locale}/auth/login` })}
-            className="rounded-md p-1.5 text-zinc-500 hover:bg-side-hover hover:text-zinc-100"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-side-label transition-colors hover:bg-side-hover hover:text-white"
             aria-label="로그아웃"
-            title="로그아웃"
+            data-tip="로그아웃"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="size-4" aria-hidden />
           </button>
         </div>
       </div>

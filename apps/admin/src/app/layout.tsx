@@ -1,9 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { AuthProvider } from "@/components/AuthProvider";
+import { FeedbackProvider } from "@/components/ui/feedback";
 
 export const metadata: Metadata = {
-  title: "BAYADA Academy Admin",
+  title: "BAYADA Admin",
   description: "바야다 아카데미 운영 콘솔",
 };
 
@@ -17,7 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <FeedbackProvider>{children}</FeedbackProvider>
+        </AuthProvider>
       </body>
     </html>
   );
