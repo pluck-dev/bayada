@@ -34,6 +34,8 @@ COPY --from=build /repo/apps/${APP}/.next/standalone ./
 COPY --from=build /repo/apps/${APP}/.next/static ./apps/${APP}/.next/static
 COPY --from=build /repo/apps/${APP}/public ./apps/${APP}/public
 ENV APP_DIR=apps/${APP}
+# next/image 최적화 캐시를 node 사용자가 쓸 수 있게
+RUN mkdir -p ./apps/${APP}/.next/cache && chown -R node:node ./apps/${APP}/.next
 USER node
 EXPOSE 3000
 CMD ["sh", "-c", "node $APP_DIR/server.js"]
