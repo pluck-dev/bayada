@@ -45,6 +45,13 @@ services:
     build: { context: ../.., args: { APP: web, NEXT_PUBLIC_SITE_URL: "https://${WEB_HOST}" } }
     image: bayada-web:prod
     restart: unless-stopped
+    depends_on: { db: { condition: service_healthy } }
+    environment:
+      # 클라이언트 검수용 리뷰·피드백 도구 (비밀번호를 비우면 도구·API 모두 꺼진다)
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/bayada
+      DIRECT_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/bayada
+      REVIEW_ACCESS_PASSWORD: ${REVIEW_ACCESS_PASSWORD:-}
+      REVIEW_ACCESS_SECRET: ${REVIEW_ACCESS_SECRET:-}
 
   academy:
     build: { context: ../.., args: { APP: academy, NEXT_PUBLIC_SITE_URL: "https://${ACADEMY_HOST}" } }
@@ -67,6 +74,8 @@ services:
       AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID:-}
       AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET:-}
       CRON_SECRET: ${CRON_SECRET:-}
+      REVIEW_ACCESS_PASSWORD: ${REVIEW_ACCESS_PASSWORD:-}
+      REVIEW_ACCESS_SECRET: ${REVIEW_ACCESS_SECRET:-}
 
   admin:
     build: { context: ../.., args: { APP: admin, NEXT_PUBLIC_SITE_URL: "https://${ACADEMY_HOST}" } }
@@ -80,6 +89,8 @@ services:
       AUTH_TRUST_HOST: "true"
       NEXTAUTH_URL: https://${ADMIN_HOST}
       ACADEMY_URL: https://${ACADEMY_HOST}
+      # 피드백 "위치 보기" 링크가 여는 사이트 주소
+      WEB_URL: https://${WEB_HOST}
       TOSS_SECRET_KEY: ${TOSS_SECRET_KEY:-}
       SMTP_URL: ${SMTP_URL:-smtp://mailpit:1025}
       MAIL_FROM: ${MAIL_FROM:-BAYADA Academy <no-reply@bayada.co.kr>}
