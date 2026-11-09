@@ -415,3 +415,4 @@
 - compose 는 MEDIA_SIGNING_SECRET 없으면 시작을 거부한다(`:?`). 로컬은 비밀값이 있어도 nginx(4300) 가 확인을 안 해서 그냥 재생된다.
 - Oinzi 브라우저는 mp4 재생이 안 된다(원본 주소도 readyState 0) → 플레이어 탐색 잠금은 Oinzi 로 실측 불가. API·Caddy 는 curl 로 검증.
 - 옛 WP 진도는 watchedSec 가 없어, 미완료 영상은 처음부터 봐야 완료된다(완료된 레슨은 그대로).
+- 서버 반영(2026-11-10, DEPLOYED_COMMIT be4872d): 서버 .env 에 MEDIA_SIGNING_SECRET 추가, app 재빌드 후 caddy 는 `up -d --force-recreate caddy` (Caddyfile 이 단일 파일 bind mount 라 tar 로 덮으면 재생성해야 새 내용을 본다). 확인: 원본 주소 403, 위조 403, 만료 410, 서명 206, /uploads 200.
