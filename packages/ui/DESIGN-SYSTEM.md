@@ -4,6 +4,17 @@
 > 단일 소스: 토큰 `packages/ui/src/theme.css`, 컴포넌트 `packages/ui/src/components/*`.
 > 참고 사이트 조사 원문·스크린샷 위치: `apps/academy/design/REFERENCES.md`.
 
+## 0-1. 2026-11 v5 개편 (Boxon 품질 기준, BAYADA 레드 유지)
+
+어드민 콘솔 재디자인 뒤 학습자 화면이 뒤처진다는 감사 결과로 다시 손봤다. 원칙(레드는 화면당 주요 행동 1개 + 현재 위치)은 그대로, 모양만 바꿨다.
+
+- **알약**: 버튼·필터 칩·검색칸·탭(pill)·GNB 항목이 전부 `rounded-full`. `secondary` 버튼은 테두리 대신 옅은 회색 채움(`surface-sunken`), 회색 면 위에서는 `outline`.
+- **현재 위치** = `brand-50` 면 + `brand-700` 글자 알약(GNB·마이 메뉴·강의실 현재 강의). 선택된 필터 칩 = 잉크 채움.
+- **큰 면**: 22–28px 모서리 패널(빈 상태 안내·기관 도입·이어서 학습·퀴즈 결과). 어두운 면(`bg-side`/`bg-ink`)은 한 화면에 한 덩어리.
+- **제목 위계**: PageHeader 30/40px extrabold, SectionHeader lg 26/34px.
+- **푸터**: 어두운 면 + 큰 BAYADA 워드마크.
+- **자동 표지**: 분야(카테고리)별 색 5종(red·ink·rose·sand·wine) + 무늬 5종. `@bayada/ui/cover` (§4).
+
 ## 0. 왜 다시 정리했나
 
 고객 피드백: "사이트가 어수선하다." 화면을 하나씩 보면 큰 문제가 없는데, 모아 보면
@@ -98,7 +109,13 @@
 | `Badge` · `tagClass()` | tone: neutral · brand · success · warning · info · danger · inverse / soft · outline. 필터 칩은 `tagClass({active})` |
 | `Card` (+`CardMedia` `CardHeader` `CardBody` `CardFooter`) | outline(기본) · surface · plain |
 | `CourseCard` | **유일한 프로그램 카드.** 썸네일 → 유형·기관 → 제목(2줄) → 메타 → 진도 또는 평점·가격. `layout="horizontal"` 목록형 |
-| `Input` `Textarea` `Select` `Checkbox` `Radio` `Switch` `Field` | label · help · error 내장. md 44px(학습자) / sm 32px(어드민). 클래스만 필요하면 `controlClass()` `selectClass()` `textareaClass()` |
+| `Input` `Textarea` `Field` | label · help · error 내장. md 44px. 클래스만 필요하면 `controlClass()` `textareaClass()` |
+| `Select` | **네이티브 `<select>` 대신.** 디자인된 listbox(키보드·글자 이동), `name` 이면 숨은 입력으로 폼 전송, `required` 지원. `<option>` 자식도 받음. `size="pill"` = 정렬 같은 알약 |
+| `Checkbox` `Radio` `Switch` · `CheckVisual` `RadioVisual` | 네이티브 입력은 `sr-only`(폼·키보드·필수 검증 유지) + 디자인된 상자. 목록 행 안에서는 `CheckVisual` 만 그린다 |
+| `DatePicker` | **네이티브 date 대신.** 한국어 달력, 값 `YYYY-MM-DD` |
+| `Popover` · `HiddenValue` | Select·DatePicker 의 떠 있는 패널(body 포털) / 커스텀 컨트롤 폼 값 |
+| `Sheet` | 모바일 서랍(`side="right"`)·바텀시트(`side="bottom"`). `<dialog>` 기반 |
+| `@bayada/ui/cover` (`CourseCover` `CoverPattern` `coverSpec` `categoryTone`) | 프로그램 자동 표지. 서버·OG(satori)에서도 쓰도록 클라이언트 모듈과 분리된 진입점 |
 | `Tabs` · `TabNav` | 패널 전환 / 라우트 탭. underline · pill |
 | `Accordion` | `<details>` 기반(서버 컴포넌트 가능). divided · boxed |
 | `Table` `Th` `Td` `Tr` `TableWrap` `DataTable` · `tableClasses` | compact(어드민) / comfortable |
@@ -147,3 +164,4 @@
 - 장식 그라데이션·블러 원·그림자 카드
 - 12px 미만 글자, `neutral-400` 이하 색의 읽어야 하는 글자
 - 앱 안에 Button/Badge/Card/EmptyState 를 새로 만들기 — `@bayada/ui` 에 추가할 것
+- **네이티브 컨트롤**: `<select>`, 보이는 `type="checkbox|radio|date|number|file"`, `window.confirm/alert` — Select·Checkbox·DatePicker·`useFeedback().confirm/toast` 를 쓴다(아카데미 루트에 FeedbackProvider 있음)

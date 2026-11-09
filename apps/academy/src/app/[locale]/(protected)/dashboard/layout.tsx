@@ -18,7 +18,7 @@ export default async function DashboardLayout({
   const sub = [viewer.jobRole ? JOB_ROLE_LABEL[viewer.jobRole] : null, viewer.organizationName].filter(Boolean).join(" · ");
 
   return (
-    <div className="container-page page-y grid gap-6 lg:grid-cols-[240px_1fr] lg:gap-12">
+    <div className="container-page page-y grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-12">
       <aside>
         <div className="lg:sticky lg:top-24">
           <div className="flex items-center gap-3 rounded-[22px] bg-surface-sunken p-4">

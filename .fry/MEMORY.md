@@ -342,3 +342,26 @@
 - 처음 안내(welcome)는 localStorage `bayada-admin.tour.<userId>`="done" — 브라우저별(서버 기록 아님). 사용자가 700ms 안에 도움말을 먼저 열면 자동 시작 생략(열어 둔 패널을 닫던 경쟁 상태).
 - 둘러보기 스크롤은 scrollIntoView 금지(페이지까지 굴러감) → 가장 가까운 스크롤 상자만 굴리고 끝나면 원위치.
 - 검증 스크립트(Playwright, 임시 폴더)는 `button:has-text("완료")` 처럼 넓게 잡으면 페이지의 "처리 완료"·"개발완료" 칩을 누른다 → 둘러보기 대화상자 안으로 한정.
+
+# 프로그램 자동 표지(Course.coverMode AUTO/UPLOAD): @bayada/ui/cover, 분야 색, OG /api/cover, 어드민 미리보기
+## WHY (2026-11-09)
+- 이관된 WP 썸네일은 작은 로고·작은 글씨 배너라 카드에서 안 읽힘 → `Course.coverMode` enum(AUTO 기본 | UPLOAD) 추가(additive db push). 기존 64개 전부 AUTO. thumbnail 값은 지우지 않았다(UPLOAD 로 바꾸면 그대로 쓰임).
+- 표지 규칙은 `packages/ui/src/cover` 한 곳: 색 = 카테고리 slug(`CATEGORY_TONE` 표, 없으면 해시), 무늬 = 코스 slug 해시. 라벨 문자열은 앱이 넘긴다(아카데미 `lib/cover.ts` coverInput, 어드민 ProgramForm CoverPreview). 별도 진입점 `@bayada/ui/cover` 인 이유: 루트 index 는 "use client" 모듈이 섞여 라우트 핸들러(OG)·서버에서 쓰기 애매.
+- 이미지가 들어가는 곳은 전부 `components/course/CourseMedia`(카드·상세·마이 러닝·홈 순위·결제). UPLOAD 인데 이미지가 깨지면 자동 표지로 대체(CourseThumb onError + 마운트 시 naturalWidth 검사).
+## 함정
+- 표지 글자 크기는 cqw — cq 단위는 "조상" 컨테이너 기준이라 container-type 을 바깥 div 에 둔다(자기 자신에 두면 안 먹음).
+- OG `/api/cover/[slug]`: 게시+PUBLIC 만(사내 전용 제목 유출 방지 → 404). satori 는 woff2·한글 기본 글꼴이 없어 Pretendard Bold otf 를 jsdelivr **npm** 경로에서 받아 메모리 캐시(gh 경로는 403/404). 서버에 인터넷이 없으면 한글이 빠진다. satori 는 SVG preserveAspectRatio slice 를 무시 → 무늬를 1200×675 로 그려 맞춤.
+- 어드민 Program 저장: UPLOAD 인데 URL 없으면 거부. 파트너 콘솔도 같은 폼.
+
+# 아카데미 학습자 UI v5: 네이티브 컨트롤 금지, 알약 키트, 빈 상태(외부 회원 0개), 강의실·플레이어, 검증 방법
+## 규칙
+- 학습자 화면도 네이티브 select/checkbox/radio/date/confirm/alert 금지 → `@bayada/ui` Select·Checkbox·CheckVisual·DatePicker·Sheet·useFeedback. 예외: sr-only 로 숨긴 네이티브 입력 + 디자인된 모양(폼 검증 유지용)은 허용. `@bayada/ui` 컴포넌트는 academy 만 쓴다(web·admin 은 cn 만) — 바꿔도 웹사이트 화면은 안 바뀜. theme.css 토큰은 web 도 읽으니 기존 값은 건드리지 말 것. 애니메이션 키프레임은 academy globals.css @theme 에만.
+- form.tsx(서버 안전: controlClass 등)와 choice.tsx("use client": Checkbox 등)를 나눈 이유: "use client" 모듈의 함수(controlClass)를 서버 컴포넌트가 부르면 클라이언트 참조라 깨진다.
+- 열람 가능한 프로그램이 0개(외부 회원·비로그인 — 2026-11 현재 49개 전부 INTERNAL)면 홈·카탈로그에 `NoProgramsNotice`(이유 + 임직원 로그인/기관 도입 문의/바야다 인증). 판단은 `getFacetCounts().total === 0`. 공개 여부는 고객사 엑셀로 결정 예정 — 데이터 손대지 말 것.
+- 강의실: 영상은 끝까지 보면 자동 완료(onEnded), 5초마다 watchedSec 저장 → 다음 진입 시 이어보기(끝 10초 전까지만). 전체 화면은 컨테이너 요소(커스텀 컨트롤 유지), 속도 메뉴는 포털이 아니라 플레이어 안(전체 화면에서도 보이게).
+## 검증 방법 (2026-11-09)
+- 공개 전환 후 동작 확인은 DB 사본으로: `pg_dump bayada_v2 | psql bayada_v2_pubtest` → 사본에서만 visibility=PUBLIC → dev 를 `DATABASE_URL=…/bayada_v2_pubtest pnpm dev` 로 띄워 외부 회원 수강→영상→퀴즈→수료증 확인 후 사본 삭제. 실데이터 visibility 는 그대로.
+- demo.student@bayada.local 은 원래 Docker 운영 DB(5435)에만 있었다 → bayada_v2 에는 가입 화면으로 새로 만듦(외부 회원, 조직 없음).
+- b-academy 는 게시 강의 49개 전부 수강 중이라 "수강 신청" 흐름은 외부 회원+사본 DB 로만 볼 수 있다.
+- 모바일 가로 넘침: grid 에 열 지정이 없으면 overflow-x-auto 자식의 내용 폭만큼 열이 커진다 → `grid-cols-[minmax(0,1fr)]`.
+
