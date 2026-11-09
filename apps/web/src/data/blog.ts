@@ -1,14 +1,7 @@
-import type { BlogPost, BlogCategory } from "@/types";
+import type { BlogPost } from "@/types";
 
-// 블로그 카테고리 (FR-W-011)
-export const blogCategories: { slug: BlogCategory; name: string }[] = [
-  { slug: "bayada-story", name: "50년 BAYADA" },
-  { slug: "policy", name: "제도·정책" },
-  { slug: "disease-info", name: "질환정보" },
-  { slug: "care-guide", name: "케어가이드" },
-  { slug: "news", name: "소식" },
-];
-
+// 홈페이지 블로그 기본 데이터 — DB(WebBlogPost)가 비었거나 못 읽을 때 쓰고, import:web 이 DB 로 옮긴다.
+// 카테고리 목록은 @bayada/shared/web-content WEB_BLOG_CATEGORIES. 읽기는 lib/web-content.ts
 // Placeholder 블로그 포스트
 export const blogPosts: BlogPost[] = [
   {
@@ -147,21 +140,3 @@ export const blogPosts: BlogPost[] = [
       "BAYADA의 AI 기반 케어 가이드 DeiBud가 정식 서비스를 시작합니다. 질환 정보, 맞춤 서비스 추천, 24시간 상담 지원 등의 기능을 무료로 이용하실 수 있습니다...",
   },
 ];
-
-export function getPublishedPosts(): BlogPost[] {
-  return blogPosts
-    .filter((p) => p.isPublished)
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
-}
-
-export function getLatestPosts(count = 3): BlogPost[] {
-  return getPublishedPosts().slice(0, count);
-}
-
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find((p) => p.slug === slug);
-}
-
-export function getPostsByCategory(category: BlogCategory): BlogPost[] {
-  return getPublishedPosts().filter((p) => p.category === category);
-}

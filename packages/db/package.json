@@ -14,7 +14,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "import:wp": "tsx scripts/import-wp.ts"
+    "import:wp": "tsx scripts/import-wp.ts",
+    "import:web": "tsx scripts/import-web-content.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",

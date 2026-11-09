@@ -1,6 +1,6 @@
 import type { FAQCategory } from "@/types";
 
-// 카테고리별 FAQ (FR-W-016)
+// 카테고리별 FAQ (FR-W-016) — DB(WebFaqCategory·WebFaqItem)가 비었거나 못 읽을 때 쓰고, import:web 이 DB 로 옮긴다. 읽기는 lib/web-content.ts
 export const faqCategories: FAQCategory[] = [
   {
     slug: "general",
@@ -127,7 +127,3 @@ export const faqCategories: FAQCategory[] = [
     ],
   },
 ];
-
-export function getFAQByCategory(slug: string): FAQCategory | undefined {
-  return faqCategories.find((c) => c.slug === slug);
-}

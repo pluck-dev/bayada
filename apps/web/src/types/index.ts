@@ -241,6 +241,22 @@ export interface FormSubmitResult {
   message: string;
 }
 
+// --- 홈 히어로 슬라이드 ---
+export interface HeroSlide {
+  id: string;
+  src: string;
+  alt: string;
+  /** 줄바꿈(\n)은 화면에서도 줄바꿈 */
+  title: string;
+  subtitle: string;
+  ctaLabel: string;
+  /** #id = 같은 페이지 스크롤, /경로 = 언어 경로 아래, https:// = 외부 */
+  ctaHref: string;
+}
+
+// --- 사이트 정보 (푸터·문의 페이지) ---
+export type SiteInfo = import("@bayada/shared/web-content").WebSettings["web.site"];
+
 // --- Why BAYADA ---
 export interface WhyBayadaPillar {
   titleEn: string;

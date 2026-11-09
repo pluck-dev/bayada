@@ -1,6 +1,6 @@
 import type { Review } from "@/types";
 
-// Placeholder 리뷰 데이터 (FR-W-017)
+// Placeholder 리뷰 데이터 (FR-W-017) — DB(WebReview)가 비었거나 못 읽을 때 쓰고, import:web 이 DB 로 옮긴다. 읽기는 lib/web-content.ts
 export const reviews: Review[] = [
   {
     id: "rv-001",
@@ -111,12 +111,3 @@ export const reviews: Review[] = [
     createdAt: "2025-11-05",
   },
 ];
-
-export function getAverageRating(): number {
-  const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-  return Math.round((sum / reviews.length) * 10) / 10;
-}
-
-export function getReviewsByService(serviceType: string): Review[] {
-  return reviews.filter((r) => r.serviceType === serviceType);
-}
