@@ -14,10 +14,18 @@ import {
 } from "@/lib/labels";
 
 /**
- * 노출 규칙 (모든 목록·상세에 서버에서 적용)
+ * 둘러보기 규칙 (목록·상세·검색·홈) — 게시(PUBLISHED)된 프로그램은 비로그인 포함 누구나 본다.
+ * 사내 전용(INTERNAL)도 목록·상세에는 나오고, 수강·재생만 막는다(resolveCourseAccess / isCourseListed).
+ * 그 외 상태(ARCHIVED 등)는 카탈로그에 절대 노출하지 않는다.
+ */
+export function browsableCourseWhere(): Prisma.CourseWhereInput {
+  return { status: "PUBLISHED" };
+}
+
+/**
+ * 수강 규칙 (수강 신청·기관 배정) — 볼 수 있는 것과 들을 수 있는 것은 다르다.
  * - PUBLISHED + PUBLIC   → 누구나
  * - PUBLISHED + INTERNAL → 사내 조직(isInternal) 소속 로그인 사용자만
- * - 그 외 상태(ARCHIVED 등)는 카탈로그에 절대 노출하지 않는다
  */
 export function visibleCourseWhere(viewer: Viewer | null): Prisma.CourseWhereInput {
   return {
@@ -135,7 +143,7 @@ export function parseCatalogFilters(sp: Record<string, string | string[] | undef
 export const CATALOG_PAGE_SIZE = 12;
 
 export async function listCatalog(viewer: Viewer | null, f: CatalogFilters) {
-  const and: Prisma.CourseWhereInput[] = [visibleCourseWhere(viewer)];
+  const and: Prisma.CourseWhereInput[] = [browsableCourseWhere()];
   if (f.q) {
     and.push({
       OR: [
@@ -180,7 +188,7 @@ export async function listCatalog(viewer: Viewer | null, f: CatalogFilters) {
 
 /** 필터 패널·메가메뉴용 분류 목록 (노출 가능한 강의 수 포함) */
 export async function getTaxonomy(viewer: Viewer | null) {
-  const visible = visibleCourseWhere(viewer);
+  const visible = browsableCourseWhere();
   const [categories, providers] = await Promise.all([
     prisma.category.findMany({
       orderBy: { order: "asc" },
@@ -206,7 +214,7 @@ export type Taxonomy = Awaited<ReturnType<typeof getTaxonomy>>;
 
 /** 카탈로그 필터 옵션별 강의 수 (학습 방식·가격·인증 유형) */
 export async function getFacetCounts(viewer: Viewer | null) {
-  const visible = visibleCourseWhere(viewer);
+  const visible = browsableCourseWhere();
   const [modes, free, paid, bayada, total] = await Promise.all([
     prisma.course.groupBy({ by: ["learningMode"], where: visible, _count: { _all: true } }),
     prisma.course.count({ where: { ...visible, price: 0 } }),
@@ -225,7 +233,7 @@ export async function getFacetCounts(viewer: Viewer | null) {
 // ─── 홈 ───
 
 export async function getHomeData(viewer: Viewer | null) {
-  const visible = visibleCourseWhere(viewer);
+  const visible = browsableCourseWhere();
   const now = new Date();
 
   const [banners, popularRows, newestRows, certificationRows, roleEntries] = await Promise.all([
@@ -325,7 +333,8 @@ export type CourseAccess =
       /** 패스로 수강했지만 패스가 끝나(또는 환불돼) 지금은 들을 수 없음 — 진도는 남아 있다 */
       passLapsed?: boolean;
     }
-  | { kind: "login" } // 사내 전용 — 로그인하면 볼 수 있을 수도
+  | { kind: "login" } // 사내 전용 + 비로그인 — 상세는 보여 주고, 수강·재생할 때 로그인
+  | { kind: "restricted" } // 사내 전용 + 로그인했지만 임직원 아님 — 상세만, 수강 불가
   | { kind: "notfound" };
 
 /**
@@ -349,7 +358,7 @@ export async function resolveCourseAccess(
   if (course.status !== "PUBLISHED") return { kind: "notfound" };
   if (course.visibility === "PUBLIC") return { kind: "ok", enrollment: null, passLapsed };
   if (viewer?.isInternal) return { kind: "ok", enrollment: null, passLapsed };
-  return viewer ? { kind: "notfound" } : { kind: "login" };
+  return viewer ? { kind: "restricted" } : { kind: "login" };
 }
 
 /** 노출 가능한 강의인지 (수강 신청 가능 여부) */

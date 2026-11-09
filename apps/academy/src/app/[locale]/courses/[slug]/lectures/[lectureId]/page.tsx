@@ -72,8 +72,10 @@ export default async function LecturePage({ params }: { params: Params }) {
 
   const access = await resolveCourseAccess(course, viewer);
   if (access.kind === "notfound") notFound();
+  // 강의를 보려는 순간 로그인 — 목록·상세는 비로그인도 본다
   if (!viewer) redirect(`/${locale}/auth/login?callbackUrl=${encodeURIComponent(selfPath)}`);
-  if (access.kind === "login") notFound();
+  // 사내 전용인데 임직원이 아니면 상세의 안내로 돌려보낸다
+  if (access.kind !== "ok") redirect(detailPath);
   const enrolled = !!access.enrollment;
   // 수강 신청 전에는 미리보기(isFree) 레슨만
   if (!enrolled && !current.isFree) redirect(detailPath);

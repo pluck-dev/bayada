@@ -2,7 +2,7 @@ import { prisma } from "@bayada/db";
 import type { JobRole, Prisma } from "@bayada/db";
 import type { Viewer } from "@/lib/viewer";
 import { maskName } from "@/lib/params";
-import { cardSelect, visibleCourseWhere, withCardExtras } from "@/lib/queries/courses";
+import { browsableCourseWhere, cardSelect, withCardExtras } from "@/lib/queries/courses";
 
 // ─── 후기·평점 ───
 
@@ -89,7 +89,7 @@ export async function getCourseReviews(courseId: string, viewerId: string | null
 /** 홈 ⑩ 최근 후기 — 보는 사람이 볼 수 있는 강의의 공개 후기만 */
 export async function getRecentReviews(viewer: Viewer | null, take = 9) {
   const rows = await prisma.review.findMany({
-    where: { status: "PUBLISHED", course: visibleCourseWhere(viewer) },
+    where: { status: "PUBLISHED", course: browsableCourseWhere() },
     orderBy: { createdAt: "desc" },
     take,
     select: { ...reviewSelect, course: { select: { slug: true, title: true } } },
@@ -112,7 +112,7 @@ export async function getImpactStats(viewer: Viewer | null) {
     prisma.certificate.groupBy({ by: ["userId"] }).then((g) => g.length),
     prisma.certificate.count(),
     prisma.organization.count({ where: { users: { some: {} } } }),
-    prisma.course.count({ where: visibleCourseWhere(viewer) }),
+    prisma.course.count({ where: browsableCourseWhere() }),
   ]);
   return [
     { label: "수료자", value: graduates, unit: "명" },

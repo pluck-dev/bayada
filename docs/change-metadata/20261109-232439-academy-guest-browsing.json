@@ -1,0 +1,305 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261109-232439-academy-guest-browsing",
+  "created_at": "2026-11-09T23:24:39+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "fc29763fe8273b530fbf24f83946462ff50cd19d",
+  "request": "아카데미에서 비로그인 상태여도 강의 리스트나 상세는 다 볼 수 있어야 하고, 강의를 보려고 할 때 로그인 창을 띄워야 한다",
+  "title": "Academy guest browsing",
+  "purpose": "비로그인도 아카데미 프로그램 목록·상세를 모두 볼 수 있게 하고, 강의를 보려는 순간(재생·수강 신청)에만 로그인을 요구한다.",
+  "files": [
+    {
+      "path": "apps/academy/src/app/[locale]/courses/[slug]/lectures/[lectureId]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 75,
+          "new_end": 75
+        },
+        {
+          "old_start": 76,
+          "old_end": 76,
+          "new_start": 77,
+          "new_end": 78
+        }
+      ],
+      "working_tree_sha256": "80f8cbb9642be900414d03ce6f85771700ca859c5fcc4d5f7179cf9f31b19617",
+      "symbols": [
+        "LecturePage"
+      ],
+      "purpose": "강의실은 보려는 순간 로그인, 수강 자격 없으면 상세 안내로 돌려보낸다.",
+      "previous_behavior": "비로그인은 로그인으로 이동, INTERNAL 을 비임직원 회원이 열면 404.",
+      "new_behavior": "비로그인은 로그인으로 이동(그대로), 수강 자격이 없는 회원(restricted)은 상세 페이지로 이동해 안내를 본다.",
+      "data_impact": "none: 강의실 데이터 조회 조건은 그대로다(접근 판정 뒤에만 조회).",
+      "access_control_impact": "수강 권한은 그대로(PUBLIC 또는 사내 조직). 열람 권한만 바뀜: INTERNAL 게시 프로그램의 목록·상세(소개·커리큘럼 제목)를 비로그인·비임직원도 볼 수 있다. 강의 영상·본문·퀴즈는 여전히 로그인+수강 자격 필요.",
+      "risks": [
+        "none: 접근 판정은 더 엄격해지지 않았고 404 대신 상세로 보내는 것만 다르다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리면 옛 노출 규칙(INTERNAL 은 임직원만 열람)으로 돌아간다. 데이터 변경 없음 — 호환성 제약 없음."
+    },
+    {
+      "path": "apps/academy/src/app/[locale]/courses/[slug]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 22,
+          "old_end": 22,
+          "new_start": 22,
+          "new_end": 22
+        },
+        {
+          "old_start": 53,
+          "old_end": 53,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 55,
+          "old_end": 55,
+          "new_start": 54,
+          "new_end": 54
+        },
+        {
+          "old_start": 104,
+          "old_end": 129,
+          "new_start": 103,
+          "new_end": 106
+        },
+        {
+          "old_start": 143,
+          "old_end": 143,
+          "new_start": 120,
+          "new_end": 120
+        },
+        {
+          "old_start": 171,
+          "old_end": 171,
+          "new_start": 148,
+          "new_end": 148
+        },
+        {
+          "old_start": 339,
+          "old_end": 339,
+          "new_start": 316,
+          "new_end": 316
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 633,
+          "new_end": 634
+        },
+        {
+          "old_start": 694,
+          "old_end": 694,
+          "new_start": 673,
+          "new_end": 673
+        },
+        {
+          "old_start": 700,
+          "old_end": 700,
+          "new_start": 679,
+          "new_end": 679
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 707,
+          "new_end": 708
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 723,
+          "new_end": 724
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 738,
+          "new_end": 751
+        }
+      ],
+      "working_tree_sha256": "7cf192d82ba9cba664d9340c0c755e4795e03ca1cc92bb07b87a3391d39b127f",
+      "symbols": [
+        "generateMetadata",
+        "CourseDetailPage",
+        "InternalOnlyNotice (신규)"
+      ],
+      "purpose": "비로그인도 상세 전체를 보고, 수강하려 할 때 로그인으로 보낸다. 임직원 아닌 회원에게는 수강 대신 안내를 보여 준다.",
+      "previous_behavior": "INTERNAL 프로그램을 비로그인이 열면 '임직원 전용 프로그램이에요' 잠금 화면만, 비임직원 회원이 열면 404.",
+      "new_behavior": "누구나 상세 전체(소개·커리큘럼·수료·FAQ)를 본다. 비로그인은 '로그인하고 수강 신청' 버튼(기존 EnrollButton 동작)으로 로그인 이동. 비임직원 회원(restricted)은 수강·찜·미리보기 링크 대신 '임직원 전용 프로그램' 안내(데스크톱 패널·모바일 하단 바).",
+      "data_impact": "읽기 범위만 넓어짐. 공급자 프로그램 수도 게시 전체 기준.",
+      "access_control_impact": "수강 권한은 그대로(PUBLIC 또는 사내 조직). 열람 권한만 바뀜: INTERNAL 게시 프로그램의 목록·상세(소개·커리큘럼 제목)를 비로그인·비임직원도 볼 수 있다. 강의 영상·본문·퀴즈는 여전히 로그인+수강 자격 필요.",
+      "risks": [
+        "사내 전용 상세가 noindex 는 유지되지만 링크를 아는 누구나 볼 수 있다(의도)."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리면 옛 노출 규칙(INTERNAL 은 임직원만 열람)으로 돌아간다. 데이터 변경 없음 — 호환성 제약 없음."
+    },
+    {
+      "path": "apps/academy/src/lib/queries/courses.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 17,
+          "new_end": 26
+        },
+        {
+          "old_start": 20,
+          "old_end": 20,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 138,
+          "old_end": 138,
+          "new_start": 146,
+          "new_end": 146
+        },
+        {
+          "old_start": 183,
+          "old_end": 183,
+          "new_start": 191,
+          "new_end": 191
+        },
+        {
+          "old_start": 209,
+          "old_end": 209,
+          "new_start": 217,
+          "new_end": 217
+        },
+        {
+          "old_start": 228,
+          "old_end": 228,
+          "new_start": 236,
+          "new_end": 236
+        },
+        {
+          "old_start": 328,
+          "old_end": 328,
+          "new_start": 336,
+          "new_end": 337
+        },
+        {
+          "old_start": 352,
+          "old_end": 352,
+          "new_start": 361,
+          "new_end": 361
+        }
+      ],
+      "working_tree_sha256": "8525db1d43ea00c92ed6852e6e660f55b65b27f3c07c816ee372f47b621697c5",
+      "symbols": [
+        "browsableCourseWhere (신규)",
+        "visibleCourseWhere",
+        "listCatalog",
+        "getTaxonomy",
+        "getFacetCounts",
+        "getHomeData",
+        "CourseAccess",
+        "resolveCourseAccess"
+      ],
+      "purpose": "둘러보기 규칙(게시면 누구나)과 수강 규칙(INTERNAL 은 임직원만)을 분리한다.",
+      "previous_behavior": "목록·택소노미·필터 수·홈이 visibleCourseWhere(viewer) 로 INTERNAL 을 비임직원에게 숨겼고, resolveCourseAccess 는 비임직원 회원에게 notfound(404), 비로그인에게 login(잠금 화면)을 돌려줬다.",
+      "new_behavior": "목록·택소노미·필터 수·홈이 browsableCourseWhere()(PUBLISHED 전부)를 쓴다. resolveCourseAccess 는 비임직원 회원에게 restricted 를 돌려준다. visibleCourseWhere·isCourseListed(수강 규칙)는 그대로라 수강 신청·결제·찜·실습·기관 배정 API 는 여전히 INTERNAL 을 막는다.",
+      "data_impact": "목록에서 INTERNAL 프로그램 제목·소개·커리큘럼 제목이 비로그인에게 공개된다(사용자 요청). 영상·본문·퀴즈는 강의실에서만 내려가고 강의실은 로그인·수강 규칙을 그대로 따른다.",
+      "access_control_impact": "수강 권한은 그대로(PUBLIC 또는 사내 조직). 열람 권한만 바뀜: INTERNAL 게시 프로그램의 목록·상세(소개·커리큘럼 제목)를 비로그인·비임직원도 볼 수 있다. 강의 영상·본문·퀴즈는 여전히 로그인+수강 자격 필요.",
+      "risks": [
+        "사내 전용 프로그램의 제목·소개·커리큘럼 목록이 외부에 공개된다 — 사용자 결정. 민감한 프로그램은 어드민에서 비게시(ARCHIVED 등)로 돌려야 숨겨진다.",
+        "withCardExtras 등 viewer 인자를 받는 함수 시그니처는 유지(후속 개인화용)."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리면 옛 노출 규칙(INTERNAL 은 임직원만 열람)으로 돌아간다. 데이터 변경 없음 — 호환성 제약 없음."
+    },
+    {
+      "path": "apps/academy/src/lib/queries/engagement.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 5,
+          "old_end": 5,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": 92,
+          "old_end": 92,
+          "new_start": 92,
+          "new_end": 92
+        },
+        {
+          "old_start": 115,
+          "old_end": 115,
+          "new_start": 115,
+          "new_end": 115
+        }
+      ],
+      "working_tree_sha256": "58242c7448ac4b1d5c8f045e98db6559951789aff115c0353e20a18dc25bef00",
+      "symbols": [
+        "getRecentReviews",
+        "getImpactStats"
+      ],
+      "purpose": "홈 최근 후기·성과 지표의 프로그램 범위를 둘러보기 규칙에 맞춘다.",
+      "previous_behavior": "후기·프로그램 수가 보는 사람 기준(visibleCourseWhere)이라 비로그인에게 INTERNAL 후기가 빠지고 프로그램 수가 0 이었다.",
+      "new_behavior": "게시 프로그램 전체 기준으로 후기와 프로그램 수를 보여 준다.",
+      "data_impact": "읽기 범위만 넓어짐(공개 후기 PUBLISHED 상태 조건은 그대로).",
+      "access_control_impact": "수강 권한은 그대로(PUBLIC 또는 사내 조직). 열람 권한만 바뀜: INTERNAL 게시 프로그램의 목록·상세(소개·커리큘럼 제목)를 비로그인·비임직원도 볼 수 있다. 강의 영상·본문·퀴즈는 여전히 로그인+수강 자격 필요.",
+      "risks": [
+        "INTERNAL 프로그램의 공개 후기가 홈에서 비로그인에게도 보인다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리면 옛 노출 규칙(INTERNAL 은 임직원만 열람)으로 돌아간다. 데이터 변경 없음 — 호환성 제약 없음."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "none: 운영(EC2) 데이터 미접근. 로컬 개발 DB(bayada_v2)에서 검증용 외부 회원 qa.external@bayada.local 을 가입 API 로 만들었다가 확인 후 삭제(DELETE 1). Course 데이터(visibility)는 건드리지 않음.",
+    "schema_migration": "none: 스키마·마이그레이션 변경 없음.",
+    "external_side_effects": [
+      "none: 배포·푸시 없음. 로컬 가입 시 인증 메일 발송 시도(로컬 메일러) 외 외부 호출 없음."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter academy typecheck",
+      "result": "passed",
+      "evidence": "tsc --noEmit 오류 없음."
+    },
+    {
+      "command": "pnpm --filter academy lint",
+      "result": "failed",
+      "evidence": "eslint 설정 마이그레이션 오류로 실행 자체가 실패 — 변경 전 기준(git stash)도 같은 exit 2. 이번 변경과 무관."
+    },
+    {
+      "command": "curl 비로그인: /ko/courses, /ko, /ko/courses/비만obesity, 강의실 URL (dev 3100)",
+      "result": "passed",
+      "evidence": "카탈로그 49개(첫 페이지 카드 12), 홈 프로그램 링크 15, 상세 200 + 커리큘럼 표시, 강의실 307 → /ko/auth/login?callbackUrl=…"
+    },
+    {
+      "command": "curl 비임직원 회원 로그인(로컬 임시 계정) 후 상세·강의실",
+      "result": "passed",
+      "evidence": "상세 200 + '임직원 전용 프로그램' 안내 2곳(패널·모바일 바), 찜 버튼 없음, 강의실 307 → 상세."
+    },
+    {
+      "command": "Oinzi 스크린샷 guest-catalog.png, guest-detail.png",
+      "result": "passed",
+      "evidence": "카탈로그 '전체 49' + 사내 전용 배지 카드, 상세에 '로그인하고 수강 신청'·찜하기 버튼."
+    },
+    {
+      "command": "임직원 계정으로 수강·재생",
+      "result": "not_run",
+      "evidence": "임직원 계정 비밀번호 없음. 임직원 판정 분기(viewer.isInternal → ok)는 코드상 변경 없음."
+    }
+  ],
+  "residual_risks": [
+    "임직원 로그인 후 수강 흐름은 실화면 미확인(분기 코드는 그대로).",
+    "사내 전용 프로그램 정보(제목·소개·커리큘럼 제목)가 외부에 공개된다 — 사용자 결정. 숨길 프로그램은 어드민에서 비게시 처리 필요.",
+    "eslint 실행 환경이 깨져 있어 린트는 검증하지 못함(기존 문제)."
+  ],
+  "commit": "same-as-metadata-file"
+}

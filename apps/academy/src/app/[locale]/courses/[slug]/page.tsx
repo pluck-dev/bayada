@@ -19,7 +19,7 @@ import {
 import { prisma } from "@bayada/db";
 import type { LectureType } from "@bayada/db";
 import { getViewer } from "@/lib/viewer";
-import { getCourseForDetail, resolveCourseAccess, visibleCourseWhere } from "@/lib/queries/courses";
+import { browsableCourseWhere, getCourseForDetail, resolveCourseAccess } from "@/lib/queries/courses";
 import { getResumeLectureId } from "@/lib/queries/learning";
 import { programsRequiringCourse } from "@/lib/queries/credentials";
 import { getActivePlans, getMyPass } from "@/lib/queries/pass";
@@ -50,9 +50,8 @@ type Params = Promise<{ locale: string; slug: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const viewer = await getViewer();
   const course = await prisma.course.findFirst({
-    where: { slug: decodeParam(slug), ...visibleCourseWhere(viewer) },
+    where: { slug: decodeParam(slug), ...browsableCourseWhere() },
     select: { slug: true, title: true, summary: true, thumbnail: true, coverMode: true, visibility: true },
   });
   if (!course) return { title: "프로그램" };
@@ -101,32 +100,10 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
   const detailPath = `/${locale}/courses/${encodeURIComponent(course.slug)}`;
 
   if (access.kind === "notfound") notFound();
-  if (access.kind === "login") {
-    return (
-      <div className="container-page py-24">
-        <div className="mx-auto flex max-w-md flex-col items-center text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-sunken text-ink-soft">
-            <Lock className="h-6 w-6" aria-hidden />
-          </span>
-          <h1 className="mt-6 text-h2 font-bold tracking-tight text-ink">임직원 전용 프로그램이에요</h1>
-          <p className="mt-3 text-body leading-relaxed text-muted">
-            바야다홈헬스케어 임직원 계정으로 로그인하면 이 프로그램을 확인하고 수강할 수 있어요.
-          </p>
-          <Link
-            href={`/${locale}/auth/login?callbackUrl=${encodeURIComponent(detailPath)}`}
-            className={cn(buttonVariants({ variant: "primary", size: "lg" }), "mt-8")}
-          >
-            로그인
-          </Link>
-          <Link href={`/${locale}/courses`} className="mt-3 text-body-sm font-medium text-muted hover:text-ink">
-            다른 프로그램 둘러보기
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const enrollment = access.enrollment;
+  // 목록·상세는 누구나 본다. 사내 전용을 비로그인이 보면 수강·미리보기 버튼이 로그인으로 보내고,
+  // 로그인했지만 임직원이 아니면(restricted) 수강 버튼 대신 안내를 보여 준다.
+  const learnBlocked = access.kind === "restricted";
+  const enrollment = access.kind === "ok" ? access.enrollment : null;
   const lectures = course.sections.flatMap((s) => s.lectures);
   const lectureCount = lectures.length;
   const quizCount = lectures.filter((l) => l.type === "QUIZ").length;
@@ -140,7 +117,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
         })
       : Promise.resolve(null),
     course.providerId
-      ? prisma.course.count({ where: { providerId: course.providerId, ...visibleCourseWhere(viewer) } })
+      ? prisma.course.count({ where: { providerId: course.providerId, ...browsableCourseWhere() } })
       : Promise.resolve(0),
     getCourseSessions(course.id, viewer?.id ?? null),
     getCourseReviews(course.id, viewer?.id ?? null),
@@ -168,7 +145,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
       : [[], null];
   const passCovers = !!myPass?.includes.includes(course.productType);
   const passOffer = !passCovers && plans.some((p) => p.includes.includes(course.productType));
-  const passLapsed = access.passLapsed === true;
+  const passLapsed = access.kind === "ok" && access.passLapsed === true;
 
   const infoItems = [
     { label: "구성", value: `${lectureCount}개 강의`, icon: BookOpen },
@@ -336,7 +313,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                       <ul className="border-t border-line-soft pb-2">
                         {s.lectures.map((l) => {
                           const Icon = LECTURE_ICON[l.type];
-                          const canOpen = !!enrollment || l.isFree;
+                          const canOpen = !!enrollment || (l.isFree && !learnBlocked);
                           const row = (
                             <>
                               <Icon className="h-4 w-4 shrink-0 text-subtle" aria-hidden />
@@ -653,6 +630,8 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                         마이 러닝
                       </Link>
                     </>
+                  ) : learnBlocked ? (
+                    <InternalOnlyNotice />
                   ) : (
                     <>
                       <p className="text-h2 text-ink">{formatPrice(course.price)}</p>
@@ -691,13 +670,13 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                       )}
                     </>
                   )}
-                  <WishlistButton
+                  {!learnBlocked && <WishlistButton
                     courseId={course.id}
                     locale={locale}
                     wished={wished}
                     variant="panel"
                     className="mt-2 w-full"
-                  />
+                  />}
                   <ul className="mt-6 space-y-2 border-t border-line pt-5 text-body-sm text-ink-soft">
                     <li className="flex items-center gap-2">
                       <BookOpen className="h-4 w-4 text-subtle" aria-hidden /> {lectureCount}개 강의
@@ -725,6 +704,8 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
           <div className="shrink-0">
             {enrollment ? (
               <p className="text-body-sm font-bold text-ink">진도 {progress}%</p>
+            ) : learnBlocked ? (
+              <p className="text-body-sm font-bold text-ink">임직원 전용</p>
             ) : (
               <p className="text-title font-bold text-ink">{formatPrice(course.price)}</p>
             )}
@@ -739,6 +720,8 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                   {enrollment.completedAt ? "다시 보기" : progress > 0 ? "이어보기" : "학습 시작하기"}
                 </Link>
               )
+            ) : learnBlocked ? (
+              <p className="text-body-sm text-muted">바야다홈헬스케어 임직원 계정으로 수강할 수 있어요.</p>
             ) : course.price === 0 ? (
               <EnrollButton courseId={course.id} locale={locale} slug={course.slug} loggedIn={!!viewer} />
             ) : passCovers ? (
@@ -749,6 +732,20 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** 사내 전용 프로그램을 임직원이 아닌 회원이 볼 때 — 수강 버튼 대신 */
+function InternalOnlyNotice() {
+  return (
+    <div>
+      <p className="flex items-center gap-2 text-title font-bold text-ink">
+        <Lock className="h-4 w-4" aria-hidden /> 임직원 전용 프로그램
+      </p>
+      <p className="mt-2 text-body-sm leading-relaxed text-muted">
+        바야다홈헬스케어 임직원 계정으로 로그인하면 수강할 수 있어요. 기관·센터 단체 수강은 기관 도입 문의로 알려 주세요.
+      </p>
     </div>
   );
 }

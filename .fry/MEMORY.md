@@ -38,15 +38,17 @@
 - `createAuthConfig` 는 `@bayada/shared/auth` 에서 import. index 에서 빼 둠 — node:crypto 가 클라이언트 번들에 섞이면 webpack `UnhandledSchemeError`.
 - 이메일은 소문자로 저장·조회.
 
-# 아카데미 v2 학습자 사이트: 노출 규칙(INTERNAL), 진도·수료증 번호, 퀴즈 채점, dev 서버 함정
+# 아카데미 v2 학습자 사이트: 노출 규칙(둘러보기 누구나·수강은 INTERNAL 제한), 진도·수료증 번호, 퀴즈 채점, dev 서버 함정
 
-## 노출 규칙은 서버 쿼리에서만 판정
-- `apps/academy/src/lib/queries/courses.ts` 의 `visibleCourseWhere(viewer)` / `resolveCourseAccess` 가 유일한 기준. 목록·상세·수강신청 API 모두 이걸 쓴다.
+## 노출 규칙은 서버 쿼리에서만 판정 — 둘러보기 ≠ 수강 (2026-11-09 사용자 결정으로 변경)
+- **둘러보기**: `browsableCourseWhere()` = PUBLISHED 면 누구나(비로그인 포함). 목록·홈·검색·상세·후기·통계는 전부 이것. INTERNAL 도 목록·상세에 나오고 카드·상세에 '사내 전용' 배지만 붙는다.
+- **수강**: `visibleCourseWhere(viewer)`·`isCourseListed` = PUBLIC 또는 사내 조직(isInternal). 수강 신청·결제·찜·실습 신청·기관 배정 API 가 이것으로 막는다.
+- `resolveCourseAccess` 결과: ok / login(INTERNAL+비로그인 → 상세는 보여 주고 수강·미리보기 누르면 로그인) / restricted(INTERNAL+임직원 아닌 회원 → 상세에 '임직원 전용' 안내, 수강·찜 버튼 숨김, 강의실 URL 은 상세로 돌려보냄) / notfound(비게시).
+- 강의실(레슨) 페이지는 비로그인이면 무조건 로그인으로 보낸다(미리보기 레슨 포함) — "강의를 보려는 순간 로그인".
 - `isInternal` 은 JWT 에 없다 → `lib/viewer.ts` 의 `getViewer()` 가 매 요청 DB 에서 조직을 읽는다(관리자가 조직 권한 바꾸면 재로그인 없이 반영).
 - 수강 중인 사용자는 강의가 ARCHIVED·INTERNAL 로 바뀌어도 상세/강의실 접근 유지. 비수강자는 미리보기(isFree) 레슨만.
-- 사내 전용 강의: 비로그인 → 로그인 안내 화면, 로그인했지만 비사내 → 404 (존재 자체를 숨김).
-- 2026-10 기준 이전 강의는 전부 INTERNAL → 비로그인 홈/카탈로그는 빈 상태 화면이 정상.
-
+- 사이트맵·OG 표지(/api/cover)는 여전히 PUBLIC 만, INTERNAL 상세는 noindex.
+- 옛 규칙(INTERNAL 은 비로그인에게 숨김 → 빈 상태 화면)은 폐기. 이제 NoProgramsNotice 는 게시 프로그램이 0개일 때만 뜬다.
 ## 진도율·수료증
 - 옮겨 온 Enrollment.progressPercent(WP 값)가 Progress 레코드보다 높은 경우가 많다 → 재계산 시 `max(계산값, 기존값)` 으로 내려가지 않게 함. 화면 진도율도 Enrollment 기준.
 - 수료증 번호는 **연도별** 일련번호 `BA-YYYY-NNNNNN` (이전 데이터도 BA-2022-000004 식). unique 충돌 시 재시도.
@@ -359,7 +361,7 @@
 ## 규칙
 - 학습자 화면도 네이티브 select/checkbox/radio/date/confirm/alert 금지 → `@bayada/ui` Select·Checkbox·CheckVisual·DatePicker·Sheet·useFeedback. 예외: sr-only 로 숨긴 네이티브 입력 + 디자인된 모양(폼 검증 유지용)은 허용. `@bayada/ui` 컴포넌트는 academy 만 쓴다(web·admin 은 cn 만) — 바꿔도 웹사이트 화면은 안 바뀜. theme.css 토큰은 web 도 읽으니 기존 값은 건드리지 말 것. 애니메이션 키프레임은 academy globals.css @theme 에만.
 - form.tsx(서버 안전: controlClass 등)와 choice.tsx("use client": Checkbox 등)를 나눈 이유: "use client" 모듈의 함수(controlClass)를 서버 컴포넌트가 부르면 클라이언트 참조라 깨진다.
-- 열람 가능한 프로그램이 0개(외부 회원·비로그인 — 2026-11 현재 49개 전부 INTERNAL)면 홈·카탈로그에 `NoProgramsNotice`(이유 + 임직원 로그인/기관 도입 문의/바야다 인증). 판단은 `getFacetCounts().total === 0`. 공개 여부는 고객사 엑셀로 결정 예정 — 데이터 손대지 말 것.
+- 게시 프로그램이 0개면 홈·카탈로그에 `NoProgramsNotice`(2026-11-09 부터 INTERNAL 도 둘러보기에 포함되므로 49개 INTERNAL 이어도 안 뜬다)(이유 + 임직원 로그인/기관 도입 문의/바야다 인증). 판단은 `getFacetCounts().total === 0`. 공개 여부는 고객사 엑셀로 결정 예정 — 데이터 손대지 말 것.
 - 강의실: 영상은 끝까지 보면 자동 완료(onEnded), 5초마다 watchedSec 저장 → 다음 진입 시 이어보기(끝 10초 전까지만). 전체 화면은 컨테이너 요소(커스텀 컨트롤 유지), 속도 메뉴는 포털이 아니라 플레이어 안(전체 화면에서도 보이게).
 ## 검증 방법 (2026-11-09)
 - 공개 전환 후 동작 확인은 DB 사본으로: `pg_dump bayada_v2 | psql bayada_v2_pubtest` → 사본에서만 visibility=PUBLIC → dev 를 `DATABASE_URL=…/bayada_v2_pubtest pnpm dev` 로 띄워 외부 회원 수강→영상→퀴즈→수료증 확인 후 사본 삭제. 실데이터 visibility 는 그대로.
