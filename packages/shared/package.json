@@ -9,9 +9,12 @@
     "./constants": "./src/constants.ts",
     "./auth": "./src/auth.ts",
     "./password-policy": "./src/password-policy.ts",
+    "./password": "./src/password.ts",
     "./i18n": "./src/i18n/index.ts",
     "./site-settings": "./src/site-settings.ts",
-    "./web-content": "./src/web-content.ts"
+    "./web-content": "./src/web-content.ts",
+    "./member": "./src/member.ts",
+    "./social-auth": "./src/social-auth.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit"
