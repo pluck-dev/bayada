@@ -18,6 +18,7 @@ import {
   FileText,
   LogOut,
   MessageSquareWarning,
+  MessageSquareText,
   CalendarDays,
   FileSignature,
   LayoutGrid,
@@ -58,6 +59,7 @@ const PRIMARY: NavItem[] = [
   { path: "/partner-console", label: "파트너 콘솔", icon: LayoutGrid, permission: "partner.console" },
   { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages" },
   { path: "/site-settings", label: "사이트 설정", icon: Settings2, permission: "site.manage" },
+  { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback" },
   { path: "/roles", label: "역할·권한", icon: ShieldCheck, permission: "role.manage" },
   { path: "/audit", label: "감사 로그", icon: ScrollText, permission: "audit" },
 ];
