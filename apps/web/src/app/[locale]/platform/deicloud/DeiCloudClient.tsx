@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { submitInquiry } from "@/lib/inquiry";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
@@ -433,6 +434,33 @@ function FaqSection({
 }
 
 function EarlyApplySection() {
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (submitting) return;
+    const fd = new FormData(e.currentTarget);
+    setSubmitting(true);
+    try {
+      const res = await submitInquiry({
+        formType: "deicloud-early-access",
+        sourcePage: window.location.pathname,
+        website: String(fd.get("website") ?? ""),
+        data: { email: String(fd.get("email") ?? "") },
+      });
+      setResult(
+        res.success
+          ? { ok: true, message: `사전 신청이 접수되었습니다. 접수번호 ${res.referenceNumber}` }
+          : { ok: false, message: res.message },
+      );
+    } catch {
+      setResult({ ok: false, message: "신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <section
       id="early-apply"
@@ -466,20 +494,30 @@ function EarlyApplySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.15, ease }}
             className="mx-auto mt-10 flex max-w-md flex-col gap-4 sm:flex-row"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
           >
+            {/* 봇 차단용 — 화면에 보이지 않는다 */}
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
             <input
               type="email"
+              name="email"
+              required
               placeholder="기관 이메일을 입력하세요"
               className="flex-1 rounded-lg bg-white px-5 py-[13px] text-sm text-black/[0.87] placeholder-black/30 ring-1 ring-black/10 outline-none focus:ring-[#ce0e2d]/60 transition-all"
             />
             <button
               type="submit"
-              className="rounded-lg bg-[#ce0e2d] py-[13px] px-6 text-sm font-medium text-white transition-colors hover:bg-[#980019] whitespace-nowrap"
+              disabled={submitting}
+              className="rounded-lg bg-[#ce0e2d] py-[13px] px-6 text-sm font-medium text-white transition-colors hover:bg-[#980019] whitespace-nowrap disabled:opacity-50"
             >
-              사전 신청하기
+              {submitting ? "신청 중..." : "사전 신청하기"}
             </button>
           </motion.form>
+          {result && (
+            <p className={`mt-4 text-sm ${result.ok ? "text-green-700" : "text-[#ce0e2d]"}`} role={result.ok ? "status" : "alert"}>
+              {result.message}
+            </p>
+          )}
           <p className="mt-4 text-xs text-black/40">
             개인정보는 사전 신청 목적으로만 사용되며 안전하게 보호됩니다
           </p>

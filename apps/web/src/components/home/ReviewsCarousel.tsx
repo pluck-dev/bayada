@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/animations/FadeIn";
-import { reviews, getAverageRating } from "@/data/reviews";
+import type { Review } from "@/types";
 
-export function ReviewsCarousel() {
+/** reviews·avgRating 은 서버(lib/web-content)에서 읽어 넘긴다 */
+export function ReviewsCarousel({ reviews, avgRating }: { reviews: Review[]; avgRating: number }) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
   const displayReviews = reviews.slice(0, 8);
@@ -29,7 +30,6 @@ export function ReviewsCarousel() {
   }, [next]);
 
   const review = displayReviews[current];
-  const avgRating = getAverageRating();
 
   const variants = {
     enter: (dir: number) => ({ x: dir > 0 ? 100 : -100, opacity: 0 }),

@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { getLatestPosts, blogCategories } from "@/data/blog";
+import { getLatestPosts, blogCategories } from "@/lib/web-content";
 
 interface LatestBlogProps {
   locale: string;
 }
 
 // 서버 컴포넌트
-export function LatestBlog({ locale }: LatestBlogProps) {
-  const posts = getLatestPosts(3);
+export async function LatestBlog({ locale }: LatestBlogProps) {
+  const posts = await getLatestPosts(3);
 
   return (
     <section className="py-[var(--section-gap)] bg-white">

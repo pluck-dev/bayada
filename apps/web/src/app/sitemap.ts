@@ -1,11 +1,15 @@
 import type { MetadataRoute } from "next";
 import { i18nConfig } from "@bayada/shared/i18n";
-import { blogPosts } from "@/data/blog";
+import { getPublishedPosts } from "@/lib/web-content";
 import { services } from "@/data/services";
+
+// 블로그 글이 DB 에서 오므로 주기적으로 다시 만든다
+export const revalidate = 300;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.bayada.co.kr";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = await getPublishedPosts();
   const locales = i18nConfig.locales;
 
   // 정적 페이지 목록
@@ -55,14 +59,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // 블로그 포스트 (동적)
   const blogEntries = locales.flatMap((locale) =>
-    blogPosts
-      .filter((post) => post.isPublished)
-      .map((post) => ({
-        url: `${SITE_URL}/${locale}/blog/${post.slug}`,
-        lastModified: new Date(post.publishedAt),
-        changeFrequency: "weekly" as const,
-        priority: 0.6,
-      }))
+    posts.map((post) => ({
+      url: `${SITE_URL}/${locale}/blog/${post.slug}`,
+      lastModified: new Date(post.publishedAt),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }))
   );
 
   // 서비스 상세 (동적)

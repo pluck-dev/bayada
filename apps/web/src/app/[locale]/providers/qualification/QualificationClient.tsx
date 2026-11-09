@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { submitInquiry } from "@/lib/inquiry";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import {
@@ -290,12 +291,41 @@ function FAQAccordion({ items }: { items: { q: string; a: string }[] }) {
 
 function ApplicationForm() {
   const [agreed, setAgreed] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!agreed) return;
-    setSubmitted(true);
+    if (!agreed || submitting) return;
+    const fd = new FormData(e.currentTarget);
+    const get = (k: string) => String(fd.get(k) ?? "");
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await submitInquiry({
+        formType: "vendor-qualification",
+        privacyConsent: agreed,
+        sourcePage: window.location.pathname,
+        website: get("website"),
+        data: {
+          organization: get("organization"),
+          orgType: get("orgType"),
+          representative: get("representative"),
+          phone: get("phone"),
+          email: get("email"),
+          address: get("address"),
+          qualifications: get("qualifications"),
+          motivation: get("motivation"),
+        },
+      });
+      if (res.success) setSubmitted(res.referenceNumber);
+      else setError(res.message);
+    } catch {
+      setError("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -306,6 +336,9 @@ function ApplicationForm() {
         <p className="max-w-sm text-sm text-black/60">
           담당자가 3~5 영업일 내로 연락드리겠습니다. 감사합니다.
         </p>
+        <p className="text-sm text-black/[0.87]">
+          접수번호 <strong className="font-semibold">{submitted}</strong>
+        </p>
       </div>
     );
   }
@@ -315,6 +348,8 @@ function ApplicationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* 봇 차단용 — 화면에 보이지 않는다 */}
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className="block text-sm font-medium text-black/[0.87]">
@@ -322,6 +357,7 @@ function ApplicationForm() {
           </label>
           <input
             type="text"
+            name="organization"
             required
             className={inputClass}
             placeholder="기관명 또는 성명을 입력하세요"
@@ -332,6 +368,7 @@ function ApplicationForm() {
             기관 유형 <span className="text-[#ce0e2d]">*</span>
           </label>
           <select
+            name="orgType"
             required
             className={inputClass}
           >
@@ -347,6 +384,7 @@ function ApplicationForm() {
           </label>
           <input
             type="text"
+            name="representative"
             required
             className={inputClass}
             placeholder="대표자 성명"
@@ -358,6 +396,7 @@ function ApplicationForm() {
           </label>
           <input
             type="tel"
+            name="phone"
             required
             className={inputClass}
             placeholder="010-0000-0000"
@@ -369,6 +408,7 @@ function ApplicationForm() {
           </label>
           <input
             type="email"
+            name="email"
             required
             className={inputClass}
             placeholder="example@company.com"
@@ -378,6 +418,7 @@ function ApplicationForm() {
           <label className="block text-sm font-medium text-black/[0.87]">주소</label>
           <input
             type="text"
+            name="address"
             className={inputClass}
             placeholder="기관 또는 거주 주소"
           />
@@ -387,6 +428,7 @@ function ApplicationForm() {
       <div>
         <label className="block text-sm font-medium text-black/[0.87]">보유 자격 / 면허</label>
         <textarea
+          name="qualifications"
           rows={3}
           className={inputClass}
           placeholder="보유하신 자격증, 면허, 인증 등을 기재해 주세요"
@@ -396,6 +438,7 @@ function ApplicationForm() {
       <div>
         <label className="block text-sm font-medium text-black/[0.87]">지원 동기</label>
         <textarea
+          name="motivation"
           rows={4}
           className={inputClass}
           placeholder="BAYADA 파트너에 지원하시는 동기를 알려주세요"
@@ -418,12 +461,17 @@ function ApplicationForm() {
         </span>
       </label>
 
+      {error && (
+        <p className="text-sm text-[#ce0e2d]" role="alert">
+          {error}
+        </p>
+      )}
       <button
         type="submit"
-        disabled={!agreed}
+        disabled={!agreed || submitting}
         className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#ce0e2d] py-[13px] px-6 text-base font-medium text-white transition-colors hover:bg-[#980019] disabled:cursor-not-allowed disabled:opacity-50"
       >
-        제출하기
+        {submitting ? "제출 중..." : "제출하기"}
         <ArrowRight className="h-4 w-4" />
       </button>
     </form>

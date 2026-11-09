@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { motion } from "framer-motion";
+import { submitInquiry } from "@/lib/inquiry";
 
 type FieldType = "text" | "email" | "tel" | "select" | "textarea";
 
@@ -20,6 +21,8 @@ interface InlineFormProps {
   fields?: FormField[];
   submitLabel?: string;
   className?: string;
+  /** 문의 CRM 폼 종류 (@bayada/shared/web-content WEB_FORM_TYPES) */
+  formType?: string;
 }
 
 const defaultFields: FormField[] = [
@@ -55,9 +58,12 @@ export function InlineForm({
   fields = defaultFields,
   submitLabel = "상담 신청하기",
   className = "",
+  formType = "general",
 }: InlineFormProps) {
   const [formData, setFormData] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -65,10 +71,21 @@ export function InlineForm({
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("InlineForm 제출:", formData);
-    setSubmitted(true);
+    if (submitting) return;
+    const { website, ...data } = formData;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await submitInquiry({ formType, data, website, sourcePage: window.location.pathname });
+      if (res.success) setSubmitted(res.referenceNumber);
+      else setError(res.message);
+    } catch {
+      setError("접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputBase =
@@ -97,9 +114,12 @@ export function InlineForm({
                 <p className="mt-2 text-sm text-green-600">
                   담당자가 빠른 시간 내에 연락드리겠습니다.
                 </p>
+                <p className="mt-3 text-sm text-black/[0.87]">접수번호 {submitted}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+                {/* 봇 차단용 — 화면에 보이지 않는다 */}
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" onChange={handleChange} />
                 {fields.map((field) => (
                   <div key={field.name}>
                     <label
@@ -151,8 +171,14 @@ export function InlineForm({
                   </div>
                 ))}
 
+                {error && (
+                  <p className="text-sm text-[#ce0e2d]" role="alert">
+                    {error}
+                  </p>
+                )}
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="mt-2 w-full rounded-lg bg-[#ce0e2d] py-[0.813rem] px-6 text-base font-medium text-white transition-colors duration-300 hover:bg-[#980019] focus:outline focus:outline-4 focus:outline-[rgb(250,230,234)]"
                 >
                   {submitLabel}

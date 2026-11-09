@@ -1,5 +1,5 @@
 import { createMetadata } from "@/lib/seo";
-import { reviews, getAverageRating } from "@/data/reviews";
+import { averageRating, getReviews } from "@/lib/web-content";
 import { services } from "@/data/services";
 import { ReviewsClient } from "./ReviewsClient";
 
@@ -16,7 +16,8 @@ export default async function ReviewsPage({
   params: Promise<{ locale: string }>;
 }) {
   await params;
-  const avg = getAverageRating();
+  const reviews = await getReviews();
+  const avg = averageRating(reviews);
 
   return (
     <ReviewsClient

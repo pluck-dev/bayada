@@ -12,6 +12,7 @@ import { AcademyCTA } from "@/components/home/AcademyCTA";
 import { Certifications } from "@/components/home/Certifications";
 import { LatestBlog } from "@/components/home/LatestBlog";
 import { NeedsReview } from "@/components/shared/NeedsReview";
+import { averageRating, getHeroSlides, getReviews } from "@/lib/web-content";
 
 export const metadata = createMetadata({
   title: "BAYADA 홈헬스케어 - 가정에서 받는 최고의 간호 및 돌봄 서비스",
@@ -39,10 +40,11 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
+  const [slides, reviews] = await Promise.all([getHeroSlides(), getReviews()]);
 
   return (
     <>
-      <HeroSection locale={locale} />
+      <HeroSection locale={locale} slides={slides} />
       <ServicesByAge locale={locale} />
       <BayadaWaySection />
       <ServiceAreaMap />
@@ -50,9 +52,12 @@ export default async function HomePage({
       <NeedsReview label="엑셀 명세 없음" note="키 넘버 섹션 — 엑셀 명세서에 해당 섹션이 없습니다. 콘텐츠 확인 필요">
         <KeyNumbers />
       </NeedsReview>
-      <NeedsReview label="엑셀 명세 없음" note="고객 후기 섹션 — 엑셀 명세서에 해당 섹션이 없습니다. 콘텐츠 확인 필요">
-        <ReviewsCarousel />
-      </NeedsReview>
+      {/* 어드민에서 후기를 전부 숨기면 섹션도 숨긴다 */}
+      {reviews.length > 0 && (
+        <NeedsReview label="엑셀 명세 없음" note="고객 후기 섹션 — 엑셀 명세서에 해당 섹션이 없습니다. 콘텐츠 확인 필요">
+          <ReviewsCarousel reviews={reviews} avgRating={averageRating(reviews)} />
+        </NeedsReview>
+      )}
       <NeedsReview label="엑셀 명세 없음" note="채용 CTA 섹션 — 엑셀 명세서에 해당 섹션이 없습니다. 콘텐츠 확인 필요">
         <AcademyCTA locale={locale} />
       </NeedsReview>

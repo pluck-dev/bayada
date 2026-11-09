@@ -1,5 +1,5 @@
 import { createMetadata } from "@/lib/seo";
-import { getPublishedPosts, blogCategories } from "@/data/blog";
+import { getPublishedPosts, blogCategories } from "@/lib/web-content";
 import BlogClient from "./BlogClient";
 import type { Locale } from "@bayada/shared/i18n";
 
@@ -16,7 +16,7 @@ export default async function BlogPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const posts = getPublishedPosts();
+  const posts = await getPublishedPosts();
 
   return (
     <BlogClient

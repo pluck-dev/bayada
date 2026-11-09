@@ -5,22 +5,30 @@ import Image from "next/image";
 import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin, Youtube } from "lucide-react";
 import type { Dictionary } from "@bayada/shared/i18n";
 import { footerNavigation, getLabel, getTitle } from "@/data/navigation";
-import { getCompanyInfo } from "@/data/content";
+import { WEB_SNS_LABEL } from "@bayada/shared/web-content";
+import type { SiteInfo } from "@/types";
 
 interface FooterProps {
   dict: Dictionary;
   locale: string;
+  /** 사이트 정보 (어드민 웹사이트 > 사이트 정보, 서버에서 읽어 넘긴다) */
+  company: SiteInfo;
 }
 
-const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Youtube, href: "#", label: "YouTube" },
-];
+const SNS_ICONS = [
+  { key: "instagram", icon: Instagram },
+  { key: "facebook", icon: Facebook },
+  { key: "linkedin", icon: Linkedin },
+  { key: "youtube", icon: Youtube },
+] as const;
 
-export function Footer({ dict, locale }: FooterProps) {
-  const company = getCompanyInfo();
+export function Footer({ dict, locale, company }: FooterProps) {
+  const socialLinks = SNS_ICONS.map(({ key, icon }) => ({
+    icon,
+    href: company.sns[key],
+    label: WEB_SNS_LABEL[key],
+    external: /^https?:/i.test(company.sns[key]),
+  }));
   const sections = [
     footerNavigation.services,
     footerNavigation.company,
@@ -68,11 +76,13 @@ export function Footer({ dict, locale }: FooterProps) {
 
             {/* 소셜 미디어 */}
             <div className="mt-6 flex gap-3">
-              {socialLinks.map(({ icon: Icon, href, label }) => (
+              {socialLinks.map(({ icon: Icon, href, label, external }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-black/60 transition-colors duration-300 hover:bg-[#ce0e2d] hover:text-white"
                 >
                   <Icon className="h-5 w-5" />
@@ -80,9 +90,7 @@ export function Footer({ dict, locale }: FooterProps) {
               ))}
             </div>
 
-            <div className="mt-4 text-xs text-black/40">
-              DEILEA.AI
-            </div>
+            {company.footerNote && <div className="mt-4 text-xs text-black/40">{company.footerNote}</div>}
           </div>
 
           {/* 4컬럼 링크 */}
@@ -124,7 +132,7 @@ export function Footer({ dict, locale }: FooterProps) {
               ))}
             </div>
             <p className="text-xs text-black/40">
-              &copy; {new Date().getFullYear()} BAYADA Home Health Care Korea. All rights reserved.
+              &copy; {new Date().getFullYear()} {company.copyright}
             </p>
           </div>
         </div>

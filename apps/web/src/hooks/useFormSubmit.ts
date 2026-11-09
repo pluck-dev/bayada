@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { mockFormSubmit } from "@/lib/mock";
+import { submitInquiry } from "@/lib/inquiry";
 import type { FormSubmitResult } from "@/types";
 
 interface UseFormSubmitOptions {
@@ -36,7 +36,16 @@ export function useFormSubmit({
       setResult(null);
 
       try {
-        const res = await mockFormSubmit(formType, data);
+        // 폼 원본 값은 data 로, 개인정보 동의는 data.privacyConsent(boolean)로 받는다
+        const { privacyConsent, website, ...rest } = data;
+        const res = await submitInquiry({
+          formType,
+          data: rest,
+          privacyConsent: privacyConsent === true,
+          website: typeof website === "string" ? website : undefined,
+          sourcePage: window.location.pathname,
+        });
+        if (!res.success) throw new Error(res.message);
         setResult(res);
         onSuccess?.(res);
       } catch (err) {

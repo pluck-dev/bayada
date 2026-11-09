@@ -3,18 +3,19 @@ import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createArticleMetadata, SITE_URL } from "@/lib/seo";
-import { blogPosts, getPostBySlug, blogCategories, getLatestPosts } from "@/data/blog";
+import { getPublishedPosts, getPostBySlug, blogCategories, getLatestPosts } from "@/lib/web-content";
 import { Container } from "@/components/layout/Container";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
-export function generateStaticParams() {
-  return blogPosts.filter((p) => p.isPublished).map((p) => ({ slug: p.slug }));
+// 빌드 때 있는 글만 미리 만들고, 어드민에서 새로 게시한 글은 첫 요청 때 만든다(dynamicParams 기본값 true)
+export async function generateStaticParams() {
+  return (await getPublishedPosts()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const post = getPostBySlug(slug);
-  if (!post) return {};
+  const post = await getPostBySlug(slug);
+  if (!post || !post.isPublished) return {};
   return createArticleMetadata({
     title: post.title,
     description: post.excerpt,
@@ -27,10 +28,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function BlogPostPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || !post.isPublished) notFound();
   const dict = await getDictionary(locale as Locale);
-  const related = getLatestPosts(3).filter((p) => p.slug !== slug);
+  const related = (await getLatestPosts(3)).filter((p) => p.slug !== slug);
 
   return (
     <>
@@ -58,9 +59,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
               <span>{post.author}</span><span>·</span><span>{post.publishedAt}</span><span>·</span><span>{post.readTime}분 읽기</span>
             </div>
           </div>
-          <div className="mt-8 h-64 rounded-2xl bg-[color:var(--surface)]" />
-          <div className="mt-8 text-base leading-relaxed text-[color:var(--muted)]">
-            <p>{post.content}</p>
+          {post.image ? (
+            // 어드민에서 넣은 표지 URL (외부 주소일 수 있어 next/image 대신 img)
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={post.image} alt="" className="mt-8 h-64 w-full rounded-2xl bg-[color:var(--surface)] object-cover" />
+          ) : (
+            <div className="mt-8 h-64 rounded-2xl bg-[color:var(--surface)]" />
+          )}
+          <div className="mt-8 space-y-4 text-base leading-relaxed text-[color:var(--muted)]">
+            {/* 빈 줄로 문단을 나눈다. 문단 안 줄바꿈은 그대로 */}
+            {post.content.split(/\n\s*\n/).map((para, i) => (
+              <p key={i} className="whitespace-pre-line">
+                {para}
+              </p>
+            ))}
           </div>
           {related.length > 0 && (
             <div className="mt-12 border-t border-[color:var(--border)] pt-8">

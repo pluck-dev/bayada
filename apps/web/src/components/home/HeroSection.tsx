@@ -4,24 +4,24 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ExternalLink, X } from "lucide-react";
-
-const SLIDES = [
-  { src: "/images/hero/hero-1.webp", alt: "BAYADA 홈헬스케어 서비스 1" },
-  { src: "/images/hero/hero-2.webp", alt: "BAYADA 홈헬스케어 서비스 2" },
-  { src: "/images/hero/hero-3.webp", alt: "BAYADA 홈헬스케어 서비스 3" },
-];
+import { resolveWebHref } from "@bayada/shared/web-content";
+import type { HeroSlide } from "@/types";
 
 interface HeroSectionProps {
   locale: string;
+  /** 서버(lib/web-content)에서 읽은 슬라이드 — 최소 1장 */
+  slides: HeroSlide[];
 }
 
-export function HeroSection({ locale }: HeroSectionProps) {
+export function HeroSection({ locale, slides }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
   const [showJobsPopup, setShowJobsPopup] = useState(false);
+  const slide = slides[current] ?? slides[0];
+  const ctaHref = resolveWebHref(slide.ctaHref, locale);
 
   const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % SLIDES.length);
-  }, []);
+    setCurrent((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
 
   useEffect(() => {
     const timer = setInterval(next, 5000);
@@ -32,15 +32,15 @@ export function HeroSection({ locale }: HeroSectionProps) {
     <section className="relative h-[620px] w-full overflow-hidden bg-white">
       {/* 배경 이미지 슬라이더 */}
       <div className="absolute inset-0">
-        {SLIDES.map((slide, i) => (
+        {slides.map((s, i) => (
           <div
-            key={slide.src}
+            key={s.id}
             className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
             style={{ opacity: i === current ? 1 : 0 }}
           >
             <Image
-              src={slide.src}
-              alt={slide.alt}
+              src={s.src}
+              alt={s.alt}
               fill
               className="object-cover object-center"
               priority={i === 0}
@@ -68,29 +68,38 @@ export function HeroSection({ locale }: HeroSectionProps) {
           className="max-w-[560px]"
         >
           <h1 className="font-bold leading-[1.1] text-black/[0.87]" style={{ fontSize: "clamp(2.5rem, 4vw, 3.5rem)" }}>
-            무엇보다 소중한 것에
-            <br />
-            집중할 수 있도록 —
-            <br />
-            비교할 수 없는 돌봄
+            {slide.title.split("\n").map((line, i) => (
+              <span key={i}>
+                {i > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </h1>
 
-          <p className="mt-6 text-base leading-relaxed text-black/60 sm:text-lg">
-            사명감과 진심을 바탕으로, 우리는 최고 수준의 홈 헬스케어 서비스를 제공합니다.
-            이를 통해 고객과 가족이 안전하고, 편안하며, 독립적인 삶을 유지할 수 있도록 돕습니다.
-          </p>
+          {slide.subtitle && (
+            <p className="mt-6 text-base leading-relaxed text-black/60 sm:text-lg">{slide.subtitle}</p>
+          )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => {
-                document.getElementById("services-by-age")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ce0e2d] px-6 py-[13px] text-base font-medium text-white transition-all duration-300 hover:bg-[#980019] hover:outline hover:outline-4 hover:outline-[rgb(250,230,234)]"
-            >
-              <Heart className="h-[18px] w-[18px]" />
-              서비스 찾기
-            </button>
+            {slide.ctaLabel && ctaHref && (
+              <a
+                href={ctaHref}
+                target={/^https?:/i.test(ctaHref) ? "_blank" : undefined}
+                rel={/^https?:/i.test(ctaHref) ? "noopener noreferrer" : undefined}
+                onClick={(e) => {
+                  // #id 는 같은 페이지 안 위치로 부드럽게 스크롤 (원래 '서비스 찾기' 동작)
+                  if (!ctaHref.startsWith("#")) return;
+                  const el = document.getElementById(ctaHref.slice(1));
+                  if (!el) return;
+                  e.preventDefault();
+                  el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ce0e2d] px-6 py-[13px] text-base font-medium text-white transition-all duration-300 hover:bg-[#980019] hover:outline hover:outline-4 hover:outline-[rgb(250,230,234)]"
+              >
+                <Heart className="h-[18px] w-[18px]" />
+                {slide.ctaLabel}
+              </a>
+            )}
 
             <button
               type="button"
@@ -106,7 +115,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
 
       {/* 슬라이드 인디케이터 */}
       <div className="absolute bottom-6 left-1/2 z-[4] flex -translate-x-1/2 gap-2">
-        {SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}

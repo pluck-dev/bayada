@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
-import { faqCategories } from "@/data/faq-data";
+import { getFaqCategories } from "@/lib/web-content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { FAQAccordion } from "@/components/FAQAccordion";
@@ -24,6 +24,7 @@ export default async function FAQPage({
   const { locale } = await params;
   const { category: selectedCategory } = await searchParams;
   const dict = await getDictionary(locale as Locale);
+  const faqCategories = await getFaqCategories();
 
   /* 선택된 카테고리가 없으면 전체 표시 */
   const activeCategory = selectedCategory || "all";
