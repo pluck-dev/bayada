@@ -1,0 +1,28 @@
+{
+  "name": "@bayada/review-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./gate": "./src/gate.tsx",
+    "./access-form": "./src/access-form.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@bayada/review": "workspace:*",
+    "@radix-ui/react-select": "^2.2.6",
+    "@untitledui/icons": "^0.0.23"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "react": "^19",
+    "react-dom": "^19"
+  }
+}
