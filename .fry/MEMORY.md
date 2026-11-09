@@ -365,3 +365,23 @@
 - b-academy 는 게시 강의 49개 전부 수강 중이라 "수강 신청" 흐름은 외부 회원+사본 DB 로만 볼 수 있다.
 - 모바일 가로 넘침: grid 에 열 지정이 없으면 overflow-x-auto 자식의 내용 폭만큼 열이 커진다 → `grid-cols-[minmax(0,1fr)]`.
 
+
+# 홈페이지 회원·마이페이지(apps/web): 같은 User 계정, bayada-web 쿠키, 회원 유형·방문 인력, 예약 상태 전이, 가족 연결, 문의 연결, 어드민 web.members/web.bookings
+## 구조·WHY (2026-11-09)
+- 시니어 플랫폼 1차 = 홈페이지 `/[locale]/my-page`. 계정은 아카데미와 같은 User (role STUDENT) — 웹 가입 계정으로 아카데미 로그인되고 반대도 된다. 회원 유형은 `WebMemberProfile`(userId PK). 프로필 없는 계정(아카데미·소셜 가입)은 마이페이지 첫 진입 시 `/my-page/onboarding` 에서 유형만 고른다. 명세의 Patient 모델은 안 만들었다(서비스 이용자 User = 환자). 차이점은 functional-spec/06 §10.
+- web 인증 `apps/web/src/lib/auth.ts`: createAuthConfig + 쿠키 `bayada-web.*`(pkce/state/nonce 포함 — 소셜 왕복용). 운영 비밀값 `WEB_AUTH_SECRET`→AUTH_SECRET. 카카오·구글 로직은 `@bayada/shared/social-auth` 로 옮겨 아카데미와 공유(academy lib/social-auth.ts 는 재export). 웹 콜백 주소 `https://${WEB_HOST}/api/auth/callback/{kakao,google}` 를 콘솔에 따로 등록해야 한다.
+- 정적 생성 유지: 레이아웃·헤더는 쿠키를 안 읽는다. 헤더 회원 메뉴(AccountMenu)는 Header 안의 SessionProvider → 브라우저가 /api/auth/session 조회. my-page·auth 레이아웃만 force-dynamic. DB 없이 `DATABASE_URL="" next build` 통과 확인.
+- 공용 규칙 `@bayada/shared/member`(순수): 회원 유형 라벨, 예약 상태·시간대, 예약 가능 서비스(BOOKABLE_SERVICES ⊂ WEB_SERVICE_OPTIONS), 건강 수치 범위·이상 징후(명세 §3), 취소 가능 판정.
+## 상태·권한 규칙
+- 예약 `REQUESTED →(어드민 확정+담당자)→ CONFIRMED →(담당 제공자 방문 기록)→ COMPLETED`, 어디서든 `CANCELLED`. 회원: 변경은 REQUESTED 만, 취소는 REQUESTED 언제든 / CONFIRMED 는 방문 24시간 전까지(시간대 시작 KST). 전이는 전부 updateMany(where status) count=1. 진행 이력 BookingEvent — `internal=true`(어드민 메모)만 회원에게 숨김.
+- 예약·기록 접근 = 본인 또는 승인된 FamilyLink 보호자(`canViewPatient`). 보호자는 연결된 가족 대신 예약 가능, 건강·복약은 열람만. 건강 기록·복약 입력은 SERVICE_USER 본인만.
+- 방문 기록은 `isVisitStaff` 인 PROVIDER 이고 자기에게 배정된 CONFIRMED 예약, 방문일 ≤ 오늘(KST)일 때만. 저장하면 예약 COMPLETED + (활력징후 있으면) HealthRecord(STAFF). 수정 불가. 어드민 "방문 기록 없이 완료"는 만족도 평가가 열리지 않는다(평가는 visit 필수).
+- 가족 연결: 보호자가 이용자 이메일/휴대폰(숫자만 비교, regexp_replace)으로 요청 → 결과와 무관하게 같은 안내(계정 존재 노출 방지). 승인 전에는 보호자 화면에 이용자 이름 대신 입력한 연락처만.
+- 문의 연결: submitInquiry 가 auth() 로 userId 저장. '내 문의' = userId 또는 (이메일 인증된 경우만) userId null + 같은 이메일. 회원에게는 WebInquiryNote kind=status 만(메모·담당자 숨김).
+- 어드민 권한 `web.bookings`(예약·방문 기록), `web.members`(회원 유형·방문 인력·탈퇴). 사이드바 배지 bookings=REQUESTED 수, withdrawals=처리 전 탈퇴 요청. 담당자 후보 = PROVIDER && isVisitStaff && 탈퇴 전. 확정 담당 중인 인력은 지정 해제 불가.
+- 탈퇴 처리 = 건강·복약·가족 연결·소셜·토큰 삭제 + User 익명화(email `withdrawn-<id>@withdrawn.bayada.invalid`, REJECTED, passwordChangedAt=now) — 예약·방문 기록·아카데미 수료는 익명 계정에 남김. 진행 중 예약·어드민 역할이 있으면 거부. 감사 로그에 원래 이메일 안 남김.
+## 함정·검증
+- 비밀번호 변경(마이페이지)은 passwordChangedAt 을 갱신 → 현재 세션도 끊김 → 화면이 signOut 후 로그인으로 보낸다(의도).
+- Header.tsx 는 LF(메모리의 CRLF 기록과 다름, 2026-11-09 확인).
+- E2E 스크립트 `D:/dev/work/bayada-member-e2e/e2e.cjs`(boxon/boxon 의 playwright 1.57 + chromium-1248) — 가입→예약→어드민 확정→제공자 기록→평가·보호자 열람·문의 상태·아카데미 로그인까지 한 번에, 스크린샷 apps/web/.screens/member/. 로컬 어드민 계정 e2e-admin@bayada.test / E2eAdmin123 (bayada_v2 에만). 정리: 같은 폴더 cleanup.sql.
+- dev 서버를 TaskStop 해도 node 자식이 포트를 잡고 남는다 → netstat 으로 PID 확인 후 Stop-Process.
