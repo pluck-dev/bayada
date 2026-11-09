@@ -7,26 +7,28 @@ import { Spinner } from "./spinner";
 /**
  * 버튼 위계 (화면당 primary 는 최대 1개)
  * - primary   : 브랜드 레드. 그 화면의 단 하나의 주요 행동
- * - secondary : 흰 바탕 + 테두리. 나머지 모든 일반 행동
+ * - secondary : 옅은 회색 채움 알약. 나머지 모든 일반 행동
+ * - outline   : 흰 바탕 + 테두리. 회색 면 위에 놓일 때
  * - ghost     : 배경 없음. 툴바·보조 링크성 행동
  * - danger    : 되돌릴 수 없는 행동(삭제·취소·반려). 흰 바탕 + 진홍 글자
  * - link      : 문장 안 링크처럼 보이는 행동
  */
 export const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-semibold transition-colors select-none disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:size-[1.1em] [&_svg]:shrink-0",
+  "inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full font-semibold transition-[background-color,border-color,color,transform] duration-150 select-none active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:size-[1.1em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary: "bg-brand text-white hover:bg-brand-hover active:bg-brand-700",
-        secondary: "border border-line-strong bg-canvas text-ink hover:border-neutral-400 hover:bg-surface",
+        secondary: "bg-surface-sunken text-ink hover:bg-neutral-200",
+        outline: "border border-line-strong bg-canvas text-ink hover:border-neutral-400 hover:bg-surface",
         ghost: "text-ink-soft hover:bg-surface-sunken hover:text-ink",
         danger: "border border-danger-line bg-canvas text-danger hover:bg-danger-soft",
         link: "h-auto! px-0! text-ink underline-offset-4 hover:text-brand hover:underline",
       },
       size: {
-        xs: "h-7 px-2.5 text-micro rounded-md",
-        sm: "h-8 px-3 text-caption rounded-md",
-        md: "h-10 px-4 text-body-sm",
+        xs: "h-7 px-3 text-micro",
+        sm: "h-9 px-4 text-caption",
+        md: "h-11 px-5 text-body-sm",
         lg: "h-12 px-6 text-body",
       },
       fullWidth: {
@@ -69,12 +71,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 const iconButtonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center rounded-lg transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
+  "inline-flex shrink-0 items-center justify-center rounded-full transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         ghost: "text-ink-soft hover:bg-surface-sunken hover:text-ink",
-        secondary: "border border-line-strong bg-canvas text-ink hover:bg-surface",
+        secondary: "bg-surface-sunken text-ink hover:bg-neutral-200",
         overlay: "bg-canvas/90 text-ink shadow-xs ring-1 ring-black/5 backdrop-blur hover:bg-canvas",
       },
       size: {
@@ -100,7 +102,6 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       ref={ref}
       type={type}
       aria-label={label}
-      title={label}
       className={cn(iconButtonVariants({ variant, size }), className)}
       {...props}
     >

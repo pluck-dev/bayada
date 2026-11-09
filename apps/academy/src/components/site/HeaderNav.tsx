@@ -4,9 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
-import { Building2, ChevronDown, LogOut, Menu, Search, X } from "lucide-react";
+import {
+  Award,
+  BookOpen,
+  Building2,
+  ChevronDown,
+  ChevronRight,
+  Compass,
+  LogOut,
+  Menu,
+  Receipt,
+  Search,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
+import { COVER_PALETTES, categoryTone } from "@bayada/ui/cover";
 import { JOB_ROLES, JOB_ROLE_LABEL, PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
-import { Avatar, buttonVariants, cn } from "@bayada/ui";
+import { Avatar, Sheet, buttonVariants, cn } from "@bayada/ui";
 
 interface TaxItem {
   name: string;
@@ -27,7 +41,7 @@ interface Props {
 }
 
 export function HeaderNav({ locale, user, categories, providers, hasPass = false, showOrg = true, showFaq = true }: Props) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -56,7 +70,6 @@ export function HeaderNav({ locale, user, categories, providers, hasPass = false
         setMegaOpen(false);
         setCareerOpen(false);
         setUserOpen(false);
-        setMobileOpen(false);
       }
     }
     document.addEventListener("mousedown", onDown);
@@ -68,118 +81,136 @@ export function HeaderNav({ locale, user, categories, providers, hasPass = false
   }, []);
 
   const catalog = `${base}/courses`;
+  const visibleCategories = categories.filter((c) => c.count > 0);
+  const visibleProviders = providers.filter((p) => p.count > 0);
   const columns = [
     {
       title: "직군별",
-      items: JOB_ROLES.map((r) => ({ label: JOB_ROLE_LABEL[r], href: `${catalog}?audience=${r}` })),
+      items: JOB_ROLES.map((r) => ({ label: JOB_ROLE_LABEL[r], href: `${catalog}?audience=${r}`, dot: null as string | null })),
     },
     {
-      title: "주제별",
-      items: categories.map((c) => ({ label: c.name, href: `${catalog}?category=${encodeURIComponent(c.slug)}` })),
+      title: "분야별",
+      items: visibleCategories.map((c) => ({
+        label: c.name,
+        href: `${catalog}?category=${encodeURIComponent(c.slug)}`,
+        dot: COVER_PALETTES[categoryTone(c.slug)].bg,
+      })),
     },
     {
-      title: "상품유형별",
-      items: PRODUCT_TYPES.map((t) => ({ label: PRODUCT_TYPE_LABEL[t], href: `${catalog}?type=${t}` })),
+      title: "유형별",
+      items: PRODUCT_TYPES.map((t) => ({ label: PRODUCT_TYPE_LABEL[t], href: `${catalog}?type=${t}`, dot: null })),
     },
     {
       title: "제공기관별",
-      items: providers.map((p) => ({ label: p.name, href: `${catalog}?provider=${encodeURIComponent(p.slug)}` })),
+      items: visibleProviders.map((p) => ({ label: p.name, href: `${catalog}?provider=${encodeURIComponent(p.slug)}`, dot: null })),
     },
-  ];
+  ].filter((col) => col.items.length > 0);
 
-  const isCatalog = pathname?.startsWith(catalog);
+  const isCatalog = pathname.startsWith(catalog);
   // 인증·커리어 메뉴 (바야다 인증 · 인증과정 프로그램 · 커리어 패스웨이)
   const careerLinks = [
-    { label: "바야다 인증", desc: "인증 과정 안내와 신청", href: `${base}/certifications` },
-    { label: "인증과정 프로그램", desc: "인증 준비 학습 프로그램", href: `${catalog}?type=CERTIFICATION` },
-    { label: "커리어 패스웨이", desc: "국가·직군별 커리어 경로", href: `${base}/pathways` },
+    { label: "바야다 인증", desc: "인증 과정 안내와 신청", href: `${base}/certifications`, icon: ShieldCheck },
+    { label: "인증과정 프로그램", desc: "인증 준비 학습 프로그램", href: `${catalog}?type=CERTIFICATION`, icon: Award },
+    { label: "커리어 패스웨이", desc: "국가·직군별 커리어 경로", href: `${base}/pathways`, icon: Compass },
   ];
-  const isCareer = pathname?.startsWith(`${base}/certifications`) || pathname?.startsWith(`${base}/pathways`);
-  const accountLinks: Array<[string, string]> = user
+  const isCareer = pathname.startsWith(`${base}/certifications`) || pathname.startsWith(`${base}/pathways`);
+  const isMyLearning = pathname.startsWith(`${base}/dashboard`) || pathname.startsWith(`${base}/orders`);
+  const accountLinks = user
     ? [
-        ["마이 러닝", `${base}/dashboard`],
-        ["인증서", `${base}/dashboard/certificates`],
-        ["결제 내역", `${base}/orders`],
-        ["프로필", `${base}/dashboard/profile`],
-        ...(user.canManageOrg ? ([["기관 대시보드", `${base}/business`]] as Array<[string, string]>) : []),
+        { label: "마이 러닝", href: `${base}/dashboard`, icon: BookOpen },
+        { label: "인증서", href: `${base}/dashboard/certificates`, icon: Award },
+        { label: "결제 내역", href: `${base}/orders`, icon: Receipt },
+        { label: "프로필", href: `${base}/dashboard/profile`, icon: UserRound },
+        ...(user.canManageOrg ? [{ label: "기관 대시보드", href: `${base}/business`, icon: Building2 }] : []),
       ]
     : [];
 
   return (
-    <header className="sticky top-0 z-header border-b border-line bg-canvas/95 backdrop-blur print:hidden">
-      {/* GNB — 한 줄 64px. 예전 유틸리티 띠(개인/기관·센터/FAQ)는 GNB '기관·센터'·모바일 메뉴·푸터로 옮겼다 */}
-      <div className="container-page flex h-16 items-center gap-8">
-        <Link href={base} className="flex shrink-0 items-baseline gap-1.5" aria-label="BAYADA Academy 홈">
-          <span className="text-[19px] font-extrabold tracking-tight text-brand">BAYADA</span>
-          <span className="text-body font-semibold tracking-tight text-ink">Academy</span>
+    <header className="sticky top-0 z-header border-b border-line-soft bg-canvas/90 backdrop-blur-md print:hidden">
+      <div className="container-page flex h-16 items-center gap-3 lg:h-[72px] lg:gap-6">
+        <Link href={base} className="flex shrink-0 items-baseline gap-1.5 rounded-lg" aria-label="BAYADA Academy 홈">
+          <span className="text-[20px] font-black tracking-[-0.02em] text-brand">BAYADA</span>
+          <span className="text-body font-bold tracking-tight text-ink">Academy</span>
         </Link>
 
-        <nav aria-label="주요 메뉴" className="hidden h-full items-stretch gap-1 lg:flex">
-          <div ref={megaRef} className="relative flex" onMouseLeave={() => setMegaOpen(false)}>
+        <nav aria-label="주요 메뉴" className="hidden items-center gap-1 lg:flex">
+          <div ref={megaRef} className="relative" onMouseLeave={() => setMegaOpen(false)}>
             <button
               type="button"
               aria-expanded={megaOpen}
               aria-haspopup="true"
               onClick={() => setMegaOpen((v) => !v)}
               onMouseEnter={() => setMegaOpen(true)}
-              className={navItem(megaOpen || !!isCatalog)}
+              className={navPill(megaOpen || isCatalog)}
             >
-              탐색
+              프로그램
               <ChevronDown className={cn("h-4 w-4 transition-transform", megaOpen && "rotate-180")} aria-hidden />
             </button>
             {megaOpen && (
-              <div className="absolute left-0 top-full z-dropdown">
-                <div className="grid w-[760px] grid-cols-4 gap-8 rounded-xl border border-line bg-canvas p-6 shadow-md">
-                  {columns.map((col) => (
-                    <div key={col.title}>
-                      <p className="mb-3 text-caption font-semibold text-muted">{col.title}</p>
-                      <ul className="space-y-0.5">
-                        {col.items.map((it) => (
-                          <li key={it.href}>
-                            <Link
-                              href={it.href}
-                              className="block rounded-md py-1.5 text-body-sm text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline"
-                            >
-                              {it.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <div className="col-span-4 flex items-center justify-between border-t border-line pt-4">
-                    <span className="text-caption text-muted">원하는 조건으로 바로 찾아보세요</span>
-                    <Link href={catalog} className="text-body-sm font-semibold text-ink underline-offset-4 hover:underline">
-                      전체 프로그램 보기 →
-                    </Link>
+              <div className="absolute left-0 top-full z-dropdown pt-3">
+                <div className="animate-pop-in w-[780px] rounded-[22px] border border-line bg-canvas p-6 shadow-lg">
+                  <div className="grid grid-cols-4 gap-6">
+                    {columns.map((col) => (
+                      <div key={col.title}>
+                        <p className="mb-2 px-2 text-caption font-bold text-subtle">{col.title}</p>
+                        <ul>
+                          {col.items.map((it) => (
+                            <li key={it.href}>
+                              <Link
+                                href={it.href}
+                                className="flex items-center gap-2 rounded-xl px-2 py-2 text-body-sm font-medium text-ink-soft transition-colors hover:bg-surface-sunken hover:text-ink"
+                              >
+                                {it.dot && <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: it.dot }} />}
+                                {it.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
+                  <Link
+                    href={catalog}
+                    className="mt-5 flex items-center justify-between rounded-2xl bg-surface-sunken px-5 py-4 transition-colors hover:bg-neutral-200"
+                  >
+                    <span>
+                      <span className="block text-body-sm font-bold text-ink">전체 프로그램 보기</span>
+                      <span className="block text-caption text-muted">직군·분야·난이도로 원하는 교육을 찾아보세요</span>
+                    </span>
+                    <ChevronRight className="h-5 w-5 text-ink" aria-hidden />
+                  </Link>
                 </div>
               </div>
             )}
           </div>
-          <Link href={`${base}#roles`} className={navItem(false)}>
+          <Link href={`${base}#roles`} className={navPill(false)}>
             직군별 학습
           </Link>
-          <div ref={careerRef} className="relative flex" onMouseLeave={() => setCareerOpen(false)}>
+          <div ref={careerRef} className="relative" onMouseLeave={() => setCareerOpen(false)}>
             <button
               type="button"
               aria-expanded={careerOpen}
               aria-haspopup="true"
               onClick={() => setCareerOpen((v) => !v)}
               onMouseEnter={() => setCareerOpen(true)}
-              className={navItem(careerOpen || !!isCareer)}
+              className={navPill(careerOpen || isCareer)}
             >
               인증·커리어
               <ChevronDown className={cn("h-4 w-4 transition-transform", careerOpen && "rotate-180")} aria-hidden />
             </button>
             {careerOpen && (
-              <div className="absolute left-0 top-full z-dropdown">
-                <ul className="w-64 rounded-xl border border-line bg-canvas p-2 shadow-md">
+              <div className="absolute left-0 top-full z-dropdown pt-3">
+                <ul className="animate-pop-in w-72 rounded-[22px] border border-line bg-canvas p-2 shadow-lg">
                   {careerLinks.map((it) => (
                     <li key={it.href}>
-                      <Link href={it.href} className="block rounded-lg px-3 py-2.5 transition-colors hover:bg-surface">
-                        <span className="block text-body-sm font-semibold text-ink">{it.label}</span>
-                        <span className="mt-0.5 block text-caption text-muted">{it.desc}</span>
+                      <Link href={it.href} className="flex items-start gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-surface-sunken">
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
+                          <it.icon className="h-4 w-4" aria-hidden />
+                        </span>
+                        <span>
+                          <span className="block text-body-sm font-bold text-ink">{it.label}</span>
+                          <span className="mt-0.5 block text-caption text-muted">{it.desc}</span>
+                        </span>
                       </Link>
                     </li>
                   ))}
@@ -188,26 +219,22 @@ export function HeaderNav({ locale, user, categories, providers, hasPass = false
             )}
           </div>
           {hasPass && (
-            <Link
-              href={`${base}/pass`}
-              aria-current={pathname === `${base}/pass` ? "page" : undefined}
-              className={navItem(pathname === `${base}/pass`)}
-            >
+            <Link href={`${base}/pass`} aria-current={pathname === `${base}/pass` ? "page" : undefined} className={navPill(pathname === `${base}/pass`)}>
               아카데미 패스
             </Link>
           )}
           {user?.canManageOrg ? (
             <Link
               href={`${base}/business`}
-              aria-current={pathname?.startsWith(`${base}/business`) ? "page" : undefined}
-              className={navItem(!!pathname?.startsWith(`${base}/business`))}
+              aria-current={pathname.startsWith(`${base}/business`) ? "page" : undefined}
+              className={navPill(pathname.startsWith(`${base}/business`))}
             >
               <Building2 className="h-4 w-4" aria-hidden />
               기관 대시보드
             </Link>
           ) : (
             showOrg && (
-              <Link href={`${base}#org`} className={navItem(false)}>
+              <Link href={`${base}#org`} className={navPill(false)}>
                 기관·센터
               </Link>
             )
@@ -215,156 +242,218 @@ export function HeaderNav({ locale, user, categories, providers, hasPass = false
         </nav>
 
         <form action={catalog} role="search" className="ml-auto hidden flex-1 justify-end md:flex">
-          <label className="relative w-full max-w-[280px]">
+          <label className="relative w-full max-w-[260px]">
             <span className="sr-only">프로그램 검색</span>
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" aria-hidden />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
             <input
               name="q"
               type="search"
-              placeholder="프로그램·주제 검색"
-              className="h-10 w-full rounded-lg border border-transparent bg-surface-sunken pl-9 pr-3 text-body-sm text-ink placeholder:text-subtle transition-colors hover:border-line focus:border-ink focus:bg-canvas focus:outline-none"
+              placeholder="프로그램 검색"
+              className="h-10 w-full rounded-full border border-transparent bg-surface-sunken pl-10 pr-4 text-body-sm text-ink outline-none transition-colors placeholder:text-subtle hover:bg-neutral-200 focus:border-ink focus:bg-canvas"
             />
           </label>
         </form>
 
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        <div className="ml-auto flex items-center gap-1.5 md:ml-0">
           {user ? (
-            <div ref={userRef} className="relative hidden md:block">
-              <button
-                type="button"
-                aria-expanded={userOpen}
-                aria-haspopup="true"
-                onClick={() => setUserOpen((v) => !v)}
-                className="flex h-10 items-center gap-2 rounded-lg pl-1 pr-2 text-body-sm font-medium text-ink transition-colors hover:bg-surface-sunken"
+            <>
+              <Link
+                href={`${base}/dashboard`}
+                aria-current={isMyLearning ? "page" : undefined}
+                className={cn(navPill(isMyLearning), "hidden md:inline-flex")}
               >
-                <Avatar name={user.name} size="sm" />
-                <span className="max-w-[96px] truncate">{user.name}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-muted" aria-hidden />
-              </button>
-              {userOpen && (
-                <div className="absolute right-0 top-full z-dropdown mt-2 w-56 overflow-hidden rounded-xl border border-line bg-canvas py-2 shadow-md">
-                  <div className="border-b border-line px-4 pb-3 pt-1">
-                    <p className="truncate text-body-sm font-semibold text-ink">{user.name}</p>
-                    <p className="truncate text-caption text-muted">{user.email}</p>
+                마이 러닝
+              </Link>
+              <div ref={userRef} className="relative hidden md:block">
+                <button
+                  type="button"
+                  aria-expanded={userOpen}
+                  aria-haspopup="true"
+                  aria-label={`${user.name} 계정 메뉴`}
+                  onClick={() => setUserOpen((v) => !v)}
+                  className="flex h-10 items-center gap-1.5 rounded-full py-1 pl-1 pr-2.5 text-body-sm font-semibold text-ink transition-colors hover:bg-surface-sunken"
+                >
+                  <Avatar name={user.name} size="sm" />
+                  <ChevronDown className={cn("h-3.5 w-3.5 text-muted transition-transform", userOpen && "rotate-180")} aria-hidden />
+                </button>
+                {userOpen && (
+                  <div className="animate-pop-in absolute right-0 top-full z-dropdown mt-2 w-64 overflow-hidden rounded-[22px] border border-line bg-canvas p-2 shadow-lg">
+                    <div className="flex items-center gap-3 px-3 pb-3 pt-2">
+                      <Avatar name={user.name} />
+                      <div className="min-w-0">
+                        <p className="truncate text-body-sm font-bold text-ink">{user.name}</p>
+                        <p className="truncate text-caption text-muted">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="border-t border-line-soft pt-1.5">
+                      {accountLinks.map((it) => (
+                        <Link
+                          key={it.href}
+                          href={it.href}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-body-sm font-medium text-ink-soft transition-colors hover:bg-surface-sunken hover:text-ink"
+                        >
+                          <it.icon className="h-4 w-4 text-subtle" aria-hidden />
+                          {it.label}
+                        </Link>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => signOut({ callbackUrl: base })}
+                      className="mt-1.5 flex w-full items-center gap-2.5 rounded-xl border-t border-line-soft px-3 py-2.5 text-left text-body-sm font-medium text-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+                    >
+                      <LogOut className="h-4 w-4" aria-hidden /> 로그아웃
+                    </button>
                   </div>
-                  {accountLinks.map(([label, href]) => (
-                    <Link key={href} href={href} className="block px-4 py-2 text-body-sm text-ink-soft hover:bg-surface hover:text-ink">
-                      {label}
-                    </Link>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => signOut({ callbackUrl: base })}
-                    className="mt-1 flex w-full items-center gap-2 border-t border-line px-4 pb-1 pt-3 text-left text-body-sm text-muted hover:text-ink"
-                  >
-                    <LogOut className="h-4 w-4" aria-hidden /> 로그아웃
-                  </button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </>
           ) : (
-            <div className="hidden items-center gap-1 md:flex">
+            <div className="hidden items-center gap-1.5 md:flex">
               <Link href={`${base}/auth/login`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
                 로그인
               </Link>
-              <Link href={`${base}/auth/register`} className={buttonVariants({ variant: "secondary", size: "sm" })}>
+              <Link href={`${base}/auth/register`} className={buttonVariants({ variant: "primary", size: "sm" })}>
                 무료 가입
               </Link>
             </div>
           )}
+          {/* 모바일: 검색 아이콘 + 메뉴 서랍 */}
+          <Link
+            href={catalog}
+            aria-label="프로그램 검색"
+            className="flex size-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-surface-sunken md:hidden"
+          >
+            <Search className="h-5 w-5" aria-hidden />
+          </Link>
           <button
             type="button"
-            aria-label={mobileOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-label="메뉴 열기"
             aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-surface-sunken lg:hidden"
+            aria-haspopup="dialog"
+            onClick={() => setMobileOpen(true)}
+            className="flex size-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-surface-sunken lg:hidden"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <Menu className="h-5 w-5" aria-hidden />
           </button>
         </div>
       </div>
 
-      {/* 모바일 메뉴 */}
-      {mobileOpen && (
-        <div className="max-h-[calc(100dvh-64px)] overflow-y-auto border-t border-line bg-canvas lg:hidden">
-          <div className="container-page space-y-6 py-5">
-            <form action={catalog} role="search" className="md:hidden">
-              <label className="relative block">
-                <span className="sr-only">프로그램 검색</span>
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" aria-hidden />
-                <input
-                  name="q"
-                  type="search"
-                  placeholder="프로그램·주제 검색"
-                  className="h-11 w-full rounded-lg border border-transparent bg-surface-sunken pl-9 pr-3 text-body text-ink placeholder:text-subtle focus:border-ink focus:bg-canvas focus:outline-none"
-                />
-              </label>
-            </form>
-            <div className="flex flex-col">
-              {[
-                { label: "전체 프로그램", href: catalog },
-                { label: "직군별 학습", href: `${base}#roles` },
-                ...careerLinks.map((it) => ({ label: it.label, href: it.href })),
-                ...(hasPass ? [{ label: "아카데미 패스", href: `${base}/pass` }] : []),
-                ...(showOrg ? [{ label: "기관·센터", href: `${base}#org` }] : []),
-                ...(showFaq ? [{ label: "자주 묻는 질문", href: `${base}#faq` }] : []),
-              ].map((it) => (
-                <Link key={it.href} href={it.href} className="py-2.5 text-body font-semibold text-ink">
+      {/* 모바일 메뉴 서랍 */}
+      <Sheet open={mobileOpen} onClose={() => setMobileOpen(false)} side="right" aria-label="전체 메뉴">
+        <div className="flex flex-col gap-6 pb-4">
+          {user ? (
+            <div className="flex items-center gap-3 rounded-2xl bg-surface-sunken p-4">
+              <Avatar name={user.name} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-body-sm font-bold text-ink">{user.name}</p>
+                <p className="truncate text-caption text-muted">{user.email}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-brand-50 p-4">
+              <p className="text-body-sm font-bold text-ink">로그인하고 학습을 이어가세요</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <Link href={`${base}/auth/login`} className={buttonVariants({ variant: "outline", fullWidth: true })}>
+                  로그인
+                </Link>
+                <Link href={`${base}/auth/register`} className={buttonVariants({ variant: "primary", fullWidth: true })}>
+                  무료 가입
+                </Link>
+              </div>
+            </div>
+          )}
+
+          <form action={catalog} role="search">
+            <label className="relative block">
+              <span className="sr-only">프로그램 검색</span>
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
+              <input
+                name="q"
+                type="search"
+                placeholder="프로그램·분야 검색"
+                className="h-12 w-full rounded-full border border-transparent bg-surface-sunken pl-11 pr-4 text-body text-ink outline-none placeholder:text-subtle focus:border-ink focus:bg-canvas"
+              />
+            </label>
+          </form>
+
+          <nav aria-label="모바일 메뉴" className="flex flex-col">
+            {[
+              { label: "전체 프로그램", href: catalog, active: isCatalog },
+              ...(user ? [{ label: "마이 러닝", href: `${base}/dashboard`, active: isMyLearning }] : []),
+              { label: "직군별 학습", href: `${base}#roles`, active: false },
+              ...careerLinks.map((it) => ({ label: it.label, href: it.href, active: pathname.startsWith(it.href) })),
+              ...(hasPass ? [{ label: "아카데미 패스", href: `${base}/pass`, active: pathname === `${base}/pass` }] : []),
+              ...(showOrg && !user?.canManageOrg ? [{ label: "기관·센터", href: `${base}#org`, active: false }] : []),
+              ...(showFaq ? [{ label: "자주 묻는 질문", href: `${base}#faq`, active: false }] : []),
+            ].map((it) => (
+              <Link
+                key={it.href}
+                href={it.href}
+                onClick={() => setMobileOpen(false)}
+                aria-current={it.active ? "page" : undefined}
+                className={cn(
+                  "flex items-center justify-between rounded-xl px-3 py-3 text-body font-bold transition-colors",
+                  it.active ? "bg-brand-50 text-brand-700" : "text-ink hover:bg-surface-sunken",
+                )}
+              >
+                {it.label}
+                <ChevronRight className="h-4 w-4 text-subtle" aria-hidden />
+              </Link>
+            ))}
+          </nav>
+
+          {columns.slice(0, 2).map((col) => (
+            <div key={col.title}>
+              <p className="mb-2 px-3 text-caption font-bold text-subtle">{col.title}</p>
+              <div className="flex flex-wrap gap-1.5 px-1">
+                {col.items.map((it) => (
+                  <Link
+                    key={it.href}
+                    href={it.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-full bg-surface-sunken px-3.5 text-body-sm font-medium text-ink-soft"
+                  >
+                    {it.dot && <span aria-hidden className="size-2 rounded-full" style={{ background: it.dot }} />}
+                    {it.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {user && (
+            <div className="border-t border-line-soft pt-4">
+              {accountLinks.map((it) => (
+                <Link
+                  key={it.href}
+                  href={it.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-body-sm font-medium text-ink-soft hover:bg-surface-sunken"
+                >
+                  <it.icon className="h-4 w-4 text-subtle" aria-hidden />
                   {it.label}
                 </Link>
               ))}
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: base })}
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-body-sm font-medium text-muted hover:bg-surface-sunken"
+              >
+                <LogOut className="h-4 w-4" aria-hidden /> 로그아웃
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-5 border-t border-line pt-5">
-              {columns.slice(0, 2).map((col) => (
-                <div key={col.title}>
-                  <p className="mb-2 text-caption font-semibold text-muted">{col.title}</p>
-                  {col.items.map((it) => (
-                    <Link key={it.href} href={it.href} className="block py-1.5 text-body-sm text-ink-soft">
-                      {it.label}
-                    </Link>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div className="border-t border-line pt-5">
-              {user ? (
-                <div className="flex flex-col">
-                  {accountLinks.map(([label, href]) => (
-                    <Link key={href} href={href} className="py-2.5 text-body-sm font-medium text-ink">
-                      {label}
-                    </Link>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => signOut({ callbackUrl: base })}
-                    className="py-2.5 text-left text-body-sm text-muted"
-                  >
-                    로그아웃
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href={`${base}/auth/login`} className={buttonVariants({ variant: "secondary", fullWidth: true })}>
-                    로그인
-                  </Link>
-                  <Link href={`${base}/auth/register`} className={buttonVariants({ variant: "primary", fullWidth: true })}>
-                    무료 가입
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
-      )}
+      </Sheet>
     </header>
   );
 }
 
-/** GNB 항목: 현재 위치면 진한 글자 + 아래 브랜드 레드 2px 선 (레드 = 현재 위치) */
-function navItem(active: boolean) {
+/** GNB 항목: 알약. 현재 위치면 브랜드 옅은 면 + 진한 레드 글자 (레드 = 현재 위치) */
+function navPill(active: boolean) {
   return cn(
-    "relative flex items-center gap-1 px-3 text-body font-semibold transition-colors",
-    "after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:rounded-full",
-    active ? "text-ink after:bg-brand" : "text-ink-soft after:bg-transparent hover:text-ink",
+    "inline-flex h-10 items-center gap-1 rounded-full px-4 text-body-sm font-bold transition-colors",
+    active ? "bg-brand-50 text-brand-700" : "text-ink-soft hover:bg-surface-sunken hover:text-ink",
   );
 }

@@ -69,10 +69,14 @@ export interface CoverSpec {
   length: "short" | "medium" | "long";
 }
 
+/** 분야(카테고리) slug → 표지 색. 분야 칩의 색 점 등 표지 밖에서도 같은 색을 쓰려고 따로 둔다 */
+export function categoryTone(slug: string | null | undefined): CoverTone {
+  if (!slug) return "rose";
+  return CATEGORY_TONE[slug] ?? TONES[hash(slug) % TONES.length];
+}
+
 export function coverSpec(c: CoverInput): CoverSpec {
-  const tone: CoverTone = c.category
-    ? (CATEGORY_TONE[c.category.slug] ?? TONES[hash(c.category.slug) % TONES.length])
-    : "rose";
+  const tone = categoryTone(c.category?.slug);
   const title = c.title.replace(/\s+/g, " ").trim() || "제목 없음";
   const len = title.length;
   return {

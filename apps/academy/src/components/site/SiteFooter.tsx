@@ -1,4 +1,3 @@
-import { buttonVariants } from "@bayada/ui";
 import Link from "next/link";
 import { prisma } from "@bayada/db";
 import { JOB_ROLES, JOB_ROLE_LABEL, PRODUCT_TYPES, PRODUCT_TYPE_LABEL } from "@/lib/labels";
@@ -50,14 +49,10 @@ export async function SiteFooter({ locale }: { locale: string }) {
   ];
 
   return (
-    <footer className="border-t border-line bg-surface print:hidden">
-      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 md:grid-cols-[1.3fr_repeat(4,1fr)]">
+    <footer className="mt-8 bg-side text-white print:hidden">
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 pb-12 pt-16 md:grid-cols-[1.3fr_repeat(4,1fr)]">
         <div className="col-span-2 md:col-span-1">
-          <Link href={base} className="flex items-baseline gap-1.5">
-            <span className="text-title font-extrabold tracking-tight text-brand">BAYADA</span>
-            <span className="text-body-sm font-semibold text-ink">Academy</span>
-          </Link>
-          {footer.tagline && <p className="mt-3 max-w-[240px] text-body-sm leading-relaxed text-muted">{footer.tagline}</p>}
+          {footer.tagline && <p className="max-w-[260px] text-body-sm leading-relaxed text-white/70">{footer.tagline}</p>}
           {footer.sns.length > 0 && (
             <ul className="mt-5 flex flex-wrap gap-2" aria-label="SNS">
               {footer.sns.map((l) => (
@@ -66,7 +61,7 @@ export async function SiteFooter({ locale }: { locale: string }) {
                     href={l.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={buttonVariants({ variant: "secondary", size: "sm" })}
+                    className="inline-flex h-9 items-center rounded-full bg-white/10 px-4 text-caption font-semibold text-white transition-colors hover:bg-white/20"
                   >
                     {l.label}
                   </a>
@@ -77,11 +72,11 @@ export async function SiteFooter({ locale }: { locale: string }) {
         </div>
         {columns.map((col) => (
           <div key={col.title}>
-            <p className="text-body-sm font-semibold text-ink">{col.title}</p>
+            <p className="text-body-sm font-bold text-white">{col.title}</p>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-body-sm text-muted transition-colors hover:text-ink">
+                  <Link href={l.href} className="text-body-sm text-white/60 transition-colors hover:text-white">
                     {l.label}
                   </Link>
                 </li>
@@ -90,56 +85,58 @@ export async function SiteFooter({ locale }: { locale: string }) {
           </div>
         ))}
       </div>
-      <div className="border-t border-line">
-        <div className="container-page flex flex-col gap-2 py-6 text-caption text-muted md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-5">
-            <nav aria-label="약관 및 정책" className="flex items-center gap-2">
-              <Link href={`${base}/terms`} className="font-medium text-ink-soft hover:text-ink">
-                이용약관
+      <div className="container-page">
+        <Link href={base} aria-label="BAYADA Academy 홈" className="block select-none border-t border-white/10 pt-10 pb-6">
+          <span className="block text-[15vw] font-black leading-[0.85] tracking-[-0.05em] text-white md:text-[128px]">
+            BAYADA<span className="text-brand">.</span>
+          </span>
+          <span className="mt-2 block text-body font-bold tracking-tight text-white/70 md:text-title">Academy</span>
+        </Link>
+      </div>
+      <div className="container-page flex flex-col gap-3 pb-10 pt-4 text-caption text-white/55 md:flex-row md:items-end md:justify-between">
+        <div className="space-y-2">
+          <nav aria-label="약관 및 정책" className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <Link href={`${base}/terms`} className="font-semibold text-white/80 hover:text-white">
+              이용약관
+            </Link>
+            <Link href={`${base}/privacy`} className="font-bold text-white hover:underline underline-offset-4">
+              개인정보처리방침
+            </Link>
+            {refundPage && (
+              <Link href={`${base}/refund`} className="font-semibold text-white/80 hover:text-white">
+                환불 규정
               </Link>
-              <span aria-hidden className="text-line">·</span>
-              <Link href={`${base}/privacy`} className="font-semibold text-ink underline-offset-4 hover:underline">
-                개인정보처리방침
-              </Link>
-              {refundPage && (
-                <>
-                  <span aria-hidden className="text-line">·</span>
-                  <Link href={`${base}/refund`} className="font-medium text-ink-soft hover:text-ink">
-                    환불 규정
-                  </Link>
-                </>
-              )}
-            </nav>
-            <p>
-              © {new Date().getFullYear()} {footer.copyright}
-            </p>
-          </div>
-          {(footer.contactEmail || footer.contactPhone) && (
-            <p className="flex flex-wrap gap-x-1">
-              <span>운영 문의</span>
-              {footer.contactEmail && (
-                <a href={`mailto:${footer.contactEmail}`} className="hover:text-ink">
-                  {footer.contactEmail}
-                </a>
-              )}
-              {footer.contactPhone && (
-                <a href={`tel:${footer.contactPhone.replace(/[^0-9+]/g, "")}`} className="tabular-nums hover:text-ink">
-                  {footer.contactPhone}
-                </a>
-              )}
-            </p>
+            )}
+          </nav>
+          {(footer.companyInfo || footer.businessLine) && (
+            <div className="space-y-0.5 leading-relaxed">
+              {footer.companyInfo
+                .split(/\r?\n/)
+                .filter((l) => l.trim())
+                .map((l, i) => (
+                  <p key={i}>{l}</p>
+                ))}
+              {footer.businessLine && <p>{footer.businessLine}</p>}
+            </div>
           )}
+          <p>
+            © {new Date().getFullYear()} {footer.copyright}
+          </p>
         </div>
-        {(footer.companyInfo || footer.businessLine) && (
-          <div className="container-page space-y-1 pb-6 text-caption leading-relaxed text-subtle">
-            {footer.companyInfo
-              .split(/\r?\n/)
-              .filter((l) => l.trim())
-              .map((l, i) => (
-                <p key={i}>{l}</p>
-              ))}
-            {footer.businessLine && <p>{footer.businessLine}</p>}
-          </div>
+        {(footer.contactEmail || footer.contactPhone) && (
+          <p className="flex flex-wrap gap-x-2">
+            <span>운영 문의</span>
+            {footer.contactEmail && (
+              <a href={`mailto:${footer.contactEmail}`} className="font-semibold text-white/80 hover:text-white">
+                {footer.contactEmail}
+              </a>
+            )}
+            {footer.contactPhone && (
+              <a href={`tel:${footer.contactPhone.replace(/[^0-9+]/g, "")}`} className="tabular-nums font-semibold text-white/80 hover:text-white">
+                {footer.contactPhone}
+              </a>
+            )}
+          </p>
         )}
       </div>
     </footer>

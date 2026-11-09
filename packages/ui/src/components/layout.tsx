@@ -107,7 +107,7 @@ export function PageHeader({
           {eyebrow && (
             <p className={cn("font-semibold text-brand-700", compact ? "mb-1 text-micro" : "mb-2 text-body-sm")}>{eyebrow}</p>
           )}
-          <h1 className={cn("text-ink", compact ? "text-[20px] font-semibold leading-tight tracking-tight" : "text-[28px] font-bold leading-tight tracking-tight md:text-h1")}>
+          <h1 className={cn("text-ink", compact ? "text-[20px] font-bold leading-tight tracking-tight" : "text-[30px] font-extrabold leading-[1.2] tracking-[-0.03em] md:text-[40px]")}>
             {title}
           </h1>
           {description && (
@@ -148,7 +148,11 @@ export function SectionHeader({
           id={id}
           className={cn(
             "text-ink",
-            size === "lg" ? "text-[24px] font-bold leading-snug tracking-tight md:text-[28px]" : size === "md" ? "text-h2" : "text-h3",
+            size === "lg"
+              ? "text-[26px] font-extrabold leading-[1.25] tracking-[-0.03em] md:text-[34px]"
+              : size === "md"
+                ? "text-[22px] font-extrabold leading-snug tracking-[-0.025em] md:text-[24px]"
+                : "text-h3 font-bold",
           )}
         >
           {title}

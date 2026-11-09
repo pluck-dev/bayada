@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@bayada/ui";
+import { buttonVariants, useFeedback } from "@bayada/ui";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -26,6 +26,7 @@ export function SessionButton({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { confirm } = useFeedback();
 
   async function submit() {
     if (!loggedIn) {
@@ -33,7 +34,11 @@ export function SessionButton({
       router.push(`/${locale}/auth/login?callbackUrl=${encodeURIComponent(here)}`);
       return;
     }
-    if (registered && !window.confirm("실습 신청을 취소할까요?")) return;
+    if (
+      registered &&
+      !(await confirm({ title: "실습 신청을 취소할까요?", body: "취소한 자리는 다른 분이 신청할 수 있어요.", confirmLabel: "신청 취소", cancelLabel: "유지", danger: true }))
+    )
+      return;
     setBusy(true);
     setError(null);
     try {
@@ -72,7 +77,7 @@ export function SessionButton({
     );
   } else if (loggedIn && !canApply) {
     button = (
-      <span className={base} aria-disabled title={reason}>
+      <span className={base} aria-disabled>
         신청
       </span>
     );
@@ -93,6 +98,7 @@ export function SessionButton({
   return (
     <div className="flex flex-col items-end gap-1">
       {button}
+      {!registered && !full && loggedIn && !canApply && reason && <p className="max-w-[160px] text-right text-caption text-muted">{reason}</p>}
       {error && (
         <p role="alert" className="text-caption text-danger">
           {error}

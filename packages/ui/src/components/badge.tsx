@@ -72,9 +72,9 @@ export function Badge({ className, tone, variant, size, dot, icon, children, ...
 export function tagClass({ active = false, size = "md" }: { active?: boolean; size?: "sm" | "md" } = {}) {
   return cn(
     "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium transition-colors",
-    size === "sm" ? "h-7 px-3 text-caption" : "h-9 px-4 text-body-sm",
+    size === "sm" ? "h-8 px-3.5 text-caption" : "h-10 px-4 text-body-sm",
     active
       ? "border-ink bg-ink text-white"
-      : "border-line bg-canvas text-ink-soft hover:border-line-strong hover:text-ink",
+      : "border-transparent bg-surface-sunken text-ink-soft hover:bg-neutral-200 hover:text-ink",
   );
 }

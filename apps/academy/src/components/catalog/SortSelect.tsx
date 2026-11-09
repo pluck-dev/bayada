@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { selectClass } from "@bayada/ui";
+import { Select } from "@bayada/ui";
 import { catalogHref, type CatalogQuery } from "@/lib/catalog-url";
 
 const OPTIONS = [
@@ -13,19 +13,13 @@ const OPTIONS = [
 export function SortSelect({ locale, query }: { locale: string; query: CatalogQuery }) {
   const router = useRouter();
   return (
-    <label className="relative inline-flex items-center">
-      <span className="sr-only">정렬</span>
-      <select
-        value={query.sort ?? "recommended"}
-        onChange={(e) => router.push(catalogHref(locale, { ...query, sort: e.target.value, page: 1 }), { scroll: false })}
-        className={selectClass("md", "h-10 w-auto text-body-sm font-medium")}
-      >
-        {OPTIONS.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Select
+      aria-label="정렬"
+      size="pill"
+      align="end"
+      value={query.sort ?? "recommended"}
+      onValueChange={(sort) => router.push(catalogHref(locale, { ...query, sort, page: 1 }), { scroll: false })}
+      options={OPTIONS}
+    />
   );
 }

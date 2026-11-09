@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useFeedback } from "@bayada/ui";
 import { formatDate } from "@/lib/labels";
 import { InviteLink } from "./InviteLink";
 
@@ -15,13 +16,22 @@ export function PendingInvites({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
+  const { confirm, toast } = useFeedback();
 
   async function revoke(id: string, email: string) {
-    if (!window.confirm(`${email} 초대를 취소할까요? 보낸 링크는 더 이상 쓸 수 없어요.`)) return;
+    const ok = await confirm({
+      title: "초대를 취소할까요?",
+      body: `${email}\n보낸 링크는 더 이상 쓸 수 없어요.`,
+      confirmLabel: "초대 취소",
+      cancelLabel: "유지",
+      danger: true,
+    });
+    if (!ok) return;
     setBusy(id);
     try {
       const res = await fetch(`/api/v1/business/invites/${encodeURIComponent(id)}`, { method: "DELETE" });
-      if (!res.ok) window.alert("초대를 취소하지 못했어요.");
+      if (!res.ok) toast("error", "초대를 취소하지 못했어요.");
+      else toast("success", "초대를 취소했어요.");
       router.refresh();
     } finally {
       setBusy(null);

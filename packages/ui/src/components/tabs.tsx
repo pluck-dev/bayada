@@ -26,12 +26,12 @@ export function tabTriggerClass(variant: "underline" | "pill", selected: boolean
     ? cn(
         "shrink-0 rounded-full border font-semibold transition-colors",
         size === "sm" ? "h-8 px-3 text-caption" : "h-10 px-4 text-body-sm",
-        selected ? "border-ink bg-ink text-white" : "border-line bg-canvas text-ink-soft hover:border-line-strong hover:text-ink",
+        selected ? "border-ink bg-ink text-white" : "border-transparent bg-surface-sunken text-ink-soft hover:bg-neutral-200 hover:text-ink",
       )
     : cn(
         "-mb-px shrink-0 border-b-2 font-semibold transition-colors",
         size === "sm" ? "pb-2.5 text-body-sm" : "pb-3 text-body",
-        selected ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink",
+        selected ? "border-brand text-ink" : "border-transparent text-muted hover:text-ink",
       );
 }
 

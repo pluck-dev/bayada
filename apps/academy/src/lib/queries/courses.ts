@@ -218,6 +218,7 @@ export async function getFacetCounts(viewer: Viewer | null) {
     mode: Object.fromEntries(modes.map((m) => [m.learningMode, m._count._all])) as Partial<Record<LearningMode, number>>,
     price: { free, paid } as Record<PriceKind, number>,
     cert: { BAYADA: bayada, COMPLETION: total - bayada } as Record<CertKind, number>,
+    total,
   };
 }
 

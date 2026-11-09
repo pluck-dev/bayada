@@ -1,6 +1,10 @@
 import Link from "next/link";
-import { Lock, Search, SearchX, SlidersHorizontal, X } from "lucide-react";
-import { Badge, Breadcrumb, EmptyState, PageHeader, Pagination, buttonVariants, controlClass, tagClass } from "@bayada/ui";
+import { Search, SearchX, X } from "lucide-react";
+import { Breadcrumb, EmptyState, Pagination, buttonVariants, cn, tagClass } from "@bayada/ui";
+import { COVER_PALETTES, categoryTone } from "@bayada/ui/cover";
+import { getSiteSettings } from "@/lib/site-settings";
+import { inquiryHref } from "@bayada/shared/site-settings";
+import { NoProgramsNotice } from "@/components/course/NoProgramsNotice";
 import { getViewer } from "@/lib/viewer";
 import { getFacetCounts, getTaxonomy, listCatalog, parseCatalogFilters } from "@/lib/queries/courses";
 import { LIST_KEYS, catalogHref, type CatalogQuery, type ListKey } from "@/lib/catalog-url";
@@ -19,7 +23,7 @@ import {
   PRODUCT_TYPE_LABEL,
 } from "@/lib/labels";
 import { CourseCard } from "@/components/course/CourseCard";
-import { FilterPanel, type FilterGroup } from "@/components/catalog/FilterPanel";
+import { FilterPanel, FilterSheetButton, type FilterGroup } from "@/components/catalog/FilterPanel";
 import { SortSelect } from "@/components/catalog/SortSelect";
 
 export default async function CatalogPage({
@@ -32,10 +36,11 @@ export default async function CatalogPage({
   const { locale } = await params;
   const filters = parseCatalogFilters(await searchParams);
   const viewer = await getViewer();
-  const [result, taxonomy, facets] = await Promise.all([
+  const [result, taxonomy, facets, settings] = await Promise.all([
     listCatalog(viewer, filters),
     getTaxonomy(viewer),
     getFacetCounts(viewer),
+    getSiteSettings(),
   ]);
 
   const query: CatalogQuery = {
@@ -109,133 +114,163 @@ export default async function CatalogPage({
 
   const isFiltered = chips.length > 0;
   const title = filters.type.length === 1 && filters.type[0] === "CERTIFICATION" ? "인증·커리어" : "전체 프로그램";
+  // 보는 사람에게 열린 프로그램이 하나도 없음(필터와 무관) — 외부 회원·비로그인의 현재 상태
+  const nothingVisible = facets.total === 0;
+  // 분야 칩: 프로그램이 있는 분야 + 지금 선택된 분야
+  const categoryChips = taxonomy.categories.filter((c) => c.count > 0 || filters.category.includes(c.slug));
+  const onlyCategory = filters.category.length === 1 ? filters.category[0] : null;
 
   return (
     <div className="container-page page-y">
-      <PageHeader
-        breadcrumb={<Breadcrumb LinkComponent={Link} items={[{ label: "홈", href: `/${locale}` }, { label: title }]} />}
-        title={title}
-        description="직군·주제·난이도로 필요한 교육을 찾아보세요."
-      />
-
-      <form action={`/${locale}/courses`} role="search" className="max-w-xl">
-        {Object.entries(query).flatMap(([k, v]) =>
-          k !== "q" && Array.isArray(v) && v.length ? [<input key={k} type="hidden" name={k} value={v.join(",")} />] : []
-        )}
-        {filters.sort !== "recommended" && <input type="hidden" name="sort" value={filters.sort} />}
-        <label className="relative block">
-          <span className="sr-only">프로그램 검색</span>
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-subtle" aria-hidden />
-          <input
-            name="q"
-            type="search"
-            defaultValue={filters.q}
-            placeholder="프로그램, 주제, 기관 이름으로 검색"
-            className={controlClass("md", "pl-12 pr-24")}
-          />
-          <button type="submit" className={`${buttonVariants({ variant: "secondary", size: "sm" })} absolute right-2 top-2`}>
-            검색
-          </button>
-        </label>
-      </form>
-
-      <div className="mt-10 grid gap-10 lg:grid-cols-[220px_1fr]">
-        {/* 필터: 데스크톱 사이드바 / 모바일 접이식 */}
-        <aside className="hidden lg:block">
-          <div className="sticky top-24">
-            <FilterPanel locale={locale} query={query} groups={groups} />
-          </div>
-        </aside>
-        <details className="rounded-xl border border-line bg-canvas lg:hidden">
-          <summary className="flex items-center gap-2 px-5 py-3.5 text-body-sm font-semibold text-ink">
-            <SlidersHorizontal className="h-4 w-4" aria-hidden /> 필터
-            {isFiltered && <Badge tone="neutral">{chips.length}</Badge>}
-          </summary>
-          <div className="border-t border-line p-5">
-            <FilterPanel locale={locale} query={query} groups={groups} />
-          </div>
-        </details>
-
+      <Breadcrumb LinkComponent={Link} items={[{ label: "홈", href: `/${locale}` }, { label: title }]} />
+      <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-body text-muted">
-              <span className="tabular font-semibold text-ink">{result.total}</span>개 프로그램
-            </p>
-            <SortSelect locale={locale} query={query} />
-          </div>
+          <h1 className="text-[34px] font-extrabold leading-[1.15] tracking-[-0.035em] text-ink md:text-[48px]">{title}</h1>
+          <p className="mt-3 text-body-lg text-muted">직군·분야·난이도로 지금 필요한 교육을 찾아보세요.</p>
+        </div>
+        <form action={`/${locale}/courses`} role="search" className="w-full md:max-w-[400px]">
+          {Object.entries(query).flatMap(([k, v]) =>
+            k !== "q" && Array.isArray(v) && v.length ? [<input key={k} type="hidden" name={k} value={v.join(",")} />] : []
+          )}
+          {filters.sort !== "recommended" && <input type="hidden" name="sort" value={filters.sort} />}
+          <label className="relative block">
+            <span className="sr-only">프로그램 검색</span>
+            <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" aria-hidden />
+            <input
+              name="q"
+              type="search"
+              defaultValue={filters.q}
+              placeholder="프로그램·분야·기관 검색"
+              className="h-13 w-full rounded-full border border-transparent bg-surface-sunken pl-13 pr-24 text-body text-ink outline-none transition-colors placeholder:text-subtle hover:bg-neutral-200 focus:border-ink focus:bg-canvas"
+            />
+            <button type="submit" className={cn(buttonVariants({ variant: "primary", size: "sm" }), "absolute right-2 top-1/2 -translate-y-1/2")}>
+              검색
+            </button>
+          </label>
+        </form>
+      </div>
 
-          {isFiltered && (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              {chips.map((c) => (
-                <Link
-                  key={c.href + c.label}
-                  href={c.href}
-                  scroll={false}
-                  className={`${tagClass({ size: "sm" })} pr-2`}
-                  aria-label={`${c.label} 조건 해제`}
-                >
-                  {c.label} <X className="h-3.5 w-3.5" aria-hidden />
-                </Link>
-              ))}
+      {nothingVisible && !isFiltered ? (
+        <NoProgramsNotice
+          className="mt-10"
+          locale={locale}
+          loggedIn={!!viewer}
+          name={viewer?.name}
+          inquiryHref={inquiryHref(settings.inquiry)}
+          contactEmail={settings.footer.contactEmail}
+          callbackPath={`/${locale}/courses`}
+        />
+      ) : (
+        <>
+          {categoryChips.length > 0 && (
+            <nav aria-label="분야" className="no-scrollbar -mx-5 mt-8 flex gap-2 overflow-x-auto px-5 lg:mx-0 lg:flex-wrap lg:px-0">
               <Link
-                href={catalogHref(locale, { sort: query.sort })}
+                href={catalogHref(locale, { ...query, category: [], page: 1 })}
                 scroll={false}
-                className="ml-1 text-caption font-medium text-muted underline-offset-2 hover:text-ink hover:underline"
+                aria-current={filters.category.length === 0 ? "true" : undefined}
+                className={tagClass({ active: filters.category.length === 0 })}
               >
-                전체 해제
+                전체 <span className="tabular opacity-70">{facets.total}</span>
               </Link>
-            </div>
+              {categoryChips.map((c) => {
+                const active = onlyCategory === c.slug;
+                return (
+                  <Link
+                    key={c.slug}
+                    href={catalogHref(locale, { ...query, category: active ? [] : [c.slug], page: 1 })}
+                    scroll={false}
+                    aria-current={active ? "true" : undefined}
+                    className={tagClass({ active })}
+                  >
+                    <span
+                      aria-hidden
+                      className="size-2.5 rounded-full ring-1 ring-black/10"
+                      style={{ background: COVER_PALETTES[categoryTone(c.slug)].bg }}
+                    />
+                    {c.name} <span className="tabular opacity-70">{c.count}</span>
+                  </Link>
+                );
+              })}
+            </nav>
           )}
 
-          <div className="mt-6">
-            {result.items.length > 0 ? (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {result.items.map((c) => (
-                  <CourseCard key={c.id} course={c} locale={locale} />
-                ))}
+          <div className="mt-8 grid gap-10 lg:grid-cols-[232px_1fr]">
+            {/* 필터: 데스크톱 사이드바 / 모바일 바텀시트 */}
+            <aside className="hidden lg:block">
+              <div className="no-scrollbar sticky top-24 max-h-[calc(100dvh-7rem)] overflow-y-auto pb-6">
+                <FilterPanel locale={locale} query={query} groups={groups} />
               </div>
-            ) : isFiltered ? (
-              <EmptyState
-                framed
-                icon={<SearchX />}
-                title="조건에 맞는 프로그램이 없어요"
-                description="검색어를 바꾸거나 필터를 줄여 보세요."
-                action={
-                  <Link href={`/${locale}/courses`} className={buttonVariants({ variant: "secondary" })}>
-                    전체 보기
-                  </Link>
-                }
-              />
-            ) : (
-              <EmptyState
-                framed
-                icon={<Lock />}
-                title={viewer ? "아직 공개된 프로그램이 없어요" : "지금은 임직원 전용 프로그램을 운영하고 있어요"}
-                description={
-                  viewer
-                    ? "새 프로그램이 공개되면 이곳에서 바로 확인할 수 있어요."
-                    : "바야다홈헬스케어 임직원이라면 로그인 후 사내 교육 프로그램을 볼 수 있어요."
-                }
-                action={
-                  viewer ? undefined : (
-                    <Link href={`/${locale}/auth/login`} className={buttonVariants({ variant: "secondary" })}>
-                      로그인
-                    </Link>
-                  )
-                }
-              />
-            )}
-          </div>
+            </aside>
 
-          <Pagination
-            className="mt-12"
-            page={result.page}
-            totalPages={result.totalPages}
-            hrefFor={(p) => catalogHref(locale, { ...query, page: p })}
-            LinkComponent={Link}
-          />
-        </div>
-      </div>
+            <div className="min-w-0">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-body text-muted" aria-live="polite">
+                  <span className="tabular font-bold text-ink">{result.total}</span>개 프로그램
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="lg:hidden">
+                    <FilterSheetButton locale={locale} query={query} groups={groups} total={result.total} />
+                  </span>
+                  <SortSelect locale={locale} query={query} />
+                </div>
+              </div>
+
+              {isFiltered && (
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  {chips.map((c) => (
+                    <Link
+                      key={c.href + c.label}
+                      href={c.href}
+                      scroll={false}
+                      className={cn(tagClass({ size: "sm", active: true }), "pr-2.5")}
+                      aria-label={`${c.label} 조건 해제`}
+                    >
+                      {c.label} <X className="h-3.5 w-3.5" aria-hidden />
+                    </Link>
+                  ))}
+                  <Link
+                    href={catalogHref(locale, { sort: query.sort })}
+                    scroll={false}
+                    className="ml-1 rounded-full px-2 py-1 text-caption font-semibold text-muted hover:bg-surface-sunken hover:text-ink"
+                  >
+                    전체 해제
+                  </Link>
+                </div>
+              )}
+
+              <div className="mt-6">
+                {result.items.length > 0 ? (
+                  <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
+                    {result.items.map((c) => (
+                      <CourseCard key={c.id} course={c} locale={locale} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    framed
+                    icon={<SearchX />}
+                    title="조건에 맞는 프로그램이 없어요"
+                    description="검색어를 바꾸거나 필터를 줄여 보세요."
+                    action={
+                      <Link href={`/${locale}/courses`} className={buttonVariants({ variant: "secondary" })}>
+                        조건 모두 해제
+                      </Link>
+                    }
+                  />
+                )}
+              </div>
+
+              <Pagination
+                className="mt-14"
+                page={result.page}
+                totalPages={result.totalPages}
+                hrefFor={(p) => catalogHref(locale, { ...query, page: p })}
+                LinkComponent={Link}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

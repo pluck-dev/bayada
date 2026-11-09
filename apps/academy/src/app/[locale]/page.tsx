@@ -14,6 +14,8 @@ import {
   Infinity as InfinityIcon,
 } from "lucide-react";
 import { Accordion, EmptyState, SectionHeader, Tabs, buttonVariants, cn } from "@bayada/ui";
+import { COVER_PALETTES, CoverPattern, categoryTone, type CoverPatternKind } from "@bayada/ui/cover";
+import { NoProgramsNotice } from "@/components/course/NoProgramsNotice";
 import { getViewer } from "@/lib/viewer";
 import { getHomeData, getTaxonomy, type CourseCardData } from "@/lib/queries/courses";
 import { getImpactStats, getPartners, getRecentReviews } from "@/lib/queries/engagement";
@@ -41,12 +43,14 @@ function categoryIcon(name: string) {
   return <GraduationCap className={cls} aria-hidden />;
 }
 
-/** 섹션 오른쪽 '전체 보기' — 텍스트 링크 하나 */
+const TOPIC_PATTERNS: CoverPatternKind[] = ["rings", "cross", "dots", "arc", "stripes"];
+
+/** 섹션 오른쪽 '전체 보기' — 알약 링크 하나 */
 function MoreLink({ href, children = "전체 보기" }: { href: string; children?: React.ReactNode }) {
   return (
     <Link
       href={href}
-      className="hidden items-center gap-1 text-body-sm font-semibold text-ink-soft underline-offset-4 hover:text-ink hover:underline sm:inline-flex"
+      className="hidden h-10 items-center gap-1 rounded-full bg-surface-sunken px-4 text-body-sm font-bold text-ink transition-colors hover:bg-neutral-200 sm:inline-flex"
     >
       {children} <ArrowRight className="h-4 w-4" aria-hidden />
     </Link>
@@ -55,7 +59,7 @@ function MoreLink({ href, children = "전체 보기" }: { href: string; children
 
 function CourseRow({ items, locale }: { items: CourseCardData[]; locale: string }) {
   return (
-    <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-4 lg:gap-6">
+    <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-10 md:overflow-visible md:px-0 lg:grid-cols-4">
       {items.map((c) => (
         <div key={c.id} className="w-[78%] shrink-0 snap-start sm:w-[46%] md:w-auto">
           <CourseCard course={c} locale={locale} />
@@ -94,6 +98,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       }
     : null;
   const hasCourses = home.popular.length > 0;
+  // 주제 타일: 프로그램이 있는 분야만 (0개 분야를 누르면 빈 목록이라)
+  const topicCategories = taxonomy.categories.filter((c) => c.count > 0);
   const heroCourses = home.popular.slice(0, 3);
 
   // 홈 섹션 — 표시 여부·순서는 어드민 사이트 설정(home.sections). 섹션별 데이터 노출 규칙(빈 데이터면 숨김)은 그대로.
@@ -105,7 +111,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container-page">
           <SectionHeader
             size="lg"
-            title="어떤 일을 하시나요?"
+            title={hasCourses ? "어떤 일을 하시나요?" : "바야다 아카데미 프로그램"}
             description={hasCourses ? "직군을 고르면 꼭 맞는 프로그램을 추천해 드려요." : undefined}
           />
           {hasCourses ? (
@@ -136,22 +142,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               }))}
             />
           ) : (
-            <EmptyState
-              framed
-              icon={<Lock />}
-              title={viewer ? "아직 공개된 프로그램이 없어요" : "지금은 임직원 전용 프로그램을 운영하고 있어요"}
-              description={
-                viewer
-                  ? "새 프로그램이 공개되면 이곳에 바로 보여 드릴게요."
-                  : "바야다홈헬스케어 임직원이라면 로그인 후 사내 교육 프로그램을 수강할 수 있어요. 일반 공개 프로그램도 곧 이곳에 소개됩니다."
-              }
-              action={
-                viewer ? undefined : (
-                  <Link href={`${base}/auth/login`} className={buttonVariants({ variant: "secondary" })}>
-                    로그인
-                  </Link>
-                )
-              }
+            <NoProgramsNotice
+              locale={locale}
+              loggedIn={!!viewer}
+              name={viewer?.name}
+              inquiryHref={inquiry}
+              contactEmail={settings.footer.contactEmail}
+              callbackPath={base}
             />
           )}
         </div>
@@ -239,26 +236,37 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       ) : null,
     // ⑦ 주제별 찾아보기
     topics:
-      taxonomy.categories.length > 0 ? (
+      topicCategories.length > 0 ? (
         <section className="section-y">
           <div className="container-page">
             <SectionHeader size="lg" title="주제별로 찾아보기" action={<MoreLink href={catalog}>전체 프로그램</MoreLink>} />
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
-              {taxonomy.categories.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
-                  className="lift group flex items-center gap-3 rounded-xl border border-line bg-canvas p-4"
-                >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface text-ink-soft [&_svg]:h-5 [&_svg]:w-5">
-                    {categoryIcon(c.name)}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="line-clamp-2 block text-body-sm font-semibold text-ink">{c.name}</span>
-                    {c.count > 0 && <span className="block text-caption text-muted">{c.count}개 프로그램</span>}
-                  </span>
-                </Link>
-              ))}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:gap-4">
+              {topicCategories.map((c, i) => {
+                const p = COVER_PALETTES[categoryTone(c.slug)];
+                return (
+                  <Link
+                    key={c.slug}
+                    href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
+                    className="group relative flex min-h-[168px] flex-col justify-between overflow-hidden rounded-[22px] p-5 transition-transform duration-300 hover:-translate-y-1 md:min-h-[200px]"
+                    style={{ background: p.bg, color: p.fg }}
+                  >
+                    <CoverPattern kind={TOPIC_PATTERNS[i % TOPIC_PATTERNS.length]} color={p.pattern} />
+                    <span
+                      className="relative flex size-11 items-center justify-center rounded-full [&_svg]:h-5 [&_svg]:w-5"
+                      style={{ background: p.chipBg }}
+                    >
+                      {categoryIcon(c.name)}
+                    </span>
+                    <span className="relative">
+                      <span className="line-clamp-2 block text-title font-extrabold tracking-tight">{c.name}</span>
+                      <span className="mt-1 flex items-center justify-between text-caption font-semibold" style={{ color: p.sub }}>
+                        {c.count}개 프로그램
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                      </span>
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -268,7 +276,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section id="org" className="scroll-mt-20 py-8 md:py-10">
         <div className={cn("container-page", passPromo && "grid gap-4 lg:grid-cols-2 lg:gap-6")}>
           {passPromo && (
-            <div className="flex flex-col justify-between gap-8 rounded-xl bg-surface px-7 py-9 md:px-10 md:py-11">
+            <div className="flex flex-col justify-between gap-8 rounded-[28px] bg-brand-50 px-7 py-10 md:px-12 md:py-14">
               <div className="max-w-xl">
                 <p className="inline-flex items-center gap-2 text-body-sm font-semibold text-muted">
                   <InfinityIcon className="h-4 w-4" aria-hidden /> 아카데미 패스
@@ -278,28 +286,36 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   {passPromo.includes} 무제한 수강 · {passPromo.minPrice.toLocaleString("ko-KR")}원부터
                 </p>
               </div>
-              <Link href={`${base}/pass`} className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "self-start")}>
+              <Link href={`${base}/pass`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "self-start")}>
                 패스 알아보기 <ArrowRight aria-hidden />
               </Link>
             </div>
           )}
           <div
             className={cn(
-              "flex flex-col gap-8 rounded-xl bg-surface px-7 py-9 md:px-10 md:py-11",
+              "relative flex flex-col gap-8 overflow-hidden rounded-[28px] bg-side px-7 py-10 text-white md:px-12 md:py-14",
               !passPromo && "md:flex-row md:items-center md:justify-between",
             )}
           >
-            <div className="max-w-xl">
-              <p className="inline-flex items-center gap-2 text-body-sm font-semibold text-muted">
-                <Building2 className="h-4 w-4" aria-hidden /> 기관·센터
+            <CoverPattern kind="rings" color="rgba(255,255,255,0.06)" />
+            <div className="relative max-w-xl">
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 text-caption font-bold text-white">
+                <Building2 className="h-3.5 w-3.5" aria-hidden /> 기관·센터
               </p>
-              <h2 className="mt-3 text-h2 text-ink">우리 센터 직원 교육, 바야다 아카데미로</h2>
-              <p className="mt-2 text-body text-muted">
+              <h2 className="mt-4 text-[26px] font-extrabold leading-[1.3] tracking-[-0.03em] md:text-[34px]">
+                우리 센터 직원 교육,
+                <br />
+                바야다 아카데미로
+              </h2>
+              <p className="mt-3 text-body text-white/70">
                 직원 단체 수강과 교육 운영이 필요하신가요? 담당자가 기관 상황에 맞는 도입 방법을 안내해 드려요.
               </p>
             </div>
-            <a href={inquiry} className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "self-start md:self-auto")}>
-              기관 도입 문의 <ArrowRight aria-hidden />
+            <a
+              href={inquiry}
+              className="relative inline-flex h-12 items-center gap-1.5 self-start rounded-full bg-white px-6 text-body font-bold text-ink transition-colors hover:bg-neutral-200 md:self-auto"
+            >
+              기관 도입 문의 <ArrowRight className="h-4 w-4" aria-hidden />
             </a>
           </div>
         </div>
@@ -379,11 +395,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       {/* ② 히어로 — 문장 2줄 + 주요 버튼 1개 + 보조 버튼 1개. 배경 장식 없음 */}
-      <section className="border-b border-line">
-        <div className="container-page grid items-center gap-10 py-12 md:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+      <section>
+        <div className="container-page grid items-center gap-10 pb-10 pt-10 md:pb-16 md:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div>
-            {hero.eyebrow && <p className="text-body-sm font-semibold text-brand-700">{hero.eyebrow}</p>}
-            <h1 className="mt-4 text-[34px] font-bold leading-[1.2] tracking-[-0.03em] text-ink md:text-display">
+            {hero.eyebrow && (
+              <p className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3.5 py-1.5 text-caption font-bold text-brand-700">
+                <span aria-hidden className="size-1.5 rounded-full bg-brand" />
+                {hero.eyebrow}
+              </p>
+            )}
+            <h1 className="mt-4 text-[38px] font-black leading-[1.12] tracking-[-0.045em] text-ink md:text-[60px]">
               {hero.title.split(/\r?\n/).map((line, i) => (
                 <Fragment key={i}>
                   {i > 0 && <br />}
@@ -420,10 +441,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 }))}
               />
             ) : heroCourses.length > 0 ? (
-              <div className="flex h-full flex-col rounded-xl border border-line bg-canvas p-3">
-                <p className="flex items-center justify-between px-3 pb-2 pt-2 text-body-sm font-semibold text-ink">
+              <div className="flex h-full flex-col rounded-[28px] bg-surface-sunken p-3 md:p-4">
+                <p className="flex items-center justify-between px-3 pb-2 pt-2 text-body font-extrabold tracking-tight text-ink">
                   지금 많이 듣는 프로그램
-                  <Link href={`${catalog}?sort=popular`} className="text-caption font-semibold text-muted hover:text-ink">
+                  <Link
+                    href={`${catalog}?sort=popular`}
+                    className="rounded-full bg-canvas px-3 py-1.5 text-caption font-bold text-ink-soft transition-colors hover:text-ink"
+                  >
                     더 보기
                   </Link>
                 </p>
@@ -432,10 +456,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     <li key={c.id} className="flex-1">
                       <Link
                         href={`${catalog}/${encodeURIComponent(c.slug)}`}
-                        className="group flex h-full items-center gap-4 rounded-xl p-3 transition-colors hover:bg-surface"
+                        className="group flex h-full items-center gap-4 rounded-2xl p-2.5 transition-colors hover:bg-canvas"
                       >
-                        <span className="tabular w-4 shrink-0 text-center text-title font-bold text-ink-soft">{i + 1}</span>
-                        <span className="block aspect-video w-28 shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-36">
+                        <span className={cn("tabular w-6 shrink-0 text-center text-[22px] font-black", i === 0 ? "text-brand" : "text-ink")}>
+                          {i + 1}
+                        </span>
+                        <span className="block aspect-video w-28 shrink-0 overflow-hidden rounded-xl bg-canvas sm:w-36">
                           <CourseMedia course={c} size="thumb" />
                         </span>
                         <span className="min-w-0">
@@ -458,16 +484,23 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
             ) : (
               <div className="grid h-full grid-cols-2 gap-3">
-                {taxonomy.categories.slice(0, 4).map((c) => (
-                  <Link
-                    key={c.slug}
-                    href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
-                    className="lift flex min-h-[140px] flex-col justify-between rounded-xl border border-line bg-canvas p-6 text-ink"
-                  >
-                    <span className="text-ink-soft">{categoryIcon(c.name)}</span>
-                    <span className="text-title font-bold">{c.name}</span>
-                  </Link>
-                ))}
+                {taxonomy.categories.slice(0, 4).map((c, i) => {
+                  const p = COVER_PALETTES[categoryTone(c.slug)];
+                  return (
+                    <Link
+                      key={c.slug}
+                      href={`${catalog}?category=${encodeURIComponent(c.slug)}`}
+                      className="group relative flex min-h-[150px] flex-col justify-between overflow-hidden rounded-[22px] p-5 transition-transform duration-300 hover:-translate-y-1"
+                      style={{ background: p.bg, color: p.fg }}
+                    >
+                      <CoverPattern kind={TOPIC_PATTERNS[i % TOPIC_PATTERNS.length]} color={p.pattern} />
+                      <span className="relative flex size-10 items-center justify-center rounded-full [&_svg]:h-5 [&_svg]:w-5" style={{ background: p.chipBg }}>
+                        {categoryIcon(c.name)}
+                      </span>
+                      <span className="relative text-title font-extrabold tracking-tight">{c.name}</span>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
