@@ -60,7 +60,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
           fontFamily: font ? "Pretendard" : "sans-serif",
         }}
       >
-        <CoverPattern kind={s.pattern} color={p.pattern} />
+        {/* satori 는 preserveAspectRatio slice 를 안 따른다 → 16:9 크기로 그려 아래를 맞춘다 */}
+        <CoverPattern kind={s.pattern} color={p.pattern} style={{ top: -45, width: 1200, height: 675 }} />
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 30, color: p.sub }}>
           <div style={{ width: 16, height: 16, borderRadius: 999, background: p.accent }} />
           {s.eyebrow}

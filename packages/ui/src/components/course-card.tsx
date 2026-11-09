@@ -139,7 +139,7 @@ export function CourseCard({
           {metaText && <p className="mt-1.5 line-clamp-1 text-caption text-muted">{metaText}</p>}
           {hasFooter && (
             <div className={cn("mt-auto", horizontal ? "pt-2" : "pt-3")}>
-              <div className={cn(!horizontal && "border-t border-line-soft pt-3")}>
+              <div>
                 {hasProgress ? (
                   <div>
                     <div className="flex items-center justify-between text-caption">

@@ -16,7 +16,7 @@ export function DashboardNav({ locale }: { locale: string }) {
     { href: `${base}/profile`, label: "프로필", icon: UserRound },
   ];
   return (
-    <nav aria-label="마이 메뉴" className="no-scrollbar -mx-5 flex gap-1 overflow-x-auto border-b border-line px-5 lg:mx-0 lg:mt-4 lg:flex-col lg:border-0 lg:px-0">
+    <nav aria-label="마이 메뉴" className="no-scrollbar -mx-5 flex gap-1 overflow-x-auto px-5 pb-1 lg:mx-0 lg:mt-4 lg:flex-col lg:px-0">
       {items.map((it) => {
         // 결제 내역은 상세(/orders/[id])에서도 활성
         const active = pathname === it.href || (it.icon === Receipt && pathname.startsWith(`${it.href}/`));
@@ -26,11 +26,11 @@ export function DashboardNav({ locale }: { locale: string }) {
             href={it.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2.5 text-body-sm font-semibold transition-colors",
-              active ? "bg-surface-sunken text-ink" : "text-ink-soft hover:bg-surface hover:text-ink",
+              "flex shrink-0 items-center gap-2.5 rounded-full px-4 py-2.5 text-body-sm font-bold transition-colors",
+              active ? "bg-brand-50 text-brand-700" : "text-ink-soft hover:bg-surface-sunken hover:text-ink",
             )}
           >
-            <it.icon className={cn("h-4 w-4", active ? "text-brand" : "text-subtle")} aria-hidden />
+            <it.icon className={cn("h-4 w-4", active ? "text-brand-700" : "text-subtle")} aria-hidden />
             {it.label}
           </Link>
         );

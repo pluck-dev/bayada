@@ -37,14 +37,14 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
+    <div className="flex items-center justify-center py-6 lg:min-h-[560px] lg:py-10">
       <div className="w-full max-w-[400px]">
         {sentTo ? (
           <div>
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-success-soft text-success">
               <MailCheck className="h-6 w-6" aria-hidden />
             </span>
-            <h1 className="mt-5 text-[28px] font-bold tracking-tight text-ink">메일을 확인해 주세요</h1>
+            <h1 className="mt-5 text-[32px] font-extrabold tracking-[-0.03em] text-ink">메일을 확인해 주세요</h1>
             {/* 가입 여부와 상관없이 같은 안내 (계정 존재 노출 방지) */}
             <p className="mt-3 text-body leading-relaxed text-muted">
               <span className="font-semibold text-ink">{sentTo}</span> 로 가입된 계정이 있다면 비밀번호 재설정 링크를
@@ -69,7 +69,7 @@ export default function ForgotPasswordForm() {
           </div>
         ) : (
           <>
-            <h1 className="text-[28px] font-bold tracking-tight text-ink">비밀번호 찾기</h1>
+            <h1 className="text-[32px] font-extrabold tracking-[-0.03em] text-ink">비밀번호 찾기</h1>
             <p className="mt-2 text-body text-muted">가입한 이메일을 입력하면 재설정 링크를 보내 드려요.</p>
             <form onSubmit={handleSubmit} className="mt-8 space-y-4">
               {error && (

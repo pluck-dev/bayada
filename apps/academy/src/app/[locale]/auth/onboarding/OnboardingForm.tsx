@@ -37,9 +37,9 @@ export default function OnboardingForm({
   };
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
+    <div className="flex items-center justify-center py-6 lg:min-h-[560px] lg:py-10">
       <form onSubmit={submit} className="w-full max-w-[440px]">
-        <h1 className="text-[28px] font-bold tracking-tight text-ink">{name ? `${name}님, 환영해요` : "환영해요"}</h1>
+        <h1 className="text-[32px] font-extrabold tracking-[-0.03em] text-ink">{name ? `${name}님, 환영해요` : "환영해요"}</h1>
         <p className="mt-2 text-body text-muted">하시는 일을 알려 주시면 맞는 교육을 먼저 보여 드릴게요.</p>
         {error && (
           <p role="alert" className="mt-6 rounded-xl bg-danger-soft px-4 py-3 text-body-sm text-danger">

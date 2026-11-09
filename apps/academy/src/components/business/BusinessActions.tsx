@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Dialog, buttonVariants, controlClass, tagClass, textareaClass } from "@bayada/ui";
+import { Badge, CheckVisual, DatePicker, Dialog, buttonVariants, controlClass, tagClass, textareaClass } from "@bayada/ui";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { CheckCircle2, ClipboardList, Loader2, Search, UserPlus } from "lucide-react";
@@ -295,8 +295,11 @@ function AssignModal({
                       type="checkbox"
                       checked={courseIds.has(c.id)}
                       onChange={() => setCourseIds((s) => toggle(s, c.id))}
-                      className="h-4 w-4 accent-ink"
+                      className="peer sr-only"
                     />
+                    <span className="rounded-[6px] peer-focus-visible:ring-3 peer-focus-visible:ring-brand-200">
+                      <CheckVisual checked={courseIds.has(c.id)} size="sm" />
+                    </span>
                     <span className="min-w-0 flex-1 truncate text-ink">{c.title}</span>
                     {c.category && <span className="shrink-0 text-caption text-muted">{c.category}</span>}
                   </label>
@@ -366,8 +369,11 @@ function AssignModal({
                       type="checkbox"
                       checked={userIds.has(m.id)}
                       onChange={() => setUserIds((s) => toggle(s, m.id))}
-                      className="h-4 w-4 accent-ink"
+                      className="peer sr-only"
                     />
+                    <span className="rounded-[6px] peer-focus-visible:ring-3 peer-focus-visible:ring-brand-200">
+                      <CheckVisual checked={userIds.has(m.id)} size="sm" />
+                    </span>
                     <span className="shrink-0 font-medium text-ink">{m.name}</span>
                     <span className="min-w-0 flex-1 truncate text-caption text-muted">{m.email}</span>
                     {m.jobRole && <span className="shrink-0 text-caption text-muted">{JOB_ROLE_LABEL[m.jobRole]}</span>}
@@ -382,13 +388,13 @@ function AssignModal({
             <label htmlFor="assign-due" className="text-body-sm font-semibold text-ink">
               이수 기한 <span className="font-normal text-muted">(선택)</span>
             </label>
-            <input
+            <DatePicker
               id="assign-due"
-              type="date"
               min={today}
               value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className={controlClass("md", "mt-2 h-10 w-auto")}
+              onChange={setDueDate}
+              placeholder="기한 없음"
+              className="mt-2 max-w-[280px]"
             />
           </div>
 

@@ -43,9 +43,11 @@ export default async function CredentialPrintPage({ params }: { params: Promise<
         )}
       </div>
 
-      {/* A4 가로 비율 — 수료증 출력물과 같은 틀, 인증은 상단 띠와 붉은 테두리로 구분 */}
+      {/* A4 가로 비율 — 수료증 출력물과 같은 틀, 인증은 상단 띠와 붉은 테두리로 구분.
+          휴대폰에서는 글자가 겹치지 않게 증서 폭을 유지하고 옆으로 밀어 본다 */}
+      <div className="overflow-x-auto px-3 pb-2 sm:px-5 print:overflow-visible print:p-0">
       <div
-        className={`relative mx-auto aspect-[297/210] w-full max-w-[1000px] bg-canvas shadow-xs print:h-[210mm] print:w-[297mm] print:max-w-none print:shadow-none ${
+        className={`relative mx-auto aspect-[297/210] w-full min-w-[760px] max-w-[1000px] bg-canvas shadow-xs print:h-[210mm] print:w-[297mm] print:max-w-none print:shadow-none ${
           invalid ? "print:hidden" : ""
         }`}
       >
@@ -103,6 +105,7 @@ export default async function CredentialPrintPage({ params }: { params: Promise<
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

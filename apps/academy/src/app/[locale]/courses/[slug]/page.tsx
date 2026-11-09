@@ -201,14 +201,14 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
   return (
     <div className="pb-24 lg:pb-0">
       {/* 섹션 바로가기 — 헤더(64px) 바로 아래 고정 */}
-      <div className="sticky top-16 z-sticky border-b border-line bg-canvas/95 backdrop-blur">
+      <div className="sticky top-16 z-sticky border-b border-line-soft bg-canvas/95 backdrop-blur lg:top-[72px]">
         <div className="container-page">
-          <nav aria-label="프로그램 상세 메뉴" className="no-scrollbar flex h-12 items-center gap-6 overflow-x-auto">
+          <nav aria-label="프로그램 상세 메뉴" className="no-scrollbar flex h-14 items-center gap-1 overflow-x-auto">
             {nav.map((n) => (
               <a
                 key={n.id}
                 href={`#${n.id}`}
-                className="shrink-0 text-body-sm font-semibold text-ink-soft transition-colors hover:text-ink"
+                className="inline-flex h-9 shrink-0 items-center rounded-full px-3.5 text-body-sm font-bold text-ink-soft transition-colors hover:bg-surface-sunken hover:text-ink"
               >
                 {n.label}
               </a>
@@ -221,7 +221,11 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
         <div className="grid gap-10 pt-8 md:pt-10 lg:grid-cols-[1fr_360px] lg:gap-16">
           <div className="min-w-0">
             {/* 히어로 */}
-            <section id="intro" className="scroll-mt-40">
+            <section id="intro" className="scroll-mt-44">
+              {/* 모바일: 표지를 맨 위에 (데스크톱은 오른쪽 수강 패널에) */}
+              <div className="-mx-5 mb-6 aspect-video overflow-hidden sm:mx-0 sm:rounded-[22px] lg:hidden">
+                <CourseMedia course={course} />
+              </div>
               <Breadcrumb
                 LinkComponent={Link}
                 items={[
@@ -232,10 +236,12 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                     : []),
                 ]}
               />
-              <p className="mt-6 text-body-sm font-medium text-muted">
-                {PRODUCT_TYPE_LABEL[course.productType]} · {course.provider?.name ?? "바야다홈헬스케어"}
+              <p className="mt-6 text-body-sm font-semibold text-muted">
+                {[course.category?.name, PRODUCT_TYPE_LABEL[course.productType], course.provider?.name ?? "바야다홈헬스케어"]
+                  .filter(Boolean)
+                  .join(" · ")}
               </p>
-              <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-[-0.025em] text-ink md:text-[36px]">
+              <h1 className="mt-2 text-[30px] font-extrabold leading-[1.2] tracking-[-0.035em] text-ink md:text-[42px]">
                 {course.title}
               </h1>
               {course.summary && <p className="mt-4 text-body-lg text-muted">{course.summary}</p>}
@@ -256,13 +262,13 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
               </div>
 
               {/* 정보 바 */}
-              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 sm:grid-cols-3 xl:grid-cols-6">
+              <dl className="mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-3 xl:grid-cols-5">
                 {infoItems.map((it) => (
-                  <div key={it.label}>
-                    <dt className="flex items-center gap-1.5 text-caption text-muted">
+                  <div key={it.label} className="rounded-2xl bg-surface-sunken px-4 py-3.5">
+                    <dt className="flex items-center gap-1.5 text-caption font-medium text-muted">
                       <it.icon className="h-3.5 w-3.5" aria-hidden /> {it.label}
                     </dt>
-                    <dd className="mt-1 text-body font-semibold text-ink">{it.value}</dd>
+                    <dd className="mt-1 text-body font-bold text-ink">{it.value}</dd>
                   </div>
                 ))}
               </dl>
@@ -294,7 +300,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             </section>
 
             {/* 커리큘럼 */}
-            <section id="curriculum" className="mt-14 scroll-mt-32">
+            <section id="curriculum" className="mt-14 scroll-mt-40">
               <SectionHeader
                 title={
                   <>
@@ -303,7 +309,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                 }
                 description={quizCount > 0 ? `퀴즈 ${quizCount}개 포함` : undefined}
               />
-              <div className="divide-y divide-line overflow-hidden rounded-xl border border-line">
+              <div className="divide-y divide-line-soft overflow-hidden rounded-[22px] border border-line">
                 {course.sections.map((s, si) => {
                   const secSec = s.lectures.reduce((sum, l) => sum + (l.duration ?? 0), 0);
                   return (
@@ -313,8 +319,11 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                       className="group"
                     >
                       <summary className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-surface">
-                        <span className="text-body font-semibold text-ink">
-                          {si + 1}. {s.title}
+                        <span className="flex items-center gap-3 text-body font-bold text-ink">
+                          <span className="tabular flex size-7 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-caption font-extrabold">
+                            {si + 1}
+                          </span>
+                          {s.title}
                         </span>
                         <span className="flex shrink-0 items-center gap-3 text-caption text-muted">
                           {s.lectures.length}개
@@ -366,7 +375,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
             {/* 실습 일정 */}
             {sessions.length > 0 && (
-              <section id="sessions" className="mt-14 scroll-mt-32">
+              <section id="sessions" className="mt-14 scroll-mt-40">
                 <SectionHeader
                   title={
                     <>
@@ -438,7 +447,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             )}
 
             {/* 수료 안내 */}
-            <section id="certificate" className="mt-14 scroll-mt-32">
+            <section id="certificate" className="mt-14 scroll-mt-40">
               <SectionHeader title="수료 안내" />
               <div className="grid gap-6 sm:grid-cols-[180px_1fr] sm:gap-8">
                 <div className="flex aspect-[1.414] flex-col justify-between rounded-lg border border-line bg-canvas p-4">
@@ -523,7 +532,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
             {/* 후기·평점 */}
             {showReviews && (
-              <section id="reviews" className="mt-14 scroll-mt-32">
+              <section id="reviews" className="mt-14 scroll-mt-40">
                 <SectionHeader
                   className="mb-0"
                   title={
@@ -608,7 +617,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
             )}
 
             {/* FAQ */}
-            <section id="faq" className="mt-14 scroll-mt-32 pb-8">
+            <section id="faq" className="mt-14 scroll-mt-40 pb-8">
               <SectionHeader title="자주 묻는 질문" />
               <Accordion items={DETAIL_FAQ.map((f) => ({ title: f.q, content: <p className="leading-relaxed">{f.a}</p> }))} />
             </section>
@@ -616,9 +625,9 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
 
           {/* 수강 패널 */}
           <aside className="lg:row-start-1 lg:col-start-2">
-            <div className="lg:sticky lg:top-[136px]">
-              <div className="overflow-hidden rounded-xl border border-line bg-canvas">
-                <div className="aspect-video bg-surface-sunken">
+            <div className="lg:sticky lg:top-[152px]">
+              <div className="overflow-hidden rounded-[22px] border border-line bg-canvas shadow-sm">
+                <div className="hidden aspect-video bg-surface-sunken lg:block">
                   <CourseMedia course={course} />
                 </div>
                 <div className="p-6">
@@ -711,7 +720,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
       </div>
 
       {/* 모바일 하단 고정 CTA */}
-      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-line bg-canvas/95 px-5 py-3 backdrop-blur lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-line-soft bg-canvas/95 px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
         <div className="flex items-center gap-4">
           <div className="shrink-0">
             {enrollment ? (

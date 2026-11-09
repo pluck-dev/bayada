@@ -9,7 +9,7 @@ export function CoverPattern({ kind, color, style }: { kind: CoverPatternKind; c
   const common = {
     viewBox: "0 0 160 90",
     preserveAspectRatio: "xMaxYMax slice",
-    style: { position: "absolute" as const, inset: 0, width: "100%", height: "100%", ...style },
+    style: { position: "absolute" as const, top: 0, left: 0, width: "100%", height: "100%", ...style },
     "aria-hidden": true,
   };
   switch (kind) {

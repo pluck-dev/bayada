@@ -18,13 +18,13 @@ export default async function DashboardLayout({
   const sub = [viewer.jobRole ? JOB_ROLE_LABEL[viewer.jobRole] : null, viewer.organizationName].filter(Boolean).join(" · ");
 
   return (
-    <div className="container-page page-y grid gap-8 lg:grid-cols-[220px_1fr] lg:gap-12">
+    <div className="container-page page-y grid gap-6 lg:grid-cols-[240px_1fr] lg:gap-12">
       <aside>
         <div className="lg:sticky lg:top-24">
-          <div className="flex items-center gap-3 pb-5 lg:border-b lg:border-line">
-            <Avatar name={name} size="lg" />
+          <div className="flex items-center gap-3 rounded-[22px] bg-surface-sunken p-4">
+            <Avatar name={name} size="lg" className="bg-ink text-white" />
             <div className="min-w-0">
-              <p className="truncate text-body font-semibold text-ink">{name}</p>
+              <p className="truncate text-body font-bold text-ink">{name}</p>
               <p className="truncate text-caption text-muted">{sub || viewer.email}</p>
             </div>
           </div>

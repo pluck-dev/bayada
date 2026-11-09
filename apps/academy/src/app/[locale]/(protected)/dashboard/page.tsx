@@ -1,7 +1,7 @@
 import { EmptyState, PageHeader, ProgressBar, StatCard, Tabs, buttonVariants, cn } from "@bayada/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BookOpen, CalendarDays, GraduationCap, Heart, MapPin } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarDays, GraduationCap, Heart, MapPin } from "lucide-react";
 import { getViewer } from "@/lib/viewer";
 import { getMyEnrollments } from "@/lib/queries/learning";
 import { getMySessions, getMyWishlist } from "@/lib/queries/engagement";
@@ -22,12 +22,12 @@ function EnrollmentRow({ row, locale }: { row: Row; locale: string }) {
   const resume = row.resumeLectureId ? `${detail}/lectures/${row.resumeLectureId}` : detail;
   const done = !!row.completedAt;
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-line bg-canvas p-4 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:gap-5">
-      <Link href={detail} className="block aspect-video shrink-0 overflow-hidden rounded-lg bg-surface-sunken sm:w-44">
-        <CourseMedia course={row.course} />
+    <li className="flex gap-4 rounded-[22px] border border-line-soft bg-canvas p-3 transition-colors hover:border-line sm:items-center sm:gap-5 sm:p-4">
+      <Link href={detail} tabIndex={-1} aria-hidden className="block aspect-video w-28 shrink-0 self-start overflow-hidden rounded-2xl bg-surface-sunken sm:w-44 sm:self-auto">
+        <CourseMedia course={row.course} size="thumb" />
       </Link>
       <div className="min-w-0 flex-1">
-        <Link href={detail} className="line-clamp-2 text-title text-ink underline-offset-4 hover:underline">
+        <Link href={detail} className="line-clamp-2 text-body font-bold text-ink underline-offset-4 hover:underline sm:text-title">
           {row.course.title}
         </Link>
         <p className="mt-1 text-caption text-muted">
@@ -37,14 +37,45 @@ function EnrollmentRow({ row, locale }: { row: Row; locale: string }) {
           {row.course.archived && " · 운영 종료된 프로그램"}
         </p>
         <ProgressBar value={row.progressPercent} showValue size="sm" className="mt-3" />
+        <Link href={resume} className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "mt-3 sm:hidden")}>
+          {done ? "다시 보기" : row.progressPercent > 0 ? "이어보기" : "시작하기"}
+        </Link>
       </div>
-      <Link
-        href={resume}
-        className={cn(buttonVariants({ variant: "secondary" }), "sm:w-28")}
-      >
+      <Link href={resume} className={cn(buttonVariants({ variant: done ? "secondary" : "outline" }), "hidden sm:inline-flex sm:w-28")}>
         {done ? "다시 보기" : row.progressPercent > 0 ? "이어보기" : "시작하기"}
       </Link>
     </li>
+  );
+}
+
+/** 이어서 학습하기 — 가장 먼저 눈에 띄는 큰 카드 (주요 행동 1개) */
+function ResumeCard({ row, locale }: { row: Row; locale: string }) {
+  const detail = `/${locale}/courses/${encodeURIComponent(row.course.slug)}`;
+  const resume = row.resumeLectureId ? `${detail}/lectures/${row.resumeLectureId}` : detail;
+  return (
+    <section aria-label="이어서 학습하기" className="grid overflow-hidden rounded-[28px] bg-ink text-white md:grid-cols-[minmax(0,340px)_1fr]">
+      <Link href={detail} tabIndex={-1} aria-hidden className="block aspect-video md:aspect-auto md:h-full">
+        <CourseMedia course={row.course} />
+      </Link>
+      <div className="flex flex-col justify-center gap-4 p-6 md:p-8">
+        <div>
+          <p className="text-caption font-bold text-brand-300">{row.progressPercent > 0 ? "이어서 학습하기" : "학습을 시작해 보세요"}</p>
+          <p className="mt-1.5 line-clamp-2 text-[20px] font-extrabold leading-snug tracking-tight md:text-[22px]">{row.course.title}</p>
+          <p className="mt-1.5 text-caption text-white/60">
+            {row.doneCount}/{row.lectureCount}강 완료 · {formatDate(row.enrolledAt)} 신청
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/15" aria-hidden>
+            <div className="h-full rounded-full bg-brand" style={{ width: `${row.progressPercent}%` }} />
+          </div>
+          <span className="tabular text-body-sm font-bold">{row.progressPercent}%</span>
+        </div>
+        <Link href={resume} className={cn(buttonVariants({ variant: "primary", size: "lg" }), "self-start")}>
+          {row.progressPercent > 0 ? "이어보기" : "학습 시작하기"} <ArrowRight aria-hidden />
+        </Link>
+      </div>
+    </section>
   );
 }
 
@@ -62,11 +93,13 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   const upcomingSessions = sessions.filter((s) => s.endsAt >= now);
   const pastSessions = sessions.filter((s) => s.endsAt < now).reverse();
   const active = rows.filter((r) => !r.completedAt);
+  // 이어서 학습: 진도가 있는 수강 중 프로그램 중 최근 신청, 없으면 최근 신청한 수강 중 프로그램
+  const resumeRow = active.find((r) => r.progressPercent > 0 && !r.course.archived) ?? active.find((r) => !r.course.archived) ?? null;
   const completed = rows.filter((r) => r.completedAt);
 
   return (
     <div>
-      <PageHeader title="마이 러닝" className="mb-6 md:mb-6" />
+      <PageHeader title="마이 러닝" description="이어서 듣고, 수료하고, 인증서를 모아 보세요." className="mb-6 md:mb-8" />
       <div className="mb-6 empty:hidden">
         <EmailVerifyBanner userId={viewer.id} locale={locale} />
       </div>
@@ -75,7 +108,8 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           <RenewalBanner locale={locale} items={renewals} />
         </div>
       )}
-      <div className="grid grid-cols-3 gap-3">
+      {resumeRow && <ResumeCard row={resumeRow} locale={locale} />}
+      <div className="mt-4 grid grid-cols-3 gap-2.5 md:gap-3">
         <StatCard label="수강 중" value={active.length} />
         <StatCard label="수료" value={completed.length} />
         <StatCard label="전체 신청" value={rows.length} />
@@ -85,6 +119,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       <div className="mt-10">
         <Tabs
           ariaLabel="수강 상태"
+          defaultValue={active.length === 0 && completed.length > 0 ? "completed" : "active"}
           items={[
             {
               key: "active",

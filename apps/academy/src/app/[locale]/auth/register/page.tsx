@@ -101,9 +101,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
+    <div className="flex items-center justify-center py-6 lg:min-h-[560px] lg:py-10">
       <div className="w-full max-w-auth">
-        <h1 className="text-[28px] font-bold tracking-tight text-ink">{dict.auth.registerTitle}</h1>
+        <h1 className="text-[32px] font-extrabold tracking-[-0.03em] text-ink">{dict.auth.registerTitle}</h1>
         <p className="mt-2 text-body text-muted">{dict.auth.registerDescription}</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">

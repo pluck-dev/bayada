@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@bayada/ui";
+import { CheckVisual, buttonVariants } from "@bayada/ui";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2, Star } from "lucide-react";
@@ -107,12 +107,10 @@ export function ReviewForm({
       <div className="mt-1 text-right text-caption text-subtle">{content.length}/1000</div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <label className="flex cursor-pointer items-center gap-2 text-body-sm text-ink-soft">
-          <input
-            type="checkbox"
-            checked={showName}
-            onChange={(e) => setShowName(e.target.checked)}
-            className="h-4 w-4 rounded border-line accent-[#e31b34]"
-          />
+          <input type="checkbox" checked={showName} onChange={(e) => setShowName(e.target.checked)} className="peer sr-only" />
+          <span className="rounded-[6px] peer-focus-visible:ring-3 peer-focus-visible:ring-brand-200">
+            <CheckVisual checked={showName} size="sm" />
+          </span>
           이름 공개에 동의해요 <span className="text-caption text-muted">(동의하지 않으면 홍*동처럼 가려져요)</span>
         </label>
         <div className="flex gap-2">

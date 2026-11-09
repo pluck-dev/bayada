@@ -47,7 +47,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
         <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-success-soft text-success">
           <CheckCircle2 className="h-6 w-6" aria-hidden />
         </span>
-        <h1 className="mt-5 text-[28px] font-bold tracking-tight text-ink">비밀번호를 바꿨어요</h1>
+        <h1 className="mt-5 text-[32px] font-extrabold tracking-[-0.03em] text-ink">비밀번호를 바꿨어요</h1>
         <p className="mt-3 text-body leading-relaxed text-muted">
           안전을 위해 다른 기기에서 로그인된 세션은 모두 로그아웃됐어요. 새 비밀번호로 다시 로그인해 주세요.
         </p>
@@ -63,7 +63,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
 
   return (
     <>
-      <h1 className="text-[28px] font-bold tracking-tight text-ink">새 비밀번호 설정</h1>
+      <h1 className="text-[32px] font-extrabold tracking-[-0.03em] text-ink">새 비밀번호 설정</h1>
       <p className="mt-2 text-body text-muted">{PASSWORD_RULE}으로 입력해 주세요.</p>
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {error && (

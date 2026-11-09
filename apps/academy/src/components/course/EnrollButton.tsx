@@ -65,7 +65,7 @@ export function EnrollButton({
         loading={loading}
         className={className}
       >
-        {via === "pass" ? "패스로 수강" : loggedIn ? "수강신청" : "로그인하고 수강신청"}
+        {via === "pass" ? "패스로 수강하기" : loggedIn ? "무료로 수강 신청" : "로그인하고 수강 신청"}
       </Button>
       {error && (
         <p role="alert" className="mt-2 text-body-sm text-danger">

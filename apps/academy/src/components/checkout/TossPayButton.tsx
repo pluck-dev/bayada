@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants, cn } from "@bayada/ui";
+import { CheckVisual, buttonVariants, cn } from "@bayada/ui";
 import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
@@ -137,12 +137,10 @@ export function TossPayButton({
   return (
     <div>
       <label className="flex cursor-pointer items-start gap-2.5 text-caption leading-relaxed text-ink-soft">
-        <input
-          type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0 accent-brand"
-        />
+        <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="peer sr-only" />
+        <span className="mt-0.5 rounded-[6px] peer-focus-visible:ring-3 peer-focus-visible:ring-brand-200">
+          <CheckVisual checked={agreed} size="sm" tone="brand" />
+        </span>
         <span>
           주문 내용을 확인했으며{" "}
           {refundHref ? (

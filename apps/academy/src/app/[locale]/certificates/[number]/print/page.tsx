@@ -32,56 +32,75 @@ export default async function CertificatePrintPage({
 
   return (
     <div className="bg-surface py-10 print:bg-canvas print:py-0">
-      <div className="mx-auto mb-6 flex max-w-[1000px] items-center justify-between px-5 print:hidden">
+      <div className="mx-auto mb-6 flex max-w-[1000px] items-center justify-between gap-3 px-5 print:hidden">
         <Link href={`/${locale}/dashboard/certificates`} className="flex items-center gap-1.5 text-body-sm font-semibold text-ink-soft hover:text-ink">
           <ArrowLeft className="h-4 w-4" aria-hidden /> 인증서 목록
         </Link>
         <PrintButton />
       </div>
 
-      {/* A4 가로 비율 */}
-      <div className="mx-auto aspect-[297/210] w-full max-w-[1000px] bg-canvas shadow-xs print:h-[210mm] print:w-[297mm] print:max-w-none print:shadow-none">
-        <div className="flex h-full flex-col p-[4%]">
-          <div className="flex h-full flex-col rounded-sm border-[3px] border-ink p-[5%]">
-            <div className="flex items-start justify-between">
-              <div className="flex items-baseline gap-2">
-                <span className="text-[28px] font-extrabold tracking-tight text-brand">BAYADA</span>
-                <span className="text-title font-semibold text-ink">Academy</span>
-              </div>
-              <p className="text-right text-caption text-muted">
-                수료번호
-                <br />
-                <span className="font-mono text-body-sm font-semibold text-ink">{cert.number}</span>
-              </p>
-            </div>
-
-            <div className="flex flex-1 flex-col items-center justify-center text-center">
-              <p className="text-body-sm font-semibold tracking-[0.5em] text-muted">CERTIFICATE OF COMPLETION</p>
-              <h1 className="mt-3 text-[44px] font-bold tracking-[0.3em] text-ink">수 료 증</h1>
-              <p className="mt-8 text-[32px] font-bold text-ink">{holder}</p>
-              <div className="mt-6 h-px w-24 bg-brand" />
-              <p className="mt-6 max-w-[70%] text-title leading-relaxed text-ink-soft">
-                위 사람은 바야다 아카데미에서 운영하는
-                <br />
-                <strong className="text-ink">「{cert.course.title}」</strong>
-                {duration ? ` (${duration})` : ""} 과정을
-                <br />
-                성실히 이수하였기에 이 증서를 수여합니다.
-              </p>
-            </div>
-
-            <div className="flex items-end justify-between gap-6">
-              <div className="flex items-end gap-4">
-                <CertificateQr url={verifyUrl} className="h-[84px] w-[84px] shrink-0" />
-                <div className="text-body-sm text-muted">
-                  <p>발급일 {formatDate(cert.issuedAt)}</p>
-                  <p className="mt-1">유효기간 {cert.expiresAt ? `${formatDate(cert.expiresAt)}까지` : "없음"}</p>
-                  <p className="mt-1 break-all">검증 {verifyUrl}</p>
+      {/* A4 가로 비율. 글자·여백을 증서 폭 기준(cqw)으로 잡아 휴대폰에서도 비율 그대로 줄어든다 */}
+      <div className="mx-auto w-full max-w-[1000px] px-3 sm:px-5 print:max-w-none print:px-0">
+        <div className="[container-type:inline-size] print:w-[297mm]">
+          <div className="aspect-[297/210] w-full bg-canvas shadow-md print:h-[210mm] print:shadow-none" style={{ padding: "3.2cqw" }}>
+            <div className="relative flex h-full flex-col border-ink" style={{ borderWidth: "0.3cqw", padding: "4.2cqw 5cqw" }}>
+              <span aria-hidden className="pointer-events-none absolute inset-0 border-brand" style={{ margin: "0.8cqw", borderWidth: "0.12cqw" }} />
+              <div className="relative flex items-start justify-between">
+                <div className="flex items-baseline" style={{ gap: "0.8cqw" }}>
+                  <span className="font-black tracking-tight text-brand" style={{ fontSize: "2.9cqw" }}>
+                    BAYADA
+                  </span>
+                  <span className="font-bold text-ink" style={{ fontSize: "1.7cqw" }}>
+                    Academy
+                  </span>
                 </div>
+                <p className="text-right text-muted" style={{ fontSize: "1.15cqw", lineHeight: 1.5 }}>
+                  수료번호
+                  <br />
+                  <span className="font-mono font-semibold text-ink" style={{ fontSize: "1.4cqw" }}>
+                    {cert.number}
+                  </span>
+                </p>
               </div>
-              <div className="text-right">
-                <p className="text-h3 font-bold text-ink">바야다홈헬스케어</p>
-                <p className="mt-1 text-body-sm text-muted">{cert.course.provider?.name ?? "BAYADA Home Health Care"}</p>
+
+              <div className="relative flex flex-1 flex-col items-center justify-center text-center">
+                <p className="font-semibold text-muted" style={{ fontSize: "1.3cqw", letterSpacing: "0.5em" }}>
+                  CERTIFICATE OF COMPLETION
+                </p>
+                <h1 className="font-extrabold text-ink" style={{ fontSize: "4.6cqw", letterSpacing: "0.3em", marginTop: "0.8cqw" }}>
+                  수 료 증
+                </h1>
+                <p className="font-bold text-ink" style={{ fontSize: "3.2cqw", marginTop: "2.6cqw" }}>
+                  {holder}
+                </p>
+                <div className="bg-brand" style={{ height: "0.15cqw", width: "8cqw", marginTop: "2cqw" }} />
+                <p className="text-ink-soft" style={{ fontSize: "1.75cqw", lineHeight: 1.75, marginTop: "2cqw", maxWidth: "72%" }}>
+                  위 사람은 바야다 아카데미에서 운영하는
+                  <br />
+                  <strong className="text-ink">「{cert.course.title}」</strong>
+                  {duration ? ` (${duration})` : ""} 과정을
+                  <br />
+                  성실히 이수하였기에 이 증서를 수여합니다.
+                </p>
+              </div>
+
+              <div className="relative flex items-end justify-between" style={{ gap: "2cqw" }}>
+                <div className="flex min-w-0 items-end" style={{ gap: "1.6cqw" }}>
+                  <CertificateQr url={verifyUrl} className="shrink-0" style={{ width: "8.4cqw", height: "8.4cqw" }} />
+                  <div className="min-w-0 text-muted" style={{ fontSize: "1.25cqw", lineHeight: 1.6 }}>
+                    <p>발급일 {formatDate(cert.issuedAt)}</p>
+                    <p>유효기간 {cert.expiresAt ? `${formatDate(cert.expiresAt)}까지` : "없음"}</p>
+                    <p className="break-all">검증 {verifyUrl}</p>
+                  </div>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="font-extrabold text-ink" style={{ fontSize: "2.1cqw" }}>
+                    바야다홈헬스케어
+                  </p>
+                  <p className="text-muted" style={{ fontSize: "1.25cqw", marginTop: "0.3cqw" }}>
+                    {cert.course.provider?.name ?? "BAYADA Home Health Care"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

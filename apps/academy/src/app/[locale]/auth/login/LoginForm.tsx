@@ -60,9 +60,9 @@ function Form({ social }: { social: SocialProviderId[] }) {
   const inputCls = controlClass("md");
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-5 py-16">
+    <div className="flex items-center justify-center py-6 lg:min-h-[560px] lg:py-10">
       <div className="w-full max-w-[400px]">
-        <h1 className="text-[28px] font-bold tracking-tight text-ink">로그인</h1>
+        <h1 className="text-[32px] font-extrabold tracking-[-0.03em] text-ink">로그인</h1>
         <p className="mt-2 text-body text-muted">바야다 아카데미 계정으로 학습을 이어가세요.</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -160,8 +160,8 @@ function SocialButton({ id, callbackUrl, locale }: { id: SocialProviderId; callb
       disabled={busy}
       className={
         kakao
-          ? "flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-body font-semibold text-black/85 transition-opacity hover:opacity-90 disabled:opacity-70"
-          : "flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-line bg-canvas text-body font-semibold text-ink transition-colors hover:bg-surface disabled:opacity-70"
+          ? "flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#FEE500] text-body font-semibold text-black/85 transition-opacity hover:opacity-90 disabled:opacity-70"
+          : "flex h-12 w-full items-center justify-center gap-2 rounded-full border border-line bg-canvas text-body font-semibold text-ink transition-colors hover:bg-surface disabled:opacity-70"
       }
     >
       {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : kakao ? <KakaoIcon /> : <GoogleIcon />}
