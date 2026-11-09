@@ -71,6 +71,16 @@
 - 운영 DB 데이터는 `import:wp` 를 `VIDEO_BASE_URL`/`UPLOADS_BASE_URL` 을 미디어 서버 주소로 줘서 넣는다. 개발 DB(bayada_v2)는 8088/8089 주소를 갖고 있어 그대로 덤프하면 안 된다.
 - 로컬에서 academy/admin 을 같은 localhost 에 띄우면 Auth.js 기본 쿠키(authjs.*)가 겹친다 → admin 은 `bayada-admin.*` 쿠키 이름 사용.
 
+## AWS 운영: EC2 한 대 (2026-11-09 구축, deploy/ec2/)
+- 계정 bayada-sim(446147096014), 서울. 인스턴스 bayada-prod `i-0bcbf1a85540c65bb` m7i-flex.large(8GB, 무료 플랜 허용 타입 중 최대), 60GB gp3(DeleteOnTermination=false), 고정 IP 54.116.157.4, SG bayada-web(80/443 전체, 22 는 사무실 IP 218.50.226.163/32 만). SSH 키는 PC `~/.ssh/bayada_ec2` (공개키만 AWS 에 import).
+- WHY 단일 EC2 + compose: 사용자 결정(라이트세일은 확장 어려움). 나중에 RDS/S3 로 뺄 때 DATABASE_URL·MEDIA_HOST 만 바꾼다.
+- 도메인 전에는 sslip.io 호스트(academy./admin./media.54-116-157-4.sslip.io, web 은 루트)로 Caddy 가 Let's Encrypt 자동 발급. 도메인 바꾸면 `.env` 의 *_HOST 수정 후 **재빌드 필수**(NEXT_PUBLIC_SITE_URL 이 빌드에 박힘) + DB 의 미디어 URL 치환.
+- 서버 경로: 코드 /srv/bayada/app (git archive 로 전송, git 저장소 아님), 미디어 /srv/bayada/media/{videos,uploads}(Caddy 가 직접 서빙), 백업 /srv/bayada/backups. 비밀값은 서버의 deploy/ec2/.env 에만 있음.
+- 초기 데이터 = 로컬 Docker DB(5435) pg_dump 에서 localhost:4300/8089/8088 주소를 media/academy 호스트로 sed 치환해 넣음.
+- 서버 cron(ubuntu): 04:00 deploy/ec2/backup.sh(DB 덤프 14일, **같은 디스크** — S3 복사 아직 없음), 09:00 /srv/bayada/renewals.sh(인증 갱신 메일 API). renewals.sh 는 .env 를 source 하지 않는다(MAIL_FROM 의 공백·<> 때문에 sh 가 깨짐) → grep 으로 값만 꺼냄.
+- 함정: 웹(web)은 빌드 때 data/_enriched-content.json 을 import → .dockerignore 에서 그 파일만 예외. 러너 이미지의 .next/cache 는 node 소유여야 next/image 캐시가 써진다.
+- 함정: 계정이 "무료 플랜"이라 6개월 또는 크레딧 소진 시 종료된다 → 운영 전 유료 플랜 업그레이드 필요(크레딧 유지). AWS 콘솔 작업은 Oinzi 바야다 프로필 + CloudShell(`type`/`press` 로 입력, 출력은 스크린샷으로 확인).
+
 # 아카데미 v3 학습자 기능: 찜·후기 신고·실습 정원·기관 대시보드(B2B)·초대 링크·수료증 QR
 
 ## 후기·평점
