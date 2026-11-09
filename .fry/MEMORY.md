@@ -72,6 +72,7 @@
 - 로컬에서 academy/admin 을 같은 localhost 에 띄우면 Auth.js 기본 쿠키(authjs.*)가 겹친다 → admin 은 `bayada-admin.*` 쿠키 이름 사용.
 
 ## AWS 운영: EC2 한 대 (2026-11-09 구축, deploy/ec2/)
+- 위상(2026-11-09 사용자 결정): 이 EC2(무료 플랜)는 **개발·시연용**. 정식 오픈 때 서버를 새로 옮긴다 → 유료 전환·S3 백업·무중단 배포는 지금 하지 않음. 옮길 때 필요한 것: DB pg_dump(backups 폴더), /srv/bayada/media 복사, deploy/ec2/.env 비밀값(새로 생성 권장), 도메인 확정 후 *_HOST 바꿔 재빌드, 수료증 QR/검증 주소가 새 도메인을 가리키게(이미 발급분은 sslip 주소 → 리다이렉트 필요), SES 인증·SMTP 파라미터(/bayada/smtp_url) 재설정.
 - 계정 bayada-sim(446147096014), 서울. 인스턴스 bayada-prod `i-0bcbf1a85540c65bb` m7i-flex.large(8GB, 무료 플랜 허용 타입 중 최대), 60GB gp3(DeleteOnTermination=false), 고정 IP 54.116.157.4, SG bayada-web(80/443 전체, 22 는 사무실 IP 218.50.226.163/32 만). SSH 키는 PC `~/.ssh/bayada_ec2` (공개키만 AWS 에 import).
 - WHY 단일 EC2 + compose: 사용자 결정(라이트세일은 확장 어려움). 나중에 RDS/S3 로 뺄 때 DATABASE_URL·MEDIA_HOST 만 바꾼다.
 - 도메인 전에는 sslip.io 호스트(academy./admin./media.54-116-157-4.sslip.io, web 은 루트)로 Caddy 가 Let's Encrypt 자동 발급. 도메인 바꾸면 `.env` 의 *_HOST 수정 후 **재빌드 필수**(NEXT_PUBLIC_SITE_URL 이 빌드에 박힘) + DB 의 미디어 URL 치환.
