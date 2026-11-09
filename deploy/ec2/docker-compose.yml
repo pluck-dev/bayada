@@ -93,6 +93,8 @@ services:
       CRON_SECRET: ${CRON_SECRET:-}
       REVIEW_ACCESS_PASSWORD: ${REVIEW_ACCESS_PASSWORD:-}
       REVIEW_ACCESS_SECRET: ${REVIEW_ACCESS_SECRET:-}
+      # 레슨 영상 서명 주소 (Caddy forward_auth → /api/media/verify). 없으면 영상이 전부 막힌다
+      MEDIA_SIGNING_SECRET: ${MEDIA_SIGNING_SECRET:?MEDIA_SIGNING_SECRET 필요}
 
   admin:
     build: { context: ../.., args: { APP: admin, NEXT_PUBLIC_SITE_URL: "https://${ACADEMY_HOST}" } }

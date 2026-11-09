@@ -19,14 +19,20 @@
 }
 
 # 레슨 영상(mp4, 범위 요청 지원)과 옛 사이트 업로드 이미지
+# 영상은 서명 주소만 보낸다: 강의실이 수강 자격 확인 뒤 ?exp=&sig= 를 붙이고, 여기서 아카데미에 서명을 확인받는다.
 {$MEDIA_HOST} {
 	header Access-Control-Allow-Origin *
-	header Cache-Control "public, max-age=604800"
-	handle_path /videos/* {
-		root * /srv/media/videos
+	handle /videos/* {
+		forward_auth academy:3000 {
+			uri /api/media/verify
+		}
+		header Cache-Control "private, max-age=3600"
+		# 경로를 고치지 않는다(uri 재작성은 forward_auth 보다 먼저 돌아 서명한 경로가 달라진다) → /srv/media/videos/<파일>
+		root * /srv/media
 		file_server
 	}
 	handle_path /uploads/* {
+		header Cache-Control "public, max-age=604800"
 		root * /srv/media/uploads
 		file_server
 	}

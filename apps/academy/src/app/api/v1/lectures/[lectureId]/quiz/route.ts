@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { errorResponse } from "@/lib/api-utils";
 import { getViewer } from "@/lib/viewer";
-import { getLectureEnrollment, gradeQuiz, markLectureComplete, type QuizAnswer } from "@/lib/queries/learning";
+import { prisma } from "@bayada/db";
+import { getLectureEnrollment, gradeQuiz, markLectureComplete, quizBlockedBy, type QuizAnswer } from "@/lib/queries/learning";
 
 function parseAnswers(raw: unknown): QuizAnswer[] {
   if (!Array.isArray(raw)) return [];
@@ -30,6 +31,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ lec
       return NextResponse.json({ error: "퀴즈를 찾을 수 없습니다" }, { status: 404 });
     }
     if (!info.enrolled) return NextResponse.json({ error: "수강 신청 후 이용할 수 있어요" }, { status: 403 });
+
+    // 앞 강의를 다 들어야 퀴즈를 풀 수 있다 (이미 통과·완료한 퀴즈는 다시 풀어도 된다)
+    const passedBefore = await prisma.progress.findFirst({
+      where: { userId: viewer.id, lectureId, completed: true },
+      select: { id: true },
+    });
+    if (!passedBefore && (await quizBlockedBy(viewer.id, info.courseId, lectureId))) {
+      return NextResponse.json({ error: "앞의 강의를 모두 완료해야 퀴즈를 풀 수 있어요" }, { status: 403 });
+    }
 
     const body = (await request.json().catch(() => ({}))) as { answers?: unknown };
     const result = await gradeQuiz(viewer.id, lectureId, parseAnswers(body.answers));

@@ -25,21 +25,42 @@ interface VideoPlayerProps {
   title: string;
   /** 이어보기 시작 위치(초) */
   startAt?: number;
-  onTimeUpdate?: (currentTime: number) => void;
-  onComplete?: () => void;
+  /** 앞으로 건너뛰기 막기: 지금까지 본 가장 먼 지점까지만 이동할 수 있다 */
+  lockForward?: boolean;
+  /** 서버에 기록된, 지금까지 본 가장 먼 지점(초) */
+  watchedUntil?: number;
+  /** 5초마다: 본 가장 먼 지점(초)과 영상 길이 */
+  onTimeUpdate?: (watchedSec: number, duration: number) => void;
+  onComplete?: (duration: number) => void;
+  /** 영상을 못 불러왔을 때 '다시 시도' — 서명 주소가 만료됐을 수 있어 새 주소를 받아 온다 */
+  onReload?: () => void;
 }
 
 /**
  * 강의 영상 플레이어. 브라우저 기본 컨트롤 대신 디자인된 컨트롤:
  * 재생/일시정지 · 10초 앞뒤 · 탐색 막대(키보드 ←→) · 음소거 · 재생 속도 · 전체 화면(컨트롤 유지) · 이어보기.
  * 재생 중엔 2.5초 뒤 컨트롤이 숨고, 마우스·터치·키보드가 있으면 다시 보인다. 끝까지 보면 onComplete.
+ * lockForward 면 본 구간 안에서만 이동할 수 있다(뒤로 가기·다시 보기는 자유). 진짜 판정은 서버가 한다.
  */
-export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComplete }: VideoPlayerProps) {
+export function VideoPlayer({
+  videoUrl,
+  title,
+  startAt = 0,
+  lockForward = false,
+  watchedUntil = 0,
+  onTimeUpdate,
+  onComplete,
+  onReload,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const speedBtn = useRef<HTMLButtonElement>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastReported = useRef(0);
+  const furthestRef = useRef(watchedUntil);
+  const [furthest, setFurthest] = useState(watchedUntil);
+  // 오류 뒤 새 주소로 다시 불러올 때 이어서 볼 위치
+  const resumeAfterReload = useRef(0);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -83,11 +104,12 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
     (sec: number) => {
       const v = videoRef.current;
       if (!v || !Number.isFinite(v.duration)) return;
-      v.currentTime = Math.min(Math.max(0, sec), v.duration);
+      const limit = lockForward ? Math.min(v.duration, furthestRef.current) : v.duration;
+      v.currentTime = Math.min(Math.max(0, sec), limit);
       setCurrent(v.currentTime);
       showControls();
     },
-    [showControls]
+    [showControls, lockForward]
   );
 
   const toggleMute = useCallback(() => {
@@ -154,6 +176,7 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
 
   const pct = duration ? (current / duration) * 100 : 0;
   const bufPct = duration ? (buffered / duration) * 100 : 0;
+  const watchedPct = duration ? Math.min(100, (furthest / duration) * 100) : 0;
   const controlsShown = controlsVisible || !playing || speedOpen;
 
   return (
@@ -189,12 +212,26 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
         onWaiting={() => setWaiting(true)}
         onPlaying={() => setWaiting(false)}
         onCanPlay={() => setWaiting(false)}
-        onError={() => setError(true)}
+        onError={() => {
+          resumeAfterReload.current = videoRef.current?.currentTime ?? 0;
+          setError(true);
+        }}
+        onSeeking={() => {
+          // 브라우저·OS 기본 컨트롤(전체 화면 iOS, 미디어 키)로 앞으로 건너뛴 경우도 되돌린다
+          const v = videoRef.current;
+          if (v && lockForward && v.currentTime > furthestRef.current + 1) v.currentTime = furthestRef.current;
+        }}
         onLoadedMetadata={() => {
           const v = videoRef.current;
           if (!v) return;
           setDuration(v.duration);
           setError(false);
+          if (resumeAfterReload.current > 0) {
+            v.currentTime = resumeAfterReload.current;
+            setCurrent(resumeAfterReload.current);
+            resumeAfterReload.current = 0;
+            return;
+          }
           // 이어보기: 끝 10초 전까지만 (거의 다 본 영상은 처음부터)
           if (startAt > 5 && startAt < v.duration - 10) {
             v.currentTime = startAt;
@@ -210,17 +247,27 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
           const v = videoRef.current;
           if (!v) return;
           setCurrent(v.currentTime);
+          // 이어서 재생한 구간만 '본 지점'으로 늘린다 (건너뛴 구간은 안 셈)
+          if (!v.seeking && v.currentTime > furthestRef.current && v.currentTime <= furthestRef.current + 3) {
+            furthestRef.current = v.currentTime;
+            setFurthest(v.currentTime);
+          }
           const sec = Math.floor(v.currentTime);
-          // 5초마다 시청 위치 보고(이어보기용)
+          // 5초마다 본 가장 먼 지점 보고(이어보기·완료 판정용)
           if (Math.abs(sec - lastReported.current) >= 5) {
             lastReported.current = sec;
-            onTimeUpdate?.(sec);
+            onTimeUpdate?.(Math.floor(furthestRef.current), v.duration);
           }
         }}
         onEnded={() => {
+          const v = videoRef.current;
           setPlaying(false);
           setControlsVisible(true);
-          onComplete?.();
+          if (v) {
+            furthestRef.current = Math.max(furthestRef.current, v.duration);
+            setFurthest(furthestRef.current);
+          }
+          onComplete?.(v?.duration ?? 0);
         }}
       />
 
@@ -234,6 +281,8 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
             type="button"
             onClick={() => {
               setError(false);
+              // 새 서명 주소를 받아 오면 src 가 바뀌어 다시 불러온다. 주소가 그대로면(네트워크 문제) 지금 다시 시도
+              onReload?.();
               videoRef.current?.load();
             }}
             className="mt-1 inline-flex h-10 items-center gap-1.5 rounded-full bg-white px-5 text-body-sm font-bold text-ink hover:bg-neutral-200"
@@ -306,6 +355,7 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
         >
           <div className="relative h-1 w-full overflow-hidden rounded-full bg-white/25 transition-[height] group-hover/seek:h-1.5 group-focus-visible/seek:h-1.5">
             <div className="absolute inset-y-0 left-0 bg-white/35" style={{ width: `${bufPct}%` }} />
+            {lockForward && <div className="absolute inset-y-0 left-0 bg-white/60" style={{ width: `${watchedPct}%` }} />}
             <div className="absolute inset-y-0 left-0 bg-brand" style={{ width: `${pct}%` }} />
           </div>
           <span
@@ -322,7 +372,7 @@ export function VideoPlayer({ videoUrl, title, startAt = 0, onTimeUpdate, onComp
           <CtrlButton label="10초 뒤로" onClick={() => seekTo(current - 10)}>
             <RotateCcw className="h-[18px] w-[18px]" />
           </CtrlButton>
-          <CtrlButton label="10초 앞으로" onClick={() => seekTo(current + 10)}>
+          <CtrlButton label={lockForward ? "10초 앞으로 (본 구간까지)" : "10초 앞으로"} onClick={() => seekTo(current + 10)}>
             <RotateCw className="h-[18px] w-[18px]" />
           </CtrlButton>
           <CtrlButton label={muted ? "소리 켜기" : "음소거"} onClick={toggleMute}>

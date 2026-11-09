@@ -27,6 +27,7 @@ export function LectureBody({
   enrolled,
   initialCompleted,
   startAt,
+  watchedUntil,
   basePath,
   prev,
   next,
@@ -42,6 +43,8 @@ export function LectureBody({
   enrolled: boolean;
   initialCompleted: boolean;
   startAt: number;
+  /** 서버에 기록된 본 가장 먼 지점(초) — 앞으로 건너뛰기 한계 */
+  watchedUntil: number;
   basePath: string;
   prev: NavLecture | null;
   next: NavLecture | null;
@@ -54,14 +57,15 @@ export function LectureBody({
   const [saving, setSaving] = useState(false);
   const [justFinishedCourse, setJustFinishedCourse] = useState(false);
 
-  const complete = useCallback(async () => {
+  // 영상은 본 지점·길이를 같이 보내고 서버가 95% 이상 봤는지 확인한다. 읽기는 그대로 완료
+  const complete = useCallback(async (watchedSec?: number, duration?: number) => {
     if (!enrolled || completed || saving) return;
     setSaving(true);
     try {
       const res = await fetch(`/api/v1/progress/${lectureId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ completed: true }),
+        body: JSON.stringify(type === "VIDEO" ? { completed: true, watchedSec, duration } : { completed: true }),
       });
       const data = (await res.json().catch(() => ({}))) as { courseCompleted?: boolean; error?: string };
       if (!res.ok) {
@@ -77,18 +81,23 @@ export function LectureBody({
     } finally {
       setSaving(false);
     }
-  }, [enrolled, completed, saving, lectureId, router, toast, courseAlreadyDone]);
+  }, [enrolled, completed, saving, lectureId, router, toast, courseAlreadyDone, type]);
 
   const reportTime = useCallback(
-    (sec: number) => {
+    (sec: number, duration: number) => {
       if (!enrolled) return;
+      // 95% 까지 봤으면 끝까지 기다리지 않고 완료 처리
+      if (!completed && duration > 0 && sec >= Math.floor(duration * 0.95)) {
+        void complete(sec, duration);
+        return;
+      }
       fetch(`/api/v1/progress/${lectureId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ watchedSec: sec }),
       }).catch(() => undefined);
     },
-    [enrolled, lectureId]
+    [enrolled, completed, complete, lectureId]
   );
 
   const NextIcon = next ? NEXT_ICON[next.type] : null;
@@ -98,7 +107,16 @@ export function LectureBody({
       {type === "VIDEO" ? (
         <>
           <div className="overflow-hidden bg-black sm:rounded-[22px]">
-            <VideoPlayer videoUrl={videoUrl} title={title} startAt={startAt} onTimeUpdate={reportTime} onComplete={complete} />
+            <VideoPlayer
+              videoUrl={videoUrl}
+              title={title}
+              startAt={startAt}
+              lockForward={enrolled && !completed}
+              watchedUntil={watchedUntil}
+              onTimeUpdate={reportTime}
+              onComplete={(duration) => void complete(Math.floor(duration), duration)}
+              onReload={() => router.refresh()}
+            />
           </div>
           <div className="mt-6 px-5 sm:px-0">{heading}</div>
         </>
@@ -162,14 +180,14 @@ export function LectureBody({
                   : completed
                     ? "이 강의는 진도에 반영됐어요."
                     : type === "VIDEO"
-                      ? "영상을 끝까지 보면 자동으로 완료돼요."
+                      ? "영상을 끝까지 보면 자동으로 완료돼요. 아직 안 본 구간으로는 건너뛸 수 없어요."
                       : "다 읽었으면 완료를 눌러 주세요. 다음 강의로 넘어가도 완료돼요."}
               </p>
             </div>
           </div>
-          {enrolled && !completed && (
-            <Button onClick={complete} loading={saving} variant="outline" className="shrink-0">
-              <Check aria-hidden /> {type === "VIDEO" ? "완료로 표시" : "다 읽었어요"}
+          {enrolled && !completed && type === "TEXT" && (
+            <Button onClick={() => void complete()} loading={saving} variant="outline" className="shrink-0">
+              <Check aria-hidden /> 다 읽었어요
             </Button>
           )}
         </div>

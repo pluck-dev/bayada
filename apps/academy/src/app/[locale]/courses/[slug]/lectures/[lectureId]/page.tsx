@@ -7,6 +7,7 @@ import { prisma } from "@bayada/db";
 import type { LectureType } from "@bayada/db";
 import { getViewer } from "@/lib/viewer";
 import { getCourseForDetail, resolveCourseAccess } from "@/lib/queries/courses";
+import { signMediaUrl } from "@/lib/media-sign";
 import { LECTURE_TYPE_LABEL, formatSeconds } from "@/lib/labels";
 import { decodeParam } from "@/lib/params";
 import { htmlToText } from "@/lib/html-text";
@@ -121,6 +122,11 @@ export default async function LecturePage({ params }: { params: Params }) {
   // 수강 진도율은 Enrollment 기준(마이 러닝·상세와 동일). 옮겨 온 데이터는 레슨 기록보다 높을 수 있다
   const courseDone = !!access.enrollment?.completedAt;
   const progress = access.enrollment ? (courseDone ? 100 : Math.max(access.enrollment.progressPercent, computed)) : computed;
+  // 퀴즈는 앞 레슨을 모두 완료해야 열린다 (이미 통과·완료한 퀴즈는 그대로 보여 준다). 채점 API 도 같은 규칙
+  const quizBlocker =
+    current.type === "QUIZ" && enrolled && !done.has(lectureId) && !passedAttempt
+      ? all.slice(0, index).find((l) => !done.has(l.id)) ?? null
+      : null;
   const prev = index > 0 ? { id: all[index - 1].id, title: all[index - 1].title, type: all[index - 1].type } : null;
   const next = index < all.length - 1 ? { id: all[index + 1].id, title: all[index + 1].title, type: all[index + 1].type } : null;
   const basePath = `${detailPath}/lectures`;
@@ -262,7 +268,19 @@ export default async function LecturePage({ params }: { params: Params }) {
               <div className="px-5 pt-6 sm:px-0 sm:pt-0">
                 <LectureHeading section={current.sectionTitle} type={current.type} title={current.title} meta={`${lecture.quiz?.questions.length ?? 0}문항`} />
                 <div className="mt-6">
-                  {lecture.quiz && lecture.quiz.questions.length > 0 ? (
+                  {quizBlocker ? (
+                    <EmptyState
+                      framed
+                      icon={<Lock />}
+                      title="앞의 강의를 모두 마치면 퀴즈가 열려요"
+                      description={`영상을 끝까지 보고 오세요. 다음에 들을 강의: ${quizBlocker.title}`}
+                      action={
+                        <Link href={`${basePath}/${quizBlocker.id}`} className={buttonVariants({ variant: "primary" })}>
+                          이어서 학습하기
+                        </Link>
+                      }
+                    />
+                  ) : lecture.quiz && lecture.quiz.questions.length > 0 ? (
                     <QuizRunner
                       lectureId={lectureId}
                       questions={lecture.quiz.questions.map(toClientQuestion)}
@@ -292,11 +310,12 @@ export default async function LecturePage({ params }: { params: Params }) {
                     meta={current.duration ? formatSeconds(current.duration) : null}
                   />
                 }
-                videoUrl={lecture.videoUrl}
+                videoUrl={signMediaUrl(lecture.videoUrl)}
                 contentHtml={lecture.content}
                 enrolled={enrolled}
                 initialCompleted={done.has(lectureId)}
                 startAt={done.has(lectureId) ? 0 : startAt}
+                watchedUntil={startAt}
                 basePath={basePath}
                 prev={prev}
                 next={next}

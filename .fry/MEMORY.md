@@ -399,3 +399,19 @@
 - 공용 `container-page`(lg)·`section-y`(md) 에 미디어쿼리가 있어, 아카데미 쪽 같은 이름 @utility 에 같은 중단점을 다시 쓰지 않으면 큰 화면에서 공용 값이 이긴다.
 - next/font/local 경로는 layout.tsx 기준 `../../public/fonts/...`. PowerShell 로 저장하면 BOM·CRLF 가 붙으니 확인.
 - 전 프로그램이 INTERNAL 이라 비로그인으로는 강의 상세 h1·강의실 제목을 못 본다(상세는 열람 제한 안내, 강의실은 로그인으로). 확인하려면 임직원 계정 또는 사본 DB.
+
+# 영상 보호·진도 규칙: 서명 주소(MEDIA_SIGNING_SECRET, Caddy forward_auth), 앞으로 건너뛰기 금지, 95% 완료, 퀴즈 잠금
+## WHY (2026-11-10 사용자 결정)
+- 예전 WP 는 Cloudflare Stream(스트리밍)이라 수강생이 파일을 받기 어려웠다. 우리 mp4 는 관리자 쪽 백업(2026-10-28)이고, 미디어 서버가 주소만 알면 누구에게나 주던 상태였다 → 서명 주소로 막음. 쿠키 방식은 media.* 도메인에 쿠키가 안 가서 버렸다.
+- 로그인 수강생이 자기 브라우저에서 저장하는 건 못 막는다(스트리밍·DRM 영역). 막는 건 '주소 공유'.
+## 흐름
+- 강의실 페이지가 접근 판정 뒤 `signMediaUrl()` 로 `?exp=&sig=`(HMAC-SHA256(path\nexp), 6시간) 를 붙인다. Caddy `{$MEDIA_HOST}` 의 `/videos/*` 는 `forward_auth academy:3000 /api/media/verify` → X-Forwarded-Uri 서명 확인(DB 조회 없음) → 204 면 파일, 403/410/503 그대로 반환. `/uploads/*` 는 공개 그대로.
+- 만료되면 플레이어 '다시 시도'가 router.refresh 로 새 주소를 받아 같은 위치에서 이어 본다.
+- 진도: `Progress.watchedSec` = 본 가장 먼 지점(이어보기 겸). 줄지 않고, 직전 기록 이후 경과 시간×2배속+5초까지만 늘어난다(요청 조작으로 끝 점프 불가). 영상 완료는 서버가 watchedSec ≥ 길이×0.95 일 때만(`watchedEnough`). 길이 없는 레슨 4개만 플레이어가 보낸 길이 사용. 영상 '완료로 표시' 버튼은 없앰(읽기는 그대로).
+- 플레이어: 수강 중·미완료면 lockForward — 본 지점까지만 탐색(진행 바·10초 버튼·키보드·기본 컨트롤 seeking 모두 되돌림). 완료한 영상·미리보기는 자유 탐색.
+- 퀴즈: 같은 프로그램에서 앞 레슨을 모두 완료해야 열림(페이지 잠금 화면 + 퀴즈 API 403). 이미 완료한 퀴즈는 예외.
+## 함정
+- Caddy 에서 `uri strip_prefix` 를 쓰면 rewrite 가 forward_auth 보다 먼저 돌아 서명 경로가 달라져 전부 403 → 경로를 고치지 말고 `root * /srv/media` 로 서빙(파일은 /srv/media/videos/<파일>).
+- compose 는 MEDIA_SIGNING_SECRET 없으면 시작을 거부한다(`:?`). 로컬은 비밀값이 있어도 nginx(4300) 가 확인을 안 해서 그냥 재생된다.
+- Oinzi 브라우저는 mp4 재생이 안 된다(원본 주소도 readyState 0) → 플레이어 탐색 잠금은 Oinzi 로 실측 불가. API·Caddy 는 curl 로 검증.
+- 옛 WP 진도는 watchedSec 가 없어, 미완료 영상은 처음부터 봐야 완료된다(완료된 레슨은 그대로).

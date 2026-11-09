@@ -1,0 +1,526 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261110-003543-video-signed-urls-and-watch-rules",
+  "created_at": "2026-11-10T00:35:43+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "5c3556eb0355504f50f21a2fc32764c2fd8c8c51",
+  "request": "영상은 앞으로 넘기기 막고 100%(95%) 봐야 완료, 영상 파일은 로그인/서명 주소로 보호, 퀴즈도 영상 다 보고 나와야 한다",
+  "title": "Video signed URLs and watch rules",
+  "purpose": "레슨 영상 주소 공유를 서명 주소로 막고, 앞으로 건너뛰기 금지·95% 시청 완료·퀴즈는 앞 강의 완료 후에만 열리게 한다.",
+  "files": [
+    {
+      "path": "apps/academy/src/app/[locale]/courses/[slug]/lectures/[lectureId]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 10,
+          "new_end": 10
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 125,
+          "new_end": 129
+        },
+        {
+          "old_start": 265,
+          "old_end": 265,
+          "new_start": 271,
+          "new_end": 283
+        },
+        {
+          "old_start": 295,
+          "old_end": 295,
+          "new_start": 313,
+          "new_end": 313
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 318,
+          "new_end": 318
+        }
+      ],
+      "working_tree_sha256": "be0ec60baea0077d9d178076da266d50ce99e7c0362ee2ceda69132a4997fc4b",
+      "symbols": [
+        "LecturePage"
+      ],
+      "purpose": "영상 주소 서명, 본 지점 전달, 퀴즈 잠금 화면.",
+      "previous_behavior": "원본 영상 주소를 그대로 내려 주고 퀴즈는 바로 보여 줬다.",
+      "new_behavior": "접근 판정 뒤 서명 주소를 내려 주고, 퀴즈는 앞 레슨 미완료 시 '앞의 강의를 모두 마치면 퀴즈가 열려요' + 이어서 학습하기.",
+      "data_impact": "읽기만.",
+      "access_control_impact": "none: 권한 판정 변화 없음.",
+      "risks": [
+        "none: 화면 분기 추가."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/app/api/media/verify/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 14
+        }
+      ],
+      "working_tree_sha256": "437ef92ed3f3773672948e44ee18bc59715fa722a284a9c075e36567e3c64172",
+      "symbols": [
+        "GET /api/media/verify"
+      ],
+      "purpose": "Caddy forward_auth 가 영상 요청마다 서명을 확인받는 내부 엔드포인트.",
+      "previous_behavior": "File did not exist in the baseline commit.",
+      "new_behavior": "X-Forwarded-Uri 의 서명이 맞으면 204, 위조·누락 403, 만료 410, 비밀값 없음 503.",
+      "data_impact": "none: DB 접근 없음.",
+      "access_control_impact": "공개 엔드포인트지만 판정만 하고 데이터는 주지 않는다.",
+      "risks": [
+        "비밀값 누락 시 영상 전부 503 — compose 가 시작 전에 막는다."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/app/api/v1/lectures/[lectureId]/quiz/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 5
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 35,
+          "new_end": 43
+        }
+      ],
+      "working_tree_sha256": "d531a3f2d1e8800188ea65e97e32331d6a32426d8cd68635142ecdbb2f1ac784",
+      "symbols": [
+        "POST /api/v1/lectures/:lectureId/quiz"
+      ],
+      "purpose": "퀴즈를 앞 레슨 완료 후에만 응시하게 한다.",
+      "previous_behavior": "수강 중이면 언제든 채점.",
+      "new_behavior": "앞 레슨이 남아 있으면 403(이미 완료한 퀴즈는 예외).",
+      "data_impact": "Progress 읽기 1회 추가.",
+      "access_control_impact": "none: 권한 판정 변화 없음.",
+      "risks": [
+        "none: 기존 통과자는 예외 처리로 영향 없음."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/app/api/v1/progress/[lectureId]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 5
+        },
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 9,
+          "new_end": 11
+        },
+        {
+          "old_start": 20,
+          "old_end": 21,
+          "new_start": 23,
+          "new_end": 24
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 31,
+          "new_end": 40
+        }
+      ],
+      "working_tree_sha256": "fba60104a95f8bc17d518fb971d0e8c8607cb28164779942adc4a4218f6cc961",
+      "symbols": [
+        "PUT /api/v1/progress/:lectureId"
+      ],
+      "purpose": "영상 완료를 서버 시청 기록으로 검증한다.",
+      "previous_behavior": "completed:true 면 영상도 바로 완료 처리.",
+      "new_behavior": "영상은 서버 watchedSec ≥ 길이×95% 일 때만 완료, 아니면 409. 길이 없으면 플레이어가 보낸 duration 사용. 읽기는 그대로.",
+      "data_impact": "Progress 쓰기 조건만 엄격해짐.",
+      "access_control_impact": "none: 로그인·수강 확인 그대로.",
+      "risks": [
+        "DB 길이(duration)가 실제 영상보다 길면 완료가 안 될 수 있다(로컬 표본 확인 시 일치)."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/components/VideoPlayer.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 28,
+          "old_end": 29,
+          "new_start": 28,
+          "new_end": 36
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 43,
+          "new_end": 43
+        },
+        {
+          "old_start": 37,
+          "old_end": 37,
+          "new_start": 45,
+          "new_end": 54
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 60,
+          "new_end": 63
+        },
+        {
+          "old_start": 86,
+          "old_end": 86,
+          "new_start": 107,
+          "new_end": 108
+        },
+        {
+          "old_start": 90,
+          "old_end": 90,
+          "new_start": 112,
+          "new_end": 112
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 179,
+          "new_end": 179
+        },
+        {
+          "old_start": 192,
+          "old_end": 192,
+          "new_start": 215,
+          "new_end": 223
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 229,
+          "new_end": 234
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 250,
+          "new_end": 254
+        },
+        {
+          "old_start": 214,
+          "old_end": 214,
+          "new_start": 256,
+          "new_end": 256
+        },
+        {
+          "old_start": 217,
+          "old_end": 217,
+          "new_start": 259,
+          "new_end": 259
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 263,
+          "new_end": 263
+        },
+        {
+          "old_start": 223,
+          "old_end": 223,
+          "new_start": 266,
+          "new_end": 270
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 284,
+          "new_end": 285
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 358,
+          "new_end": 358
+        },
+        {
+          "old_start": 325,
+          "old_end": 325,
+          "new_start": 375,
+          "new_end": 375
+        }
+      ],
+      "working_tree_sha256": "21f937aa8623fc5bacb4420eb5cb0c7628dc6cd2d37a7e77e2413d6e558f4a4e",
+      "symbols": [
+        "VideoPlayer"
+      ],
+      "purpose": "본 구간 안에서만 탐색하고, 서명 만료 시 새 주소로 이어 본다.",
+      "previous_behavior": "진행 바·10초 앞으로·키보드로 어디든 이동, 끝나면 완료 요청.",
+      "new_behavior": "lockForward 면 본 가장 먼 지점까지만 이동(기본 컨트롤 seeking 도 되돌림), 진행 바에 본 구간 표시, 5초마다 본 지점·길이 보고, 오류 시 onReload 로 새 주소.",
+      "data_impact": "none: 데이터 접근 변화 없음.",
+      "access_control_impact": "none: 권한 판정 변화 없음.",
+      "risks": [
+        "Oinzi 가 mp4 를 재생하지 못해 실화면 탐색 잠금은 미확인(서버 검증이 최종 방어)."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/components/lecture/LectureBody.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 30,
+          "new_end": 30
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 46,
+          "new_end": 47
+        },
+        {
+          "old_start": 57,
+          "old_end": 57,
+          "new_start": 60,
+          "new_end": 61
+        },
+        {
+          "old_start": 64,
+          "old_end": 64,
+          "new_start": 68,
+          "new_end": 68
+        },
+        {
+          "old_start": 80,
+          "old_end": 80,
+          "new_start": 84,
+          "new_end": 84
+        },
+        {
+          "old_start": 83,
+          "old_end": 83,
+          "new_start": 87,
+          "new_end": 87
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 89,
+          "new_end": 93
+        },
+        {
+          "old_start": 91,
+          "old_end": 91,
+          "new_start": 100,
+          "new_end": 100
+        },
+        {
+          "old_start": 101,
+          "old_end": 101,
+          "new_start": 110,
+          "new_end": 119
+        },
+        {
+          "old_start": 165,
+          "old_end": 165,
+          "new_start": 183,
+          "new_end": 183
+        },
+        {
+          "old_start": 170,
+          "old_end": 172,
+          "new_start": 188,
+          "new_end": 190
+        }
+      ],
+      "working_tree_sha256": "8062b2c4692e40af197e94b725cefd4b36f60abda72cf5cdc9259da7904be05c",
+      "symbols": [
+        "LectureBody"
+      ],
+      "purpose": "영상 완료를 95% 자동 완료로 바꾸고 수동 완료 버튼을 없앤다.",
+      "previous_behavior": "영상에도 '완료로 표시' 버튼이 있어 보지 않고 완료 가능.",
+      "new_behavior": "영상은 95% 도달·끝나면 자동 완료 요청(본 지점·길이 포함), 수동 버튼은 읽기 레슨만.",
+      "data_impact": "none: 데이터 접근 변화 없음.",
+      "access_control_impact": "none: 권한 판정 변화 없음.",
+      "risks": [
+        "none: 화면 분기·버튼 정리만."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/lib/media-sign.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 63
+        }
+      ],
+      "working_tree_sha256": "20bab5aba1d88d4d28d8ad427ae53468967bf0aa0b5c01cf70b4e9184b1ae8c5",
+      "symbols": [
+        "signMediaUrl",
+        "verifyMediaUri"
+      ],
+      "purpose": "영상 주소에 유효기간·HMAC 서명을 붙이고 확인한다.",
+      "previous_behavior": "File did not exist in the baseline commit.",
+      "new_behavior": "MEDIA_SIGNING_SECRET 이 있으면 /videos/ 경로 주소에 exp(6시간)·sig 를 붙이고, 확인 시 만료·위조·다른 파일 재사용을 거부한다.",
+      "data_impact": "none: DB 를 읽지 않는 순수 계산.",
+      "access_control_impact": "영상 파일 접근이 '서명 주소를 가진 요청'으로 제한된다.",
+      "risks": [
+        "비밀값을 바꾸면 이미 열린 강의실의 영상 주소가 무효 → '다시 시도'로 새 주소를 받는다."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "apps/academy/src/lib/queries/learning.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 90,
+          "new_end": 90
+        },
+        {
+          "old_start": 112,
+          "old_end": 113,
+          "new_start": 113,
+          "new_end": 135
+        },
+        {
+          "old_start": 116,
+          "old_end": 117,
+          "new_start": 138,
+          "new_end": 139
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 141,
+          "new_end": 169
+        }
+      ],
+      "working_tree_sha256": "71ceaf4df5588fb8075cb143a7c12949942dd82165653a806ae5d2714cea58ce",
+      "symbols": [
+        "saveWatchedSec",
+        "watchedEnough",
+        "VIDEO_COMPLETE_RATIO",
+        "quizBlockedBy",
+        "getLectureEnrollment"
+      ],
+      "purpose": "시청 지점 저장을 '본 가장 먼 지점, 시간에 맞게만 증가'로 바꾸고 완료·퀴즈 잠금 판정을 추가한다.",
+      "previous_behavior": "watchedSec 를 보고된 값 그대로 덮어썼다(줄거나 끝으로 점프 가능).",
+      "new_behavior": "watchedSec 는 줄지 않고 직전 기록 이후 경과 시간×2+5초까지만 증가. 완료 판정은 길이의 95%. 퀴즈는 앞 레슨 미완료 시 막는다.",
+      "data_impact": "Progress.watchedSec 쓰기 규칙 변경(값 의미: 마지막 위치 → 본 가장 먼 지점). 기존 행은 그대로 두고 이후 저장부터 적용.",
+      "access_control_impact": "none: 수강 자격 판정은 그대로.",
+      "risks": [
+        "2배속 초과로 보는 방법이 생기면 기록이 늦게 따라온다(현재 최고 2배속).",
+        "옛 WP 진도엔 watchedSec 가 없어 미완료 영상은 처음부터 봐야 완료."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    },
+    {
+      "path": "deploy/ec2/docker-compose.yml",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 96,
+          "new_end": 97
+        }
+      ],
+      "working_tree_sha256": "6657e82ceb62b7a4a6ad60f4948a85bccf5941ce64a9221bbd9c66dae0646958",
+      "symbols": [
+        "academy.environment.MEDIA_SIGNING_SECRET"
+      ],
+      "purpose": "서명 비밀값을 academy 에 넘기고 누락 시 시작을 막는다.",
+      "previous_behavior": "없었다.",
+      "new_behavior": "MEDIA_SIGNING_SECRET 필수(`:?`).",
+      "data_impact": "none: 데이터 접근 변화 없음.",
+      "access_control_impact": "none: 권한 판정 변화 없음.",
+      "risks": [
+        "서버 .env 에 값을 넣기 전에 up 하면 compose 가 오류로 멈춘다(의도)."
+      ],
+      "rollback": "git revert 로 되돌린다. 서버는 Caddyfile·compose 도 같이 되돌리고 재배포. Progress.watchedSec 값은 호환(정수 초) — 되돌려도 그대로 쓸 수 있다."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "none: 이 커밋 작성 중 운영(EC2) 데이터 미접근. 로컬 개발 DB(bayada_v2)에서 임시 계정 qa.internal@bayada.local 을 만들고 내부 조직 지정·수강·진도·퀴즈 시도를 기록해 검증한 뒤 해당 사용자·수강·진도·퀴즈 시도 행을 모두 삭제.",
+    "schema_migration": "none: 스키마 변경 없음.",
+    "external_side_effects": [
+      "none: 커밋 시점까지 배포 없음. 로컬 검증용 Caddy 컨테이너(bayada-caddytest)는 띄웠다가 삭제."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter academy typecheck (tsc --noEmit)",
+      "result": "passed",
+      "evidence": "오류 없음."
+    },
+    {
+      "command": "curl /api/media/verify (헤더 없음 / 올바른 경로 / /videos 뺀 경로)",
+      "result": "passed",
+      "evidence": "403 / 204 / 403."
+    },
+    {
+      "command": "로컬 Caddy(forward_auth, 운영과 같은 규칙) 로 영상 요청",
+      "result": "passed",
+      "evidence": "서명 206(범위 요청), 서명 없음 403, 위조 403, 다른 파일에 재사용 403, 만료 410. 처음 uri strip_prefix 버전은 전부 403 이라 수정함."
+    },
+    {
+      "command": "임시 임직원 계정: 진도 API 로 끝 점프·94%/95% 완료·감소 시도",
+      "result": "passed",
+      "evidence": "490 보고 → 5초만 인정, 완료 409. 466/496(94%) 409, 472/496(95%) 완료. 10 보고해도 472 유지."
+    },
+    {
+      "command": "퀴즈 잠금: 앞 강의 미완료/완료 후 채점 API·페이지",
+      "result": "passed",
+      "evidence": "미완료 403 + 잠금 화면, 앞 4강 완료 후 채점 정상."
+    },
+    {
+      "command": "Oinzi 강의실 화면",
+      "result": "passed",
+      "evidence": "'아직 안 본 구간으로는 건너뛸 수 없어요' 안내, 영상 '완료로 표시' 버튼 없음, 퀴즈 잠금 화면 스크린샷."
+    },
+    {
+      "command": "플레이어 실재생 탐색 잠금(진행 바 클릭)",
+      "result": "not_run",
+      "evidence": "Oinzi 브라우저가 mp4 재생을 못 함(원본 주소도 readyState 0). 서버 측 판정은 위에서 검증."
+    }
+  ],
+  "residual_risks": [
+    "플레이어 탐색 잠금은 실재생으로 확인 못 함 — 서버가 최종 판정하므로 우회돼도 완료는 안 된다.",
+    "로그인 수강생의 파일 저장은 못 막는다(스트리밍·DRM 영역).",
+    "옛 WP 진도의 미완료 영상은 처음부터 봐야 한다.",
+    "서버 반영엔 .env 에 MEDIA_SIGNING_SECRET 추가 + Caddy 재시작 + academy 재빌드 필요."
+  ],
+  "commit": "same-as-metadata-file"
+}

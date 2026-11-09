@@ -87,6 +87,7 @@ export async function getLectureEnrollment(userId: string, lectureId: string) {
     select: {
       id: true,
       type: true,
+      duration: true,
       section: { select: { courseId: true, course: { select: { price: true, productType: true } } } },
     },
   });
@@ -109,13 +110,63 @@ export async function markLectureComplete(userId: string, lectureId: string, cou
   return recomputeEnrollment(userId, courseId);
 }
 
-export async function saveWatchedSec(userId: string, lectureId: string, watchedSec: number) {
-  const sec = Math.max(0, Math.floor(watchedSec));
+/** 영상 완료 기준: 길이의 95% 이상 시청 (버퍼링·마지막 몇 초 오차 감안) */
+export const VIDEO_COMPLETE_RATIO = 0.95;
+/** 시청 위치가 늘 수 있는 최대 속도 — 플레이어 최고 배속(2배) + 여유 */
+const MAX_WATCH_RATE = 2;
+const WATCH_SLACK_SEC = 5;
+/** 오래 멈췄다 다시 봐도 한 번 보고에 인정하는 경과 시간 상한 (보고 주기 5초) */
+const MAX_ELAPSED_SEC = 60;
+
+/**
+ * 시청 기록 저장. watchedSec 는 '지금까지 본 가장 먼 지점'이다(이어보기 위치 겸 완료 판정 기준).
+ * - 줄어들지 않는다(앞부분을 다시 봐도 유지).
+ * - 직전 기록 이후 실제로 흐른 시간만큼만 늘 수 있다 → 요청을 조작해 끝으로 건너뛰어도 인정되지 않는다.
+ */
+export async function saveWatchedSec(userId: string, lectureId: string, watchedSec: number): Promise<number> {
+  const reported = Math.max(0, Math.floor(watchedSec));
+  const existing = await prisma.progress.findUnique({
+    where: { userId_lectureId: { userId, lectureId } },
+    select: { watchedSec: true, updatedAt: true },
+  });
+  const base = existing?.watchedSec ?? 0;
+  const elapsed = existing ? Math.max(0, (Date.now() - existing.updatedAt.getTime()) / 1000) : 0;
+  const allowed = base + Math.min(elapsed, MAX_ELAPSED_SEC) * MAX_WATCH_RATE + WATCH_SLACK_SEC;
+  const next = Math.max(base, Math.min(reported, Math.floor(allowed)));
   await prisma.progress.upsert({
     where: { userId_lectureId: { userId, lectureId } },
-    create: { userId, lectureId, watchedSec: sec },
-    update: { watchedSec: sec },
+    create: { userId, lectureId, watchedSec: next },
+    update: { watchedSec: next },
   });
+  return next;
+}
+
+/**
+ * 영상 레슨을 완료할 만큼 봤는지. 길이는 DB 값(초)을 쓰고, 없을 때만(옮겨 온 일부 레슨) 플레이어가 알려 준 길이를 쓴다.
+ */
+export function watchedEnough(watchedSec: number, lectureDuration: number | null, clientDuration?: number): boolean {
+  const duration = lectureDuration && lectureDuration > 0 ? lectureDuration : clientDuration && clientDuration > 0 ? clientDuration : null;
+  if (!duration) return false;
+  return watchedSec >= Math.floor(duration * VIDEO_COMPLETE_RATIO);
+}
+
+/**
+ * 퀴즈 잠금: 같은 프로그램에서 이 퀴즈보다 앞에 있는 레슨을 모두 완료해야 열린다.
+ * 잠겨 있으면 먼저 들어야 할 첫 레슨 id 를, 열려 있으면 null 을 돌려준다.
+ */
+export async function quizBlockedBy(userId: string, courseId: string, lectureId: string): Promise<string | null> {
+  const ids = await orderedLectureIds(courseId);
+  const before = ids.slice(0, Math.max(0, ids.indexOf(lectureId)));
+  if (!before.length) return null;
+  const done = new Set(
+    (
+      await prisma.progress.findMany({
+        where: { userId, completed: true, lectureId: { in: before } },
+        select: { lectureId: true },
+      })
+    ).map((p) => p.lectureId)
+  );
+  return before.find((id) => !done.has(id)) ?? null;
 }
 
 // ─── 퀴즈 채점 ───
