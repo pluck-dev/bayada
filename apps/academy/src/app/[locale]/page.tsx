@@ -302,7 +302,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <p className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 text-caption font-bold text-white">
                 <Building2 className="h-3.5 w-3.5" aria-hidden /> 기관·센터
               </p>
-              <h2 className="mt-4 text-[26px] font-extrabold leading-[1.3] tracking-[-0.03em] md:text-[34px]">
+              <h2 className="mt-4 type-section-title">
                 우리 센터 직원 교육,
                 <br />
                 바야다 아카데미로

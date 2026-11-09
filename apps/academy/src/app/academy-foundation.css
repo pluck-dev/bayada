@@ -1,0 +1,123 @@
+/* FN12 Foundation의 서체·역할별 타입 스케일을 BAYADA 학습 화면에 맞춘 테마.
+   브랜드와 본문 16px 기준은 유지한다. 관리자·웹사이트는 이 파일을 가져오지 않는다. */
+@theme {
+  --font-sans: var(--font-academy-latin), var(--font-academy-korean), sans-serif;
+  --color-ink: #101114;
+  --color-ink-soft: #4d535f;
+  --color-muted: #4d535f;
+  --color-subtle: #666d7c;
+  --color-surface: #f7f8fa;
+  --color-surface-sunken: #f2f4f6;
+  --color-line: #e2e5e9;
+  --color-line-soft: #e9ecf0;
+  --color-line-strong: #caced4;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 16px;
+  --radius-3xl: 16px;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.4;
+  --text-title--letter-spacing: -0.02em;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.5;
+  --text-body--line-height: 1.6;
+  --text-body-sm--line-height: 1.5;
+  --text-caption--line-height: 1.54;
+}
+
+:root {
+  --radius-button: 8px;
+  --academy-page-size: 28px;
+  --academy-page-line: 38px;
+  --academy-section-size: 24px;
+  --academy-section-line: 33px;
+  --academy-subsection-size: 22px;
+  --academy-subsection-line: 30px;
+  --academy-page-gutter: 20px;
+  --academy-section-space: 64px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --academy-page-size: 40px;
+    --academy-page-line: 54px;
+    --academy-section-size: 32px;
+    --academy-section-line: 44px;
+    --academy-subsection-size: 28px;
+    --academy-subsection-line: 38px;
+    --academy-page-gutter: 40px;
+    --academy-section-space: 80px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --academy-page-size: 48px;
+    --academy-page-line: 65px;
+    --academy-section-size: 40px;
+    --academy-section-line: 54px;
+    --academy-subsection-size: 32px;
+    --academy-subsection-line: 44px;
+    --academy-section-space: 96px;
+  }
+}
+
+@utility type-page-title {
+  font-size: var(--academy-page-size);
+  line-height: var(--academy-page-line);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+@utility type-section-title {
+  font-size: var(--academy-section-size);
+  line-height: var(--academy-section-line);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+/* 공유 컴포넌트의 크기 계약을 사용해 인라인 크기 지정도 같은 위계로 맞춘다. */
+[data-component="page-header"][data-size="lg"] h1 {
+  @apply type-page-title;
+}
+[data-component="section-header"][data-size="lg"] :is(h2, h3) {
+  @apply type-section-title;
+}
+[data-component="section-header"][data-size="md"] :is(h2, h3) {
+  font-size: var(--academy-subsection-size);
+  line-height: var(--academy-subsection-line);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* 공용 theme.css 의 같은 이름 유틸리티는 중단점(md·lg)마다 여백을 다시 정한다.
+   같은 중단점에서 아카데미 변수로 다시 덮어야 큰 화면에서 공용 값이 이기지 않는다. */
+@utility container-page {
+  max-width: calc(var(--container-page) + 2 * var(--academy-page-gutter));
+  padding-inline: var(--academy-page-gutter);
+  @media (width >= 48rem) {
+    padding-inline: var(--academy-page-gutter);
+  }
+  @media (width >= 64rem) {
+    padding-inline: var(--academy-page-gutter);
+  }
+}
+@utility section-y {
+  padding-block: var(--academy-section-space);
+  @media (width >= 48rem) {
+    padding-block: var(--academy-section-space);
+  }
+}
+
+@layer base {
+  body {
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+  :where(button, input, select, textarea) {
+    font-family: inherit;
+  }
+}

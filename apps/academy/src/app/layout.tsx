@@ -1,7 +1,25 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { ReviewGate } from "@bayada/review-ui/gate";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/site-settings";
+
+const latinFont = localFont({
+  src: [
+    { path: "../../public/fonts/FigtreeVariable.woff2", weight: "300 900", style: "normal" },
+    { path: "../../public/fonts/FigtreeItalicVariable.woff2", weight: "300 900", style: "italic" },
+  ],
+  variable: "--font-academy-latin",
+  display: "swap",
+  preload: false,
+});
+const koreanFont = localFont({
+  src: "../../public/fonts/PretendardVariable.woff2",
+  weight: "100 900",
+  variable: "--font-academy-korean",
+  display: "swap",
+  preload: false,
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://academy.bayada.co.kr";
 
@@ -70,15 +88,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <head>
-        <link
-          rel="stylesheet"
-          as="style"
-          crossOrigin="anonymous"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
-        />
-      </head>
+    <html lang="ko" className={`${latinFont.variable} ${koreanFont.variable}`}>
       <body className="min-h-screen bg-canvas text-ink antialiased">
         {children}
         <ReviewGate site="academy" />

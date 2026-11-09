@@ -185,6 +185,7 @@
 
 /* 시간·z-index 는 테마 네임스페이스가 없어 :root 변수 + 유틸리티로 둔다 */
 :root {
+  --radius-button: 9999px;
   --duration-fast: 120ms;
   --duration-base: 200ms;
   --duration-slow: 320ms;

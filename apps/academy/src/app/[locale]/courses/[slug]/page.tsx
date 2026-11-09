@@ -241,7 +241,7 @@ export default async function CourseDetailPage({ params }: { params: Params }) {
                   .filter(Boolean)
                   .join(" · ")}
               </p>
-              <h1 className="mt-2 text-[30px] font-extrabold leading-[1.2] tracking-[-0.035em] text-ink md:text-[42px]">
+              <h1 className="mt-2 type-page-title text-ink">
                 {course.title}
               </h1>
               {course.summary && <p className="mt-4 text-body-lg text-muted">{course.summary}</p>}

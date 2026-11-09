@@ -1,0 +1,342 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261109-221646-academy-design-foundation",
+  "created_at": "2026-11-09T22:16:46+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "0f275d347305c742febf900684ae99ae811c4b21",
+  "request": "next-client 프로젝트의 디자이너 디자인 시스템(폰트·체계적 디자인 규칙)을 참고해 우리 프로젝트(아카데미)에 적용",
+  "title": "Academy design foundation",
+  "purpose": "디자이너 파운데이션(next-client)의 서체·역할별 타입 스케일·여백·모서리 규칙을 아카데미 학습자 화면에 적용하고, 공용 UI 기본값은 다른 앱에서 그대로 유지한다.",
+  "files": [
+    {
+      "path": "apps/academy/src/app/[locale]/courses/(list)/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 128,
+          "old_end": 128,
+          "new_start": 128,
+          "new_end": 128
+        }
+      ],
+      "working_tree_sha256": "db675db97632fb0a566c4e283d542c30424e89c545fe812ef390fef8bb97d60f",
+      "symbols": [
+        "CatalogPage h1"
+      ],
+      "purpose": "카탈로그 페이지 제목에 박혀 있던 개별 크기를 역할 유틸리티로 바꿔 파운데이션 타입 스케일을 따르게 한다.",
+      "previous_behavior": "h1 이 34px(모바일)/48px(md 이상) extrabold, 행간 1.15 로 고정.",
+      "new_behavior": "h1 이 type-page-title: 28/38 → 40/54(≥768) → 48/65(≥1280) bold. Oinzi 실측 확인.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "모바일에서 제목이 6px 작아지고 굵기가 800→700 으로 가벼워진다(의도된 변화)."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/[locale]/courses/(list)/page.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "apps/academy/src/app/[locale]/courses/[slug]/lectures/[lectureId]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 343,
+          "old_end": 343,
+          "new_start": 343,
+          "new_end": 343
+        }
+      ],
+      "working_tree_sha256": "c3db7bd3076a58f2a696805423e2fe7962d3f79cb1f3d5b7cfa476b8f23d8452",
+      "symbols": [
+        "LectureHeading h1"
+      ],
+      "purpose": "강의실 강의 제목을 섹션 제목 역할로 통일한다.",
+      "previous_behavior": "h1 이 24px/30px(md) extrabold 고정.",
+      "new_behavior": "h1 이 type-section-title: 24/33 → 32/44 → 40/54 bold.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "≥1280 에서 강의 제목이 30→40px 로 커져 긴 제목은 줄이 늘 수 있다. 비로그인으로는 이 화면을 못 봐서 실화면 확인은 못 했다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/[locale]/courses/[slug]/lectures/[lectureId]/page.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "apps/academy/src/app/[locale]/courses/[slug]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 244,
+          "old_end": 244,
+          "new_start": 244,
+          "new_end": 244
+        }
+      ],
+      "working_tree_sha256": "e1f83f6007683ff05572911bbc5d5b9a5ce7f19fc181402538267ac19b4f9470",
+      "symbols": [
+        "CourseDetailPage h1"
+      ],
+      "purpose": "프로그램 상세 제목을 페이지 제목 역할로 통일한다.",
+      "previous_behavior": "h1 이 30px/42px(md) extrabold 고정.",
+      "new_behavior": "h1 이 type-page-title: 28/38 → 40/54 → 48/65 bold.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "긴 프로그램명이 ≥1280 에서 48px 로 커져 줄 수가 늘 수 있다(text-wrap: balance 로 완화). 전 프로그램이 INTERNAL 이라 비로그인 실화면 확인 못 함."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/[locale]/courses/[slug]/page.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "apps/academy/src/app/[locale]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 305,
+          "old_end": 305,
+          "new_start": 305,
+          "new_end": 305
+        }
+      ],
+      "working_tree_sha256": "7e1749bb536c489d200623d3290ddc20f5bcc16a61de0d23e4bf204631f9d203",
+      "symbols": [
+        "HomePage 기관 도입 섹션 h2"
+      ],
+      "purpose": "홈 기관 도입 섹션 제목을 섹션 제목 역할로 통일한다.",
+      "previous_behavior": "h2 가 26px/34px(md) extrabold 고정.",
+      "new_behavior": "h2 가 type-section-title: 24/33 → 32/44 → 40/54 bold. Oinzi 실측 확인.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "두 줄 제목이 ≥1280 에서 40px 로 커진다(의도된 변화)."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/[locale]/page.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "apps/academy/src/app/academy-foundation.css",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 123
+        }
+      ],
+      "working_tree_sha256": "8434ef7d81caa2f41e395cb632f6b28a6da9f9b86f0e1938ec9e60340d4e4ad2",
+      "symbols": [
+        "@theme --font-sans/색/모서리/텍스트 토큰",
+        "type-page-title",
+        "type-section-title",
+        "container-page",
+        "section-y",
+        "[data-component] 제목 규칙",
+        "body 기본 타이포"
+      ],
+      "purpose": "아카데미 전용 파운데이션 토큰·유틸리티. 공용 theme.css 값을 아카데미에서만 덮어 web·admin 외형을 보존한다.",
+      "previous_behavior": "File did not exist in the baseline commit.",
+      "new_behavior": "아카데미에서 Figtree→Pretendard 서체, 중립 글자·면·선 색, 8/16px 모서리, 반응형 제목 변수, 20/40px 페이지 여백, 64/80/96px 섹션 간격, 버튼 8px 이 적용된다.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "공용 container-page·section-y 의 중단점 규칙과 충돌 가능 → 같은 중단점에서 다시 덮도록 작성, 375/768/1280/1440 실측으로 확인.",
+        "rounded-lg/xl/2xl/3xl 값이 바뀌어 아카데미 전역 카드·패널 모서리가 달라진다(의도)."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/academy-foundation.css`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "apps/academy/src/app/globals.css",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 4,
+          "new_end": 4
+        }
+      ],
+      "working_tree_sha256": "4c8eda9a9f0a1d5028dee5a2b28d6060a9cfe24df48169587b489db112daf592",
+      "symbols": [
+        "@import ./academy-foundation.css"
+      ],
+      "purpose": "공용 theme.css 다음에 아카데미 파운데이션을 불러와 덮어쓰기 순서를 보장한다.",
+      "previous_behavior": "공용 theme.css 만 불러와 공용 토큰 그대로 사용.",
+      "new_behavior": "공용 토큰 뒤에 아카데미 파운데이션 토큰이 적용된다.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "import 순서를 바꾸면 덮어쓰기가 무력화된다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/globals.css`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "apps/academy/src/app/layout.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 7,
+          "new_end": 23
+        },
+        {
+          "old_start": 73,
+          "old_end": 81,
+          "new_start": 91,
+          "new_end": 91
+        }
+      ],
+      "working_tree_sha256": "4883fc7415b68a6d3ed1c3b4a562898610edff7952bd8ef265d0350241c7db03",
+      "symbols": [
+        "RootLayout",
+        "latinFont",
+        "koreanFont"
+      ],
+      "purpose": "외부 CDN Pretendard 대신 저장소에 동봉한 Figtree·Pretendard 가변 폰트를 next/font/local 로 자체 호스팅한다.",
+      "previous_behavior": "<head> 에서 jsDelivr Pretendard dynamic-subset CSS 를 불러왔다.",
+      "new_behavior": "html 에 --font-academy-latin/--font-academy-korean 변수 클래스가 붙고 /_next/static 에서 woff2 를 받는다(display: swap, preload: false). Oinzi 에서 latinFont·koreanFont loaded 확인.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "Pretendard 전체 가변 폰트(약 2MB)를 서브셋 없이 받는다 — preload 를 끄고 swap 으로 첫 화면 차단은 막았지만 첫 방문 전송량이 CDN dynamic-subset 보다 클 수 있다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- apps/academy/src/app/layout.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "packages/ui/src/components/button.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 17,
+          "new_end": 17
+        }
+      ],
+      "working_tree_sha256": "18608db36125f5c452d573071e8b21d5e849777ee1251be0daa47a25fb94acfc",
+      "symbols": [
+        "buttonVariants"
+      ],
+      "purpose": "버튼 모서리를 앱별로 정할 수 있게 CSS 변수로 뺀다.",
+      "previous_behavior": "일반 버튼이 rounded-full(알약) 고정.",
+      "new_behavior": "일반 버튼이 rounded-(--radius-button). 공용 기본 9999px 이라 다른 앱은 알약 유지, 아카데미는 8px. 아이콘 버튼은 rounded-full 유지.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "--radius-button 이 정의되지 않은 소비처에서는 모서리가 0 이 된다 — theme.css :root 에 기본값을 둬서 방지. @bayada/ui Button 은 아카데미만 쓴다(메모리 기록)."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- packages/ui/src/components/button.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "packages/ui/src/components/layout.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 103,
+          "old_end": 103,
+          "new_start": 103,
+          "new_end": 103
+        },
+        {
+          "old_start": 145,
+          "old_end": 145,
+          "new_start": 145,
+          "new_end": 145
+        }
+      ],
+      "working_tree_sha256": "c1d9c2191095b0cbd88a1036eadddbd2140afed611af1baec31124f7089b46f4",
+      "symbols": [
+        "PageHeader",
+        "SectionHeader"
+      ],
+      "purpose": "앱 CSS 가 공용 머리글 컴포넌트의 크기 계약을 보고 제목 스타일을 걸 수 있게 데이터 속성을 노출한다.",
+      "previous_behavior": "루트 요소에 식별 속성이 없었다.",
+      "new_behavior": "루트에 data-component(page-header/section-header)·data-size 가 붙는다. 클래스는 그대로라 아카데미 외에는 외형 변화 없음.",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "none: 속성 추가만이며 기존 className 은 그대로다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- packages/ui/src/components/layout.tsx`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    },
+    {
+      "path": "packages/ui/src/theme.css",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 188,
+          "new_end": 188
+        }
+      ],
+      "working_tree_sha256": "e9c1e3a49bfab5aa7dbd2fa4b1158d2cdaf3ea2fccdbdfce9b3c0a83e8df41a7",
+      "symbols": [
+        ":root --radius-button"
+      ],
+      "purpose": "버튼 모서리 변수의 공용 기본값을 정의해 아카데미 외 앱의 알약 모양을 보존한다.",
+      "previous_behavior": "--radius-button 변수가 없었다.",
+      "new_behavior": "--radius-button: 9999px 기본값 제공(아카데미는 academy-foundation.css 에서 8px 로 덮음).",
+      "data_impact": "none: 정적 스타일·마크업만 바뀌고 DB 읽기/쓰기 경로는 그대로다.",
+      "access_control_impact": "none: 인증·권한 판정 코드와 노출 규칙(INTERNAL)은 손대지 않았다.",
+      "risks": [
+        "none: 새 변수 추가만이며 기존 토큰 값은 바꾸지 않았다."
+      ],
+      "rollback": "git revert 로 이 커밋을 되돌리거나 `git checkout <baseline> -- packages/ui/src/theme.css`. 데이터 호환성 제약 없음(스키마·데이터 변경 없음)."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "none: 운영 데이터 읽기/쓰기 없음. 로컬 검증 중 next start 화면 조회가 로컬 개발 DB(bayada_v2, 127.0.0.1:5433)를 읽었고, 강의 slug 확인용 SELECT 1회만 실행. 쓰기 없음.",
+    "schema_migration": "none: Prisma 스키마·마이그레이션 변경 없음.",
+    "external_side_effects": [
+      "none: 배포·푸시·외부 API 호출 없음. 오히려 jsDelivr CDN 폰트 요청이 사라진다."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter academy build",
+      "result": "passed",
+      "evidence": "Next.js production build exit 0 (Compiled successfully, 전 라우트 생성). 빌드가 건드린 next-env.d.ts 는 되돌림."
+    },
+    {
+      "command": "pnpm --filter admin typecheck && pnpm --filter web typecheck",
+      "result": "passed",
+      "evidence": "tsc --noEmit 오류 없음."
+    },
+    {
+      "command": "pnpm --filter @bayada/ui typecheck",
+      "result": "failed",
+      "evidence": "src/cover/spec.ts(85,5) TS2322 1건 — 이번 변경과 무관한 기존 오류(해당 파일 미수정, 마지막 커밋 7fac002)."
+    },
+    {
+      "command": "Oinzi: next start -p 3100 에서 /ko, /ko/courses, /ko/auth/login, 강의 상세 를 375/768/1280/1440 폭 iframe 으로 실측 + 스크린샷",
+      "result": "passed",
+      "evidence": "폰트 latinFont·koreanFont loaded, 본문 16px/1.6. 카탈로그 h1 28/38→40/54→48/65, 섹션 h2 24/33→32/44→40/54, container 패딩 20→40px·max 1240/1280, section-y 64/80/96, 버튼 radius 8px, 모든 폭에서 가로 넘침 없음."
+    },
+    {
+      "command": "강의 상세 h1·강의실 제목 실화면 확인",
+      "result": "not_run",
+      "evidence": "게시 프로그램 전부 INTERNAL 이라 비로그인으로는 열람 제한 안내/로그인으로 이동. 같은 유틸리티를 카탈로그에서 실측했다."
+    }
+  ],
+  "residual_risks": [
+    "@bayada/ui typecheck 의 cover/spec.ts 기존 오류는 별도 수정 필요(이번 범위 밖).",
+    "강의 상세·강의실 제목은 로그인 계정으로 실화면 확인이 남았다 — 긴 제목 줄바꿈 확인 필요.",
+    "홈 히어로·로그인 카드·빈 상태 안내 카드 제목은 아직 개별 크기(역할 유틸리티 미적용).",
+    "Pretendard 전체 가변 폰트 자체 호스팅으로 첫 방문 전송량이 늘 수 있다."
+  ],
+  "commit": "same-as-metadata-file"
+}

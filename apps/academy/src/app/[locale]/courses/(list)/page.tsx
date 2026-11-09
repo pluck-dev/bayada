@@ -125,7 +125,7 @@ export default async function CatalogPage({
       <Breadcrumb LinkComponent={Link} items={[{ label: "홈", href: `/${locale}` }, { label: title }]} />
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-[34px] font-extrabold leading-[1.15] tracking-[-0.035em] text-ink md:text-[48px]">{title}</h1>
+          <h1 className="type-page-title text-ink">{title}</h1>
           <p className="mt-3 text-body-lg text-muted">직군·분야·난이도로 지금 필요한 교육을 찾아보세요.</p>
         </div>
         <form action={`/${locale}/courses`} role="search" className="w-full md:max-w-[400px]">

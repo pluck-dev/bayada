@@ -340,7 +340,7 @@ function LectureHeading({
         <span className="truncate">{section}</span>
         {meta && <span className="tabular">· {meta}</span>}
       </p>
-      <h1 className="mt-2.5 text-[24px] font-extrabold leading-[1.3] tracking-[-0.03em] text-ink md:text-[30px]">{title}</h1>
+      <h1 className="mt-2.5 type-section-title text-ink">{title}</h1>
     </div>
   );
 }

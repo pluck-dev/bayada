@@ -1,6 +1,7 @@
 @import "tailwindcss";
 /* 디자인 토큰·기본 스타일·공용 유틸리티(container-page, section-y, skeleton …)는 전부 여기 — packages/ui/DESIGN-SYSTEM.md */
 @import "@bayada/ui/theme.css";
+@import "./academy-foundation.css";
 
 /* 아카데미 전용 움직임 (@bayada/ui 의 Popover·Select·Sheet·체크 표시가 쓴다 — 웹사이트에는 넣지 않는다) */
 @theme {

@@ -386,3 +386,13 @@
 - Header.tsx 는 LF(메모리의 CRLF 기록과 다름, 2026-11-09 확인).
 - E2E 스크립트 `D:/dev/work/bayada-member-e2e/e2e.cjs`(boxon/boxon 의 playwright 1.57 + chromium-1248) — 가입→예약→어드민 확정→제공자 기록→평가·보호자 열람·문의 상태·아카데미 로그인까지 한 번에, 스크린샷 apps/web/.screens/member/. 로컬 어드민 계정 e2e-admin@bayada.test / E2eAdmin123 (bayada_v2 에만). 정리: 같은 폴더 cleanup.sql.
 - dev 서버를 TaskStop 해도 node 자식이 포트를 잡고 남는다 → netstat 으로 PID 확인 후 Stop-Process.
+
+# 아카데미 파운데이션(Figtree·Pretendard, 역할별 제목 type-page-title, --radius-button): academy 전용 덮어쓰기
+## WHY (2026-11-09)
+- 디자이너의 next-client 파운데이션(서체·타입 스케일·여백)을 아카데미에만 적용. 공용 `theme.css` 는 web·admin 도 읽으므로 값은 `apps/academy/src/app/academy-foundation.css` 에서 덮는다(globals.css 가 theme.css 다음에 import).
+- 버튼 모양은 `--radius-button`(공용 :root 9999px, 아카데미 8px) — Button 컴포넌트에 8px 를 박으면 다른 앱 알약이 깨진다.
+- PageHeader·SectionHeader 의 `data-component`/`data-size` 는 아카데미 CSS 가 제목 크기를 거는 훅. 지우면 아카데미 제목 위계가 풀린다.
+## 함정
+- 공용 `container-page`(lg)·`section-y`(md) 에 미디어쿼리가 있어, 아카데미 쪽 같은 이름 @utility 에 같은 중단점을 다시 쓰지 않으면 큰 화면에서 공용 값이 이긴다.
+- next/font/local 경로는 layout.tsx 기준 `../../public/fonts/...`. PowerShell 로 저장하면 BOM·CRLF 가 붙으니 확인.
+- 전 프로그램이 INTERNAL 이라 비로그인으로는 강의 상세 h1·강의실 제목을 못 본다(상세는 열람 제한 안내, 강의실은 로그인으로). 확인하려면 임직원 계정 또는 사본 DB.

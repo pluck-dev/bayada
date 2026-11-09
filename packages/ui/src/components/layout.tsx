@@ -100,7 +100,7 @@ export function PageHeader({
 }) {
   const compact = size === "compact";
   return (
-    <header className={cn(compact ? "mb-5" : "mb-8 md:mb-10", className)}>
+    <header data-component="page-header" data-size={size} className={cn(compact ? "mb-5" : "mb-8 md:mb-10", className)}>
       {(breadcrumb || back) && <div className={compact ? "mb-2" : "mb-4"}>{breadcrumb ?? back}</div>}
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div className="min-w-0 max-w-3xl">
@@ -142,7 +142,7 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-end justify-between gap-4", size === "lg" ? "mb-8" : size === "md" ? "mb-6" : "mb-4", className)}>
+    <div data-component="section-header" data-size={size} className={cn("flex items-end justify-between gap-4", size === "lg" ? "mb-8" : size === "md" ? "mb-6" : "mb-4", className)}>
       <div className="min-w-0">
         <H
           id={id}
