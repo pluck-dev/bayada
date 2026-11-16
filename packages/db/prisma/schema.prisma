@@ -300,6 +300,7 @@ model Enrollment {
 model Certificate {
   id        String    @id @default(cuid())
   number    String    @unique // 공개 검증용 번호 BA-2026-000123
+  legacyCode String? // 기존 워드프레스 발급 코드. 현재 검증 번호와 별도 보존
   userId    String
   courseId  String
   user      User      @relation(fields: [userId], references: [id])
@@ -308,6 +309,26 @@ model Certificate {
   expiresAt DateTime?
 
   @@unique([userId, courseId])
+}
+
+// 이전 사이트 자료. 미연결·삭제 회원의 기록도 계정을 복원하지 않고 보존한다.
+model LegacyRecord {
+  id          String   @id
+  kind        String
+  sourceId    String
+  title       String
+  body        String   @db.Text
+  status      String
+  userWpId    Int?
+  courseWpId  Int?
+  sourceDate  String?
+  payload     Json
+  importedAt  DateTime @default(now())
+
+  @@unique([kind, sourceId])
+  @@index([kind, status])
+  @@index([userWpId, kind])
+  @@index([courseWpId])
 }
 
 // ─── 메인 배너 (노출 기간 필수) ───

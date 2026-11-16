@@ -72,6 +72,7 @@ const PRIMARY: NavItem[] = [
   { path: "/taxonomy", label: "택소노미", icon: Tags, permission: "taxonomy", group: "콘텐츠" },
   { path: "/pathways", label: "커리어 패스웨이", icon: Route, permission: "pathway", group: "콘텐츠" },
   { path: "/pages", label: "문서 관리", icon: FileSignature, permission: "pages", group: "콘텐츠" },
+  { path: "/legacy", label: "이전 사이트 자료", icon: FileText, permission: "legacy.read", group: "콘텐츠" },
   { path: "/members", label: "회원·수강", icon: Users, permission: "member.read", badgeKey: "signups", group: "학습자 운영" },
   { path: "/reviews", label: "후기 관리", icon: MessageSquareWarning, permission: "review", badgeKey: "reports", group: "학습자 운영" },
   { path: "/sessions", label: "실습·오프라인 일정", icon: CalendarDays, permission: "session", group: "학습자 운영" },

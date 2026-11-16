@@ -113,6 +113,15 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
             )}
           </Card>
 
+          {m.legacyWpId && can(user, "legacy.read") && (
+            <Card title="이전 사이트 원본 기록">
+              <div className="flex flex-wrap gap-4 text-caption">
+                <Link className="text-brand hover:underline" href={`/${locale}/legacy?kind=ANSWER&user=${m.legacyWpId}`}>문항별 시험 답안</Link>
+                <Link className="text-brand hover:underline" href={`/${locale}/legacy?kind=CERTIFICATE&user=${m.legacyWpId}`}>기존 수료증 코드</Link>
+              </div>
+            </Card>
+          )}
+
           <Card title="레슨 학습 이력" padded={false}>
             {m.progresses.length === 0 ? <EmptyState title="레슨 학습 기록이 없습니다" /> : (
               <div className="overflow-x-auto">
@@ -175,7 +184,10 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
                 <tbody>
                   {m.certificates.map((c) => (
                     <tr key={c.id} className={trClass}>
-                      <td className={cx(tdClass, "font-mono text-caption")}>{c.number}</td>
+                      <td className={cx(tdClass, "font-mono text-caption")}>
+                        {c.number}
+                        {c.legacyCode && <div className="mt-1 text-muted">기존 코드: {c.legacyCode}</div>}
+                      </td>
                       <td className={cx(tdClass, "whitespace-normal!")}>{c.course.title}</td>
                       <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(c.issuedAt)}</td>
                       <td className={cx(tdClass, "tabular text-subtle")}>{formatDate(c.expiresAt)}</td>

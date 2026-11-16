@@ -175,7 +175,7 @@ export async function getMember(id: string) {
       },
       certificates: {
         orderBy: { issuedAt: "desc" },
-        select: { id: true, number: true, issuedAt: true, expiresAt: true, course: { select: { title: true } } },
+        select: { id: true, number: true, legacyCode: true, issuedAt: true, expiresAt: true, course: { select: { title: true } } },
       },
     },
   });

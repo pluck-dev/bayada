@@ -43,6 +43,7 @@ export default async function ReviewsPage({
     <>
       <PageHeader
         title="후기 관리"
+        actions={can(user, "legacy.read") ? <Link className="text-sm font-semibold text-brand hover:underline" href={`/${locale}/legacy?kind=REVIEW`}>기존 사이트 후기</Link> : undefined}
         description="학습자 후기와 신고를 검토합니다. 신고가 많은 후기가 위에 옵니다. 작성자 이름은 가려서 표시합니다."
       />
 

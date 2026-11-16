@@ -100,6 +100,8 @@ services:
     build: { context: ../.., args: { APP: admin, NEXT_PUBLIC_SITE_URL: "https://${ACADEMY_HOST}" } }
     image: bayada-admin:prod
     restart: unless-stopped
+    volumes:
+      - /srv/bayada/legacy-private:/legacy-private:ro
     depends_on: { db: { condition: service_healthy } }
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/bayada

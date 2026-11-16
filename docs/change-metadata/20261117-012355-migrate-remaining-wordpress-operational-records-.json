@@ -1,0 +1,569 @@
+{
+    "schema_version":  "1.0",
+    "change_id":  "20261117-012355-migrate-remaining-wordpress-operational-records-",
+    "created_at":  "2026-11-17T01:23:55+09:00",
+    "repository":  "bayada",
+    "branch":  "feat/academy-v2",
+    "baseline_commit":  "814daf0a3abac612961b23136638d249335e8d40",
+    "request":  "Move all remaining WordPress backup data into our administrator and make it viewable",
+    "title":  "Migrate remaining WordPress operational records into protected admin archive",
+    "purpose":  "Preserve source posts, files, original certificate codes and submitted answers with protected administrator access",
+    "files":  [
+                  {
+                      "path":  "apps/admin/src/app/[locale]/(dashboard)/legacy/[id]/page.tsx",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  40
+                                          }
+                                      ],
+                      "working_tree_sha256":  "a74577f1efc86ca6fa83699f4c471f3c24e858c2f5e290ff24cff51644699a08",
+                      "symbols":  [
+                                      "LegacyDetail",
+                                      "/legacy/[id]"
+                                  ],
+                      "purpose":  "Provide protected readable detail for every preserved record and its related files and current member/program.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Displays escaped text, source state, readable answer fields, permission-aware account links and authenticated attachment download links.",
+                      "data_impact":  "Reads one LegacyRecord, related FILE records and optional current User/Course; no content writes.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Original HTML is preserved in JSON but displayed as text; original embedded layout and external links are not executed."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/app/[locale]/(dashboard)/legacy/page.tsx",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  65
+                                          }
+                                      ],
+                      "working_tree_sha256":  "92391eb9fc981820629bb6d43341f015f288d8a8273ac9f9642b65a6518bc1d0",
+                      "symbols":  [
+                                      "LegacyPage",
+                                      "/legacy"
+                                  ],
+                      "purpose":  "Make imported content discoverable in the existing administrator design.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Adds source-kind counts, board/state/member filters, bounded search, stable pagination and source status labels; defaults to boards.",
+                      "data_impact":  "Read-only paginated archive queries; no writes.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Search scans preserved title/body data; future large imports may need full-text indexes."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/app/[locale]/(dashboard)/members/[id]/page.tsx",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  116,
+                                              "new_end":  124
+                                          },
+                                          {
+                                              "old_start":  178,
+                                              "old_end":  178,
+                                              "new_start":  187,
+                                              "new_end":  190
+                                          }
+                                      ],
+                      "working_tree_sha256":  "43cebaee15fc9f852cc9c89c4278e18583e6263430978162dd7be40c77fcc6f4",
+                      "symbols":  [
+                                      "MemberDetailPage"
+                                  ],
+                      "purpose":  "Connect preserved answers and original certificate codes to normal member administration.",
+                      "previous_behavior":  "Member detail showed new certificate numbers and learning summary but no original-code or raw-answer navigation.",
+                      "new_behavior":  "Displays linked original certificate codes and permission-gated links to that member original answers and certificate records.",
+                      "data_impact":  "Read-only presentation of Certificate.legacyCode and legacyWpId-scoped links.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Only codes matched to current certificates appear inline; all 90 unmatched codes remain in archive."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/app/[locale]/(dashboard)/reviews/page.tsx",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  46,
+                                              "new_end":  46
+                                          }
+                                      ],
+                      "working_tree_sha256":  "ef4b63df9023a6458d79fbb99f9effc33419ec178a508f7f751675e988288d68",
+                      "symbols":  [
+                                      "ReviewsPage"
+                                  ],
+                      "purpose":  "Connect existing review operations to preserved pending reviews without publishing them.",
+                      "previous_behavior":  "Review management had no path to WordPress-only reviews.",
+                      "new_behavior":  "Users with legacy.read see a link to original reviews; no review moderation action is automatically executed.",
+                      "data_impact":  "Navigation only; existing Review rows are unchanged.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Original pending reviews are preserved records rather than automatically converted into current Review rows, including one from an unlinked account."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/app/api/v1/legacy/files/[id]/route.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  31
+                                          }
+                                      ],
+                      "working_tree_sha256":  "3ac602588006ae26fce866066ad8e80934b462cbfd14ae65f8f0f37760d8bf32",
+                      "symbols":  [
+                                      "GET",
+                                      "/api/v1/legacy/files/[id]"
+                                  ],
+                      "purpose":  "Allow private archived attachments to be downloaded by authorized administrators.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Requires current admin session and legacy.read, validates FILE identity and hashed path/realpath, streams bytes as attachment with no-store and nosniff, and writes a download audit entry.",
+                      "data_impact":  "Reads private filesystem bytes and LegacyRecord; creates AuditLog for authorized downloads.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Files are buffered per request; unusually large files or many concurrent downloads can increase memory use. Authorization and path guards must remain on the server."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/components/Sidebar.tsx",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  75,
+                                              "new_end":  75
+                                          }
+                                      ],
+                      "working_tree_sha256":  "25936beca408bf2edf0e7f38b20034d542a0294737d3fd34190cbca1932761ca",
+                      "symbols":  [
+                                      "PRIMARY"
+                                  ],
+                      "purpose":  "Expose archive navigation in the existing academy admin menu.",
+                      "previous_behavior":  "No menu entry existed for remaining WordPress records.",
+                      "new_behavior":  "Shows Previous site records only when legacy.read is granted.",
+                      "data_impact":  "None: client navigation and permission visibility only.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "None: matches the existing permission-gated navigation pattern and has been verified in the deployed UI."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/lib/legacy.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  26
+                                          }
+                                      ],
+                      "working_tree_sha256":  "6df7a9709eb60294ddbc15bf8e6142d76c0ca792fc2f9e2798064f6a5a9728cd",
+                      "symbols":  [
+                                      "LEGACY_KINDS",
+                                      "LEGACY_STATUS",
+                                      "LEGACY_FIELDS",
+                                      "legacyDate",
+                                      "legacyFields"
+                                  ],
+                      "purpose":  "Translate preserved records into readable operator labels without exposing arbitrary JSON fields.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Defines archive kinds, state labels, compact-date formatting and an allowlist of visible detail fields.",
+                      "data_impact":  "In-memory formatting only; original JSON remains preserved.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "New source fields need explicit labels before appearing in detail; sensitive raw fields are intentionally not dumped into the UI."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/lib/queries/admin.ts",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  178,
+                                              "old_end":  178,
+                                              "new_start":  178,
+                                              "new_end":  178
+                                          }
+                                      ],
+                      "working_tree_sha256":  "009e0a522fda1a259efe44a2f70f28ad57e85459c86f5d37befdf31082f8f7af",
+                      "symbols":  [
+                                      "getMember"
+                                  ],
+                      "purpose":  "Select the original certificate code for the existing member certificate table.",
+                      "previous_behavior":  "Selected current certificate number without original WordPress code.",
+                      "new_behavior":  "Adds nullable legacyCode to the member certificate selection.",
+                      "data_impact":  "One additional nullable field is read; no writes.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Database column must exist before deploying the new admin; the additive SQL was applied first."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/lib/rbac.ts",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  38,
+                                              "new_end":  38
+                                          },
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  134,
+                                              "new_end":  134
+                                          }
+                                      ],
+                      "working_tree_sha256":  "fa93a729e7233a198a3f38d68cd6216c687333dd743b8d88beb0d46edd588b8b",
+                      "symbols":  [
+                                      "PERMISSION_DEFS",
+                                      "HOME_ORDER"
+                                  ],
+                      "purpose":  "Provide a separate access boundary for old answers, private posts and files.",
+                      "previous_behavior":  "No permission covered protected source archive content.",
+                      "new_behavior":  "Defines legacy.read and a home route for roles explicitly granted it; ADMIN automatically receives it through existing all-permissions logic.",
+                      "data_impact":  "No operational role assignments are modified.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Granting legacy.read exposes original answers and private records; role administrators must assign it only to authorized operators."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "deploy/ec2/docker-compose.yml",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  103,
+                                              "new_end":  104
+                                          }
+                                      ],
+                      "working_tree_sha256":  "92d76ecd1b3675724fb692ff85cfe877809ba91355a19a7cc8dced7c57862349",
+                      "symbols":  [
+                                      "services.admin.volumes"
+                                  ],
+                      "purpose":  "Make original files available only to the administrator download route.",
+                      "previous_behavior":  "Admin had no private archive filesystem mount.",
+                      "new_behavior":  "Read-only mounts /srv/bayada/legacy-private into admin at /legacy-private; public media and other services are unchanged.",
+                      "data_impact":  "Reads 53 preserved files and the private import bundle; no public-media copies or source file changes.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Host archive directory must be backed up along with DB. Its bundle includes sensitive records and must not be served publicly."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/prisma/legacy-records.sql",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  19
+                                          }
+                                      ],
+                      "working_tree_sha256":  "7b8adefe85ba5c58ebd1510f13222ed59bec91242301541f9499476eda709319",
+                      "symbols":  [
+                                      "Certificate.legacyCode",
+                                      "LegacyRecord",
+                                      "archive indexes"
+                                  ],
+                      "purpose":  "Apply a repeatable additive database change without resetting learning data.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Adds a nullable certificate source code, preserved-record table and unique/filter indexes using IF NOT EXISTS; applied as one PostgreSQL transaction.",
+                      "data_impact":  "DDL only; creates table/indexes and nullable column without dropping or changing existing rows.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "ALTER TABLE briefly takes a table lock. The operator must validate the existing schema when using this script on a different database."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/prisma/schema.prisma",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  303,
+                                              "new_end":  303
+                                          },
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  314,
+                                              "new_end":  333
+                                          }
+                                      ],
+                      "working_tree_sha256":  "4c97c8de0639c71dae4030a4ebc42a01a2ccc82769e024fe02f718e58350a38a",
+                      "symbols":  [
+                                      "Certificate.legacyCode",
+                                      "LegacyRecord"
+                                  ],
+                      "purpose":  "Represent original codes and unlinked source records alongside current academy models.",
+                      "previous_behavior":  "Only current certificate numbers existed; there was no persistence model for remaining WordPress records.",
+                      "new_behavior":  "Adds nullable original code and generic indexed preserved records with source identity, status, member/course WP IDs and original payload.",
+                      "data_impact":  "Additive schema only; no cascades to existing members or courses. Unlinked source records can be retained without recreating accounts.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Preserved JSON includes private answers and source content; all reads require the new server-side permission boundary."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/apply-wp-archive.cjs",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  57
+                                          }
+                                      ],
+                      "working_tree_sha256":  "cf30f134a5fba18e87bc1cbbb2a26fe897c74a89b45c3a1eea51ff498c148a12",
+                      "symbols":  [
+                                      "main",
+                                      "archive import transaction"
+                                  ],
+                      "purpose":  "Apply prepared source data safely inside the admin runtime without exporting DB secrets.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Verifies bundle/files, defaults to dry-run, rejects changed existing snapshots/code conflicts and explicitly applies missing archive records plus original-code links in one Serializable transaction.",
+                      "data_impact":  "Created 16799 LegacyRecord rows and updated legacyCode on 646 existing Certificate rows; 90 unmatched codes retained in archive. No deletes, approvals or new certificates.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Source archives with changed records require an explicit reconciliation workflow; this importer intentionally refuses to overwrite them. Concurrent DB updates can abort the transaction and require retry."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/prepare-wp-archive.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  31
+                                          }
+                                      ],
+                      "working_tree_sha256":  "e752784157733748cb2ec844545d465648dd76cfe414d13ba996938757eb04a4",
+                      "symbols":  [
+                                      "offline archive preparation",
+                                      "attachment verification"
+                                  ],
+                      "purpose":  "Create a reproducible private import bundle from the SQL and uploaded files.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Builds source records, validates real upload paths, copies all 53 files under SHA256 filenames and produces a checksummed bundle outside Git.",
+                      "data_impact":  "Reads local backup and uploads; writes private bundle and copied files outside repository. Does not connect to a DB or change original files.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Output contains private records; operators must keep it outside public media and Git. Missing attachments cause preparation to fail rather than omit files silently."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/wp-archive.test.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  54
+                                          }
+                                      ],
+                      "working_tree_sha256":  "f4ed20bbf3118988e53133891bfb2d7b1b055bb7bcd1275d14e8e9143afe0b54",
+                      "symbols":  [
+                                      "archive preservation/path/text tests"
+                                  ],
+                      "purpose":  "Protect the source-status, deleted-account and attachment isolation invariants.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Adds three tests for stable source identities, private/trash/pending states, password exclusion, deleted users, certificate codes, path traversal and serialized-answer display.",
+                      "data_impact":  "Synthetic fixtures only; does not mutate operational data.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Unit fixtures cannot represent every historical plugin format; the real bundle and all files were separately reconciled and verified."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/wp-archive.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  93
+                                          }
+                                      ],
+                      "working_tree_sha256":  "85d0f2c9d122f19b543143fc9a554a96af024402d6c5309ae80f903eb0caaf75",
+                      "symbols":  [
+                                      "buildArchive",
+                                      "safeUploadRelative",
+                                      "plainText",
+                                      "answerText"
+                                  ],
+                      "purpose":  "Map remaining original data into a faithful protected archive while retaining records with no current account.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Builds deterministic records for boards/files/codes/answers/reviews/articles/comments/quiz times and all original learning history; retains original payload and state, omits authentication hashes and supplies readable answer text.",
+                      "data_impact":  "In-memory backup transformation only; does not execute source SQL or modify accounts.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Deleted question text absent from the backup cannot be reconstructed; source IDs are retained. HTML is stored but shown as text rather than replaying the old layout."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/wp-history-source.ts",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  6,
+                                              "new_end":  11
+                                          }
+                                      ],
+                      "working_tree_sha256":  "34b19e7b9af32b39ea8565901d42cb843ed234ee0a7f2a82a226b304f585bd8f",
+                      "symbols":  [
+                                      "readHistoryTable",
+                                      "readWpTable"
+                                  ],
+                      "purpose":  "Reuse the tested SQL parser for additional named source tables.",
+                      "previous_behavior":  "Exported only a three-history-table reader.",
+                      "new_behavior":  "Keeps the history allowlist and adds a validated table-name reader without executing SQL.",
+                      "data_impact":  "Read-only in-memory parsing of source SQL.",
+                      "access_control_impact":  "No existing account status or role changed. New legacy.read permission protects archive pages and files; only Super Admin receives it by default. Other roles need explicit assignment.",
+                      "risks":  [
+                                    "Supports this backup INSERT/CREATE format; unsupported values or malformed rows fail closed."
+                                ],
+                      "rollback":  "Revert this source change or restore bayada-admin:before-full-wp-archive. Additive DB fields may remain. For data rollback, compare the validated pre-wp-archive-20261117.dump in an isolated DB; do not overwrite subsequent learner activity."
+                  }
+              ],
+    "production_safety":  {
+                              "operational_data":  "Read the local 2026-10-26 WordPress SQL/uploads and live EC2 PostgreSQL. Created 16799 protected LegacyRecord rows, linked original codes on 646 existing Certificate rows, and copied 53 private files. Retained all original codes including 90 unlinked. No existing account approvals, roles, enrollments, progress, quiz attempts or certificate numbers changed. Authorized test downloads created audit entries.",
+                              "schema_migration":  "Applied packages/db/prisma/legacy-records.sql as one PostgreSQL transaction after validating /srv/bayada/backups/pre-wp-archive-20261117.dump with pg_restore --list. Adds LegacyRecord with indexes and nullable Certificate.legacyCode. No destructive schema or data operation.",
+                              "external_side_effects":  [
+                                                            "Deployed only EC2 admin via docker compose with read-only private-file mount. Rollback image tag bayada-admin:before-full-wp-archive retained.",
+                                                            "Uploaded private data bundle/files to /srv/bayada/legacy-private and source artifact to /srv/bayada/app. No public-media copying, source WordPress writes, outbound notifications, learner publication or payments."
+                                                        ]
+                          },
+    "verification":  [
+                         {
+                             "evidence":  "All 8 tests passed.",
+                             "command":  "pnpm --filter @bayada/db exec tsx --test scripts/wp-history-source.test.ts scripts/wp-archive.test.ts",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Admin typecheck passed with generated client and archive pages/API.",
+                             "command":  "pnpm --filter admin typecheck",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Preparation, archive builder and tests compile.",
+                             "command":  "pnpm --filter @bayada/db exec tsc --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler --typeRoots ../../apps/admin/node_modules/@types --types node scripts/prepare-wp-archive.ts scripts/wp-archive.ts scripts/wp-archive.test.ts",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Runtime importer syntax is valid.",
+                             "command":  "node --check packages/db/scripts/apply-wp-archive.cjs",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "16799 records prepared, 53/53 original files found and hashed, 736 distinct certificate source pairs with no conflicting codes. Source SHA256 4632ac5ad00244fd5f6362bb47e6a53fb844cd2e95a1e3a2945ca660172ffe28.",
+                             "command":  "prepare-wp-archive.ts against dump.sql and wp-content/uploads",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Production Next build/type/static generation and admin recreation completed; previous image retained.",
+                             "command":  "docker compose -f deploy/ec2/docker-compose.yml --env-file deploy/ec2/.env up -d --no-deps --build admin",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Dry-run planned 16799 inserts and 646 code links. Apply succeeded. Repeat dry-run returned create=0, codeUpdates=0, unchanged=16799, linkedCodes=646, unlinkedCodes=90.",
+                             "command":  "apply-wp-archive.cjs bundle.json; apply-wp-archive.cjs bundle.json --apply; apply-wp-archive.cjs bundle.json",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Archive counts: BOARD59 FILE53 CERTIFICATE736 ANSWER4404 REVIEW2 ARTICLE8 COMMENT29 QUIZ_TIME28 HISTORY11480. Pending reviews2, published boards44, trash15. Existing enrollments1477/progress2326/attempts2074/certificates1229 and member statuses54/8/28 unchanged.",
+                             "command":  "PostgreSQL aggregate reconciliation",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Verified menu, paginated board list/detail/attachments, answer detail with expected/submitted answers, pending review list2, member source links and 45 original-code labels on a linked member.",
+                             "command":  "Oinzi live admin UI checks with Bayada profile",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "PDF returned 200, 1343562 bytes, attachment and private no-store headers; SHA256 dd98e4867be4541f33303df913f3e6c992daf191b01f8de08636737bfb1707c5 matched source.",
+                             "command":  "Authenticated browser download and SHA256 comparison",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "File API returned401; archive page returned307 to /ko/auth/login.",
+                             "command":  "Anonymous requests to archive file endpoint and page",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "No whitespace errors.",
+                             "command":  "git diff --cached --check",
+                             "result":  "passed"
+                         }
+                     ],
+    "residual_risks":  [
+                           "Source backup is dated 2026-10-26; later WordPress changes are not available in this backup.",
+                           "90 original codes and some source histories cannot attach to current accounts/curricula; all are preserved in the protected archive without recreating deleted users or issuing certificates.",
+                           "Preserved pending reviews are not publicly published or automatically converted to current Review entries. Source HTML layout is retained in JSON but rendered as safe text.",
+                           "Private archive data and DB are on the same EC2 disk; existing backup retention is not offsite. Preserve the source backup and private files for disaster recovery.",
+                           "Files are buffered during authenticated download; very high concurrency or much larger future attachments may require streaming.",
+                           "Metadata generator was invoked with .cjs added to its in-memory extension set so the CommonJS importer receives the same Git-derived ranges and hash validation as other source files; the installed skill file was not modified."
+                       ],
+    "commit":  "same-as-metadata-file"
+}

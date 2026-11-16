@@ -3,6 +3,12 @@ export const HISTORY_TABLES = ["stm_lms_user_courses", "stm_lms_user_lessons", "
 export type HistoryRow = Record<string, string | number | null>;
 
 export function readHistoryTable(sql: string, suffix: typeof HISTORY_TABLES[number]): HistoryRow[] {
+  if (!HISTORY_TABLES.includes(suffix)) throw new Error("Unsupported history table");
+  return readWpTable(sql, suffix);
+}
+
+export function readWpTable(sql: string, suffix: string): HistoryRow[] {
+  if (!/^[a-z0-9_]+$/i.test(suffix)) throw new Error("Invalid table name");
   const table = `lLJ_${suffix}`;
   const ddl = sql.match(new RegExp("CREATE TABLE `" + table + "` \\(([\\s\\S]*?)\\) ENGINE="));
   if (!ddl) throw new Error(`Missing schema: ${table}`);
