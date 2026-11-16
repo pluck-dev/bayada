@@ -13,6 +13,7 @@ import {
   USER_STATUS_LABEL,
   USER_STATUS_TONE,
   formatDate,
+  formatDateTime,
 } from "@/lib/labels";
 import { Badge, Card, EmptyState, PageHeader, Stat, cx, tableClass, tdClass, thClass, trClass } from "@/components/ui";
 import { MemberControls } from "@/components/members/MemberControls";
@@ -109,6 +110,52 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ l
                   ))}
                 </tbody>
               </table>
+            )}
+          </Card>
+
+          <Card title="레슨 학습 이력" padded={false}>
+            {m.progresses.length === 0 ? <EmptyState title="레슨 학습 기록이 없습니다" /> : (
+              <div className="overflow-x-auto">
+                <table className={tableClass}>
+                  <thead><tr>
+                    {["프로그램 / 레슨", "학습 상태", "시청 시간", "완료 시각"].map((label) => <th key={label} className={thClass}>{label}</th>)}
+                  </tr></thead>
+                  <tbody>{m.progresses.map((p) => (
+                    <tr key={p.id} className={trClass}>
+                      <td className={cx(tdClass, "whitespace-normal!")}>
+                        <div className="text-caption text-muted">{p.lecture.section.course.title}</div>
+                        {p.lecture.title}
+                      </td>
+                      <td className={tdClass}><Badge tone={p.completed ? "green" : "zinc"}>{p.completed ? "완료" : "학습 중"}</Badge></td>
+                      <td className={cx(tdClass, "tabular")}>{p.watchedSec > 0 ? `${Math.floor(p.watchedSec / 60)}분 ${p.watchedSec % 60}초` : "-"}</td>
+                      <td className={cx(tdClass, "tabular text-subtle")}>{formatDateTime(p.completedAt)}</td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+
+          <Card title="시험 응시 이력" padded={false}>
+            {m.quizAttempts.length === 0 ? <EmptyState title="시험 응시 기록이 없습니다" /> : (
+              <div className="overflow-x-auto">
+                <table className={tableClass}>
+                  <thead><tr>
+                    {["프로그램 / 시험", "점수", "결과", "응시 시각"].map((label) => <th key={label} className={thClass}>{label}</th>)}
+                  </tr></thead>
+                  <tbody>{m.quizAttempts.map((a) => (
+                    <tr key={a.id} className={trClass}>
+                      <td className={cx(tdClass, "whitespace-normal!")}>
+                        <div className="text-caption text-muted">{a.quiz.lecture.section.course.title}</div>
+                        {a.quiz.lecture.title}
+                      </td>
+                      <td className={cx(tdClass, "tabular")}>{a.score}점</td>
+                      <td className={tdClass}><Badge tone={a.passed ? "green" : "zinc"}>{a.passed ? "합격" : "불합격"}</Badge></td>
+                      <td className={cx(tdClass, "tabular text-subtle")}>{a.id.startsWith("wp-history-undated-") ? "원본 시각 없음" : formatDateTime(a.createdAt)}</td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+              </div>
             )}
           </Card>
 

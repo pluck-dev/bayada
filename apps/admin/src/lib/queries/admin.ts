@@ -149,6 +149,20 @@ export async function getMember(id: string) {
       legacyWpId: true,
       createdAt: true,
       organization: { select: { id: true, name: true, isInternal: true } },
+      progresses: {
+        orderBy: { updatedAt: "desc" },
+        select: {
+          id: true, completed: true, completedAt: true, watchedSec: true,
+          lecture: { select: { title: true, section: { select: { course: { select: { title: true } } } } } },
+        },
+      },
+      quizAttempts: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true, score: true, passed: true, createdAt: true,
+          quiz: { select: { lecture: { select: { title: true, section: { select: { course: { select: { title: true } } } } } } } },
+        },
+      },
       enrollments: {
         orderBy: { createdAt: "desc" },
         select: {

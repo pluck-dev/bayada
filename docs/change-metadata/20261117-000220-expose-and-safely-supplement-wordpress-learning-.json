@@ -1,0 +1,208 @@
+{
+    "schema_version":  "1.0",
+    "change_id":  "20261117-000220-expose-and-safely-supplement-wordpress-learning-",
+    "created_at":  "2026-11-17T00:02:20+09:00",
+    "repository":  "bayada",
+    "branch":  "feat/academy-v2",
+    "baseline_commit":  "b164ba9420458f55261e2fb38fb4cfd9f40d02ca",
+    "request":  "Migrate WordPress learner history into the feat/academy-v2 administrator",
+    "title":  "Expose and safely supplement WordPress learning history in admin",
+    "purpose":  "Connect legacy learning records to existing member administration without overwriting newer activity",
+    "files":  [
+                  {
+                      "path":  "apps/admin/src/app/[locale]/(dashboard)/members/[id]/page.tsx",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  16,
+                                              "new_end":  16
+                                          },
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  116,
+                                              "new_end":  161
+                                          }
+                                      ],
+                      "working_tree_sha256":  "e29c9908857578fa718ece27b936d1be5a46e7ebde62d923440c8a14aeaf03e7",
+                      "symbols":  [
+                                      "MemberDetailPage",
+                                      "/members/[id]"
+                                  ],
+                      "purpose":  "Make imported lesson completions and quiz attempts visible in the existing member detail design.",
+                      "previous_behavior":  "Member detail displayed enrollment progress and certificates only.",
+                      "new_behavior":  "Adds lesson history and quiz score/result/time tables, empty states, KST dates and unknown-source-time labels.",
+                      "data_impact":  "Read-only display of existing Progress and QuizAttempt relationships; no writes.",
+                      "access_control_impact":  "No roles, user accounts, permissions or authentication are changed. Admin reads remain behind member.read; CLI uses operator-supplied DB credentials.",
+                      "risks":  [
+                                    "Members with very large histories render more table rows; no browser visual verification was possible while DB was offline."
+                                ],
+                      "rollback":  "Revert this commit. No schema changes. If --apply was later executed, compare against the pre-import pg_dump in an isolated DB and restore only affected history; preserve subsequent learner activity."
+                  },
+                  {
+                      "path":  "apps/admin/src/lib/queries/admin.ts",
+                      "change_type":  "modified",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  152,
+                                              "new_end":  165
+                                          }
+                                      ],
+                      "working_tree_sha256":  "b2787be0e93f212d440258b21dfba0d1294bc8adf2e60059485779cb313d3cc4",
+                      "symbols":  [
+                                      "getMember"
+                                  ],
+                      "purpose":  "Provide the existing member detail page with lesson and quiz history.",
+                      "previous_behavior":  "Selected member profile, enrollments and certificates without learning detail.",
+                      "new_behavior":  "Also selects member-scoped lesson progress and quiz attempts with associated program titles, sorted newest first.",
+                      "data_impact":  "Additional read-only Prisma relations; no schema or data writes.",
+                      "access_control_impact":  "No roles, user accounts, permissions or authentication are changed. Admin reads remain behind member.read; CLI uses operator-supplied DB credentials.",
+                      "risks":  [
+                                    "Query volume grows with member history size; live query performance remains unverified."
+                                ],
+                      "rollback":  "Revert this commit. No schema changes. If --apply was later executed, compare against the pre-import pg_dump in an isolated DB and restore only affected history; preserve subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/import-wp-history.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  123
+                                          }
+                                      ],
+                      "working_tree_sha256":  "f08d7ec1190a6990a1137a6241e90ddddacfa066d022a741e488f0a4d604e090",
+                      "symbols":  [
+                                      "main",
+                                      "Enrollment",
+                                      "Progress",
+                                      "QuizAttempt"
+                                  ],
+                      "purpose":  "Provide a non-destructive history-only supplement instead of rerunning the account/content importer.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Defaults to reconciliation; explicit --apply merges history in a serializable transaction, preserves newer progress, matches existing attempts and reports unmapped records without personal data.",
+                      "data_impact":  "Only source-only mode was executed, reading backup history. Future --apply can insert/update Enrollment and Progress and insert QuizAttempt; no deletion, account modification or certificate issuance.",
+                      "access_control_impact":  "No roles, user accounts, permissions or authentication are changed. Admin reads remain behind member.read; CLI uses operator-supplied DB credentials.",
+                      "risks":  [
+                                    "Live transaction, concurrent execution and repeat-run reconciliation were not exercised because Docker/WSL was unavailable. Source timestamps require a verified offset. Missing users/curricula are reported rather than fabricated."
+                                ],
+                      "rollback":  "Revert this commit. No schema changes. If --apply was later executed, compare against the pre-import pg_dump in an isolated DB and restore only affected history; preserve subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/wp-history-source.test.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  50
+                                          }
+                                      ],
+                      "working_tree_sha256":  "fb2b37f4c3a79460cb5b2168fa66d59e8a017e5e5c8d427ba7364fb6d89be413",
+                      "symbols":  [
+                                      "node:test history parser and merge tests"
+                                  ],
+                      "purpose":  "Check malformed input handling, timestamp policy and preservation of newer learning history.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Five deterministic tests cover multiline batches, escaping, truncated or executable values, missing dates, timezone conversion and monotonic enrollment merge.",
+                      "data_impact":  "Synthetic in-memory fixtures only; operational data is not modified.",
+                      "access_control_impact":  "No roles, user accounts, permissions or authentication are changed. Admin reads remain behind member.read; CLI uses operator-supplied DB credentials.",
+                      "risks":  [
+                                    "Tests do not replace a live PostgreSQL dry-run, transactional apply and repeat-run test."
+                                ],
+                      "rollback":  "Revert this commit. No schema changes. If --apply was later executed, compare against the pre-import pg_dump in an isolated DB and restore only affected history; preserve subsequent learner activity."
+                  },
+                  {
+                      "path":  "packages/db/scripts/wp-history-source.ts",
+                      "change_type":  "added",
+                      "previous_path":  null,
+                      "line_ranges":  [
+                                          {
+                                              "old_start":  null,
+                                              "old_end":  null,
+                                              "new_start":  1,
+                                              "new_end":  85
+                                          }
+                                      ],
+                      "working_tree_sha256":  "e30bb843bf8133f67d08d445285817943e691fe424a0c05a0511ee0217c301c6",
+                      "symbols":  [
+                                      "readHistoryTable",
+                                      "unixDate",
+                                      "quizDate",
+                                      "mergeEnrollment"
+                                  ],
+                      "purpose":  "Read the existing SQL backup without requiring restored MySQL or executing SQL.",
+                      "previous_behavior":  "File did not exist in the baseline commit.",
+                      "new_behavior":  "Parses allowlisted history tables, validates row shape, decodes escaped strings and merges enrollment progress without regression; requires explicit quiz timestamp offset.",
+                      "data_impact":  "In-memory parsing only; no database access or writes.",
+                      "access_control_impact":  "No roles, user accounts, permissions or authentication are changed. Admin reads remain behind member.read; CLI uses operator-supplied DB credentials.",
+                      "risks":  [
+                                    "Parser supports the checked-in backup format and fails closed on unsupported value expressions; other dump formats need separate verification."
+                                ],
+                      "rollback":  "Revert this commit. No schema changes. If --apply was later executed, compare against the pre-import pg_dump in an isolated DB and restore only affected history; preserve subsequent learner activity."
+                  }
+              ],
+    "production_safety":  {
+                              "operational_data":  "Read the local WordPress backup only. No target or production DB data was read or changed because the local Docker/WSL engine was unavailable; no --apply was executed.",
+                              "schema_migration":  "None: existing Prisma models are used without schema changes. Optional future explicit --apply is an additive history backfill with monotonic progress updates.",
+                              "external_side_effects":  [
+                                                            "Attempted to start local Docker Desktop; engine failed to boot. WSL service restart failed for insufficient privileges. No remote server access, deployment, messages or external account changes."
+                                                        ]
+                          },
+    "verification":  [
+                         {
+                             "evidence":  "5 tests passed, 0 failed.",
+                             "command":  "pnpm --filter @bayada/db exec tsx --test scripts/wp-history-source.test.ts",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "History importer, parser and tests compile.",
+                             "command":  "pnpm --filter @bayada/db exec tsc --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler --typeRoots ../../apps/admin/node_modules/@types --types node scripts/import-wp-history.ts scripts/wp-history-source.ts scripts/wp-history-source.test.ts",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Admin TypeScript completed successfully.",
+                             "command":  "pnpm --filter admin typecheck",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Parsed 2237 enrollments, 4794 lesson records and 4449 quiz attempts. SHA256 4632ac5ad00244fd5f6362bb47e6a53fb844cd2e95a1e3a2945ca660172ffe28.",
+                             "command":  "pnpm --filter @bayada/db exec tsx scripts/import-wp-history.ts --source=D:/dev/clients/bayada/bestcareacademy-restore/db/dump.sql --source-only",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "No whitespace errors.",
+                             "command":  "git diff --check",
+                             "result":  "passed"
+                         },
+                         {
+                             "evidence":  "Attempt failed because the repository has no ESLint 9 flat configuration; no lint config was added for this task.",
+                             "command":  "pnpm --filter admin exec eslint src/lib/queries/admin.ts src/app/[locale]/(dashboard)/members/[id]/page.tsx",
+                             "result":  "not_run"
+                         },
+                         {
+                             "evidence":  "Docker engine failed to start, WSL list command hung and WslService restart was denied. No local DB listener was available.",
+                             "command":  "Live DB dry-run, --apply, repeat-run reconciliation and admin browser QA",
+                             "result":  "not_run"
+                         }
+                     ],
+    "residual_risks":  [
+                           "Actual migration into 127.0.0.1:5433/bayada_v2 is pending Docker/WSL recovery and verified source timezone; code completion must not be reported as data migration completion.",
+                           "Live PostgreSQL transaction/idempotency, query performance and rendered admin tables remain unverified.",
+                           "Admin lint is unavailable until the project supplies an ESLint flat configuration.",
+                           "Deleted users and missing curricula are skipped and counted. Individual answer bodies and new certificate issuance are outside this history supplement.",
+                           "The 2026-10-26 backup does not include subsequent WordPress activity."
+                       ],
+    "commit":  "same-as-metadata-file"
+}
