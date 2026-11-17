@@ -128,3 +128,38 @@ test("paid snapshots match the current quote and remain immutable after persiste
   hidden.commerce.orders[0].scope = "기존 확정 기록 변조";
   assert.throws(() => validateTransition(definition, result, hidden, actor));
 });
+
+
+test("contract groups follow the exact website selection and keep academy commerce", () => {
+  const c = definition.catalog;
+  const included = c.contractScope.websiteIncludedIds;
+  const excluded = new Set([...c.contractScope.websiteExcludedIds, ...c.contractScope.dependentExcludedIds]);
+  assert.equal(included.length, 31);
+  assert.equal(c.contractScope.websiteExcludedIds.length, 41);
+  assert.equal(c.contractModules.length, 27);
+  assert.equal(c.contractDraft.articles.length, 16);
+  const ids = new Set(c.contractModules.flatMap((x: RecordData) => x.featureIds));
+  included.forEach((id: string) => assert(ids.has(id)));
+  excluded.forEach(id => assert(!ids.has(id)));
+  assert(ids.has("ACADEMY-017"));
+  assert(ids.has("ACADEMY-001"));
+  assert.equal(definition.initialState.terms.C02, "");
+  assert.equal(definition.initialState.terms.C17, "");
+});
+
+test("scope source changes are admin-only, preserve prior state and cannot be forged", () => {
+  const current = clone(definition.initialState);
+  const scope = definition.catalog.contractScope;
+  const candidate = proposed(current, "계약 범위 기준 반영", scope.version, null, scope, s => { s.scopeRevision = clone(scope); });
+  assert.throws(() => validateTransition(definition, current, candidate, actor));
+  const admin = { ...actor, isAdmin: true, party: "개발사" as const };
+  const result = validateTransition(definition, current, candidate, admin);
+  assert.deepEqual(result.state.scopeRevision, scope);
+  assert.deepEqual(result.state.decisions, current.decisions);
+  assert.equal(result.event.actorId, admin.id);
+  const forged = clone(candidate);
+  forged.scopeRevision.websiteExcludedIds = [];
+  forged.events.at(-1)!.after.websiteExcludedIds = [];
+  assert.throws(() => validateTransition(definition, current, forged, admin));
+});
+

@@ -99,6 +99,14 @@ export function validateTransition(
   const before = (value: unknown) => assert(same(supplied.before, value), "변경 전 내용이 현재 문서와 다릅니다.");
 
   switch (event.kind) {
+    case "계약 범위 기준 반영":
+      assert(actor.isAdmin, "범위 기준 반영은 개발사 관리자만 수행합니다.");
+      assert(id === definition.catalog.contractScope.version, "현재 범위 기준과 다릅니다.");
+      before(current.scopeRevision || null);
+      assert(same(event.after, definition.catalog.contractScope), "원본 범위 선택과 다릅니다.");
+      assert(!same(current.scopeRevision, event.after), "이미 반영한 범위 기준입니다.");
+      expected.scopeRevision = copy(event.after);
+      break;
     case "항목 변경":
       assert(allowedItems.has(id), "기능 항목을 찾을 수 없습니다.");
       before(decision(current, id));

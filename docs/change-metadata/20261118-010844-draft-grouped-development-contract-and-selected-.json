@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-010844-draft-grouped-development-contract-and-selected-",
+  "created_at": "2026-11-18T01:08:44+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "fe7e4e31a1f145a4239d79677b0fb09c59b4e2d4",
+  "request": "Group academy features, exclude X-marked website items, draft contract at KRW 30 million with separate maintenance and additional development",
+  "title": "Draft grouped development contract and selected website scope",
+  "purpose": "Provide a usable contract draft in the shared workspace with exact customer scope selections",
+  "files": [
+    {
+      "path": "apps/admin/src/lib/project-workspace/transition.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 102,
+          "new_end": 109
+        }
+      ],
+      "working_tree_sha256": "565dc612ff77b8c07d2e2f930190262b44554c28712da24e2a8f15c48deec5b2",
+      "symbols": [
+        "validateTransition"
+      ],
+      "purpose": "Provide a usable contract draft in the shared workspace with exact customer scope selections",
+      "previous_behavior": "Scope catalogue changes had no dedicated auditable state transition.",
+      "new_behavior": "Allows an authenticated administrator to append the exact packaged scope revision, rejects forged content, repeated revisions and unrelated changes.",
+      "data_impact": "Appends one workspace event and scopeRevision JSON field. Preserves decisions, terms and prior events. No schema migration.",
+      "access_control_impact": "New transition is restricted to the existing isAdmin actor capability. Customer role permissions remain unchanged.",
+      "risks": [
+        "Incorrect source selection would propagate to contract coverage. Exact source equality and 31/41 coverage tests constrain this risk."
+      ],
+      "rollback": "Revert the three source files to fe7e4e3 and redeploy the previous source release or bayada-admin:before-contract-20261118. Keep existing workspace events and scopeRevision JSON for audit. Older code tolerates the extra state field and existing past event kind. Do not restore the database solely to roll back presentation."
+    },
+    {
+      "path": "apps/admin/tests/project-workspace.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 131,
+          "new_end": 165
+        }
+      ],
+      "working_tree_sha256": "913b70c1cad255eed5f740b17ef855f4c53ce1aac4e742600722d778440d1287",
+      "symbols": [
+        "contract groups follow the exact website selection",
+        "scope source changes are admin-only"
+      ],
+      "purpose": "Provide a usable contract draft in the shared workspace with exact customer scope selections",
+      "previous_behavior": "Seven tests covered existing workspace security, persistence and commercial invariants.",
+      "new_behavior": "Nine tests additionally verify website scope counts, preserved academy commerce, 27 groups, 16 clauses and admin-only immutable source revisions.",
+      "data_impact": "None. Tests use cloned in-memory fixtures and do not access production data.",
+      "access_control_impact": "None. Tests verify the existing customer boundary plus the new admin-only transition.",
+      "risks": [
+        "Rendering compilation tests do not establish all underlying LMS features have passed acceptance."
+      ],
+      "rollback": "Revert the three source files to fe7e4e3 and redeploy the previous source release or bayada-admin:before-contract-20261118. Keep existing workspace events and scopeRevision JSON for audit. Older code tolerates the extra state field and existing past event kind. Do not restore the database solely to roll back presentation."
+    },
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 220,
+          "old_end": 220,
+          "new_start": 220,
+          "new_end": 220
+        },
+        {
+          "old_start": 460,
+          "old_end": 460,
+          "new_start": 460,
+          "new_end": 460
+        },
+        {
+          "old_start": 545,
+          "old_end": 545,
+          "new_start": 545,
+          "new_end": 545
+        },
+        {
+          "old_start": 554,
+          "old_end": 554,
+          "new_start": 554,
+          "new_end": 554
+        },
+        {
+          "old_start": 560,
+          "old_end": 560,
+          "new_start": 560,
+          "new_end": 567
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 570,
+          "new_end": 572
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 666,
+          "new_end": 668
+        }
+      ],
+      "working_tree_sha256": "cbb3ed8fed5aecb5efbdd741c72fa2264c9b99e9201c8e2aad4ea2edf9e905a4",
+      "symbols": [
+        "catalog.contractScope",
+        "catalog.contractModules",
+        "catalog.contractDraft",
+        "renderContract",
+        "contractDocument",
+        "downloadContract",
+        "printContract",
+        "currentList",
+        "excelSheets"
+      ],
+      "purpose": "Provide a usable contract draft in the shared workspace with exact customer scope selections",
+      "previous_behavior": "Contract tab exposed editable terms without a complete grouped contract draft. Website items remained in v1 review.",
+      "new_behavior": "Adds a 16-clause editable-term contract draft, 27 scope groups, HTML and print export, exact 31 included/41 excluded website/server choices, five linked admin exclusions and three raw Excel sheets. Preserves 11 workbook security checks and unset agreement fields.",
+      "data_impact": "Catalogue-only scope updates preserve all feature identifiers and existing user decisions. Exports include current terms. Hosted state remains in the existing shared store.",
+      "access_control_impact": "None. Existing workspace-only client access, authenticated authorship and server CAS persistence are reused.",
+      "risks": [
+        "Draft remains unsigned with VAT, payments, dates, warranty term and legal allocations unresolved. Exclusion changes affect contract/specification coverage and do not delete operating public routes."
+      ],
+      "rollback": "Revert the three source files to fe7e4e3 and redeploy the previous source release or bayada-admin:before-contract-20261118. Keep existing workspace events and scopeRevision JSON for audit. Older code tolerates the extra state field and existing past event kind. Do not restore the database solely to roll back presentation."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Existing workspace state read via authenticated API. One user-authorized source-scope event appended with current revision CAS. No customer record, role, payment, enrollment or prior agreement rewritten. Full PostgreSQL backup verified before admin rollout.",
+    "schema_migration": "None. Reuses existing JSON state and append-only event tables.",
+    "external_side_effects": [
+      "Admin-only AWS deployment at https://admin.54-116-157-4.sslip.io/ko/workspace.",
+      "Authenticated scope source revision save through the existing API. No external messages or invitations sent."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "9 tests passed locally and during Docker build."
+    },
+    {
+      "command": "pnpm --filter admin typecheck",
+      "result": "passed",
+      "evidence": "TypeScript completed with no errors."
+    },
+    {
+      "command": "node $env:TEMP/bayada-contract-render-test.mjs",
+      "result": "passed",
+      "evidence": "16 clauses, 27 scope rows, 11 security rows. Placeholder replacement and HTML escaping verified."
+    },
+    {
+      "command": "Oinzi contract-check, export-check, history-check and excel-check scripts against deployed AWS administrator",
+      "result": "passed",
+      "evidence": "Live view showed 16 clauses and 27 scope groups. HTML export generated 22512 bytes, substituted unset terms and escaped HTML. Print action generated 40 table rows. XLSX action produced 20 sheets including 27 scope rows, 72 selections and 16 clauses. Source event saved HTTP 200, revision 1, and survived reload."
+    },
+    {
+      "command": "Docker admin production build and deployment health probes",
+      "result": "passed",
+      "evidence": "Production build completed. Login returned 200, anonymous workspace API/document returned 401. Verified PostgreSQL backup bayada-pre-project-contract-20261118-1794931992.dump (1015976 bytes). Existing image layers were unavailable for tagging, so previous source release was rebuilt as bayada-admin:before-contract-20261118 before rollout."
+    }
+  ],
+  "residual_risks": [
+    "Contract draft requires parties to fill and agree unresolved commercial and legal terms before signing. No signature or acceptance was inferred.",
+    "Functional scope is a contractual proposal, not evidence that all underlying academy workflows have passed live acceptance.",
+    "Source exclusions affect contract/specification presentation. Existing operating site routes remain present pending a separate implementation decision."
+  ],
+  "commit": "same-as-metadata-file"
+}
