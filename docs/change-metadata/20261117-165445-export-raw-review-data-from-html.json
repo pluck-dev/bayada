@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261117-165445-export-raw-review-data-from-html",
+  "created_at": "2026-11-17T16:54:45+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "16c0c7dc00a960b47d2cda735d8cfd0f456ab7ca",
+  "request": "Excel means raw data export within the HTML workbench",
+  "title": "Export raw review data from HTML",
+  "purpose": "Provide row-level XLSX download instead of a separately authored workbook",
+  "files": [
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 209,
+          "old_end": 209,
+          "new_start": 209,
+          "new_end": 209
+        },
+        {
+          "old_start": 556,
+          "old_end": 559,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 651,
+          "new_end": 668
+        },
+        {
+          "old_start": 656,
+          "old_end": 656,
+          "new_start": 670,
+          "new_end": 671
+        },
+        {
+          "old_start": 658,
+          "old_end": 665,
+          "new_start": 673,
+          "new_end": 687
+        },
+        {
+          "old_start": 672,
+          "old_end": 672,
+          "new_start": 694,
+          "new_end": 694
+        },
+        {
+          "old_start": 674,
+          "old_end": 674,
+          "new_start": 696,
+          "new_end": 696
+        },
+        {
+          "old_start": 677,
+          "old_end": 679,
+          "new_start": 699,
+          "new_end": 701
+        }
+      ],
+      "working_tree_sha256": "4b7372236c0e1c70f751291355e2824b795d1d1bb148db57c9d5991506e6c31e",
+      "symbols": [
+        "rawRows",
+        "excelSheets",
+        "exportExcel"
+      ],
+      "purpose": "Provide row-level XLSX download instead of a separately authored workbook",
+      "previous_behavior": "HTML exported selected presentation columns and a separate styled workbook was committed.",
+      "new_behavior": "HTML downloads row-level data across 15 datasets including all feature records, decisions, parent links, excluded legacy scope, history and baselines. Nested fields use dotted columns, arrays retain JSON and long strings use ordered parts. The separate authored workbook is removed.",
+      "data_impact": "Reads current local review state and catalog only. No changes to storage schema, decisions or operational data. Generated standalone XLSX removed as requested by correction.",
+      "access_control_impact": "None. Standalone client-side download only.",
+      "risks": [
+        "Excel edits are one-way exports and do not merge into HTML. Null and absent fields are represented by blank Excel cells. Long fields span ordered part columns documented in the export."
+      ],
+      "rollback": "Revert this commit to restore the previous export and the separate workbook. Saved local state remains compatible."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production data read or written. QA item save used a separate project key.",
+    "schema_migration": "None. Local state format unchanged.",
+    "external_side_effects": [
+      "Local browser test and file download generation only. No deployment or external messages."
+    ]
+  },
+  "verification": [
+    {
+      "command": "node D:/auto-browser/native/agent.mjs C:/Users/SIMJAE/AppData/Local/Temp/bayada-hierarchy/raw-qa.mjs; git diff --check",
+      "result": "passed",
+      "evidence": "Binary XLSX roundtrip has 15 sheets, all 228 features including 36 derived and excluded shopping, changed phase and parent ID, and one history event. Numeric data preserved. Nested fields and JSON arrays verified. A 72,001-code-unit Unicode field reassembled from three parts exactly. Whitespace check passed."
+    }
+  ],
+  "residual_risks": [
+    "Raw Excel exports are one-way. Null and absent fields use blank cells. Planning candidate version identity remains pending as already labeled in the HTML."
+  ],
+  "commit": "same-as-metadata-file"
+}
