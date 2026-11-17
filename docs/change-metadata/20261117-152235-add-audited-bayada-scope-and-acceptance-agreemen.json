@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261117-152235-add-audited-bayada-scope-and-acceptance-agreemen",
+  "created_at": "2026-11-17T15:22:35+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "239bad2c4985dbbcb1b76bbd9c0f4d3749581a1d",
+  "request": "Audit current implementation and create a tabbed HTML specification security release plan and contract agreement history for the 30000000 KRW development and defect warranty scope",
+  "title": "Add audited Bayada scope and acceptance agreement workbench",
+  "purpose": "Document current website academy and admin scope and preserve contract decisions with staged release and paid maintenance boundaries",
+  "files": [
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 427
+        }
+      ],
+      "working_tree_sha256": "fd66694a4231ff4bddfc11f236a837fd748e7b4189b81df7166d50d97efdb892",
+      "symbols": [
+        "embedded catalog: 192 features, 21 security items, 56 contract terms, 272 source inventory records",
+        "renderOverview/renderItems/renderPhases/renderMaintenance/renderContract/renderHistory/renderInventory",
+        "mutate/validateState/isAncestor/exportHtml/exportJson/importFile/printAll",
+        "item, bulk, contract, baseline, approval and new requirement dialogs"
+      ],
+      "purpose": "Create a portable current-state specification and precontract agreement document for website, academy and admin, with explicit paid maintenance and scope-change boundaries.",
+      "previous_behavior": "No unified source-backed interactive scope, staged acceptance and agreement history document existed. Existing reports did not provide per-item release/cost decisions and portable revision history.",
+      "new_behavior": "A standalone offline HTML inventories every one of 168 current page paths and 55 API paths, documents 192 page/backend features and 21 security items, provides 56 precontract decisions, separates initial delivery/defect correction/paid maintenance/additional work, records before-after changes and baseline-specific confirmations, supports portable HTML/JSON backups, validates compatible history on import, and prints the complete document.",
+      "data_impact": "Reads embedded source-derived metadata and previously collected aggregate production observations. User edits write only browser localStorage and explicitly downloaded HTML/JSON files. QA uses separate project IDs. No production records, schema, accounts, permissions or deployed services are changed.",
+      "access_control_impact": "none: the document does not change platform authorization or grant access. Party confirmations are manually recorded references, not authenticated signatures. Imports require matching project/commit, checksum, valid fields and a complete compatible event prefix; concurrent-tab storage changes block overwrites.",
+      "risks": [
+        "Source-level implementation findings must not be confused with complete runtime acceptance or verified production coverage.",
+        "Local browser history and portable files require versioned shared storage and external approval evidence; file integrity checks do not authenticate the author or prevent deliberate rewriting.",
+        "A new audited catalog needs explicit reconciliation rather than silently reusing this commit-scoped project ID and enumerated feature IDs.",
+        "Embedded fonts increase the single HTML size to approximately 3.2 MB."
+      ],
+      "rollback": "Remove docs/bayada-contract-review.html or revert this commit. Export any user-created browser history as HTML/JSON before removing the tool. Production apps and databases need no rollback; local browser storage remains until the user removes it."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production data was created, updated or deleted in this implementation. The artifact reuses aggregate read-only server observations collected earlier on 2026-11-17 and reconciles those against existing migration documentation. QA writes only separate local browser test projects.",
+    "schema_migration": "none: no schema, migration, operational backfill or deployment change.",
+    "external_side_effects": [
+      "Read-only official legal/security source browsing and Oinzi local-file visual/functional review.",
+      "Local QA exercised separate test histories, downloads intercepted during automated checks, and temporary test documents.",
+      "No external messages, production deployments, permission changes or real party approvals."
+    ]
+  },
+  "verification": [
+    {
+      "command": "Source inventory validation against apps/{web,academy,admin}/src/app and embedded source hashes",
+      "result": "passed",
+      "evidence": "All 168 page files have a feature record; all 55 API paths are inventoried; 272 file SHA256 values match current sources; 269 unique feature/security/contract IDs; mandatory feature fields and referenced files validated. 622 source files scanned."
+    },
+    {
+      "command": "node --check extracted inline JavaScript from docs/bayada-contract-review.html",
+      "result": "passed",
+      "evidence": "Final inline JavaScript parses successfully."
+    },
+    {
+      "command": "Oinzi QA1 separate local fixture functional DOM checks",
+      "result": "passed",
+      "evidence": "18 checks passed: all 8 tabs, search, item edit, before/after journal, contract edits, baseline, baseline-scoped confirmation, subsequent-change detection, pagination-wide bulk update of 192 items, new requirement, and evidence enforced for completed status."
+    },
+    {
+      "command": "Oinzi QA2 portable HTML/JSON and print verification",
+      "result": "passed",
+      "evidence": "9 checks passed: local journal, special-character HTML snapshot round trip, no script element injection, SHA256 backup, compatible descendant import, changed-history rejection, corrupt-checksum rejection, complete 272-file print inventory and full print rows."
+    },
+    {
+      "command": "Oinzi desktop screenshots and 390px mobile iframe inspection",
+      "result": "passed",
+      "evidence": "Overview, functional specification and security views visually reviewed; mobile innerWidth 388 with document scrollWidth 373, 8 tabs and no storage lock. Final stylesheet adds internal table overflow and wrapping for long status labels."
+    },
+    {
+      "command": "Full production user-flow acceptance across all inventoried functions",
+      "result": "not_run",
+      "evidence": "The deliverable is an audited specification and agreement document. Live account mutation, real payments, destructive privacy tests and every role/browser journey are explicitly marked pending per feature rather than represented as completed."
+    }
+  ],
+  "residual_risks": [
+    "Runtime acceptance remains pending for most source-audited functions, including live PG/SMTP, all role-specific mutations and privacy deletion.",
+    "AWS account ownership, security groups, volume encryption and other account-level settings remain unconfirmed due to read permissions in the earlier server audit.",
+    "This portable document provides local storage and manual file exchange; authenticated concurrent collaboration, trusted timestamps and digital signing require a separate system.",
+    "Release assignments, VAT, warranty period/start, timelines and unfilled contract terms are proposals or unresolved decisions until both parties agree.",
+    "The observed backup failure and dependency advisories are documented, not repaired by this documentation task."
+  ],
+  "commit": "same-as-metadata-file"
+}
