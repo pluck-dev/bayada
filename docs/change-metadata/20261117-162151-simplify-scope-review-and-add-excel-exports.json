@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261117-162151-simplify-scope-review-and-add-excel-exports",
+  "created_at": "2026-11-17T16:21:51+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "fcdae13f06dc5978105f7e326449809e45df1750",
+  "request": "Cleaner HTML essentials and Excel download",
+  "title": "Simplify scope review and add Excel exports",
+  "purpose": "Improve feature readability and workbook delivery",
+  "files": [
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 200,
+          "new_end": 202
+        },
+        {
+          "old_start": 203,
+          "old_end": 203,
+          "new_start": 206,
+          "new_end": 206
+        },
+        {
+          "old_start": 206,
+          "old_end": 206,
+          "new_start": 209,
+          "new_end": 436
+        },
+        {
+          "old_start": 289,
+          "old_end": 289,
+          "new_start": 519,
+          "new_end": 520
+        },
+        {
+          "old_start": 308,
+          "old_end": 309,
+          "new_start": 539,
+          "new_end": 540
+        },
+        {
+          "old_start": 312,
+          "old_end": 312,
+          "new_start": 543,
+          "new_end": 543
+        },
+        {
+          "old_start": 364,
+          "old_end": 364,
+          "new_start": 595,
+          "new_end": 595
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 634,
+          "new_end": 660
+        },
+        {
+          "old_start": 426,
+          "old_end": 426,
+          "new_start": 684,
+          "new_end": 684
+        }
+      ],
+      "working_tree_sha256": "53b685c127fce7f4d8785876d057adc60a118f6afccf68e6e810899ca1f68439",
+      "symbols": [
+        "renderOverview",
+        "renderDetailedOverview",
+        "renderItems",
+        "row",
+        "openItem",
+        "excelSheets",
+        "exportExcel"
+      ],
+      "purpose": "Improve feature readability and workbook delivery",
+      "previous_behavior": "Verbose feature rows mixed behavior, sources and decisions. No XLSX download.",
+      "new_behavior": "Compact feature decision rows, collapsed technical evidence, concise overview and offline eight-sheet XLSX export of current state.",
+      "data_impact": "Reads existing catalog and browser-local agreement state. No state schema or storage key changes. Workbook edits do not import into HTML. Generated workbook is an initial r0 snapshot.",
+      "access_control_impact": "None. Local document UI only, no server role or permission changes.",
+      "risks": [
+        "Spreadsheet edits can diverge from HTML history. Existing warning explains one-way export. Bundled export library is used for locally generated data only."
+      ],
+      "rollback": "Revert this commit and remove the generated XLSX. Existing schema-1 local state remains compatible with the previous HTML."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production database data read, created, updated or deleted in this change. Browser acceptance test used a separate project key.",
+    "schema_migration": "None. Catalog, saved agreement schema and storage key preserved.",
+    "external_side_effects": [
+      "Downloaded SheetJS CE 0.18.5 and Apache-2.0 license for offline bundling. No deployment, push or third-party messages."
+    ]
+  },
+  "verification": [
+    {
+      "command": "node D:/auto-browser/native/agent.mjs C:/Users/SIMJAE/AppData/Local/Temp/bayada-simple/verify.mjs --keep-tabs",
+      "result": "passed",
+      "evidence": "All nine tabs render. Isolated item save created r1 history. Export reflects 1차 오픈 and changed owner, 192 features, 21 security, 56 terms, 17 prices and one history event. XLSX binary roundtrip retained all eight sheets. Mobile overview fits 375px content width."
+    },
+    {
+      "command": "node C:/Users/SIMJAE/AppData/Local/Temp/bayada-simple/build.mjs",
+      "result": "passed",
+      "evidence": "Artifact Tool generated and rendered eight workbook sheets, recalculated before export. Reviewed desktop compact table and workbook previews. Added header freeze, filters and open-stage data validation."
+    },
+    {
+      "command": "python openpyxl read-only validation of docs/bayada-contract-review.xlsx; git diff --check",
+      "result": "passed",
+      "evidence": "Eight sheets, 192 feature rows, 21 security rows and numeric pricing cells verified. No whitespace errors."
+    }
+  ],
+  "residual_risks": [
+    "Excel export is one-way. Workbook changes do not update HTML history. Browser-exported XLSX has basic column widths and filters while the supplied workbook has additional formatting and validation. Full service runtime acceptance is outside this presentation change."
+  ],
+  "commit": "same-as-metadata-file"
+}
