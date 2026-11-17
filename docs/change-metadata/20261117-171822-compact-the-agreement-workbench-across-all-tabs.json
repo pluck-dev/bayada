@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261117-171822-compact-the-agreement-workbench-across-all-tabs",
+  "created_at": "2026-11-17T17:18:22+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "596cd39674fcc7480650add54dbef3e9592d0d8e",
+  "request": "Make every tab concise and platform-like, remove design-system material",
+  "title": "Compact the agreement workbench across all tabs",
+  "purpose": "Show actionable status and controls with mobile-first compact layouts",
+  "files": [
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 2,
+          "old_end": 2,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 206,
+          "new_end": 213
+        },
+        {
+          "old_start": 208,
+          "old_end": 209,
+          "new_start": 216,
+          "new_end": 217
+        },
+        {
+          "old_start": 212,
+          "old_end": 212,
+          "new_start": 220,
+          "new_end": 220
+        },
+        {
+          "old_start": 448,
+          "old_end": 448,
+          "new_start": 456,
+          "new_end": 456
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 459,
+          "new_end": 459
+        },
+        {
+          "old_start": 512,
+          "old_end": 512,
+          "new_start": 521,
+          "new_end": 526
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 528,
+          "new_end": 529
+        },
+        {
+          "old_start": 519,
+          "old_end": 519,
+          "new_start": 535,
+          "new_end": 535
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 537,
+          "new_end": 537
+        },
+        {
+          "old_start": 524,
+          "old_end": 535,
+          "new_start": 541,
+          "new_end": 541
+        },
+        {
+          "old_start": 537,
+          "old_end": 555,
+          "new_start": 543,
+          "new_end": 546
+        },
+        {
+          "old_start": 558,
+          "old_end": 591,
+          "new_start": 549,
+          "new_end": 552
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 554,
+          "new_end": 555
+        },
+        {
+          "old_start": 611,
+          "old_end": 612,
+          "new_start": 574,
+          "new_end": 574
+        },
+        {
+          "old_start": 718,
+          "old_end": 718,
+          "new_start": 680,
+          "new_end": 680
+        },
+        {
+          "old_start": 720,
+          "old_end": 721,
+          "new_start": 682,
+          "new_end": 683
+        },
+        {
+          "old_start": 794,
+          "old_end": 809,
+          "new_start": 756,
+          "new_end": 758
+        }
+      ],
+      "working_tree_sha256": "eae479986c25d544e9a303e332759ab1725102a82ae8f4b61a8db356a88d4b93",
+      "symbols": [
+        "renderOverview",
+        "renderItems",
+        "renderHierarchy",
+        "renderPhases",
+        "renderMaintenance",
+        "renderContract",
+        "renderHistory",
+        "renderPricing",
+        "renderPaidOrders",
+        "openItem",
+        "compactItem",
+        "compactFilters",
+        "securityLabel",
+        "render",
+        "bindContent",
+        "catalog.features.ADMIN-047",
+        "compact workspace CSS"
+      ],
+      "purpose": "Show actionable status and controls with mobile-first compact layouts",
+      "previous_behavior": "Tabs displayed long descriptions, repeated planning notices, technical evidence and multi-column forms before actionable records. Pricing and contract screens contained large blocks of explanatory prose.",
+      "new_behavior": "Eight compact platform-style tabs with record lists, grouped workflows, status chips, collapsible filters and condition dialogs. All tabs expose actions and summaries first. Technical evidence tab removed from navigation. Design-system/style-guide record hidden from review and excluded from current-scope counts while retained in raw exports. Mobile first record appears around y299 for features, y252 for security and y219 for pricing in a 390px frame. Group expansion survives selection re-renders. Phase drilldown includes both feature and security records.",
+      "data_impact": "Reads original catalog and browser-local agreement state. Existing IDs, local storage key and state schema preserved. ADMIN-047 gains hiddenFromReview and excluded scope annotation, specification revision changes so older baseline content is marked as changed. All 228 source records remain in raw XLSX. QA writes isolated local project state only.",
+      "access_control_impact": "None. Standalone document interaction only. No authentication, server permission or production role changes.",
+      "risks": [
+        "Short status labels summarize source-audit and user-review states. Full acceptance conditions and evidence remain accessible through item dialogs and raw data.",
+        "Technical navigation is removed. Previously saved HTML files remain separate versioned artifacts. Current HTML is the new working version."
+      ],
+      "rollback": "Revert this commit to restore previous renderers and CSS. Existing saved decisions and histories remain schema-compatible. Keep the newer HTML/JSON snapshot if restoring older visual artifacts after editing decisions."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production server or database data read, created, updated or deleted. Local browser behavior tests used a separate QA project key.",
+    "schema_migration": "No database or application schema migration. Adds one local catalog visibility annotation and a specification revision.",
+    "external_side_effects": [
+      "Local artifact edits, local browser screenshots and isolated test downloads only. No deployment, external messages or push."
+    ]
+  },
+  "verification": [
+    {
+      "command": "node --check C:/Users/SIMJAE/AppData/Local/Temp/bayada-compact/app.js; node D:/auto-browser/native/agent.mjs C:/Users/SIMJAE/AppData/Local/Temp/bayada-compact/qa.mjs --keep-tabs",
+      "result": "passed",
+      "evidence": "Eight tabs rendered correct headings without undefined content. Reviewed desktop screenshots for every tab."
+    },
+    {
+      "command": "node D:/auto-browser/native/agent.mjs C:/Users/SIMJAE/AppData/Local/Temp/bayada-compact/mobile.mjs; mobile-capture.mjs",
+      "result": "passed",
+      "evidence": "Reviewed mobile screenshots for features, security, pricing, contract and other tabs. Content width equals scroll width at 375/390px, with multiple real records visible on the first screen."
+    },
+    {
+      "command": "node D:/auto-browser/native/agent.mjs C:/Users/SIMJAE/AppData/Local/Temp/bayada-compact/verify.mjs --keep-tabs",
+      "result": "passed",
+      "evidence": "Workflow expansion retained after selecting a child. Bulk phase assignment, derived-item save, mixed feature/security phase drilldown, contract edit, baseline save and party confirmation passed. Raw export contains 15 sheets and all 228 feature records. Pricing plan exclusivity, quantity two and three-month selection yield supply 1,560,000 and total 1,716,000, immutable paid record saved and cart cleared."
+    },
+    {
+      "command": "export-qa.mjs and export-check.mjs through Oinzi; smoke.mjs; git diff --check",
+      "result": "passed",
+      "evidence": "Saved HTML retains multiline text, angle brackets, embedded Excel library, eight tabs and closed dialog. Final smoke checks multiline evidence editor, hidden style-guide record and full raw export. Whitespace check passed."
+    }
+  ],
+  "residual_risks": [
+    "Local storage and manual confirmation records retain the existing sharing and identity limitations. The planning candidate version identity remains pending. Full production feature acceptance is outside this UI restructuring task."
+  ],
+  "commit": "same-as-metadata-file"
+}
