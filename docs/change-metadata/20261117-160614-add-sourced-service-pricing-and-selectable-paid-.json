@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261117-160614-add-sourced-service-pricing-and-selectable-paid-",
+  "created_at": "2026-11-17T16:06:14+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "63c0bffdb6618cf6b898dbd21dfd04be5a764e95",
+  "request": "Add industry reference prices and selectable paid maintenance and additional development so selected work can be confirmed at the displayed conditions",
+  "title": "Add sourced service pricing and selectable paid work agreements",
+  "purpose": "Let customer choose bounded maintenance and additional development offers with visible prices totals and immutable agreement history",
+  "files": [
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 198,
+          "new_end": 199
+        },
+        {
+          "old_start": 204,
+          "old_end": 204,
+          "new_start": 206,
+          "new_end": 206
+        },
+        {
+          "old_start": 213,
+          "old_end": 213,
+          "new_start": 215,
+          "new_end": 215
+        },
+        {
+          "old_start": 227,
+          "old_end": 227,
+          "new_start": 229,
+          "new_end": 229
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 247,
+          "new_end": 247
+        },
+        {
+          "old_start": 281,
+          "old_end": 281,
+          "new_start": 284,
+          "new_end": 284
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 287,
+          "new_end": 287
+        },
+        {
+          "old_start": 316,
+          "old_end": 316,
+          "new_start": 320,
+          "new_end": 320
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 419,
+          "new_end": 419
+        },
+        {
+          "old_start": 419,
+          "old_end": 419,
+          "new_start": 424,
+          "new_end": 424
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 429,
+          "new_end": 559
+        }
+      ],
+      "working_tree_sha256": "98f46566af2584f613f1108ae9a3d934ae002887701978b4c71d893cb8d48427",
+      "symbols": [
+        "catalog.pricing: 17 bounded offers and 5 public price sources",
+        "commercial/pricedOffer/quoteTotals/validateCommerce",
+        "renderPricing/renderPaidOrders/openPaidConfirmation/submitPrice",
+        "order price snapshots and cancellation/correction history",
+        "payload/validateState/printAll/HTML and JSON export compatibility"
+      ],
+      "purpose": "Add a sourced, selectable price menu to the existing contract scope document so fixed-scope maintenance and new work can be recorded at visible agreed prices.",
+      "previous_behavior": "The document distinguished defect correction, paid maintenance and additional work, but had no unit prices, selectable offers, calculated commercial totals or immutable paid-work records.",
+      "new_behavior": "Adds a ninth pricing tab with three monthly plans, ten priced one-off offers and four custom quotation entries. Shows public asking-price examples separately from project proposals, computes monthly period, quantities, one-time costs and 10% VAT, records explicit progress confirmation with a frozen scope/price snapshot, and appends later price/cancellation/correction history. Existing pre-pricing saved states load without losing their journals or invalidating unchanged prior baselines.",
+      "data_impact": "Reads embedded public benchmark and proposal data. Writes optional commerce selection, price overrides, immutable paid-work snapshots and status updates to browser localStorage and portable HTML/JSON. No production DB reads or writes in this change.",
+      "access_control_impact": "none: production permissions and authentication are untouched. Identity and approval references in this local document remain manually entered and do not authenticate either party.",
+      "risks": [
+        "Proposal amounts, working-hour limits and lead times are author-selected defaults and need developer review before customer use.",
+        "Public price examples are starting prices under different scopes and contract periods, not industry-average statistics or equivalent platform quotes.",
+        "Local agreement records require file sharing and real approval evidence. They do not dispatch work, process payment or establish authenticated electronic signatures.",
+        "Monthly work allowances and separately selected jobs need scope review to avoid charging the same included work twice."
+      ],
+      "rollback": "Revert the HTML change after exporting any priced agreement history. The previous document preserves unknown commerce data in saved state copies but cannot display the pricing tab; retain the new version and its exports for historical review. Production apps and databases need no rollback."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production operational data was read, created, updated or deleted. Functional tests used separate PRICE-QA and LEGACY-QA local documents and localStorage namespaces.",
+    "schema_migration": "none: optional local document commerce state only, with backward-compatible handling of existing journals.",
+    "external_side_effects": [
+      "Read-only browsing of public supplier pricing pages.",
+      "Oinzi local-file UI tests and local screenshots; export tests intercepted download clicks.",
+      "No vendor or customer messages, purchase requests, payment transactions, production deployments or new server integrations."
+    ]
+  },
+  "verification": [
+    {
+      "command": "node --check extracted final inline JavaScript",
+      "result": "passed",
+      "evidence": "Final pricing and original document JavaScript parses."
+    },
+    {
+      "command": "Embedded catalog and source inventory validation",
+      "result": "passed",
+      "evidence": "Existing 192 features, 21 security items and 56 terms retained; all 272 source hashes match. 17 unique offers have valid source references, integer proposal amounts or explicit custom quotation status, bounded scope and lead-time data."
+    },
+    {
+      "command": "Oinzi PRICE-QA2 functional UI test",
+      "result": "passed",
+      "evidence": "14 checks passed including 17 offers, four disabled unpriced quotes, mutually exclusive monthly plans, quantity/month persistence, explicit paid acknowledgement, order capture, 1,810,000 KRW supply plus 181,000 VAT calculation, historical price freezing, proposal edit, cancellation-request history, custom quote activation and common journal entries."
+    },
+    {
+      "command": "Oinzi priced HTML/JSON portability and print test",
+      "result": "passed",
+      "evidence": "Seven checks passed: frozen totals and old/new rates retained in HTML, cancellation status retained, JSON checksum/data retained, inconsistent order totals rejected without writes, compatible newer priced histories imported, and print includes pricing and confirmed order."
+    },
+    {
+      "command": "Oinzi legacy document save and upgrade compatibility test",
+      "result": "passed",
+      "evidence": "An actual pre-pricing document saved a decision and baseline at r2. The upgraded document retained the history and current baseline; adding a pricing selection correctly marked the old baseline as having subsequent changes."
+    },
+    {
+      "command": "Oinzi final desktop and 390px mobile visual inspection",
+      "result": "passed",
+      "evidence": "Desktop pricing view reviewed with 28px amounts, 9 tabs and 17 offers. Mobile iframe viewport 388px has document scrollWidth 373px and three vertically stacked 341px plan cards; screenshots reviewed."
+    }
+  ],
+  "residual_risks": [
+    "Prices are project proposal defaults with VAT excluded and a displayed 10% VAT calculation. They are not user-confirmed final commercial rates or statistical market averages.",
+    "Custom AI, recurring payment, migration and professional-security offers remain unpriced until their detailed scope, amount and lead time are entered.",
+    "Local histories, manual confirmations and exports require the parties to maintain versioned shared files and actual approval evidence."
+  ],
+  "commit": "same-as-metadata-file"
+}
