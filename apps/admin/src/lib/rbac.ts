@@ -11,6 +11,7 @@ export function isAdminRole(role: unknown): role is AdminRole {
 
 /** 권한 정의 — 그룹·한국어 이름·한 줄 설명. 순서가 화면(역할·권한 매트릭스) 순서다 */
 export const PERMISSION_DEFS = [
+  { key: "project.workspace", group: "프로젝트", label: "프로젝트 협의", desc: "기능·계약·유상 업무를 공동 편집하고 합의 이력을 기록합니다." },
   { key: "dashboard", group: "공통", label: "대시보드", desc: "운영 현황 숫자와 최근 활동을 봅니다." },
   { key: "program.read", group: "프로그램", label: "프로그램 조회", desc: "프로그램 목록·상세·커리큘럼을 봅니다." },
   { key: "program.write", group: "프로그램", label: "프로그램 작성·수정", desc: "생성·기본정보·커리큘럼·공개범위를 바꾸고 승인 요청합니다." },
@@ -94,6 +95,7 @@ export const SYSTEM_ROLE_DEFAULTS: Record<AdminRole, { name: string; description
 
 /** ADMIN 은 DB 값과 무관하게 항상 전체 권한 (잠금 — 역할·권한 화면에서 스스로 잠기는 사고 방지) */
 export function effectivePermissions(roleKey: string, stored: readonly string[]): Permission[] {
+  if (roleKey === "custom_project_client") return ["project.workspace"];
   if (roleKey === "ADMIN") return [...DEFAULT_ROLE_PERMISSIONS.ADMIN];
   const fixedOk = (p: Permission) => !FIXED_PERMISSIONS[p] || FIXED_PERMISSIONS[p] === roleKey;
   const set = new Set(stored.filter(isPermission).filter(fixedOk));
@@ -115,6 +117,7 @@ export function can(user: PermissionSubject, permission: Permission): boolean {
 /** 권한별 첫 화면 후보 (사이드바 순서) */
 const HOME_ORDER: [Permission, string][] = [
   ["dashboard", ""],
+  ["project.workspace", "/workspace"],
   ["partner.console", "/partner-console"],
   ["approval.queue", "/approvals"],
   ["program.read", "/programs"],

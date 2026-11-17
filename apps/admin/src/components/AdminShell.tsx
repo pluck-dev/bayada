@@ -135,7 +135,7 @@ function Shell({ sidebar, initialRail, children }: { sidebar: SidebarProps; init
       />
 
       <main className="min-w-0 flex-1" inert={drawer && !desktop ? true : undefined}>
-        <div className="mx-auto max-w-[1360px] px-4 pb-16 pt-6 sm:px-6 md:px-8 lg:px-10 lg:pt-9">{children}</div>
+        <div className={pathname.endsWith("/workspace") ? "w-full" : "mx-auto max-w-[1360px] px-4 pb-16 pt-6 sm:px-6 md:px-8 lg:px-10 lg:pt-9"}>{children}</div>
       </main>
     </div>
   );

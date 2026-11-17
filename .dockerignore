@@ -9,7 +9,9 @@
 .omc
 .fry
 .claude
-docs
+docs/*
+!docs/bayada-contract-review.html
+.codex-attachments
 search
 LM
 # web 이 빌드 때 import 하는 파일만 남기고 원본 수집 자료는 뺀다

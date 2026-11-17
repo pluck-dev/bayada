@@ -66,6 +66,7 @@ interface NavItem {
 
 const PRIMARY: NavItem[] = [
   { path: "", label: "대시보드", icon: LayoutDashboard, permission: "dashboard" },
+  { path: "/workspace", label: "프로젝트 협의", icon: FileSignature, permission: "project.workspace" },
   { path: "/programs", label: "프로그램", icon: BookOpen, permission: "program.read", group: "콘텐츠" },
   { path: "/approvals", label: "승인 대기", icon: ClipboardCheck, permission: "approval.queue", badgeKey: "queue", group: "콘텐츠" },
   { path: "/curation", label: "배너·메인 큐레이션", icon: GalleryHorizontalEnd, permission: "curation", group: "콘텐츠" },

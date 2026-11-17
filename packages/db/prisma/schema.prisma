@@ -376,6 +376,37 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 }
 
+model ProjectWorkspace {
+  id        String   @id
+  revision  Int      @default(0)
+  state     Json
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectWorkspaceEvent {
+  id          String   @id
+  workspaceId String
+  revision    Int
+  actorId     String
+  requestHash String
+  detail      Json
+  createdAt   DateTime @default(now())
+
+  @@unique([workspaceId, revision])
+  @@index([workspaceId, createdAt])
+}
+
+model ProjectWorkspaceInvite {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique
+  email      String
+  invitedBy  String
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  acceptedBy String?
+  createdAt  DateTime  @default(now())
+}
+
 model Progress {
   id          String    @id @default(cuid())
   userId      String

@@ -7,6 +7,7 @@ import { QUEUE_STATUSES } from "@/lib/workflow";
 import { OPEN_REPORT_WHERE } from "@/lib/queries/reviews";
 import { AdminShell } from "@/components/AdminShell";
 import { SIDEBAR_COOKIE } from "@/lib/sidebar-pref";
+import { ProjectClientShell } from "@/components/project-workspace/ProjectClientShell";
 
 export default async function DashboardLayout({
   children,
@@ -18,6 +19,9 @@ export default async function DashboardLayout({
   const { locale } = await params;
   const user = await getAdminUser();
   if (!user) redirect(`/${locale}/auth/login`);
+  if (user.permissions.length === 1 && can(user, "project.workspace")) {
+    return <ProjectClientShell locale={locale} name={user.name ?? user.email}>{children}</ProjectClientShell>;
+  }
 
   // 사이드바 배지 — 역할이 처리할 수 있는 항목만 센다
   const clinicalOnly = can(user, "workflow.clinical") && !can(user, "workflow.operate");

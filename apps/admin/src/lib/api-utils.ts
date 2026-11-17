@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { ServiceError } from "@bayada/services";
 import type { SessionUser } from "@bayada/shared/types";
+import { getAdminUser } from "@/lib/session";
 
 /** 현재 세션 사용자 가져오기 (없으면 null) */
 export async function getSession(): Promise<SessionUser | null> {
@@ -15,14 +16,14 @@ export async function requireAdmin(): Promise<
   | { user: SessionUser; error?: never }
   | { user?: never; error: NextResponse }
 > {
-  const user = await getSession();
+  const user = await getAdminUser();
   if (!user) {
     return { error: NextResponse.json({ error: "로그인이 필요합니다" }, { status: 401 }) };
   }
-  if (user.role !== "ADMIN") {
+  if (user.roleKey !== "ADMIN") {
     return { error: NextResponse.json({ error: "관리자 권한이 필요합니다" }, { status: 403 }) };
   }
-  return { user };
+  return { user: { ...user, role: "ADMIN" } };
 }
 
 /** 성공 응답 */

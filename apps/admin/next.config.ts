@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
   outputFileTracingIncludes: {
     "/**": ["node_modules/.pnpm/**/.prisma/client/*"],
+    "/api/project-workspace/**": ["../../docs/bayada-contract-review.html"],
   },
   transpilePackages: ["@bayada/ui", "@bayada/shared", "@bayada/review"],
 };

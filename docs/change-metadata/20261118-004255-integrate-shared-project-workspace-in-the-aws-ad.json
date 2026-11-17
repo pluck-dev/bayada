@@ -1,0 +1,951 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-004509-integrate-shared-project-workspace-in-the-aws-ad",
+  "created_at": "2026-11-18T00:45:09+09:00",
+  "repository": "bayada",
+  "branch": "feat/academy-v2",
+  "baseline_commit": "7e46f97b3e9a85388ff573380dae70bac107ebeb",
+  "request": "Add project agreement menu, customer-only access, AWS deployment and shared editing; use only the supplied security workbook",
+  "title": "Integrate shared project workspace in the AWS administrator",
+  "purpose": "Provide authenticated customer-only collaborative scope review with durable history",
+  "files": [
+    {
+      "path": ".dockerignore",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 12,
+          "old_end": 12,
+          "new_start": 12,
+          "new_end": 14
+        }
+      ],
+      "working_tree_sha256": "b5d45698d93174bd752d828001eb2a0bc15d97113c2c0c4d418fc41a3674c0e8",
+      "symbols": [
+        "Docker build context"
+      ],
+      "purpose": "Includes only the protected agreement HTML from docs and excludes task attachments.",
+      "previous_behavior": "All docs excluded; task attachment directory was eligible for context.",
+      "new_behavior": "Includes only the protected agreement HTML from docs and excludes task attachments.",
+      "data_impact": "Build context packaging only; no application records.",
+      "access_control_impact": "Protected document remains outside public assets.",
+      "risks": [
+        "A missing document would prevent hosted rendering."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "Dockerfile",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 20,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "8d65579ea65d28659982a5c2c5a2eeb43e2f34d80b491519f5041254c6421a16",
+      "symbols": [
+        "admin build verification"
+      ],
+      "purpose": "Runs seven workspace tests before the admin production build.",
+      "previous_behavior": "Admin image compiled without workspace domain tests.",
+      "new_behavior": "Runs seven workspace tests before the admin production build.",
+      "data_impact": "Build-time test reads trusted local catalog only.",
+      "access_control_impact": "None; deployment build gate only.",
+      "risks": [
+        "Domain-test failures stop image creation."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/next.config.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 12,
+          "new_end": 12
+        }
+      ],
+      "working_tree_sha256": "cc0be0203e73ac23f081287c78d7a9301e569b4d54b6d1dadbd52da0cce771d1",
+      "symbols": [
+        "outputFileTracingIncludes"
+      ],
+      "purpose": "Traces the HTML for protected workspace API routes.",
+      "previous_behavior": "Standalone image tracing did not include the agreement source.",
+      "new_behavior": "Traces the HTML for protected workspace API routes.",
+      "data_impact": "Copies packaged source into standalone output.",
+      "access_control_impact": "Document is served only through guarded API routes.",
+      "risks": [
+        "Tracing pattern changes can omit the runtime template."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/layout.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 10,
+          "new_end": 10
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 22,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "152c382233b40fb3603a8d43a4d26190012edfa23d0e736a27d519239d815286",
+      "symbols": [
+        "DashboardLayout"
+      ],
+      "purpose": "Workspace-only accounts receive a dedicated project shell before operational badge queries.",
+      "previous_behavior": "Every approved admin role used the operational shell.",
+      "new_behavior": "Workspace-only accounts receive a dedicated project shell before operational badge queries.",
+      "data_impact": "Avoids operational counter queries for customers.",
+      "access_control_impact": "Customer-only permissions expose only project navigation.",
+      "risks": [
+        "Future permission groups must preserve the restricted-shell branch."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/manual/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 12,
+          "old_end": 12,
+          "new_start": 12,
+          "new_end": 14
+        }
+      ],
+      "working_tree_sha256": "646ab66ef81dc498d3b745a0333965ec050c11a8b888331b3aebe0a24c5bd21a",
+      "symbols": [
+        "ManualPage"
+      ],
+      "purpose": "Workspace-only accounts redirect to project workspace.",
+      "previous_behavior": "Any authenticated admin role could read the full operating manual.",
+      "new_behavior": "Workspace-only accounts redirect to project workspace.",
+      "data_impact": "No record changes.",
+      "access_control_impact": "Closes a direct-URL path to unrelated operating material.",
+      "risks": [
+        "Operational roles retain their existing manual access."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/workspace/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "6588ea7c20193adbb02b1794754242910678f99ac132187e541e7e0430058a85",
+      "symbols": [
+        "ProjectWorkspacePage"
+      ],
+      "purpose": "Adds permission-guarded project agreement page and admin-only invitation control.",
+      "previous_behavior": "No project agreement entry point.",
+      "new_behavior": "Adds permission-guarded project agreement page and admin-only invitation control.",
+      "data_impact": "Reads current authenticated role.",
+      "access_control_impact": "Checks project.workspace before rendering.",
+      "risks": [
+        "Role deletion or revocation redirects to login/home."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/auth/project-invite/[token]/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "9654bc4b1b3e5479bd09e1c6791a325b6b240a87b168cd91219d026ea45b63d2",
+      "symbols": [
+        "ProjectInvitePage"
+      ],
+      "purpose": "Displays an unexpired one-use invitation acceptance form; expired links display a bounded message.",
+      "previous_behavior": "No project invite acceptance page.",
+      "new_behavior": "Displays an unexpired one-use invitation acceptance form; expired links display a bounded message.",
+      "data_impact": "Reads token-hash lookup and expiry.",
+      "access_control_impact": "Valid opaque token gates signup form; no indexing.",
+      "risks": [
+        "Invitation URLs act as temporary capabilities and must be shared with the intended recipient."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/api/project-workspace/document/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "0077e2d352a92974bb9f3b05a75f523e94e4a65bac71fd8502e35958d53fd58e",
+      "symbols": [
+        "GET protected workspace HTML"
+      ],
+      "purpose": "Serves hosted HTML or offline snapshot with private no-store headers and same-origin framing policy.",
+      "previous_behavior": "No authenticated hosted document or server snapshot download.",
+      "new_behavior": "Serves hosted HTML or offline snapshot with private no-store headers and same-origin framing policy.",
+      "data_impact": "Reads current workspace and actor.",
+      "access_control_impact": "Project permission check precedes document access.",
+      "risks": [
+        "The hosted template uses trusted inline scripts and styles under a constrained CSP."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/api/project-workspace/invitations/[token]/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "941b450436e74339b78f5a5721c21d773a47c738392c1df6440a8172b9efe47e",
+      "symbols": [
+        "POST invitation acceptance"
+      ],
+      "purpose": "Enforces same-origin JSON requests and delegates token/password/role validation.",
+      "previous_behavior": "No invitation acceptance endpoint.",
+      "new_behavior": "Enforces same-origin JSON requests and delegates token/password/role validation.",
+      "data_impact": "May create a customer account or attach project role to an approved learner; consumes invitation atomically.",
+      "access_control_impact": "Valid token, bound email and existing password protect existing accounts.",
+      "risks": [
+        "Already-used and expired invitations are rejected."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/api/project-workspace/invitations/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "cdad7a876e6aa218252abcb71f1df0d3d4ba8efefb722e4fd0c1cf6463b70017",
+      "symbols": [
+        "POST customer invitation"
+      ],
+      "purpose": "Creates seven-day one-use invitation for a specified email.",
+      "previous_behavior": "No project customer invitation endpoint.",
+      "new_behavior": "Creates seven-day one-use invitation for a specified email.",
+      "data_impact": "Creates hashed invitation and audit row.",
+      "access_control_impact": "Only current Super Admin can invite.",
+      "risks": [
+        "No email is sent automatically; recipient delivery is performed by the administrator."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/app/api/project-workspace/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 28
+        }
+      ],
+      "working_tree_sha256": "a2a2f6d1918a625a2b289eafb1b17fa4ff8deabd33d37510efae702e87dd0d87",
+      "symbols": [
+        "GET and POST workspace"
+      ],
+      "purpose": "Adds authenticated state GET with revision ETag and guarded save/import POST.",
+      "previous_behavior": "Agreement state lived in each browser.",
+      "new_behavior": "Adds authenticated state GET with revision ETag and guarded save/import POST.",
+      "data_impact": "Reads/writes project state through transactional store.",
+      "access_control_impact": "Project permission plus same-origin check for writes; import is Super Admin only.",
+      "risks": [
+        "Clients must handle 409 conflicts and temporary connection errors."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/components/AdminShell.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 138,
+          "old_end": 138,
+          "new_start": 138,
+          "new_end": 138
+        }
+      ],
+      "working_tree_sha256": "d45f20283320f76da0c07e4de746491465324e242937ef161b8f2a150531b61a",
+      "symbols": [
+        "Shell workspace layout"
+      ],
+      "purpose": "Workspace route uses full-width container for the compact embedded application.",
+      "previous_behavior": "All admin pages used the standard padded max-width container.",
+      "new_behavior": "Workspace route uses full-width container for the compact embedded application.",
+      "data_impact": "No data changes.",
+      "access_control_impact": "Existing shell role filtering continues.",
+      "risks": [
+        "Only workspace path receives layout change."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/components/Sidebar.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 69,
+          "new_end": 69
+        }
+      ],
+      "working_tree_sha256": "ef52068a7197b4c732e64e553680150199c28e335aadee5b8bd385ba0db7db60",
+      "symbols": [
+        "PRIMARY navigation"
+      ],
+      "purpose": "Adds project menu filtered by project.workspace permission.",
+      "previous_behavior": "No project agreement menu.",
+      "new_behavior": "Adds project menu filtered by project.workspace permission.",
+      "data_impact": "No records changed.",
+      "access_control_impact": "Menu visibility uses current server-supplied permissions.",
+      "risks": [
+        "Server guards remain authoritative for direct URLs."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/components/project-workspace/AcceptInvitation.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 39
+        }
+      ],
+      "working_tree_sha256": "919880e06173920f618dcc7fa983fc87cb4e9203909daa55236481b979d7b585",
+      "symbols": [
+        "AcceptInvitation"
+      ],
+      "purpose": "Provides name, bound email, existing/new password form and login transition.",
+      "previous_behavior": "No customer invitation form.",
+      "new_behavior": "Provides name, bound email, existing/new password form and login transition.",
+      "data_impact": "Sends invite acceptance payload only to same-origin API.",
+      "access_control_impact": "No role or permission input is accepted from the form.",
+      "risks": [
+        "New-account password follows existing shared policy."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/components/project-workspace/ProjectClientShell.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 21
+        }
+      ],
+      "working_tree_sha256": "92cff19c727460dbf7c0423f0d1e2996848f5e09ade4c759efecae0c7bc582b6",
+      "symbols": [
+        "ProjectClientShell"
+      ],
+      "purpose": "Provides only project entry, authenticated name and logout.",
+      "previous_behavior": "Customers would inherit operational navigation and help.",
+      "new_behavior": "Provides only project entry, authenticated name and logout.",
+      "data_impact": "No operational data reads.",
+      "access_control_impact": "Workspace-only UI exposes no other menu.",
+      "risks": [
+        "Server authorization protects manually entered URLs."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/components/project-workspace/ProjectWorkspace.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 55
+        }
+      ],
+      "working_tree_sha256": "5ed817f44d80e4cec7daa5a0136530e20a0cb41b34ba8f757ebcf90378fd6180",
+      "symbols": [
+        "ProjectWorkspace"
+      ],
+      "purpose": "Embeds protected compact workspace and admin-only email invitation generator.",
+      "previous_behavior": "No hosted UI wrapper or invitation creation control.",
+      "new_behavior": "Embeds protected compact workspace and admin-only email invitation generator.",
+      "data_impact": "Creates invitation only after explicit admin submission.",
+      "access_control_impact": "Iframe supports controlled form events and downloads; invitation API rechecks admin.",
+      "risks": [
+        "Form permission in iframe is essential for submit handlers; actual browser save was verified."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/api-utils.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 19,
+          "new_end": 19
+        },
+        {
+          "old_start": 22,
+          "old_end": 22,
+          "new_start": 23,
+          "new_end": 23
+        },
+        {
+          "old_start": 25,
+          "old_end": 25,
+          "new_start": 26,
+          "new_end": 26
+        }
+      ],
+      "working_tree_sha256": "936fca931b4a9f7dc4a822cfe9290152fd9e21e5ebff188d9d2351a250be60ad",
+      "symbols": [
+        "requireAdmin"
+      ],
+      "purpose": "Legacy operational APIs recheck current DB user and effective ADMIN role.",
+      "previous_behavior": "Legacy APIs accepted the ADMIN role cached in the JWT.",
+      "new_behavior": "Legacy operational APIs recheck current DB user and effective ADMIN role.",
+      "data_impact": "Reads current account and organization ID.",
+      "access_control_impact": "Revoked or customer-converted ADMIN sessions are denied immediately.",
+      "risks": [
+        "Preserves ADMIN response shape for existing callers."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/definition.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 60
+        }
+      ],
+      "working_tree_sha256": "c3eb1844c840f5b98a2c5c100fdcfba09f97021c26b65952560658e91dc96b51",
+      "symbols": [
+        "getWorkspaceDefinition"
+      ],
+      "purpose": "Loads the packaged trusted HTML, reuses its catalog and bounded validators in isolated VM contexts.",
+      "previous_behavior": "Domain catalog and validation lived inside offline HTML only.",
+      "new_behavior": "Loads the packaged trusted HTML, reuses its catalog and bounded validators in isolated VM contexts.",
+      "data_impact": "Reads packaged source and validates request data; no user-controlled executable source.",
+      "access_control_impact": "Definitions are loaded from private filesystem, not submitted HTML.",
+      "risks": [
+        "Template function names and boundaries are checked by build tests."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/document.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 43
+        }
+      ],
+      "working_tree_sha256": "7eae9b5441e33b58c1b69338c44b42fbb963e19c8a32d98b949abca160cc02e5",
+      "symbols": [
+        "workspaceDocument"
+      ],
+      "purpose": "Adapts trusted UI to asynchronous server saving, authenticated actor identity and standalone snapshots.",
+      "previous_behavior": "HTML persisted locally and used manually entered authors.",
+      "new_behavior": "Adapts trusted UI to asynchronous server saving, authenticated actor identity and standalone snapshots.",
+      "data_impact": "Embeds current state safely and reuses original UI catalog.",
+      "access_control_impact": "No local-storage write path in hosted mode; actor config is escaped JSON.",
+      "risks": [
+        "Adapter depends on tested template function boundaries."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/hosted-bridge.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 117
+        }
+      ],
+      "working_tree_sha256": "9fa3e8d5fd55c2acbffe06e14f8868623dd8ca66149258d5150b3227c743c053",
+      "symbols": [
+        "hosted persistence and synchronization"
+      ],
+      "purpose": "Saves through API, polls revisions every four seconds while visible, handles conflicts without losing form contents, restricts party confirmation and imports old backup format.",
+      "previous_behavior": "Mutations synchronously wrote localStorage and files were independently edited.",
+      "new_behavior": "Saves through API, polls revisions every four seconds while visible, handles conflicts without losing form contents, restricts party confirmation and imports old backup format.",
+      "data_impact": "Posts current candidate state, reads canonical server state and exports snapshots.",
+      "access_control_impact": "Author fields use logged-in identity; server still validates identity and permissions.",
+      "risks": [
+        "Network uncertainty is handled by same-request retry and revision conflicts; historical import is limited to an untouched server document."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/http.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 49
+        }
+      ],
+      "working_tree_sha256": "c74d9b7feef9910511be232499c0e837c739947add8768b4d20ce6ef320056d4",
+      "symbols": [
+        "workspaceUser, assertSameOrigin, readBody"
+      ],
+      "purpose": "Adds current-role authentication, same-origin write checks, bounded JSON parsing and private error responses.",
+      "previous_behavior": "No project-specific HTTP boundary.",
+      "new_behavior": "Adds current-role authentication, same-origin write checks, bounded JSON parsing and private error responses.",
+      "data_impact": "Reads session/role and request body; no direct mutations.",
+      "access_control_impact": "Rejects unauthenticated, unauthorized and cross-origin requests.",
+      "risks": [
+        "Requests over 8MB are rejected to bound API memory use."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/invitations.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 78
+        }
+      ],
+      "working_tree_sha256": "57f2daaefb98447498d2c94c991609ddeca76045d0a363601011bed9dd71e4c4",
+      "symbols": [
+        "createProjectInvitation, acceptProjectInvitation"
+      ],
+      "purpose": "Generates hashed expiring tokens, verifies email and existing password, grants fixed customer role atomically and logs acceptance.",
+      "previous_behavior": "No fixed-permission customer onboarding.",
+      "new_behavior": "Generates hashed expiring tokens, verifies email and existing password, grants fixed customer role atomically and logs acceptance.",
+      "data_impact": "Creates invite/user or changes approved STUDENT customRoleKey; leaves operating roles intact; reuses login-failure tracking.",
+      "access_control_impact": "Invite generation is Super Admin only; existing operating accounts are not silently downgraded.",
+      "risks": [
+        "Concurrent email creation can fail safely on uniqueness; reused/expired token cannot grant twice."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/store.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 83
+        }
+      ],
+      "working_tree_sha256": "2ea70e38b2f05e8830ed0e2c14b275973d70b18d1994391671aa29eaad287258",
+      "symbols": [
+        "getWorkspace, saveWorkspace, importWorkspace"
+      ],
+      "purpose": "Uses optimistic revision update and event insert in one transaction, idempotent request hash, audit logging and one-time initial import.",
+      "previous_behavior": "No durable shared document or transactional event stream.",
+      "new_behavior": "Uses optimistic revision update and event insert in one transaction, idempotent request hash, audit logging and one-time initial import.",
+      "data_impact": "Writes three project state/event/audit records as appropriate; imports preserve old history with source annotation.",
+      "access_control_impact": "Store accepts only server-resolved actor and route authorization.",
+      "risks": [
+        "Large history grows state payload; rollback must retain project tables."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/project-workspace/transition.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 210
+        }
+      ],
+      "working_tree_sha256": "b277cf11104d543e87890ebfb60bb4fa68c68295b5942b98b2e9f50522950840",
+      "symbols": [
+        "validateTransition, stableStringify, workspacePayload"
+      ],
+      "purpose": "Replays the allowed single change, rejects unrelated edits/history rewrites, recalculates quote dependencies and canonicalizes actor/time and baseline tokens.",
+      "previous_behavior": "Client-side validation could not enforce server author identity or past-record immutability.",
+      "new_behavior": "Replays the allowed single change, rejects unrelated edits/history rewrites, recalculates quote dependencies and canonicalizes actor/time and baseline tokens.",
+      "data_impact": "Produces a new state and immutable event without touching DB directly.",
+      "access_control_impact": "Enforces logged-in party confirmation and fixed contract principles.",
+      "risks": [
+        "Every new mutation kind must be explicitly validated here before acceptance."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/rbac.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 14,
+          "new_end": 14
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 98,
+          "new_end": 98
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 120,
+          "new_end": 120
+        }
+      ],
+      "working_tree_sha256": "1bd4049b2c5ffe7f8f60b4eec6c565f7159878c16ee6114894df17a3e4e55f91",
+      "symbols": [
+        "project.workspace, effectivePermissions, HOME_ORDER"
+      ],
+      "purpose": "Adds project permission, fixed customer-only effective permissions and customer landing route while keeping dashboard first for existing operators.",
+      "previous_behavior": "No project permission or customer-only role boundary.",
+      "new_behavior": "Adds project permission, fixed customer-only effective permissions and customer landing route while keeping dashboard first for existing operators.",
+      "data_impact": "Reads stored permission lists; no DB writes here.",
+      "access_control_impact": "Even a broadened stored customer-role list cannot expose other permissions.",
+      "risks": [
+        "The fixed customer role key is a reserved application contract."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/src/lib/session.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 12,
+          "new_end": 12
+        },
+        {
+          "old_start": 33,
+          "old_end": 33,
+          "new_start": 34,
+          "new_end": 34
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 47,
+          "new_end": 47
+        }
+      ],
+      "working_tree_sha256": "802651373fa097086c77b7582c0aeb6f6f581723595a853f95b07bb1b9d2f202",
+      "symbols": [
+        "AdminUser.organizationId, getAdminUser"
+      ],
+      "purpose": "Selects and returns organizationId with current role/approval checks.",
+      "previous_behavior": "Fresh DB admin user omitted organizationId needed by the existing API user contract.",
+      "new_behavior": "Selects and returns organizationId with current role/approval checks.",
+      "data_impact": "Adds one existing column to authenticated user lookup.",
+      "access_control_impact": "No new permission grant.",
+      "risks": [
+        "Preserves the API session-user shape after current-DB authorization change."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "apps/admin/tests/project-workspace.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 130
+        }
+      ],
+      "working_tree_sha256": "f34f1f8bbcad7903bc79a6c78fc13306b6465e86e046eb1e32e3a3b0cf168b36",
+      "symbols": [
+        "seven workspace regression tests"
+      ],
+      "purpose": "Tests source workbook scope, customer permission clamp, hosted/offline scripts, author normalization, immutable history, baseline JSONB ordering and paid snapshots.",
+      "previous_behavior": "No workspace domain/security regression suite.",
+      "new_behavior": "Tests source workbook scope, customer permission clamp, hosted/offline scripts, author normalization, immutable history, baseline JSONB ordering and paid snapshots.",
+      "data_impact": "Synthetic in-memory data only.",
+      "access_control_impact": "Exercises rejection cases for forged author, wrong party and unrelated edits.",
+      "risks": [
+        "Real PostgreSQL and HTTP/browser acceptance were also executed separately."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "deploy/ec2/project-workspace.sql",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 40
+        }
+      ],
+      "working_tree_sha256": "5ae31594e1f3788ca3c381f4792b388b41a0b55efbcff6b49a8c6c3ecadaa1de",
+      "symbols": [
+        "additive project schema deployment"
+      ],
+      "purpose": "Creates three isolated tables and indexes transactionally and seeds the fixed customer role without overwriting existing roles.",
+      "previous_behavior": "Operating database had no project workspace/event/invitation tables.",
+      "new_behavior": "Creates three isolated tables and indexes transactionally and seeds the fixed customer role without overwriting existing roles.",
+      "data_impact": "Creates schema and one role row; existing member/course/payment rows are preserved.",
+      "access_control_impact": "Role starts with only project.workspace.",
+      "risks": [
+        "Run after verified backup; application rollback leaves new tables intact to preserve agreement history."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. Use the previous admin image tag and old compose file for application rollback."
+    },
+    {
+      "path": "docs/bayada-contract-review.html",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 220,
+          "old_end": 220,
+          "new_start": 220,
+          "new_end": 220
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 460,
+          "new_end": 460
+        },
+        {
+          "old_start": 467,
+          "old_end": 467,
+          "new_start": 468,
+          "new_end": 469
+        },
+        {
+          "old_start": 480,
+          "old_end": 480,
+          "new_start": 482,
+          "new_end": 482
+        },
+        {
+          "old_start": 532,
+          "old_end": 532,
+          "new_start": 534,
+          "new_end": 534
+        },
+        {
+          "old_start": 541,
+          "old_end": 541,
+          "new_start": 543,
+          "new_end": 543
+        },
+        {
+          "old_start": 543,
+          "old_end": 544,
+          "new_start": 545,
+          "new_end": 553
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 563,
+          "new_end": 563
+        },
+        {
+          "old_start": 636,
+          "old_end": 636,
+          "new_start": 646,
+          "new_end": 646
+        },
+        {
+          "old_start": 738,
+          "old_end": 738,
+          "new_start": 748,
+          "new_end": 749
+        }
+      ],
+      "working_tree_sha256": "55d61d080fc230f61a9f64d334c839159534d486c6d90e45831806129902799d",
+      "symbols": [
+        "securityWorkbook, retiredSecurity, reviewSecurity, validateCommerce"
+      ],
+      "purpose": "Uses supplied workbook eleven mandatory checks plus exact classification/maintenance/role questions; retires ten assistant-added security examples, preserves one-year warranty as a request and validates monetary totals independent of JSONB key order.",
+      "previous_behavior": "Security review contained assistant-added expansion examples and payment validation depended on object key order.",
+      "new_behavior": "Uses supplied workbook eleven mandatory checks plus exact classification/maintenance/role questions; retires ten assistant-added security examples, preserves one-year warranty as a request and validates monetary totals independent of JSONB key order.",
+      "data_impact": "Preserves original IDs for legacy validation and raw correction history; no agreement values auto-approved.",
+      "access_control_impact": "No permission change in offline artifact; hosted mode is handled by guarded adapter.",
+      "risks": [
+        "Planning candidate identity remains provisional; retired items are historical source corrections, not current tasks."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. "
+    },
+    {
+      "path": "packages/db/prisma/schema.prisma",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 379,
+          "new_end": 409
+        }
+      ],
+      "working_tree_sha256": "7743f855efad141b83af979808b406e380ff127e48ec1d1fc10116325d15adc8",
+      "symbols": [
+        "ProjectWorkspace, ProjectWorkspaceEvent, ProjectWorkspaceInvite"
+      ],
+      "purpose": "Adds durable state/revision, unique revision event records and hashed one-use invitations.",
+      "previous_behavior": "Prisma model had no dedicated collaborative agreement entities.",
+      "new_behavior": "Adds durable state/revision, unique revision event records and hashed one-use invitations.",
+      "data_impact": "Only additive models; deployed using matching additive SQL.",
+      "access_control_impact": "Actor and invitation grant checks reside in service layer.",
+      "risks": [
+        "Do not drop these tables during rollback after users begin recording decisions."
+      ],
+      "rollback": "Restore this file from baseline commit 7e46f97 together with the matching admin image. Preserve project DB tables and any exported histories. Use the previous admin image tag and old compose file for application rollback."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Read existing account/session/role and schema metadata. Created only three project tables, the fixed customer role and initial project document in operating DB. Existing users, enrollment, health and payment records were not modified. No customer account was created or reclassified in production. All account, invitation, mutation, concurrency and stale-JWT write tests ran in a separate QA database which was removed after verification.",
+    "schema_migration": "Applied deploy/ec2/project-workspace.sql transactionally on the existing AWS PostgreSQL. Verified full DB backup archive before applying additive DDL. Backup /srv/bayada/backups/bayada-pre-project-workspace-20261118-1794929756.dump (1,010,816 bytes). Existing-model compatibility check found zero missing columns.",
+    "external_side_effects": [
+      "Deployed admin only on existing AWS 54.116.157.4. Existing web/academy/Caddy/DB containers retained.",
+      "Public authenticated entry https://admin.54-116-157-4.sslip.io/ko/workspace.",
+      "Image sha256:0799d2e437bc2ff1e7e1660e26448f0bae5d0b1ba89304d6644500a6e14ff31b. Release /srv/bayada/releases/project-workspace-20261118/app, active symlink /srv/bayada/current.",
+      "Previous running admin image preserved as bayada-admin:before-workspace-20261118. Source manifest /srv/bayada/bayada-workspace-20261118.tar.manifest.json.",
+      "Isolated QA container/database, test credentials/cookies, local tunnel and browser QA tab removed. No external email or user messages sent."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "Seven tests passed, including workbook eleven-item scope, fixed customer permissions, trusted hosted/offline script compilation, server author identity, immutable history, canonical baselines and paid totals after JSONB ordering."
+    },
+    {
+      "command": "pnpm --filter admin typecheck; git diff --check",
+      "result": "passed",
+      "evidence": "TypeScript and whitespace checks passed. Prisma client generation succeeded."
+    },
+    {
+      "command": "Docker admin build with APP=admin using final source archive",
+      "result": "passed",
+      "evidence": "Production optimized Next.js build succeeded and all seven tests ran inside Docker. Final source archive SHA256 ba40d7ba319eb42547ecc1e3192a882b6490e72c32692ef7eeebf6bddcb7cb05."
+    },
+    {
+      "command": "node C:/Users/SIMJAE/AppData/Local/Temp/bayada-workspace-api-qa.mjs against isolated PostgreSQL/preview container",
+      "result": "passed",
+      "evidence": "Anonymous workspace access 401; other operational role 403. Customer blocked from orders/organizations/invoices and all tested export/file APIs with 403; unrelated page URLs redirect to workspace. Concurrent saves return 200/409, retrying the accepted request is idempotent, unrelated edits are rejected, cross-origin request denied, customer import/invite forbidden. One-use email-bound invitation acceptance/login/reuse prevention passed."
+    },
+    {
+      "command": "Isolated role-change SQL plus bayada-workspace-stale-session.mjs",
+      "result": "passed",
+      "evidence": "Existing JWT still claimed ADMIN after test DB role change, while operational API returned 403 and project route remained accessible. Artificially broadened stored customer permissions stayed restricted by fixed role policy. Only virtual QA accounts were modified, then restored."
+    },
+    {
+      "command": "Oinzi preview customer login and actual form submission; raw XLSX inspection and visibility-controlled poll refresh",
+      "result": "passed",
+      "evidence": "Customer outer shell had only project link and logout. Real UI item save closed dialog with server r3 and authenticated read-only author. Other-account changes refreshed to r5 with visible-document condition simulated for hidden Oinzi tab. Workbook active security sheet had exactly eleven supplied titles; four role questions and all four workbook sections rendered; raw export had seventeen sheets including withdrawn-source correction history."
+    },
+    {
+      "command": "Verified pg_dump custom archive, additive SQL deployment, admin-only compose rollout and production HTTPS smoke checks",
+      "result": "passed",
+      "evidence": "Backup pg_restore --list succeeded. Login 200; anonymous workspace and document APIs 401. Operating web and academy each returned 200. Existing authenticated admin profile opened the deployed project menu and server-backed document at revision zero. No test decisions were written to production."
+    }
+  ],
+  "residual_risks": [
+    "Customer participants are provisioned through the Super Admin invitation UI. The user has not supplied actual recipient emails, so production customer accounts await invitation acceptance.",
+    "Previous browser-local selections are not discoverable across devices automatically. Super Admin can import an intact JSON backup while the server document is untouched. Legacy author entries are marked as local-source history, with the import attributed to the logged-in admin.",
+    "Agreement confirmations record authenticated accounts and document references. They do not add identity-certified electronic signatures. Planning candidate version identity remains pending.",
+    "The workbook requests one-year free defect warranty; duration and start date remain unagreed until explicitly recorded. Maintenance and additional development remain separate paid contracts.",
+    "Server state uses bounded requests and an existing twenty-thousand-event validator limit; larger future workloads may need archival/pagination. Existing source-audit implementation findings were not reclassified as passed by this collaboration deployment."
+  ],
+  "commit": "same-as-metadata-file"
+}

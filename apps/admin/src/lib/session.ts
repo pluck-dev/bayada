@@ -9,6 +9,7 @@ export interface AdminUser {
   id: string;
   name: string | null;
   email: string;
+  organizationId: string | null;
   /** 시스템 역할 (사용자 정의 역할 사용자는 STUDENT). 파트너 소유권 등 역할 고유 규칙에만 쓴다 */
   role: Role;
   /** 실효 역할 키 — customRoleKey ?? role */
@@ -30,7 +31,7 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
   if (!id) return null;
   const user = await prisma.user.findUnique({
     where: { id },
-    select: { id: true, name: true, email: true, role: true, status: true, providerId: true, customRoleKey: true },
+    select: { id: true, name: true, email: true, role: true, status: true, providerId: true, customRoleKey: true, organizationId: true },
   });
   if (!user || user.status !== "APPROVED") return null;
   if (!user.customRoleKey && !isAdminRole(user.role)) return null;
@@ -43,6 +44,7 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
     id: user.id,
     name: user.name,
     email: user.email,
+    organizationId: user.organizationId,
     role: user.role,
     roleKey: def.key,
     roleName: def.name,

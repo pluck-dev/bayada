@@ -9,7 +9,9 @@ export const metadata: Metadata = { title: "운영 매뉴얼 · BAYADA Admin" };
 /** 운영 매뉴얼 — 모든 어드민 역할이 본다(권한 검사 없이 로그인만). 내용 원본은 components/help/manual.ts (도움말 패널과 공용) */
 export default async function ManualPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  if (!(await getAdminUser())) redirect(`/${locale}/auth/login`);
+  const user = await getAdminUser();
+  if (!user) redirect(`/${locale}/auth/login`);
+  if (user.permissions.length === 1 && user.permissions.includes("project.workspace")) redirect(`/${locale}/workspace`);
   return (
     <>
       <PageHeader

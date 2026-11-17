@@ -17,6 +17,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 # 빌드 시점에는 DB 에 붙지 않는다. Prisma 클라이언트만 생성한다.
 RUN pnpm --filter @bayada/db db:generate
+RUN if [ "$APP" = "admin" ]; then pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts; fi
 RUN pnpm --filter ./apps/${APP} build
 # academy/admin 은 public 폴더가 없다. web 은 있다 → 없으면 빈 폴더를 만들어 COPY 가 항상 되게 한다
 RUN mkdir -p apps/${APP}/public
