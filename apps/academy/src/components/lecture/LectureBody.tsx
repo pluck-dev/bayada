@@ -87,7 +87,7 @@ export function LectureBody({
     (sec: number, duration: number) => {
       if (!enrolled) return;
       // 95% 까지 봤으면 끝까지 기다리지 않고 완료 처리
-      if (!completed && duration > 0 && sec >= Math.floor(duration * 0.95)) {
+      if (!completed && duration > 0 && sec >= Math.ceil(duration * 0.95)) {
         void complete(sec, duration);
         return;
       }

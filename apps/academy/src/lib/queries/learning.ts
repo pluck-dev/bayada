@@ -66,8 +66,8 @@ export async function recomputeEnrollment(userId: string, courseId: string) {
   const done = await prisma.progress.count({
     where: { userId, lectureId: { in: lectureIds }, completed: true },
   });
-  const percent = Math.round((done / lectureIds.length) * 100);
-  const completed = percent >= 100;
+  const completed = done === lectureIds.length;
+  const percent = completed ? 100 : Math.min(99, Math.round((done / lectureIds.length) * 100));
   const updated = await prisma.enrollment.update({
     where: { id: enrollment.id },
     data: {
@@ -124,30 +124,38 @@ const MAX_ELAPSED_SEC = 60;
  * - 직전 기록 이후 실제로 흐른 시간만큼만 늘 수 있다 → 요청을 조작해 끝으로 건너뛰어도 인정되지 않는다.
  */
 export async function saveWatchedSec(userId: string, lectureId: string, watchedSec: number): Promise<number> {
+  if (!Number.isFinite(watchedSec)) throw new Error("유효한 시청 위치가 필요합니다.");
   const reported = Math.max(0, Math.floor(watchedSec));
-  const existing = await prisma.progress.findUnique({
-    where: { userId_lectureId: { userId, lectureId } },
-    select: { watchedSec: true, updatedAt: true },
-  });
-  const base = existing?.watchedSec ?? 0;
-  const elapsed = existing ? Math.max(0, (Date.now() - existing.updatedAt.getTime()) / 1000) : 0;
-  const allowed = base + Math.min(elapsed, MAX_ELAPSED_SEC) * MAX_WATCH_RATE + WATCH_SLACK_SEC;
-  const next = Math.max(base, Math.min(reported, Math.floor(allowed)));
-  await prisma.progress.upsert({
-    where: { userId_lectureId: { userId, lectureId } },
-    create: { userId, lectureId, watchedSec: next },
-    update: { watchedSec: next },
-  });
-  return next;
+  const where = { where: { userId_lectureId: { userId, lectureId } } };
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const existing = await prisma.progress.findUnique({ ...where, select: { id: true, watchedSec: true, updatedAt: true } });
+    if (!existing) {
+      try {
+        const row = await prisma.progress.create({ data: { userId, lectureId, watchedSec: Math.min(reported, WATCH_SLACK_SEC) } });
+        return row.watchedSec;
+      } catch (error) {
+        if ((error as { code?: string }).code === "P2002") continue;
+        throw error;
+      }
+    }
+    const elapsed = Math.max(0, (Date.now() - existing.updatedAt.getTime()) / 1000);
+    // 최초 보고의 여유 시간은 한 번만 준다. 반복 요청마다 더하면 시청 시간을 만들어낼 수 있다.
+    const allowed = existing.watchedSec + Math.floor(Math.min(elapsed, MAX_ELAPSED_SEC) * MAX_WATCH_RATE);
+    const next = Math.max(existing.watchedSec, Math.min(reported, allowed));
+    const changed = await prisma.progress.updateMany({
+      where: { id: existing.id, watchedSec: existing.watchedSec, updatedAt: existing.updatedAt },
+      data: { watchedSec: next },
+    });
+    if (changed.count === 1) return next;
+  }
+  // 동시 보고가 겹치면 이미 확정된 위치를 돌려주고 다음 정기 보고에서 재시도한다.
+  return (await prisma.progress.findUnique({ ...where, select: { watchedSec: true } }))?.watchedSec ?? 0;
 }
 
-/**
- * 영상 레슨을 완료할 만큼 봤는지. 길이는 DB 값(초)을 쓰고, 없을 때만(옮겨 온 일부 레슨) 플레이어가 알려 준 길이를 쓴다.
- */
-export function watchedEnough(watchedSec: number, lectureDuration: number | null, clientDuration?: number): boolean {
-  const duration = lectureDuration && lectureDuration > 0 ? lectureDuration : clientDuration && clientDuration > 0 ? clientDuration : null;
-  if (!duration) return false;
-  return watchedSec >= Math.floor(duration * VIDEO_COMPLETE_RATIO);
+/** 영상 완료 길이는 운영자가 저장한 서버 메타데이터만 신뢰한다. */
+export function watchedEnough(watchedSec: number, lectureDuration: number | null): boolean {
+  if (!lectureDuration || lectureDuration <= 0 || !Number.isFinite(lectureDuration) || !Number.isFinite(watchedSec) || watchedSec < 0) return false;
+  return watchedSec >= Math.ceil(lectureDuration * VIDEO_COMPLETE_RATIO);
 }
 
 /**
@@ -225,8 +233,8 @@ export async function gradeQuiz(userId: string, lectureId: string, answers: Quiz
   const byId = new Map(answers.map((a) => [a.questionId, a]));
   const results = quiz.questions.map((q) => ({ questionId: q.id, correct: gradeQuestion(q, byId.get(q.id)) }));
   const correctCount = results.filter((r) => r.correct).length;
-  const score = quiz.questions.length ? Math.round((correctCount / quiz.questions.length) * 100) : 0;
-  const passed = score >= quiz.passingScore;
+  const score = quiz.questions.length ? Math.floor((correctCount / quiz.questions.length) * 100) : 0;
+  const passed = quiz.questions.length > 0 && correctCount * 100 >= quiz.passingScore * quiz.questions.length;
   await prisma.quizAttempt.create({ data: { userId, quizId: quiz.id, score, passed } });
   return { score, passed, passingScore: quiz.passingScore, correctCount, total: quiz.questions.length, results };
 }

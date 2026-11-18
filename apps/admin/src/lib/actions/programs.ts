@@ -6,6 +6,7 @@ import { ActionError, audit, runAction, type AdminUser } from "../session";
 import { JOB_ROLES, LEARNING_MODES, LEVELS, PRODUCT_TYPES } from "../labels";
 import { PROGRAM_EDIT, can, type Permission } from "../rbac";
 import { findTransition, requiredChecklist, type WorkflowAction } from "../workflow";
+import { curriculumIssues } from "../curriculum-readiness";
 import { assertEditable, assertOwnedBy } from "../guards";
 
 export interface ProgramInput {
@@ -176,7 +177,7 @@ export async function transitionProgram(id: string, action: WorkflowAction, note
         durationMin: true,
         providerId: true,
         publishedAt: true,
-        sections: { select: { _count: { select: { lectures: true } } } },
+        sections: { select: { _count: { select: { lectures: true } }, lectures: { select: { title: true, type: true, videoUrl: true, duration: true, content: true, quiz: { select: { questions: { select: { id: true } } } } } } } },
       },
     });
     if (!course) throw new ActionError("프로그램을 찾을 수 없습니다.");
@@ -193,6 +194,11 @@ export async function transitionProgram(id: string, action: WorkflowAction, note
       if (missing.length) {
         throw new ActionError(`필수 항목이 비어 있어 승인 요청할 수 없습니다: ${missing.map((m) => m.label).join(", ")}`);
       }
+    }
+
+    if (action === "submit" || action === "publish") {
+      const issues = curriculumIssues(course.sections.flatMap((section) => section.lectures));
+      if (issues.length) throw new ActionError(`학습 자료를 확인해 주세요: ${issues.join(" / ")}`);
     }
 
     // 동시 처리 방지 — 상태가 그대로일 때만 바꾼다

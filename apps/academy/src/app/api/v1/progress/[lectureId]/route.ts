@@ -22,7 +22,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ lect
 
     const body = (await request.json().catch(() => ({}))) as { completed?: unknown; watchedSec?: unknown; duration?: unknown };
     if (typeof body.watchedSec === "number" && Number.isFinite(body.watchedSec)) {
-      await saveWatchedSec(viewer.id, lectureId, body.watchedSec);
+      const position = info.lecture.duration && info.lecture.duration > 0 ? Math.min(body.watchedSec, info.lecture.duration) : body.watchedSec;
+      await saveWatchedSec(viewer.id, lectureId, position);
     }
     if (body.completed === true) {
       if (info.lecture.type === "QUIZ") {
@@ -33,8 +34,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ lect
           where: { userId_lectureId: { userId: viewer.id, lectureId } },
           select: { watchedSec: true, completed: true },
         });
-        const clientDuration = typeof body.duration === "number" && Number.isFinite(body.duration) ? body.duration : undefined;
-        if (!row?.completed && !watchedEnough(row?.watchedSec ?? 0, info.lecture.duration, clientDuration)) {
+        if (!row?.completed && (!info.lecture.duration || info.lecture.duration <= 0)) {
+          return NextResponse.json({ error: "영상 길이 정보가 없어 수료를 확인할 수 없습니다. 운영자에게 문의해 주세요." }, { status: 409 });
+        }
+        if (!row?.completed && !watchedEnough(row?.watchedSec ?? 0, info.lecture.duration)) {
           return NextResponse.json({ error: "영상을 끝까지 시청해야 완료돼요" }, { status: 409 });
         }
       }

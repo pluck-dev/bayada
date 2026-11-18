@@ -1,0 +1,333 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-134510-correct-learning-progress-and-completion-checks",
+  "created_at": "2026-11-18T13:45:10+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "60deb2a3b470c0918432180937a6cb3a96f53894",
+  "request": "Cross-test academy and administrator features, fix missing behavior, and deploy verified development",
+  "title": "Correct learning progress and completion checks",
+  "purpose": "Prevent request-based progress inflation and rounded completion or quiz passing, and validate learning material before publication",
+  "files": [
+    {
+      "path": "apps/academy/src/app/api/v1/progress/[lectureId]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 25,
+          "old_end": 25,
+          "new_start": 25,
+          "new_end": 26
+        },
+        {
+          "old_start": 36,
+          "old_end": 37,
+          "new_start": 37,
+          "new_end": 40
+        }
+      ],
+      "working_tree_sha256": "663f6347f207f62325d3e0da11823a90802ac2759e1e46f529e04bbb6d0be64f",
+      "symbols": [
+        "PUT"
+      ],
+      "purpose": "Positions are capped to known server duration; missing metadata returns actionable 409 and client duration cannot establish completion.",
+      "previous_behavior": "Progress accepted oversized positions and client duration could determine completion.",
+      "new_behavior": "Positions are capped to known server duration; missing metadata returns actionable 409 and client duration cannot establish completion.",
+      "data_impact": "No production records changed by this file; validates existing data or tests mocked/pure behavior.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/academy/src/components/lecture/LectureBody.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 90,
+          "old_end": 90,
+          "new_start": 90,
+          "new_end": 90
+        }
+      ],
+      "working_tree_sha256": "ce89887947e0f57d978e729adb01e447f3baf5a2c7a5d71012da92999fa480c5",
+      "symbols": [
+        "LectureBody"
+      ],
+      "purpose": "Client uses the same ceiled threshold as the server.",
+      "previous_behavior": "Client completion used a floored 95 percent threshold.",
+      "new_behavior": "Client uses the same ceiled threshold as the server.",
+      "data_impact": "No production records changed by this file; validates existing data or tests mocked/pure behavior.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/academy/src/lib/queries/learning.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 69,
+          "old_end": 70,
+          "new_start": 69,
+          "new_end": 70
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 127,
+          "new_end": 127
+        },
+        {
+          "old_start": 128,
+          "old_end": 141,
+          "new_start": 129,
+          "new_end": 152
+        },
+        {
+          "old_start": 144,
+          "old_end": 150,
+          "new_start": 155,
+          "new_end": 158
+        },
+        {
+          "old_start": 228,
+          "old_end": 229,
+          "new_start": 236,
+          "new_end": 237
+        }
+      ],
+      "working_tree_sha256": "79086201b5c847bd80246c653e63ac20afe15622b38410be98e50b214bf76c72",
+      "symbols": [
+        "recomputeEnrollment",
+        "getLectureEnrollment",
+        "markLectureComplete",
+        "VIDEO_COMPLETE_RATIO",
+        "saveWatchedSec",
+        "watchedEnough",
+        "quizBlockedBy",
+        "fillGapAnswers",
+        "gradeQuiz",
+        "getMyEnrollments",
+        "getMyCertificates",
+        "getCertificateByNumber",
+        "getResumeLectureId"
+      ],
+      "purpose": "Initial watch allowance is granted once, timestamp/position compare-and-set preserves concurrent progress, completion requires every lesson, quiz grades use exact ratios, and video completion trusts positive server duration only.",
+      "previous_behavior": "Every video report added five extra seconds, concurrent reports could overwrite newer positions, rounded percentages could complete unfinished courses/quizzes, and missing duration trusted a client value.",
+      "new_behavior": "Initial watch allowance is granted once, timestamp/position compare-and-set preserves concurrent progress, completion requires every lesson, quiz grades use exact ratios, and video completion trusts positive server duration only.",
+      "data_impact": "Updates existing progress, enrollment, attempt and certificate records through guarded learning flows; no schema change or historical certificate revocation.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/academy/tests/learning.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 48
+        }
+      ],
+      "working_tree_sha256": "0a64729f0a987ad92bb9db15daca6df68b05a882320d4bb7fba992f34a753c0d",
+      "symbols": [
+        "learning.integration"
+      ],
+      "purpose": "QA-only integration creates synthetic material and verifies enrollment, parallel reports, prerequisites, grading and one idempotent certificate using real Prisma queries; elapsed time is simulated.",
+      "previous_behavior": "No isolated real-database integration test covered the complete learning helper chain.",
+      "new_behavior": "QA-only integration creates synthetic material and verifies enrollment, parallel reports, prerequisites, grading and one idempotent certificate using real Prisma queries; elapsed time is simulated.",
+      "data_impact": "Synthetic QA fixture records only; execution refuses databases outside the local isolated QA connection.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/academy/tests/learning.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 68
+        }
+      ],
+      "working_tree_sha256": "a312de916fe137bb8947859134ab6fd3357fc2d45e43e56f63623dfae112aeff",
+      "symbols": [
+        "learning.test"
+      ],
+      "purpose": "Four regression tests reproduce and prevent repeated-request inflation, 199/200 completion, zero-second threshold and rounded or empty quiz passing.",
+      "previous_behavior": "No regressions covered clock-based inflation or rounding-based premature completion.",
+      "new_behavior": "Four regression tests reproduce and prevent repeated-request inflation, 199/200 completion, zero-second threshold and rounded or empty quiz passing.",
+      "data_impact": "No production records changed by this file; validates existing data or tests mocked/pure behavior.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/admin/src/lib/actions/programs.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 9,
+          "new_end": 9
+        },
+        {
+          "old_start": 179,
+          "old_end": 179,
+          "new_start": 180,
+          "new_end": 180
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 199,
+          "new_end": 203
+        }
+      ],
+      "working_tree_sha256": "c15c0e619bd859e07bb52faeb5203a4c1393e0af7a5812bab878a91e142174f8",
+      "symbols": [
+        "ProgramInput",
+        "createProgram",
+        "updateProgram",
+        "deleteProgram",
+        "setVisibility",
+        "setFeatured",
+        "transitionProgram"
+      ],
+      "purpose": "Submission and publication validate actual video URL/duration, readable text/image content and nonempty quiz questions under existing workflow permissions.",
+      "previous_behavior": "Submission checked only lesson count and publication had no material readiness gate.",
+      "new_behavior": "Submission and publication validate actual video URL/duration, readable text/image content and nonempty quiz questions under existing workflow permissions.",
+      "data_impact": "No production records changed by this file; validates existing data or tests mocked/pure behavior.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/admin/src/lib/curriculum-readiness.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 22
+        }
+      ],
+      "working_tree_sha256": "5ae45d618578ce206c5c1984bb24d87fa561b537ce7bb6999c2bfc0dbb197074",
+      "symbols": [
+        "ReadyLecture",
+        "curriculumIssues"
+      ],
+      "purpose": "Pure readiness validation identifies empty curriculum, missing video metadata, empty text and questionless quizzes while allowing image-only reading content.",
+      "previous_behavior": "No reusable material readiness validation existed.",
+      "new_behavior": "Pure readiness validation identifies empty curriculum, missing video metadata, empty text and questionless quizzes while allowing image-only reading content.",
+      "data_impact": "No production records changed by this file; validates existing data or tests mocked/pure behavior.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    },
+    {
+      "path": "apps/admin/tests/curriculum-readiness.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "4e5cda9ce61ef62f6b4694803c97895e604221460e08f0d84ba2d647bb3fc796",
+      "symbols": [
+        "curriculum-readiness.test"
+      ],
+      "purpose": "Tests reject incomplete materials and accept valid text, image-only reading and populated quizzes.",
+      "previous_behavior": "No tests covered publication material validation.",
+      "new_behavior": "Tests reject incomplete materials and accept valid text, image-only reading and populated quizzes.",
+      "data_impact": "No production records changed by this file; validates existing data or tests mocked/pure behavior.",
+      "access_control_impact": "Client-reported video length no longer grants completion. Existing viewer/enrollment, workflow and ownership authorization remain enforced.",
+      "risks": [
+        "Six existing published videos lack server duration, including two with no media URL; metadata/source repair must precede production rollout of strict completion.",
+        "New publication gates may reject incomplete legacy material until operators correct it."
+      ],
+      "rollback": "Revert this commit and rebuild academy/admin images. No schema rollback is needed. Preserve real progress and certificates; reverting would restore the prior inflation/rounding weaknesses."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Read only aggregate production counts: 118 video lessons, 6 missing duration, all six published, 2 with empty media URL. No production rows or credentials copied/modified. Integration wrote synthetic QA courses, lessons, enrollment, progress, quiz attempts and certificate only.",
+    "schema_migration": "None: no schema changes or production backfills.",
+    "external_side_effects": [
+      "Read-only aggregate SQL over SSH against existing production DB.",
+      "Integration runs against existing separate synthetic QA container via local SSH forwarding; no external mail/payment calls or production rollout."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "evidence": "All 10 tasks passed after final source edits."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/academy/tsconfig.json --test ../../apps/academy/tests/learning.test.ts",
+      "result": "passed",
+      "evidence": "All four regression tests passed after first reproducing failures against the prior implementation."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/curriculum-readiness.test.ts ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "10 tests passed including existing 9 workspace checks."
+    },
+    {
+      "command": "tsx --tsconfig ../../apps/academy/tsconfig.json ../../apps/academy/tests/learning.integration.mts with isolated QA env",
+      "result": "passed",
+      "evidence": "Real DB enrollment lookup, prerequisite locks, 8 parallel progress reports, simulated 95% watch accounting, failed/passed quiz and exactly one certificate passed. Evidence: output/qa-learning-integration-evidence.json."
+    },
+    {
+      "command": "Next build --webpack for apps/academy and apps/admin with DATABASE_URL empty in child process env",
+      "result": "passed",
+      "evidence": "Both production builds completed. Academy logged expected default-setting fallback in the DB-free build."
+    }
+  ],
+  "residual_risks": [
+    "Production deployment remains pending; six missing-duration lessons must be repaired/reviewed before strict completion is rolled out. Two of them also lack media URLs.",
+    "Integration tests helpers with real DB; authenticated API/controller and real browser video playback still need verification.",
+    "Payment provider, institution/partner isolation, certificates public verification and other academy flows remain part of the broader active goal.",
+    "Watch accounting bounds reports by server elapsed time and initial tolerance; it is not independent proof that a human viewed the video.",
+    "Already issued historical certificates and imported completion records are preserved and were not reassessed."
+  ],
+  "commit": "same-as-metadata-file"
+}
