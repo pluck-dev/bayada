@@ -1,7 +1,7 @@
+import { getWebPageContent } from "@/lib/web-pages";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
-import { getPrivacyContent } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { NeedsReview } from "@/components/shared/NeedsReview";
@@ -20,11 +20,11 @@ export default async function PrivacyPage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const privacy = getPrivacyContent();
+  const privacy = await getWebPageContent("privacy");
 
   return (
     <>
-      <PageHero title={dict.web.privacy.title} />
+      <PageHero title={privacy.title} />
       <section className="py-[var(--section-gap)]">
         <Container narrow>
           <div className="space-y-8">

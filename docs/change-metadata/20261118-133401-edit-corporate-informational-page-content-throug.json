@@ -1,0 +1,530 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-133401-edit-corporate-informational-page-content-throug",
+  "created_at": "2026-11-18T13:34:01+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "cc6a2b9b9be0f864ef09b5254d120cbb414beff8",
+  "request": "Connect website content CRUD to administrator website menu and verify real application behavior",
+  "title": "Edit corporate informational page content through administrator",
+  "purpose": "Replace source-only body editing with validated structured content and audited restore",
+  "files": [
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/web/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 69,
+          "new_end": 69
+        }
+      ],
+      "working_tree_sha256": "ec042954c9e22c687af401319187a7306c491ed36f37816aecd292ae2c5b39c1",
+      "symbols": [
+        "WebDashboardPage"
+      ],
+      "purpose": "Website overview links the page body editor.",
+      "previous_behavior": "Website overview did not link informational body editing.",
+      "new_behavior": "Website overview links the page body editor.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Existing web.content permission is enforced by both server actions and the editor route. No role gains permissions.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/web/pages/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 15
+        }
+      ],
+      "working_tree_sha256": "8a86be524e22a42caab9ef660bceb7596d82b6235cbf13d9d624dae0a463c1c7",
+      "symbols": [
+        "WebPagesPage"
+      ],
+      "purpose": "web.content-authorized users select one of five body documents and receive current content and concurrency timestamp.",
+      "previous_behavior": "No corporate informational page editor existed.",
+      "new_behavior": "web.content-authorized users select one of five body documents and receive current content and concurrency timestamp.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Existing web.content permission is enforced by both server actions and the editor route. No role gains permissions.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/admin/src/components/Sidebar.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 104,
+          "new_end": 104
+        }
+      ],
+      "working_tree_sha256": "231970037d5ad7151541e2fc1008dd836eec7c0d5c59b1a86ae3496a5415a8dc",
+      "symbols": [
+        "SidebarProps",
+        "Sidebar"
+      ],
+      "purpose": "Content operators see the page body menu.",
+      "previous_behavior": "Website navigation had no informational body editor.",
+      "new_behavior": "Content operators see the page body menu.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Existing web.content permission is enforced by both server actions and the editor route. No role gains permissions.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/admin/src/components/web/WebPageManager.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 26
+        }
+      ],
+      "working_tree_sha256": "f540b8460e153e7710baff6bc299cee69ee09285c14dd417d3c7c8d2786183c6",
+      "symbols": [
+        "WebPageManager"
+      ],
+      "purpose": "Structured forms edit nested text and lists, add/delete/reorder entries, save changes and intentionally restore original defaults.",
+      "previous_behavior": "Editing informational body content needed source changes.",
+      "new_behavior": "Structured forms edit nested text and lists, add/delete/reorder entries, save changes and intentionally restore original defaults.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Existing web.content permission is enforced by both server actions and the editor route. No role gains permissions.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/admin/src/lib/actions/web-pages.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 43
+        }
+      ],
+      "working_tree_sha256": "20be15adbbc1eba69ddd0ab555c33ce0e641830a28eb9de6ecbb5e78ce06dbfa",
+      "symbols": [
+        "saveWebPage",
+        "resetWebPage"
+      ],
+      "purpose": "Permission-guarded actions validate content, compare timestamps atomically, and store before/after or pre-reset snapshots with each content transaction.",
+      "previous_behavior": "No server actions persisted website informational bodies.",
+      "new_behavior": "Permission-guarded actions validate content, compare timestamps atomically, and store before/after or pre-reset snapshots with each content transaction.",
+      "data_impact": "Creates/updates/deletes only web-page/ namespaced Page overrides and writes content snapshots into AuditLog. No schema change.",
+      "access_control_impact": "Existing web.content permission is enforced by both server actions and the editor route. No role gains permissions.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/about/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 24,
+          "old_end": 72,
+          "new_start": 24,
+          "new_end": 24
+        },
+        {
+          "old_start": 77,
+          "old_end": 77,
+          "new_start": 29,
+          "new_end": 29
+        }
+      ],
+      "working_tree_sha256": "eb3f3de9b556dbc06203fcd3cd31fac21576d7a7213a9d01e56316d798bf7736",
+      "symbols": [
+        "metadata",
+        "AboutPage"
+      ],
+      "purpose": "about body reads the validated administrator override while preserving the existing template and original default.",
+      "previous_behavior": "about body content was defined in page source or the static enriched content file.",
+      "new_behavior": "about body reads the validated administrator override while preserving the existing template and original default.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/guide/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 26,
+          "old_end": 26,
+          "new_start": 26,
+          "new_end": 26
+        },
+        {
+          "old_start": 30,
+          "old_end": 30,
+          "new_start": 30,
+          "new_end": 30
+        },
+        {
+          "old_start": 36,
+          "old_end": 36,
+          "new_start": 36,
+          "new_end": 36
+        }
+      ],
+      "working_tree_sha256": "4f340dbd687ac6cf7ff8def2db7152add62ed650e303bb1148c0112155b971c6",
+      "symbols": [
+        "metadata",
+        "GuidePage"
+      ],
+      "purpose": "guide body reads the validated administrator override while preserving the existing template and original default. Timeline colors cycle safely when administrators add more steps.",
+      "previous_behavior": "guide body content was defined in page source or the static enriched content file.",
+      "new_behavior": "guide body reads the validated administrator override while preserving the existing template and original default. Timeline colors cycle safely when administrators add more steps.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/policy/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 15,
+          "old_end": 77,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 22,
+          "new_end": 22
+        }
+      ],
+      "working_tree_sha256": "8bbd03ede91b986fe6f590ed15ac787a2588af7da98c4fee6b83bfaa49235bf0",
+      "symbols": [
+        "metadata",
+        "PolicyPage"
+      ],
+      "purpose": "policy body reads the validated administrator override while preserving the existing template and original default.",
+      "previous_behavior": "policy body content was defined in page source or the static enriched content file.",
+      "new_behavior": "policy body reads the validated administrator override while preserving the existing template and original default.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/privacy/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 23,
+          "old_end": 23,
+          "new_start": 23,
+          "new_end": 23
+        },
+        {
+          "old_start": 27,
+          "old_end": 27,
+          "new_start": 27,
+          "new_end": 27
+        }
+      ],
+      "working_tree_sha256": "be6b2d02ce1b948b46e17841b3e5ea5a3347b14895576e9a973a8da22ed60fe2",
+      "symbols": [
+        "metadata",
+        "PrivacyPage"
+      ],
+      "purpose": "privacy body reads the validated administrator override while preserving the existing template and original default.",
+      "previous_behavior": "privacy body content was defined in page source or the static enriched content file.",
+      "new_behavior": "privacy body reads the validated administrator override while preserving the existing template and original default.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/terms/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 13,
+          "old_end": 116,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 20,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "0606ec4ae87b5247f5cc6064065d6cd4f1004a73ac056705084076ad86a191a3",
+      "symbols": [
+        "metadata",
+        "TermsPage"
+      ],
+      "purpose": "terms body reads the validated administrator override while preserving the existing template and original default.",
+      "previous_behavior": "terms body content was defined in page source or the static enriched content file.",
+      "new_behavior": "terms body reads the validated administrator override while preserving the existing template and original default.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/src/lib/web-pages.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 9
+        }
+      ],
+      "working_tree_sha256": "0f5b1a8b74ed82337403ba34022af439cb8e9db8757120c22feeb73b6841288a",
+      "symbols": [
+        "getWebPageContent"
+      ],
+      "purpose": "Reader loads a validated namespaced Page override or original source default if absent; runtime DB failures propagate.",
+      "previous_behavior": "Website informational pages read source data only.",
+      "new_behavior": "Reader loads a validated namespaced Page override or original source default if absent; runtime DB failures propagate.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "apps/web/tests/web-pages.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 51
+        }
+      ],
+      "working_tree_sha256": "1486fdfdab042054755c83107578d95511fb9f68b96ddc1937501b37c1114dcc",
+      "symbols": [
+        "web-pages.test"
+      ],
+      "purpose": "Four tests verify defaults, invalid/oversized structures, empty lists, derived numbering, stored reads, intentional default restore and DB error propagation.",
+      "previous_behavior": "No regression coverage for body edits and restore behavior.",
+      "new_behavior": "Four tests verify defaults, invalid/oversized structures, empty lists, derived numbering, stored reads, intentional default restore and DB error propagation.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "packages/shared/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 18,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "657414c5907750fc6ff86f6d89446467bf6dded53ca1381ab054c5e1a8e57c26",
+      "symbols": [
+        "package"
+      ],
+      "purpose": "The shared package exports web-page-content.",
+      "previous_behavior": "No shared page body module export existed.",
+      "new_behavior": "The shared package exports web-page-content.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    },
+    {
+      "path": "packages/shared/src/web-page-content.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 252
+        }
+      ],
+      "working_tree_sha256": "497301cbefa3cad55e2a53f393074c3a003bc0ce9ba53904c108ec37aea00dba",
+      "symbols": [
+        "WEB_PAGE_DEFAULTS",
+        "WebPageKey",
+        "WEB_PAGE_TITLES",
+        "WEB_PAGE_PREFIX",
+        "isWebPageKey",
+        "parseWebPageContent"
+      ],
+      "purpose": "Five original body definitions, labels and shape/size validation are shared; numbered steps and section anchors are normalized.",
+      "previous_behavior": "Original body shapes and lists were scattered across source files.",
+      "new_behavior": "Five original body definitions, labels and shape/size validation are shared; numbered steps and section anchors are normalized.",
+      "data_impact": "Existing source content remains as the default; rendering and tests read content or provided values. No operational writes in this file.",
+      "access_control_impact": "Website body content remains public; stored strings are React text, not executable HTML.",
+      "risks": [
+        "Original legal/certification content is preserved as supplied; publication wording still needs customer editorial validation.",
+        "Explicit reset restores the original source content and keeps the removed override in the audit snapshot."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin. Retain web-page/ Page rows and audit snapshots; source defaults work without any schema rollback."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production data or credentials accessed. QA created then reset only a synthetic web-page/guide override and retained its audit history in the separate QA database.",
+    "schema_migration": "None: existing Page and AuditLog tables store overrides and snapshots.",
+    "external_side_effects": [
+      "Local QA admin/web apps at 3340/3341 and Oinzi browser flows against synthetic QA DB. Apps were stopped after verification.",
+      "No production deployment, external messages or SMTP sends."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "evidence": "All 10 turbo tasks passed after final edits."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-content.test.ts ../../apps/web/tests/website-scope.test.ts ../../apps/web/tests/web-services.test.ts ../../apps/web/tests/web-pages.test.ts",
+      "result": "passed",
+      "evidence": "All 12 website regression tests passed."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "All 9 workspace tests passed."
+    },
+    {
+      "command": "Next build --webpack for apps/web and apps/admin with DATABASE_URL empty in child process environment",
+      "result": "passed",
+      "evidence": "Both builds completed; web generated 229 pages and admin includes /[locale]/web/pages."
+    },
+    {
+      "command": "Oinzi guide edit/save/reset with QA DB and read-only HTTP assertions",
+      "result": "passed",
+      "evidence": "Title, first step and description saved from admin appeared on /ko/guide. Reset removed override, restored defaults, and audit before/after snapshots retained edited content. Evidence: output/qa-page-content-evidence.json."
+    }
+  ],
+  "residual_risks": [
+    "End-to-end UI verification covers guide save/reset; remaining four default structures are covered by validation and build tests.",
+    "Full role-specific negative tests and cross-feature academy/admin verification are pending.",
+    "Production AWS rollout has not occurred.",
+    "Additional fixed homepage, audience and cost-guide content still needs integration/review as part of the active goal.",
+    "Fixed template headings/SEO and legal update-date labels remain source-defined; this change manages body content rather than every visual label."
+  ],
+  "commit": "same-as-metadata-file"
+}

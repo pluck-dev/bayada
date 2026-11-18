@@ -101,6 +101,7 @@ const SYSTEM: NavItem[] = [
 const WEBSITE: NavItem[] = [
   { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content", "web.settings"] },
   { path: "/web/inquiries", label: "문의 CRM", icon: Inbox, permission: "web.inquiries", badgeKey: "inquiries", group: "고객" },
+  { path: "/web/pages", label: "페이지 본문", icon: Newspaper, permission: "web.content", group: "콘텐츠" },
   { path: "/web/services", label: "서비스 소개", icon: Globe, permission: "web.content", group: "콘텐츠" },
   { path: "/web/blog", label: "블로그", icon: Newspaper, permission: "web.content", group: "콘텐츠" },
   { path: "/web/faq", label: "자주 묻는 질문", icon: HelpCircle, permission: "web.content", group: "콘텐츠" },

@@ -1,0 +1,26 @@
+"use client";
+import { useState } from "react";
+import { WEB_PAGE_DEFAULTS, WEB_PAGE_TITLES } from "@bayada/shared/web-page-content";
+import type { WebPageKey } from "@bayada/shared/web-page-content";
+import { saveWebPage, resetWebPage } from "@/lib/actions/web-pages";
+import { Button, Card, Field, inputClass, textareaClass } from "@/components/ui";
+import { useAction } from "@/components/ui/feedback";
+
+type Value = string | number | Value[] | { [key: string]: Value };
+const labels: Record<string, string> = { intro: "회사 소개", title: "제목", heading: "소개 제목", content: "본문", whatIsHomeHealthCare: "홈헬스케어 소개", brandColors: "브랜드 색상", name: "이름", hex: "색상 코드", desc: "설명", orgChart: "조직도", governance: "운영 체계", layers: "조직 구성", xTeams: "협업 조직", certifications: "인증·수상", year: "연도", steps: "이용 절차", description: "설명", effectiveDate: "시행일", purposes: "수집·이용 목적", collectedInfo: "수집 항목", recruitment: "채용", consultation: "상담", privacyOfficer: "개인정보 보호책임자", privacyManager: "개인정보 담당자", position: "직책", phone: "전화번호", email: "이메일", sections: "약관 조항", categories: "정책 분류", icon: "아이콘", items: "세부 항목", department: "부서", contact: "연락처" };
+function Fields({ value, template, name, change }: { value: Value; template: Value; name: string; change: (v: Value) => void }) {
+  const label = labels[name] ?? name;
+  if (Array.isArray(value)) {
+    const example = Array.isArray(template) ? template[0] ?? "" : "";
+    const blank = (v: Value): Value => Array.isArray(v) ? [] : typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([key, entry]) => [key, blank(entry)])) : typeof v === "number" ? 0 : "";
+    return <fieldset className="space-y-3 rounded-lg border border-line p-3"><legend className="px-1 text-sm font-semibold">{label} · {value.length}</legend>{value.map((entry, index) => <div key={index} className="rounded-lg bg-surface p-3"><div className="mb-3 flex items-center justify-between gap-2"><span className="text-xs text-muted">{index + 1}번 항목</span><div className="flex gap-2">{index > 0 && <Button type="button" size="sm" onClick={() => { const next = [...value]; [next[index - 1], next[index]] = [next[index]!, next[index - 1]!]; change(next); }}>위로</Button>}<Button type="button" size="sm" onClick={() => change(value.filter((_, i) => i !== index))}>항목 삭제</Button></div></div><Fields name={Array.isArray(entry) || typeof entry === "object" ? String(index + 1) : name} value={entry} template={example} change={(next) => change(value.map((item, i) => i === index ? next : item))} /></div>)}<Button type="button" size="sm" disabled={value.length >= 100} onClick={() => change([...value, blank(example)])}>항목 추가</Button></fieldset>;
+  }
+  if (typeof value === "object") return <div className="grid gap-4 sm:grid-cols-2">{Object.entries(value).filter(([key]) => !["url", "id", "step"].includes(key)).map(([key, entry]) => <div key={key} className={typeof entry === "object" || String(entry).length > 100 || ["content", "purposes", "description"].includes(key) ? "sm:col-span-2" : ""}>{typeof entry === "object" && !Array.isArray(entry) ? <details open className="rounded-lg border border-line p-3"><summary className="mb-3 cursor-pointer text-sm font-semibold">{labels[key] ?? key}</summary><Fields name={key} value={entry} template={(template as Record<string, Value>)[key]!} change={(next) => change({ ...value, [key]: next })} /></details> : <Fields name={key} value={entry} template={(template as Record<string, Value>)[key]!} change={(next) => change({ ...value, [key]: next })} />}</div>)}</div>;
+  const multiline = String(value).length > 100 || ["content", "description", "purposes", "consultation", "recruitment", "items", "whatIsHomeHealthCare"].includes(name);
+  return <Field label={label}>{multiline ? <textarea aria-label={label} className={textareaClass} rows={5} maxLength={20000} value={String(value)} onChange={(e) => change(e.target.value)} /> : <input aria-label={label} className={inputClass} type={typeof value === "number" ? "number" : "text"} value={value} maxLength={20000} onChange={(e) => change(typeof value === "number" ? Number(e.target.value) : e.target.value)} />}</Field>;
+}
+export function WebPageManager({ pageKey, initial, updatedAt }: { pageKey: WebPageKey; initial: unknown; updatedAt: string | null }) {
+  const [value, setValue] = useState(initial as Value);
+  const { run, isPending } = useAction();
+  return <Card title={WEB_PAGE_TITLES[pageKey]}><form className="space-y-5" onSubmit={(e) => { e.preventDefault(); run(() => saveWebPage(pageKey, value, updatedAt)); }}><Fields value={value} template={WEB_PAGE_DEFAULTS[pageKey] as unknown as Value} name={pageKey} change={setValue} /><div className="flex flex-wrap gap-2 border-t border-line pt-4"><Button type="submit" variant="primary" disabled={isPending}>변경 저장</Button><Button type="button" disabled={isPending} onClick={() => setValue(initial as Value)}>수정 취소</Button>{updatedAt && <Button type="button" disabled={isPending} onClick={() => run(() => resetWebPage(pageKey, updatedAt), { confirm: { title: "기본 내용으로 복원할까요?", body: "현재 수정본은 감사 이력에 남고, 웹사이트는 기존 기본 내용을 표시합니다." } })}>기본 내용 복원</Button>}</div></form></Card>;
+}

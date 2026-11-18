@@ -15,7 +15,8 @@
     "./web-content": "./src/web-content.ts",
     "./member": "./src/member.ts",
     "./social-auth": "./src/social-auth.ts",
-    "./web-services": "./src/web-services.ts"
+    "./web-services": "./src/web-services.ts",
+    "./web-page-content": "./src/web-page-content.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit"

@@ -66,6 +66,7 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
           <Card tour="web-content" title="홈페이지 콘텐츠">
             <ul className="flex flex-col gap-2 text-caption">
               {[
+                { href: `${base}/pages`, label: "페이지 본문", value: "회사소개 · 이용안내 · 정책" },
                 { href: `${base}/services`, label: "서비스 소개", value: "카드 · 상세 · 이용 절차 · FAQ" },
                 { href: `${base}/blog`, label: "블로그", value: `게시 ${d.content.posts} · 초안 ${d.content.drafts}` },
                 { href: `${base}/faq`, label: "자주 묻는 질문", value: `공개 ${d.content.faqs}개` },

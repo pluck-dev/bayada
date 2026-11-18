@@ -1,7 +1,7 @@
+import { getWebPageContent } from "@/lib/web-pages";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
-import { getUsageGuideContent } from "@/data/content";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { Phone, Home, ClipboardList, HeartHandshake, Activity, Stethoscope } from "lucide-react";
@@ -23,17 +23,17 @@ export default async function GuidePage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const guide = getUsageGuideContent();
+  const guide = await getWebPageContent("guide");
 
   return (
     <>
-      <PageHero title={dict.web.guide.title} />
+      <PageHero title={guide.title} />
       <section className="py-[var(--section-gap)]">
         <Container narrow>
           <div className="space-y-0">
             {guide.steps.map((step: { step: number; title: string; description: string }, i: number) => {
               const Icon = stepIcons[i] || Phone;
-              const color = stepColors[i];
+              const color = stepColors[i % stepColors.length];
               return (
                 <div key={step.step} className="relative flex gap-6 pb-12 last:pb-0">
                   {/* 타임라인 라인 */}

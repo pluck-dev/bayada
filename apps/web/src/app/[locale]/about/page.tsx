@@ -1,7 +1,7 @@
+import { getWebPageContent } from "@/lib/web-pages";
 import { Container } from "@/components/layout/Container";
 import { PageHero } from "@/components/layout/PageHero";
 import { NeedsReview } from "@/components/shared/NeedsReview";
-import { getAboutContent } from "@/data/content";
 import { createMetadata } from "@/lib/seo";
 import type { Locale } from "@bayada/shared/i18n";
 import { getDictionary } from "@bayada/shared/i18n";
@@ -21,60 +21,12 @@ export default async function AboutPage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const about = getAboutContent();
-
-  /* BI/CI 정보 */
-  const brandColors = [
-    { name: "BAYADA Red", hex: "#CE0E2D", desc: "주요 브랜드 컬러" },
-    { name: "Dark Navy", hex: "#1B2A4A", desc: "텍스트·배경" },
-    { name: "White", hex: "#FFFFFF", desc: "배경·대비" },
-    { name: "Warm Gray", hex: "#F5F5F0", desc: "서피스·보조" },
-  ];
-
-  /* 조직도 데이터 */
-  const orgChart = {
-    governance: "DEILEA.AI Governance",
-    layers: [
-      { name: "Global Core", desc: "글로벌 전략 수립" },
-      { name: "JAPAC Regional", desc: "아시아태평양 지역 총괄" },
-      { name: "Country Squads", desc: "한국 현지 운영" },
-    ],
-    xTeams: [
-      { name: "Product x AI", desc: "DeiBud, Dtx 등 AI 제품" },
-      { name: "Digital Platform x IT", desc: "DeiCloud, DeiEdu 플랫폼" },
-      { name: "Compliance x Public Sector", desc: "규제·공공 대응" },
-      { name: "GTM x Partnerships", desc: "시장 진출·파트너십" },
-    ],
-  };
-
-  /* 인증·수상 현황 */
-  const certifications = [
-    {
-      title: "노인장기요양보험 지정기관",
-      desc: "국민건강보험공단 공식 지정 방문요양·방문간호 서비스 제공기관",
-      year: "2024",
-    },
-    {
-      title: "2025 엑설런스 인 헬스케어 어워드",
-      desc: "홈헬스케어 분야 우수 서비스 품질 인정",
-      year: "2025",
-    },
-    {
-      title: "BAYADA 글로벌 인증",
-      desc: "BAYADA International Quality Standards 충족",
-      year: "2024",
-    },
-    {
-      title: "ISO 9001 품질경영시스템",
-      desc: "국제 품질경영 표준 인증 획득",
-      year: "2024",
-    },
-  ];
+  const { intro: about, brandColors, orgChart, certifications } = await getWebPageContent("about");
 
   return (
     <>
       <PageHero
-        title="About BAYADA"
+        title={about.title}
         subtitle="바야다홈헬스케어를 소개합니다"
         backgroundImage="/images/about/banner.jpg"
       />
