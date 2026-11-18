@@ -49,3 +49,15 @@ test("website reads stored page changes, explicit empty lists and intentional de
     if (url === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = url;
   }
 });
+
+test("home content supports section removal and rejects unsafe image paths and impossible numbers", () => {
+  const home = structuredClone(WEB_PAGE_DEFAULTS.home);
+  assert.deepEqual(parseWebPageContent("home", { ...home, certifications: [], numbers: [], features: [] }), { certifications: [], numbers: [], features: [] });
+  for (const path of ["javascript:alert(1)", "//outside.invalid/image.png", "https://outside.invalid/image.png"]) {
+    home.certifications[0]!.src = path;
+    assert.throws(() => parseWebPageContent("home", home), /이미지 경로/);
+  }
+  home.certifications = [];
+  home.numbers[0]!.value = -1;
+  assert.throws(() => parseWebPageContent("home", home), /숫자/);
+});

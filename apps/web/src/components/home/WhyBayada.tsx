@@ -1,32 +1,11 @@
 "use client";
+import type { WEB_PAGE_DEFAULTS } from "@bayada/shared/web-page-content";
 
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const features = [
-  {
-    icon: "/images/care-team/icons/book.svg",
-    alt: "교육 아이콘",
-    text: "고난도 시뮬레이션 실습실과 실제 상황 기반 교육",
-  },
-  {
-    icon: "/images/care-team/icons/clipboard.svg",
-    alt: "클립보드 아이콘",
-    text: "신규 임상 인력을 위한 체계적인 간호사 레지던시 및 멘토링 프로그램",
-  },
-  {
-    icon: "/images/care-team/icons/community.svg",
-    alt: "커뮤니티 아이콘",
-    text: "가족의 자신감과 안정을 높이는 가족 중심 교육",
-  },
-  {
-    icon: "/images/care-team/icons/home-health.svg",
-    alt: "홈헬스 아이콘",
-    text: "철저한 응급 대응 준비 및 안전 프로토콜 운영",
-  },
-];
-
-export function WhyBayada() {
+export function WhyBayada({ features }: { features: typeof WEB_PAGE_DEFAULTS.home.features }) {
+  if (!features.length) return null;
   return (
     <section className="bg-white py-16 lg:py-24">
       <div className="mx-auto max-w-[1512px] grid grid-cols-1 items-center gap-10 px-4 sm:px-6 md:grid-cols-[450px_1fr] md:gap-16 lg:grid-cols-[600px_1fr] lg:gap-20 lg:px-12">

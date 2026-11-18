@@ -1,17 +1,12 @@
 "use client";
+import type { WEB_PAGE_DEFAULTS } from "@bayada/shared/web-page-content";
 
 import { CountUp } from "@/components/animations/CountUp";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/animations/FadeIn";
 
-const numbers = [
-  { value: 50, suffix: "+", label: "홈헬스케어 역사", labelKo: "년" },
-  { value: 33000, suffix: "+", label: "글로벌 전문 인력", labelKo: "명" },
-  { value: 360, suffix: "+", label: "글로벌 사무소", labelKo: "개" },
-  { value: 24, suffix: "/7", label: "24시간 케어", labelKo: "" },
-];
-
-export function KeyNumbers() {
+export function KeyNumbers({ numbers }: { numbers: typeof WEB_PAGE_DEFAULTS.home.numbers }) {
+  if (!numbers.length) return null;
   return (
     <section className="border-y border-gray-200 bg-[#f0f4f7] py-16">
       <Container>

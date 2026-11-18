@@ -1,3 +1,4 @@
+import { getWebPageContent } from "@/lib/web-pages";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
@@ -41,7 +42,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const [slides, reviews, services] = await Promise.all([getHeroSlides(), getReviews(), getServices()]);
+  const [slides, reviews, services, home] = await Promise.all([getHeroSlides(), getReviews(), getServices(), getWebPageContent("home")]);
 
   return (
     <>
@@ -49,9 +50,9 @@ export default async function HomePage({
       <ServicesByAge locale={locale} services={services} />
       <BayadaWaySection />
       <ServiceAreaMap />
-      <WhyBayada />
+      <WhyBayada features={home.features} />
       <NeedsReview label="엑셀 명세 없음" note="키 넘버 섹션 — 엑셀 명세서에 해당 섹션이 없습니다. 콘텐츠 확인 필요">
-        <KeyNumbers />
+        <KeyNumbers numbers={home.numbers} />
       </NeedsReview>
       {/* 어드민에서 후기를 전부 숨기면 섹션도 숨긴다 */}
       {reviews.length > 0 && (
@@ -63,7 +64,7 @@ export default async function HomePage({
         <AcademyCTA locale={locale} />
       </NeedsReview>
       <NeedsReview label="엑셀 명세 없음" note="인증 배지 섹션 — 미국 인증 기준, 한국 인증으로 교체 필요">
-        <Certifications />
+        <Certifications certifications={home.certifications} />
       </NeedsReview>
       <NeedsReview label="엑셀 명세 없음" note="블로그 섹션 — 엑셀 명세서에 해당 섹션이 없습니다. 콘텐츠 확인 필요">
         <LatestBlog locale={locale} />

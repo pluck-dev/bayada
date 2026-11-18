@@ -1,14 +1,8 @@
 import Image from "next/image";
+import type { WEB_PAGE_DEFAULTS } from "@bayada/shared/web-page-content";
 
-const certifications = [
-  { name: "ANCC Accredited Provider", src: "/images/awards/ancc.png" },
-  { name: "CARF Accredited", src: "/images/awards/carf.png" },
-  { name: "CHAP Standards of Excellence", src: "/images/awards/chap.png" },
-  { name: "Home Care Pulse Certified", src: "/images/awards/hcp.png" },
-  { name: "Hospice Honors Elite", src: "/images/awards/hospice-honors.png" },
-];
-
-export function Certifications() {
+export function Certifications({ certifications }: { certifications: typeof WEB_PAGE_DEFAULTS.home.certifications }) {
+  if (!certifications.length) return null;
   return (
     <section className="border-t border-gray-200 bg-white py-12 sm:py-16">
       <div className="max-w-[1512px] mx-auto px-4 sm:px-6 lg:px-12">
