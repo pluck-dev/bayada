@@ -1,0 +1,365 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-124659-honor-empty-website-cms-collections-and-restore-",
+  "created_at": "2026-11-18T12:46:59+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "94218cc7f56968b8bf6a02742aacd2bedb44d0cc",
+  "request": "Complete website and academy development with administrator CRUD and functional tests",
+  "title": "Honor empty website CMS collections and restore workspace type checks",
+  "purpose": "Prevent deleted or hidden website content from reappearing and unblock full cross-app validation",
+  "files": [
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/web/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 99,
+          "old_end": 99,
+          "new_start": 99,
+          "new_end": 99
+        }
+      ],
+      "working_tree_sha256": "a7b9d068cda5604658b50edbbd1012107d2f34881cf4d1a1d71ad6e54a8a89be",
+      "symbols": [
+        "WebDashboardPage"
+      ],
+      "purpose": "Admin explains that hiding or deleting all entries removes the content.",
+      "previous_behavior": "Admin instructed users to retain placeholder rows.",
+      "new_behavior": "Admin explains that hiding or deleting all entries removes the content.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "Empty content now intentionally removes sections; administrators must publish content to display it."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/components/home/HeroSection.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 12,
+          "old_end": 12,
+          "new_start": 12,
+          "new_end": 12
+        },
+        {
+          "old_start": 20,
+          "old_end": 20,
+          "new_start": 20,
+          "new_end": 20
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 27,
+          "new_end": 27
+        },
+        {
+          "old_start": 29,
+          "old_end": 29,
+          "new_start": 30,
+          "new_end": 32
+        }
+      ],
+      "working_tree_sha256": "07a79b39e26426b06a7d2dde1fd69bc70a495e7ea53e2a9160643d7e1d09d5f0",
+      "symbols": [
+        "HeroSection"
+      ],
+      "purpose": "An empty collection renders no section; a single slide starts no timer.",
+      "previous_behavior": "Empty slides dereferenced undefined and rotation used modulo zero.",
+      "new_behavior": "An empty collection renders no section; a single slide starts no timer.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "Empty content now intentionally removes sections; administrators must publish content to display it."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/data/hero.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 3,
+          "old_end": 3,
+          "new_start": 3,
+          "new_end": 3
+        }
+      ],
+      "working_tree_sha256": "60749f5a86ba4e049b956cac07b5f5f90056b96a4e259231a042318507c5ba9b",
+      "symbols": [
+        "heroSlides"
+      ],
+      "purpose": "Comment describes defaults for builds without a database.",
+      "previous_behavior": "Comment described runtime fallback after database failure.",
+      "new_behavior": "Comment describes defaults for builds without a database.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "Empty content now intentionally removes sections; administrators must publish content to display it."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/lib/web-content.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 2,
+          "old_end": 2,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 18,
+          "old_end": 20,
+          "new_start": 18,
+          "new_end": 18
+        },
+        {
+          "old_start": 22,
+          "old_end": 22,
+          "new_start": 20,
+          "new_end": 20
+        },
+        {
+          "old_start": 27,
+          "old_end": 29,
+          "new_start": 25,
+          "new_end": 26
+        },
+        {
+          "old_start": 43,
+          "old_end": 43,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 83,
+          "old_end": 83,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 96,
+          "old_end": 96,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 98,
+          "old_end": 98,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 126,
+          "old_end": 127,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "2e512be0c4885bd90c69f5a323a993d452174cb57f3966badbfc6d97fbef9697",
+      "symbols": [
+        "fromDb",
+        "getAllPosts",
+        "getFaqCategories",
+        "getHeroSlides",
+        "getReviews"
+      ],
+      "purpose": "Empty lists stay empty; runtime read failures propagate for ISR stale-content retention.",
+      "previous_behavior": "Empty or failed database reads restored default placeholder content.",
+      "new_behavior": "Empty lists stay empty; runtime read failures propagate for ISR stale-content retention.",
+      "data_impact": "No operational writes or schema changes. CMS code reads existing collections; regression tests replace client methods without database access.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "Database outages on cold requests surface an error instead of placeholder content."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "apps/web/tests/web-content.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 30
+        }
+      ],
+      "working_tree_sha256": "0f34683527ce6abfad565ac8b0d0c6c0e547bb68d2d76e6477e46a8133c5f4a0",
+      "symbols": [
+        "CMS regression test"
+      ],
+      "purpose": "Mocks verify empty lists, all-hidden items, propagated failure and DB-free build defaults.",
+      "previous_behavior": "No regression covered deleted collections or failed reads.",
+      "new_behavior": "Mocks verify empty lists, all-hidden items, propagated failure and DB-free build defaults.",
+      "data_impact": "No operational writes or schema changes. CMS code reads existing collections; regression tests replace client methods without database access.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "Empty content now intentionally removes sections; administrators must publish content to display it."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "packages/db/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 25,
+          "new_end": 25
+        }
+      ],
+      "working_tree_sha256": "09129e76534c854aeafc3267f3da34bdb25a272911e2f6eeb821e35306c84b56",
+      "symbols": [
+        "@types/node"
+      ],
+      "purpose": "Explicit development dependency resolves Node environment types.",
+      "previous_behavior": "DB source could not type-check process because Node types were undeclared.",
+      "new_behavior": "Explicit development dependency resolves Node environment types.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "No known behavior regression beyond keyboard selection skipping disabled options."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "packages/ui/src/components/date-picker.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 191,
+          "old_end": 191,
+          "new_start": 191,
+          "new_end": 192
+        },
+        {
+          "old_start": 193,
+          "old_end": 193,
+          "new_start": 194,
+          "new_end": 194
+        }
+      ],
+      "working_tree_sha256": "47b69aa56371e8ae3e26caec2100f015e70ae852e98bf00cfed782fae83419a7",
+      "symbols": [
+        "DatePicker key handler"
+      ],
+      "purpose": "Validated movement tuple is stored before spread.",
+      "previous_behavior": "Repeated index lookup failed strict indexed access typing.",
+      "new_behavior": "Validated movement tuple is stored before spread.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "No known behavior regression beyond keyboard selection skipping disabled options."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "packages/ui/src/components/select.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 140,
+          "old_end": 140,
+          "new_start": 140,
+          "new_end": 144
+        },
+        {
+          "old_start": 142,
+          "old_end": 142,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "4a4361c7495f11fe74bca4033bb20e9b032f9d4421dcd4d29e5ec4a50bb8a870",
+      "symbols": [
+        "Select.move"
+      ],
+      "purpose": "Only an existing enabled option updates keyboard focus.",
+      "previous_behavior": "Unchecked indexed option failed typing and could focus a disabled option after a full scan.",
+      "new_behavior": "Only an existing enabled option updates keyboard focus.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "No known behavior regression beyond keyboard selection skipping disabled options."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    },
+    {
+      "path": "packages/ui/src/cover/spec.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 75,
+          "old_end": 75,
+          "new_start": 75,
+          "new_end": 75
+        },
+        {
+          "old_start": 85,
+          "old_end": 85,
+          "new_start": 85,
+          "new_end": 85
+        }
+      ],
+      "working_tree_sha256": "38f0398c4d6cc4afb419ac5d2b00ac1f182d7f47cd711db3f89e8593902ff8b4",
+      "symbols": [
+        "categoryTone",
+        "coverSpec"
+      ],
+      "purpose": "Explicit default values make cover selections total without changing valid hashed results.",
+      "previous_behavior": "Indexed palette and pattern selections could be undefined under strict checking.",
+      "new_behavior": "Explicit default values make cover selections total without changing valid hashed results.",
+      "data_impact": "None: UI rendering, documentation or development dependency only.",
+      "access_control_impact": "None: existing administrator authorization and public read permissions remain unchanged.",
+      "risks": [
+        "No known behavior regression beyond keyboard selection skipping disabled options."
+      ],
+      "rollback": "Revert this commit and reinstall the lockfile. No data or schema rollback is needed."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production data accessed or mutated by this change. Tests mocked Prisma methods.",
+    "schema_migration": "None: no schema or backfill changes.",
+    "external_side_effects": [
+      "Installed Node development type dependency using the existing pnpm store. No deployment or external messages."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "evidence": "10 turbo tasks succeeded including web, academy and admin."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-content.test.ts",
+      "result": "passed",
+      "evidence": "CMS regression test passed: empty collections, hidden entries, read failure, build defaults."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "All 9 existing workspace regression tests passed."
+    }
+  ],
+  "residual_risks": [
+    "Full application build, browser cross-tests, website scope removal, expanded CRUD and AWS rollout remain part of the active goal; this commit does not claim completion.",
+    "On a cold runtime request during a database outage no prior ISR result may exist, so an error is preferable to resurrecting withdrawn content."
+  ],
+  "commit": "same-as-metadata-file"
+}

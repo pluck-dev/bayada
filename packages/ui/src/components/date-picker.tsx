@@ -188,9 +188,10 @@ export function DatePicker({
                 PageUp: [0, -1],
                 PageDown: [0, 1],
               };
-              if (map[e.key]) {
+              const movement = map[e.key];
+              if (movement) {
                 e.preventDefault();
-                shift(...map[e.key]);
+                shift(...movement);
               } else if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
                 pick(cursor);

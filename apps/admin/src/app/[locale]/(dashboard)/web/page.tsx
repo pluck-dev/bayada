@@ -96,7 +96,7 @@ export default async function WebDashboardPage({ params }: { params: Promise<{ l
               ))}
             </ul>
             <p className="mt-3 border-t border-line pt-3 text-caption text-muted">
-              항목이 하나도 없으면 홈페이지는 기존 기본 콘텐츠를 보여 줍니다. 지우기보다 숨김을 쓰세요.
+              저장한 공개 상태가 홈페이지에 반영됩니다. 모두 숨기거나 삭제하면 해당 콘텐츠가 표시되지 않습니다.
             </p>
           </Card>
         )}

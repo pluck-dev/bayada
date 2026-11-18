@@ -1,5 +1,5 @@
 // 홈페이지 콘텐츠 읽기 (서버 전용) — 어드민 '웹사이트' 작업 영역에서 고친 DB 값을 읽고,
-// DB 가 없거나(도커 빌드는 DB 접속 없음) 못 읽거나 테이블이 비어 있으면 src/data/* 하드코딩 값을 쓴다.
+// DB 연결이 없는 빌드 환경에서는 기본 데이터를 사용한다. 연결된 DB의 빈 목록은 그대로 반영한다.
 // 페이지는 ISR(revalidate) + 어드민 저장 시 POST /api/revalidate 로 갱신된다.
 import { cache } from "react";
 import { prisma } from "@bayada/db";
@@ -15,18 +15,15 @@ import { faqCategories as fallbackFaq } from "@/data/faq-data";
 import { reviews as fallbackReviews } from "@/data/reviews";
 import { heroSlides as fallbackHero } from "@/data/hero";
 
-/** 한 번 실패하면 잠시 DB 를 건너뛴다 — 빌드 중 DB 가 죽어 있으면 페이지마다 접속 타임아웃을 기다리지 않게 */
-let dbDownUntil = 0;
-
+/** 기본 데이터는 DB가 없는 빌드에만 사용한다. 운영 DB 오류는 ISR의 이전 정상 결과를 유지하도록 전파한다. */
 async function fromDb<T>(label: string, query: () => Promise<T | null>, fallback: () => T): Promise<T> {
-  if (!process.env.DATABASE_URL || Date.now() < dbDownUntil) return fallback();
+  if (!process.env.DATABASE_URL) return fallback();
   try {
     const value = await query();
     return value ?? fallback();
   } catch (error) {
-    dbDownUntil = Date.now() + 30_000;
-    console.warn(`[web-content] ${label}: DB 읽기 실패 — 기본 데이터 사용`, error instanceof Error ? error.message.split("\n")[0] : error);
-    return fallback();
+    console.error(`[web-content] ${label}: DB 읽기 실패`);
+    throw error;
   }
 }
 
@@ -40,7 +37,6 @@ export const getAllPosts = cache(async (): Promise<BlogPost[]> =>
     "blog",
     async () => {
       const rows = await prisma.webBlogPost.findMany({ orderBy: { publishedAt: "desc" } });
-      if (rows.length === 0) return null;
       return rows.map((p) => ({
         slug: p.slug,
         title: p.title,
@@ -80,7 +76,6 @@ export const getFaqCategories = cache(async (): Promise<FAQCategory[]> =>
         orderBy: [{ order: "asc" }, { createdAt: "asc" }],
         include: { items: { where: { visible: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] } },
       });
-      if (rows.length === 0) return null;
       return rows
         .map((c) => ({ slug: c.slug, name: c.name, items: c.items.map((i) => ({ q: i.question, a: i.answer })) }))
         .filter((c) => c.items.length > 0);
@@ -93,9 +88,7 @@ export const getReviews = cache(async (): Promise<Review[]> =>
   fromDb(
     "reviews",
     async () => {
-      // 숨긴 후기까지 세어 '행이 하나도 없음'(가져오기 전)과 '전부 숨김'을 구분한다
       const rows = await prisma.webReview.findMany({ orderBy: [{ order: "asc" }, { reviewedAt: "desc" }] });
-      if (rows.length === 0) return null;
       return rows
         .filter((r) => r.visible)
         .map((r) => ({
@@ -123,8 +116,6 @@ export const getHeroSlides = cache(async (): Promise<HeroSlide[]> =>
     async () => {
       const rows = await prisma.webHeroSlide.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] });
       const visible = rows.filter((r) => r.visible);
-      // 슬라이드가 0장이면 히어로가 빈 화면이 되므로 기본 슬라이드를 쓴다
-      if (visible.length === 0) return null;
       return visible.map((r) => ({
         id: r.id,
         src: r.imageUrl,

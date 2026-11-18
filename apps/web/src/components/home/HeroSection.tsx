@@ -9,7 +9,7 @@ import type { HeroSlide } from "@/types";
 
 interface HeroSectionProps {
   locale: string;
-  /** 서버(lib/web-content)에서 읽은 슬라이드 — 최소 1장 */
+  /** 서버에서 읽은 공개 슬라이드. 모두 숨기면 섹션을 표시하지 않는다. */
   slides: HeroSlide[];
 }
 
@@ -17,16 +17,19 @@ export function HeroSection({ locale, slides }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
   const [showJobsPopup, setShowJobsPopup] = useState(false);
   const slide = slides[current] ?? slides[0];
-  const ctaHref = resolveWebHref(slide.ctaHref, locale);
+  const ctaHref = resolveWebHref(slide?.ctaHref ?? "", locale);
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
   useEffect(() => {
+    if (slides.length < 2) return;
     const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
-  }, [next]);
+  }, [next, slides.length]);
+
+  if (!slide) return null;
 
   return (
     <section className="relative h-[620px] w-full overflow-hidden bg-white">

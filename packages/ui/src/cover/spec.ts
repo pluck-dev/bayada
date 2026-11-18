@@ -72,7 +72,7 @@ export interface CoverSpec {
 /** 분야(카테고리) slug → 표지 색. 분야 칩의 색 점 등 표지 밖에서도 같은 색을 쓰려고 따로 둔다 */
 export function categoryTone(slug: string | null | undefined): CoverTone {
   if (!slug) return "rose";
-  return CATEGORY_TONE[slug] ?? TONES[hash(slug) % TONES.length];
+  return CATEGORY_TONE[slug] ?? (TONES[hash(slug) % TONES.length] ?? "rose");
 }
 
 export function coverSpec(c: CoverInput): CoverSpec {
@@ -82,7 +82,7 @@ export function coverSpec(c: CoverInput): CoverSpec {
   return {
     tone,
     palette: COVER_PALETTES[tone],
-    pattern: PATTERNS[hash(c.slug || title) % PATTERNS.length],
+    pattern: PATTERNS[hash(c.slug || title) % PATTERNS.length] ?? "rings",
     title,
     eyebrow: [c.category?.name ?? "바야다 아카데미", c.typeLabel].join(" · "),
     chips: [c.levelLabel, c.audienceLabel].filter((v): v is string => !!v),

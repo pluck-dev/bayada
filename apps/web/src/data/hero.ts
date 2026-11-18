@@ -1,6 +1,6 @@
 import type { HeroSlide } from "@/types";
 
-// 홈 히어로 슬라이드 기본값 — DB(WebHeroSlide)에 행이 없거나 DB 를 못 읽을 때 쓰고, import:web 이 이 값을 DB 로 옮긴다.
+// 홈 히어로 슬라이드 기본값 — DB 연결 없이 빌드할 때 쓰고, import:web 이 이 값을 DB 로 옮긴다.
 // 문구는 슬라이드마다 둘 수 있지만 원래 화면은 세 장이 같은 문구다.
 const TITLE = "무엇보다 소중한 것에\n집중할 수 있도록 —\n비교할 수 없는 돌봄";
 const SUBTITLE =

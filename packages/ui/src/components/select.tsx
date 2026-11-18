@@ -137,9 +137,12 @@ export function Select({
     let i = active;
     for (let k = 0; k < options.length; k++) {
       i = (i + d + options.length) % options.length;
-      if (!options[i].disabled) break;
+      const option = options[i];
+      if (option && !option.disabled) {
+        setActive(i);
+        return;
+      }
     }
-    setActive(i);
   };
 
   const onListKey = (e: React.KeyboardEvent) => {
