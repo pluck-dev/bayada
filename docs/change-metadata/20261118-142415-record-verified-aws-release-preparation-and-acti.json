@@ -1,0 +1,166 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-142415-record-verified-aws-release-preparation-and-acti",
+  "created_at": "2026-11-18T14:24:15+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "31240cec3a03a592ce79838911fc55ecd7ce660b",
+  "request": "Deploy verified development to existing AWS, verify operation and retain reviewable deployment evidence",
+  "title": "Record verified AWS release preparation and activation",
+  "purpose": "Preserve the exact tested build, backup, candidate startup and rollback-capable routing procedures",
+  "files": [
+    {
+      "path": "deploy/ec2/release-records/20261118-31240ce/activate.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 45
+        }
+      ],
+      "working_tree_sha256": "4819a70518dfd52942432395b9a01adb20a17ec6b8fae0a1b951db83fc6c6ac0",
+      "symbols": [
+        "activate.py"
+      ],
+      "purpose": "Archive the executed activation procedure: invalidate build cache, load explicit in-container proxy config, verify 13 public routes, and restore prior routing on failure.",
+      "previous_behavior": "No archived exact routing activation recipe existed.",
+      "new_behavior": "Archive the executed activation procedure: invalidate build cache, load explicit in-container proxy config, verify 13 public routes, and restore prior routing on failure.",
+      "data_impact": "Preparation backs up the DB server-side and creates missing namespaced Page service records and one import marker. Other recipes build or route existing data; no customer data is deleted.",
+      "access_control_impact": "Preserves existing app secrets and role permissions server-side. Public anonymous access probes verify protected APIs reject unauthenticated requests.",
+      "risks": [
+        "These are immutable historical recipes for fixed release IDs, not generic scripts to replay against an active release. State/path/hash preconditions intentionally refuse unsafe reruns.",
+        "Old services and rollback images remain until broader goal verification is complete."
+      ],
+      "rollback": "Restore the saved previous Caddy config through an explicit in-container file and reload, pointing back to retained old apps. Keep additive Page rows and subsequent customer data; never restore the entire old DB blindly."
+    },
+    {
+      "path": "deploy/ec2/release-records/20261118-31240ce/build-base.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 47
+        }
+      ],
+      "working_tree_sha256": "1714701315e13b4f51fb651120f5666ebfd363835b9f4692886659f6284ee676",
+      "symbols": [
+        "build-base.py"
+      ],
+      "purpose": "Archive the executed hash-checked source extraction and sequential three-image build with preserved rollback tags.",
+      "previous_behavior": "The base image build orchestration existed only as a temporary operations helper.",
+      "new_behavior": "Archive the executed hash-checked source extraction and sequential three-image build with preserved rollback tags.",
+      "data_impact": "Preparation backs up the DB server-side and creates missing namespaced Page service records and one import marker. Other recipes build or route existing data; no customer data is deleted.",
+      "access_control_impact": "Preserves existing app secrets and role permissions server-side. Public anonymous access probes verify protected APIs reject unauthenticated requests.",
+      "risks": [
+        "These are immutable historical recipes for fixed release IDs, not generic scripts to replay against an active release. State/path/hash preconditions intentionally refuse unsafe reruns.",
+        "Old services and rollback images remain until broader goal verification is complete."
+      ],
+      "rollback": "Restore the saved previous Caddy config through an explicit in-container file and reload, pointing back to retained old apps. Keep additive Page rows and subsequent customer data; never restore the entire old DB blindly."
+    },
+    {
+      "path": "deploy/ec2/release-records/20261118-31240ce/build.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 58
+        }
+      ],
+      "working_tree_sha256": "a594030aae00e855071d33a15c3c799b95eefd3880ca0a61dbc04f5882c77550",
+      "symbols": [
+        "build.py"
+      ],
+      "purpose": "Archive the executed patched academy build and digest-checked reuse of unchanged web/admin images.",
+      "previous_behavior": "The academy patch image build and unchanged image provenance existed only in server logs.",
+      "new_behavior": "Archive the executed patched academy build and digest-checked reuse of unchanged web/admin images.",
+      "data_impact": "Preparation backs up the DB server-side and creates missing namespaced Page service records and one import marker. Other recipes build or route existing data; no customer data is deleted.",
+      "access_control_impact": "Preserves existing app secrets and role permissions server-side. Public anonymous access probes verify protected APIs reject unauthenticated requests.",
+      "risks": [
+        "These are immutable historical recipes for fixed release IDs, not generic scripts to replay against an active release. State/path/hash preconditions intentionally refuse unsafe reruns.",
+        "Old services and rollback images remain until broader goal verification is complete."
+      ],
+      "rollback": "Restore the saved previous Caddy config through an explicit in-container file and reload, pointing back to retained old apps. Keep additive Page rows and subsequent customer data; never restore the entire old DB blindly."
+    },
+    {
+      "path": "deploy/ec2/release-records/20261118-31240ce/prepare.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 73
+        }
+      ],
+      "working_tree_sha256": "787b519a6478606d067890c6674620f044804460001eecc4e85be5fa11f52194",
+      "symbols": [
+        "prepare.py"
+      ],
+      "purpose": "Archive the executed verified DB backup, service document import, production-env candidate startup, internal health probes and proxy validation.",
+      "previous_behavior": "Backup, one-time service import and candidate startup orchestration was not preserved in Git.",
+      "new_behavior": "Archive the executed verified DB backup, service document import, production-env candidate startup, internal health probes and proxy validation.",
+      "data_impact": "Preparation backs up the DB server-side and creates missing namespaced Page service records and one import marker. Other recipes build or route existing data; no customer data is deleted.",
+      "access_control_impact": "Preserves existing app secrets and role permissions server-side. Public anonymous access probes verify protected APIs reject unauthenticated requests.",
+      "risks": [
+        "These are immutable historical recipes for fixed release IDs, not generic scripts to replay against an active release. State/path/hash preconditions intentionally refuse unsafe reruns.",
+        "Old services and rollback images remain until broader goal verification is complete."
+      ],
+      "rollback": "Restore the saved previous Caddy config through an explicit in-container file and reload, pointing back to retained old apps. Keep additive Page rows and subsequent customer data; never restore the entire old DB blindly."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "AWS-only verified DB backup created. One-time importer added 20 existing corporate service documents plus an import marker. No customer accounts, enrollments or payments were changed for deployment tests. Detailed production data/secrets were not exported.",
+    "schema_migration": "None: existing tables used; no destructive migrations.",
+    "external_side_effects": [
+      "Built three release images and a patched academy image on existing EC2. Started isolated QA image containers and passed 54 real-session checks.",
+      "Started new live app containers alongside old apps, switched Caddy routing, tagged images and updated current symlink. No new AWS servers or paid external services provisioned.",
+      "First activation probe detected stale routing and automatically restored old routing. Confirmed a stale file inode bind mount; corrected explicit reload file and successfully passed all 13 public checks.",
+      "Oinzi public web/academy/admin screen rendering checked and screenshots saved to output/aws-live-*.png."
+    ]
+  },
+  "verification": [
+    {
+      "command": "Python compile(source, filename, exec) for all four archived recipes",
+      "result": "passed",
+      "evidence": "All recipe sources compile without executing deployment mutations."
+    },
+    {
+      "command": "Compare SHA-256 of each local archived recipe with the script executed on AWS",
+      "result": "passed",
+      "evidence": "All 4 source files match byte-for-byte."
+    },
+    {
+      "command": "Authenticated API cross suite against AWS production images backed by synthetic QA DB",
+      "result": "passed",
+      "evidence": "54 checks passed on release-31240ce image tags; no external payment confirmation or real video viewing claimed."
+    },
+    {
+      "command": "AWS live preparation and activation with public HTTP probes",
+      "result": "passed",
+      "evidence": "13 public checks passed; deleted website login/shop/membership routes returned 404, protected APIs returned 401, signed-media gate returned 403 without signature. Evidence output/aws-platform-deployment-evidence.json."
+    },
+    {
+      "command": "Oinzi public render and screenshot review of deployed web, academy and admin login",
+      "result": "passed",
+      "evidence": "Expected headings rendered with no application error; images output/aws-live-web.png, aws-live-academy.png, aws-live-admin.png inspected."
+    }
+  ],
+  "residual_risks": [
+    "Broader goal remains active: additional feature coverage, fixed content scope, external PG configuration and final report/QA cleanup are pending.",
+    "Two legacy media files are absent from supplied backups and need owner-provided originals.",
+    "Application runtime source commit is 31240ce. Web/admin images reuse d742828 build inputs proven unchanged in app/package/Docker/config paths; this commit archives operations only.",
+    "Existing Caddy file mount has a stale inode. Active config is loaded from the explicit /tmp candidate file; host startup file is also updated. Reloads during this deployment must use the archived explicit-file procedure.",
+    "Old app containers, QA containers and SSH test forwards are temporarily retained for verification and rollback."
+  ],
+  "commit": "same-as-metadata-file"
+}
