@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma, Prisma } from "@bayada/db";
 import { errorResponse } from "@/lib/api-utils";
+import { paymentService } from "@/lib/services";
 import { getViewer } from "@/lib/viewer";
 import { isCourseListed } from "@/lib/queries/courses";
 
@@ -30,7 +31,7 @@ export async function POST(_req: Request, { params }: Ctx) {
       select: {
         id: true,
         startsAt: true,
-        course: { select: { id: true, status: true, visibility: true, price: true } },
+        course: { select: { id: true, status: true, visibility: true, price: true, productType: true } },
       },
     });
     if (!session || !session.course) return NextResponse.json({ error: "일정을 찾을 수 없습니다" }, { status: 404 });
@@ -39,6 +40,9 @@ export async function POST(_req: Request, { params }: Ctx) {
       where: { userId_courseId: { userId: viewer.id, courseId: course.id } },
       select: { id: true },
     });
+    if (enrolled && !(await paymentService.enrollmentActive(enrolled.id, viewer.id, course))) {
+      return NextResponse.json({ error: "수강 권한이 만료되었습니다. 이용 중인 패스나 구매 내역을 확인해 주세요." }, { status: 403 });
+    }
     if (!enrolled) {
       if (!isCourseListed(course, viewer))
         return NextResponse.json({ error: "일정을 찾을 수 없습니다" }, { status: 404 });

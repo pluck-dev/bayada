@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-140957-block-expired-pass-practice-registration-and-ext",
+  "created_at": "2026-11-18T14:09:57+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "d74282813acc4a32096ee8c774cd6689b28c468d",
+  "request": "Complete academy/admin development with cross-feature testing and AWS deployment",
+  "title": "Block expired pass practice registration and extend cross tests",
+  "purpose": "Keep practice enrollment consistent with paid learning access and verify additional platform flows",
+  "files": [
+    {
+      "path": "apps/academy/src/app/api/v1/sessions/[sessionId]/registration/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": 33,
+          "old_end": 33,
+          "new_start": 34,
+          "new_end": 34
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 43,
+          "new_end": 45
+        }
+      ],
+      "working_tree_sha256": "493f736ca2f9b2811f9d56292fd51a7a1250a039a871bb52cb5d8a8356fb08af",
+      "symbols": [
+        "POST"
+      ],
+      "purpose": "Reject practice registration without a valid paid/pass enrollment.",
+      "previous_behavior": "Presence of an enrollment row allowed paid practice registration even after its pass expired.",
+      "new_behavior": "Existing enrollment must pass the same enrollmentActive check used by learning progress; expired pass access returns 403 while active and renewed passes work.",
+      "data_impact": "Reads enrollment source and active subscriptions before registration; rejected requests write no registration. No schema change.",
+      "access_control_impact": "Expired pass holders cannot reserve paid practice seats; existing free, purchased and institution enrollment rules remain unchanged.",
+      "risks": [
+        "Adds a paid-enrollment source/subscription lookup to practice registration.",
+        "Previously reserved seats are preserved; this patch checks new requests and does not revoke existing reservations."
+      ],
+      "rollback": "Revert this commit and rebuild academy. No database rollback needed; reverting reopens the expired-pass access flaw."
+    },
+    {
+      "path": "apps/academy/tests/api-cross.integration.mts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 96,
+          "new_end": 137
+        }
+      ],
+      "working_tree_sha256": "fac83bd848144a531818bdc47805b460d1b07fc9f174ec4a697f12eee539612a",
+      "symbols": [
+        "main"
+      ],
+      "purpose": "Exercise additional practice, engagement, pathway, credential and pass lifecycle flows over actual authenticated HTTP.",
+      "previous_behavior": "The suite covered 31 flows and did not detect expired-pass practice access.",
+      "new_behavior": "54 authenticated cross-feature checks now cover capacity races, cancellation ownership, engagement, pathway goals, credential duplicates and active/expired/renewed passes.",
+      "data_impact": "Creates only synthetic QA users, courses, sessions, registrations, subscriptions, credentials applications and engagement rows; test refuses all non-QA database URLs.",
+      "access_control_impact": "Expired pass holders cannot reserve paid practice seats; existing free, purchased and institution enrollment rules remain unchanged.",
+      "risks": [
+        "Adds a paid-enrollment source/subscription lookup to practice registration.",
+        "Previously reserved seats are preserved; this patch checks new requests and does not revoke existing reservations."
+      ],
+      "rollback": "Revert this commit and rebuild academy. No database rollback needed; reverting reopens the expired-pass access flaw."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production records changed by this patch or tests. Synthetic QA data only.",
+    "schema_migration": "None.",
+    "external_side_effects": [
+      "54 local HTTP checks with synthetic Auth.js sessions; no external payments or mail. Existing AWS d742828 build completed separately without switching services."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 package/application typecheck tasks passed."
+    },
+    {
+      "command": "tsx --tsconfig ../../apps/academy/tsconfig.json ../../apps/academy/tests/api-cross.integration.mts with isolated QA environment",
+      "result": "passed",
+      "evidence": "54 checks passed. Regression first reproduced an expired pass receiving HTTP 201 instead of 403; after fix expiration rejects with no registration, renewal returns 201. Evidence output/qa-api-cross-evidence.json."
+    }
+  ],
+  "residual_risks": [
+    "New academy production image must be built before rollout; previously built d742828 images do not contain this patch.",
+    "Existing reservations made before expiry are preserved; attendance policy after expiry is outside this change.",
+    "Live PG approval/refund and actual video playback are not exercised by this test.",
+    "Remaining goal work includes deployment, production smoke verification, broader feature gaps and final report."
+  ],
+  "commit": "same-as-metadata-file"
+}
