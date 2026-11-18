@@ -169,11 +169,10 @@ export function ContactForm({ site }: { site: SiteInfo }) {
   return (
     <>
       {/* ── 연락 채널 카드 ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-14">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-14">
         {[
           { icon: "📞", title: "전화 문의", value: PHONE, sub: site.contactHours },
           { icon: "📧", title: "이메일 문의", value: EMAIL, sub: "영업일 기준 24시간 내 답변" },
-          { icon: "🤖", title: "AI 상담", value: "DeiBud", sub: "24시간 이용 가능" },
         ].map((ch) => (
           <div key={ch.title} className="rounded-2xl border border-[color:var(--border)] p-6 text-center">
             <span className="text-3xl">{ch.icon}</span>

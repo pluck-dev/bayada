@@ -1,0 +1,139 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-162139-restrict-inquiry-assignees-and-remove-retired-ai",
+  "created_at": "2026-11-18T16:21:39+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "d4a6c746c79d2ec741681158236ce12a6a9c64dc",
+  "request": "Verify website-admin connected behavior and remove excluded features",
+  "title": "Restrict inquiry assignees and remove retired AI contact card",
+  "purpose": "Actual CRM flow exposed assignees without CRM access and a retired feature card",
+  "files": [
+    {
+      "path": "apps/admin/src/lib/queries/web.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": 99,
+          "old_end": 106,
+          "new_start": 100,
+          "new_end": 112
+        }
+      ],
+      "working_tree_sha256": "66a2393d609891d89cbde8ae5bfd99b8f759668eb134e094a2e42758abe98626",
+      "symbols": [
+        "listAssignees"
+      ],
+      "purpose": "Filters candidates by effective web.inquiries permission. Existing assignment action uses this same list, so forged ineligible IDs are rejected too.",
+      "previous_behavior": "Any approved non-partner admin or custom role appeared in inquiry assignee list, even without CRM access.",
+      "new_behavior": "Filters candidates by effective web.inquiries permission. Existing assignment action uses this same list, so forged ineligible IDs are rejected too.",
+      "data_impact": "Reads effective role definitions for candidate filtering; no schema or production backfill. Actual form/status/assignee/note/delete tests used synthetic QA inquiry only and cleaned it.",
+      "access_control_impact": "Tightens assignment eligibility to effective web.inquiries permission; project-only customer clamp is respected.",
+      "risks": [
+        "An existing assignee that later loses permission may remain recorded historically; cannot be newly selected. No prior inquiry data is rewritten."
+      ],
+      "rollback": "Revert this source commit and redeploy d4a6c74 images. Schema is unchanged; keep inquiry and audit data."
+    },
+    {
+      "path": "apps/admin/tests/web-inquiry-assignees.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "6074d569134877e21c2f3b304238a7dc2c87d38e4792dde5e4cc23a64fcaa747",
+      "symbols": [
+        "effective CRM assignee regression"
+      ],
+      "purpose": "Mocks role definitions and candidates; only superadmin and explicit custom CRM role qualify, while clinical reviewer and project customer do not.",
+      "previous_behavior": "No regression coverage for custom project-only customers in assignee list.",
+      "new_behavior": "Mocks role definitions and candidates; only superadmin and explicit custom CRM role qualify, while clinical reviewer and project customer do not.",
+      "data_impact": "Reads effective role definitions for candidate filtering; no schema or production backfill. Actual form/status/assignee/note/delete tests used synthetic QA inquiry only and cleaned it.",
+      "access_control_impact": "Tightens assignment eligibility to effective web.inquiries permission; project-only customer clamp is respected.",
+      "risks": [
+        "An existing assignee that later loses permission may remain recorded historically; cannot be newly selected. No prior inquiry data is rewritten."
+      ],
+      "rollback": "Revert this source commit and redeploy d4a6c74 images. Schema is unchanged; keep inquiry and audit data."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/contact/ContactClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 172,
+          "old_end": 172,
+          "new_start": 172,
+          "new_end": 172
+        },
+        {
+          "old_start": 176,
+          "old_end": 176,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "fef9728e58b9c4c93a19a5094c52fa58944c04593bf7ba1b454f2c1927950ddc",
+      "symbols": [
+        "ContactForm contact channel cards"
+      ],
+      "purpose": "Removes the retired AI card and keeps two-column phone and email channels.",
+      "previous_behavior": "Contact page still advertised an unavailable AI consultation feature.",
+      "new_behavior": "Removes the retired AI card and keeps two-column phone and email channels.",
+      "data_impact": "Reads effective role definitions for candidate filtering; no schema or production backfill. Actual form/status/assignee/note/delete tests used synthetic QA inquiry only and cleaned it.",
+      "access_control_impact": "Tightens assignment eligibility to effective web.inquiries permission; project-only customer clamp is respected.",
+      "risks": [
+        "An existing assignee that later loses permission may remain recorded historically; cannot be newly selected. No prior inquiry data is rewritten."
+      ],
+      "rollback": "Revert this source commit and redeploy d4a6c74 images. Schema is unchanged; keep inquiry and audit data."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production inquiry data changed. One synthetic QA inquiry and notes were created, processed, exported in QA, then deleted; audit entries retained.",
+    "schema_migration": "None.",
+    "external_side_effects": [
+      "Local SMTP was configured to localhost port1 so no external mail was sent. No external messages.",
+      "Public d4a6c74 deployment was completed during this task; this CRM/contact patch awaits deployment."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/admin/tsconfig.json --test ../../apps/admin/tests/web-inquiry-assignees.test.ts",
+      "result": "passed",
+      "evidence": "Effective permission regression passed, including clamped customer role."
+    },
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 tasks passed."
+    },
+    {
+      "command": "Oinzi synthetic contact submission and admin CRM processing; isolated DB and QA export checks",
+      "result": "passed",
+      "evidence": "Reference issued; consent and userId:null stored; status/assignee/memo and audits retained; CSV authorized200/content403/anonymous401; delete removes notes and keeps audit. output/qa-inquiry-crm-evidence.json."
+    },
+    {
+      "command": "Oinzi contact page after source edit",
+      "result": "passed",
+      "evidence": "AI consultation card absent; phone and email channels remain."
+    }
+  ],
+  "residual_risks": [
+    "Patch not yet deployed; current public runtime d4a6c74.",
+    "Existing historical assignee values are not changed automatically.",
+    "SMTP delivery itself not tested; intentional local QA sink configuration."
+  ],
+  "commit": "same-as-metadata-file"
+}

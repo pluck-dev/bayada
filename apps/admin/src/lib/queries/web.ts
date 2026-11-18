@@ -2,6 +2,7 @@
 import { prisma, type Prisma, type WebInquiryStatus } from "@bayada/db";
 import { WEB_INQUIRY_STATUSES, isWebFormType } from "@bayada/shared/web-content";
 import { ADMIN_ROLES } from "@/lib/rbac";
+import { getRoleDefs, roleKeyOf } from "@/lib/roles";
 
 export interface InquiryFilter {
   type?: string;
@@ -96,14 +97,19 @@ export async function getInquiry(id: string) {
 
 /** 담당자 후보 — 승인된 운영 계정(시스템 운영 역할 또는 사용자 정의 역할). 파트너 관리자는 제외 */
 export async function listAssignees() {
-  return prisma.user.findMany({
-    where: {
-      status: "APPROVED",
-      OR: [{ role: { in: ADMIN_ROLES.filter((r) => r !== "PARTNER_ADMIN") } }, { customRoleKey: { not: null } }],
-    },
-    orderBy: [{ name: "asc" }, { email: "asc" }],
-    select: { id: true, name: true, email: true },
-  });
+  const [users, roles] = await Promise.all([
+    prisma.user.findMany({
+      where: {
+        status: "APPROVED",
+        OR: [{ role: { in: ADMIN_ROLES.filter((r) => r !== "PARTNER_ADMIN") } }, { customRoleKey: { not: null } }],
+      },
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+      select: { id: true, name: true, email: true, role: true, customRoleKey: true },
+    }),
+    getRoleDefs(),
+  ]);
+  const eligible = new Set(roles.filter(role => role.permissions.includes("web.inquiries")).map(role => role.key));
+  return users.filter(user => eligible.has(roleKeyOf(user))).map(({ id, name, email }) => ({ id, name, email }));
 }
 
 /** 웹사이트 대시보드 숫자 */
