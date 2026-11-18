@@ -1,0 +1,455 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-151957-manage-jobs-and-resources-and-remove-dead-public",
+  "created_at": "2026-11-18T15:19:57+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "58f759172632689f9885719a532cc7275196ffc8",
+  "request": "Complete editable website content and verify actual connected functionality",
+  "title": "Manage jobs and resources and remove dead public controls",
+  "purpose": "Connect operational website content to admin and make public controls reflect real availability",
+  "files": [
+    {
+      "path": "apps/admin/src/components/web/WebPageManager.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 9,
+          "old_end": 10,
+          "new_start": 9,
+          "new_end": 10
+        },
+        {
+          "old_start": 15,
+          "old_end": 15,
+          "new_start": 15,
+          "new_end": 15
+        },
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 18,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "fa7649f363cc693a0c6c413771d5af682712681e105acd39c2027ea824800a5c",
+      "symbols": [
+        "Fields"
+      ],
+      "purpose": "Supports boolean checkbox/defaults, labels careers/resources, and hides immutable route fields only for audience objects.",
+      "previous_behavior": "Boolean fields and operational list labels were unsupported; href/type were hidden globally.",
+      "new_behavior": "Supports boolean checkbox/defaults, labels careers/resources, and hides immutable route fields only for audience objects.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/careers/CareersClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 32,
+          "old_end": 38,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 40,
+          "old_end": 40,
+          "new_start": 34,
+          "new_end": 35
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 53,
+          "new_end": 53
+        },
+        {
+          "old_start": 60,
+          "old_end": 60,
+          "new_start": 56,
+          "new_end": 56
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 59,
+          "new_end": 59
+        },
+        {
+          "old_start": 64,
+          "old_end": 65,
+          "new_start": 61,
+          "new_end": 65
+        },
+        {
+          "old_start": 916,
+          "old_end": 916,
+          "new_start": 916,
+          "new_end": 916
+        },
+        {
+          "old_start": 936,
+          "old_end": 945,
+          "new_start": 936,
+          "new_end": 940
+        },
+        {
+          "old_start": 950,
+          "old_end": 950,
+          "new_start": 945,
+          "new_end": 945
+        },
+        {
+          "old_start": 953,
+          "old_end": 953,
+          "new_start": 948,
+          "new_end": 948
+        },
+        {
+          "old_start": 955,
+          "old_end": 956,
+          "new_start": 950,
+          "new_end": 950
+        },
+        {
+          "old_start": 960,
+          "old_end": 960,
+          "new_start": 954,
+          "new_end": 954
+        }
+      ],
+      "working_tree_sha256": "0b27ee1357317fdb75cef1e710d37c4dbe84fc8d27ef2bea2b5e7eaec2726e08",
+      "symbols": [
+        "CareersClient"
+      ],
+      "purpose": "Reads managed jobs, closes expired deadlines in KST, derives department filters, uses native share/clipboard and marks missing referral form pending.",
+      "previous_behavior": "Hardcoded outdated jobs, placeholder Kakao app key, missing PDF download.",
+      "new_behavior": "Reads managed jobs, closes expired deadlines in KST, derives department filters, uses native share/clipboard and marks missing referral form pending.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/careers/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 14,
+          "new_end": 14
+        },
+        {
+          "old_start": 14,
+          "old_end": 14,
+          "new_start": 16,
+          "new_end": 16
+        }
+      ],
+      "working_tree_sha256": "5a7423b39ef8d16c5fd2b127a631cff8e256b9f5887f30cabde4a0b6b5c21016",
+      "symbols": [
+        "CareersPage / ResourcesPage"
+      ],
+      "purpose": "Reads managed careers/resources; resource links are enabled only for supplied real local files or HTTPS URLs.",
+      "previous_behavior": "Static jobs or resource cards were displayed independently of CMS.",
+      "new_behavior": "Reads managed careers/resources; resource links are enabled only for supplied real local files or HTTPS URLs.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/resources/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 22,
+          "new_end": 22
+        },
+        {
+          "old_start": 35,
+          "old_end": 78,
+          "new_start": 38,
+          "new_end": 38
+        },
+        {
+          "old_start": 81,
+          "old_end": 81,
+          "new_start": 41,
+          "new_end": 42
+        },
+        {
+          "old_start": 101,
+          "old_end": 101,
+          "new_start": 62,
+          "new_end": 62
+        }
+      ],
+      "working_tree_sha256": "21ecb4e8dc1cfbe3169defbdd9168cceb73d8252e76a2ff5d7c60ecdda6a13fc",
+      "symbols": [
+        "CareersPage / ResourcesPage"
+      ],
+      "purpose": "Reads managed careers/resources; resource links are enabled only for supplied real local files or HTTPS URLs.",
+      "previous_behavior": "Static jobs or resource cards were displayed independently of CMS.",
+      "new_behavior": "Reads managed careers/resources; resource links are enabled only for supplied real local files or HTTPS URLs.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/src/components/shared/NeedsReview.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 4
+        },
+        {
+          "old_start": 21,
+          "old_end": 21,
+          "new_start": 24,
+          "new_end": 32
+        }
+      ],
+      "working_tree_sha256": "8ea6b9f73f463ababc461197d2efd7e8f66d3f4944c07ccc4a74b007ae6d0748",
+      "symbols": [
+        "NeedsReview"
+      ],
+      "purpose": "Review annotations remain hidden until hint cookie plus server review session verification permits them.",
+      "previous_behavior": "Internal review badges were rendered for public visitors.",
+      "new_behavior": "Review annotations remain hidden until hint cookie plus server review session verification permits them.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/src/lib/resource-links.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 12
+        }
+      ],
+      "working_tree_sha256": "2fb6b6d58284cf34da78e910e7ce62769d0d441b0dbff05cf20d7edc998ed754",
+      "symbols": [
+        "resourceLinkAvailable"
+      ],
+      "purpose": "Checks local resource is an actual file within public root; missing or placeholder links remain pending.",
+      "previous_behavior": "Unavailable file links appeared as working downloads.",
+      "new_behavior": "Checks local resource is an actual file within public root; missing or placeholder links remain pending.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/tests/web-pages.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 85,
+          "new_end": 96
+        }
+      ],
+      "working_tree_sha256": "bfdf3599587a29ebb9d07aa805de40356fdeb174e0cae20c8e874fdadfd50670",
+      "symbols": [
+        "operational content validation test"
+      ],
+      "purpose": "Rejects invalid dates, string booleans and script URLs while permitting HTTPS resources.",
+      "previous_behavior": "No operational content validation coverage.",
+      "new_behavior": "Rejects invalid dates, string booleans and script URLs while permitting HTTPS resources.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "apps/web/tests/website-operations.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "9fbbba42d8c2194cf41fb36f9cf331a7b651be42629673784a98a655f17fd5fd",
+      "symbols": [
+        "public operations regression tests"
+      ],
+      "purpose": "Tests expired-job hiding, department derivation, public review suppression, placeholder control removal and resource file boundaries.",
+      "previous_behavior": "No expiry, review annotation or file availability regression coverage.",
+      "new_behavior": "Tests expired-job hiding, department derivation, public review suppression, placeholder control removal and resource file boundaries.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "packages/shared/src/web-operational-content.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 51
+        }
+      ],
+      "working_tree_sha256": "ec8e25649120a84fbe29e357dc9460da14d1f0251a49b07889b6d5cb1c065142",
+      "symbols": [
+        "WEB_CAREERS_DEFAULTS, WEB_RESOURCES_DEFAULTS"
+      ],
+      "purpose": "Preserves original lists as shared CMS defaults; known missing notice file starts pending.",
+      "previous_behavior": "Operational default arrays lived inside page components.",
+      "new_behavior": "Preserves original lists as shared CMS defaults; known missing notice file starts pending.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    },
+    {
+      "path": "packages/shared/src/web-page-content.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 223,
+          "old_end": 223,
+          "new_start": 224,
+          "new_end": 224
+        },
+        {
+          "old_start": 226,
+          "old_end": 226,
+          "new_start": 227,
+          "new_end": 227
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 237,
+          "new_end": 238
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 245,
+          "new_end": 245
+        }
+      ],
+      "working_tree_sha256": "bbda854ac71afcdd10ea11246e2b4a578e9d67a2f67470328445c92d47b088ad",
+      "symbols": [
+        "WEB_PAGE_DEFAULTS, parseWebPageContent"
+      ],
+      "purpose": "Adds job/resource documents, boolean shape checks, real ISO date checks and safe resource URLs.",
+      "previous_behavior": "Operational lists were not managed and booleans unsupported.",
+      "new_behavior": "Adds job/resource documents, boolean shape checks, real ISO date checks and safe resource URLs.",
+      "data_impact": "Additive Page JSON documents for careers/resources through existing CAS and audited save/reset. Review session read only. QA fixtures only modified in synthetic DB.",
+      "access_control_impact": "Existing web.content permission unchanged; internal review badges now require verified review session. Public review metadata no longer SSR-rendered.",
+      "risks": [
+        "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
+      ],
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production business data changed for these source changes. Admin saves used synthetic QA DB only.",
+    "schema_migration": "None; existing Page/AuditLog.",
+    "external_side_effects": [
+      "Local QA admin/web started and stopped. Share/clipboard only run on explicit browser button click; no message sent in tests.",
+      "Separately built 58f7591 was deployed during this task; this current patch is not yet deployed. No live PG calls."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 workspace tasks passed."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-pages.test.ts ../../apps/web/tests/website-operations.test.ts",
+      "result": "passed",
+      "evidence": "All 11 tests passed."
+    },
+    {
+      "command": "Oinzi careers/resources save and QA HTTP /ko/careers, /ko/resources",
+      "result": "passed",
+      "evidence": "Saved active future job visible; real supplied image URL linked; other resources pending; no fake Kakao/PDF controls or public review note. output/qa-operational-content-evidence.json."
+    }
+  ],
+  "residual_risks": [
+    "This patch awaits deployment; current AWS version is 58f7591.",
+    "No new source documents supplied for pending resource/referral files.",
+    "Positive authorized review annotation display still needs browser verification; anonymous suppression verified.",
+    "Native OS share sheet and clipboard UI not exercised; placeholder external integration removed."
+  ],
+  "commit": "same-as-metadata-file"
+}

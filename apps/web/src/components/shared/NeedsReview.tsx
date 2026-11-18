@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
+import { reviewHintCookieName } from "@bayada/review/config";
+let reviewSession: Promise<boolean> | undefined;
 
 interface NeedsReviewProps {
   children: React.ReactNode;
@@ -18,7 +21,15 @@ export function NeedsReview({
   note,
   show = true,
 }: NeedsReviewProps) {
-  if (!show) return <>{children}</>;
+  const [unlocked, setUnlocked] = useState(false);
+  useEffect(() => {
+    if (!show || !document.cookie.split(/;\s*/).some(c => c.startsWith(reviewHintCookieName("web") + "="))) return;
+    let active = true;
+    reviewSession ??= fetch("/api/review/session", { cache: "no-store" }).then(async r => r.ok && (await r.json()).unlocked === true).catch(() => false);
+    reviewSession.then(value => { if (active) setUnlocked(value); });
+    return () => { active = false; };
+  }, [show]);
+  if (!show || !unlocked) return <>{children}</>;
 
   return (
     <div className="relative">

@@ -1,3 +1,4 @@
+import { getWebPageContent } from "@/lib/web-pages";
 import { createMetadata } from "@/lib/seo";
 import { CareersClient } from "./CareersClient";
 
@@ -10,6 +11,7 @@ export const metadata = createMetadata({
 
 export default async function CareersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const { jobs } = await getWebPageContent("careers");
 
-  return <CareersClient locale={locale} />;
+  return <CareersClient locale={locale} careers={jobs} />;
 }

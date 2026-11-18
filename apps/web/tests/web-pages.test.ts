@@ -82,3 +82,15 @@ test("audience edits keep route identity, optional suffixes and explicitly remov
  senior.image="//outside.invalid/image.jpg";
  assert.throws(()=>parseWebPageContent("audienceSenior",senior), /이미지 경로/);
 });
+
+test("operational content validates job dates, booleans and resource URLs", () => {
+ const jobs = structuredClone(WEB_PAGE_DEFAULTS.careers);
+ jobs.jobs[0]!.deadline="2026-02-30";assert.throws(()=>parseWebPageContent("careers",jobs), /마감일/);
+ jobs.jobs[0]!.deadline="2026-02-28";
+ assert.equal(parseWebPageContent("careers",jobs).jobs[0]!.active,true);
+ assert.throws(()=>parseWebPageContent("careers",{jobs:[{...jobs.jobs[0],active:"true"}]}), /선택 값/);
+ const resources=structuredClone(WEB_PAGE_DEFAULTS.resources);resources.items[0]!.href="javascript:alert(1)";
+ assert.throws(()=>parseWebPageContent("resources",resources), /URL/);
+ resources.items[0]!.href="https://example.com/document.pdf";
+ assert.equal(parseWebPageContent("resources",resources).items[0]!.href,resources.items[0]!.href);
+});

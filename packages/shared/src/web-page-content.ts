@@ -1,3 +1,4 @@
+import { WEB_CAREERS_DEFAULTS, WEB_RESOURCES_DEFAULTS } from "./web-operational-content";
 import { WEB_AUDIENCE_DEFAULTS } from "./web-audience-content";
 export { providerSegments, userSegments } from "./web-audience-content";
 export type { AudienceSegment } from "./web-audience-content";
@@ -220,10 +221,10 @@ const policyCategories = [
 const { url: aboutUrl, ...intro } = enrichedContent.pages.aboutus;
 const { url: guideUrl, ...guide } = enrichedContent.pages["usage-guide"];
 const { url: privacyUrl, ...privacy } = enrichedContent.pages["privacy-policy"];
-export const WEB_PAGE_DEFAULTS = { ...WEB_AUDIENCE_DEFAULTS, payment: WEB_PAYMENT_DEFAULTS, home: WEB_HOME_DEFAULTS, about: { intro, brandColors, orgChart, certifications }, guide, privacy, terms: { sections }, policy: { categories: policyCategories } };
+export const WEB_PAGE_DEFAULTS = { careers: WEB_CAREERS_DEFAULTS, resources: WEB_RESOURCES_DEFAULTS, ...WEB_AUDIENCE_DEFAULTS, payment: WEB_PAYMENT_DEFAULTS, home: WEB_HOME_DEFAULTS, about: { intro, brandColors, orgChart, certifications }, guide, privacy, terms: { sections }, policy: { categories: policyCategories } };
 
 export type WebPageKey = keyof typeof WEB_PAGE_DEFAULTS;
-export const WEB_PAGE_TITLES: Record<WebPageKey, string> = { audienceHealthcare: "의료인", audienceOther: "비의료인", audienceHospitals: "병원", audienceClinics: "의원", audienceLtci: "요양기관", audienceNursing: "방문간호기관", audienceGovernment: "지자체", audienceSenior: "시니어", payment: "비용 안내", home: "메인 화면", about: "회사소개", guide: "이용안내", privacy: "개인정보처리방침", terms: "이용약관", policy: "정책과 절차" };
+export const WEB_PAGE_TITLES: Record<WebPageKey, string> = { careers: "채용 공고", resources: "자료실", audienceHealthcare: "의료인", audienceOther: "비의료인", audienceHospitals: "병원", audienceClinics: "의원", audienceLtci: "요양기관", audienceNursing: "방문간호기관", audienceGovernment: "지자체", audienceSenior: "시니어", payment: "비용 안내", home: "메인 화면", about: "회사소개", guide: "이용안내", privacy: "개인정보처리방침", terms: "이용약관", policy: "정책과 절차" };
 export const WEB_PAGE_PREFIX = "web-page/";
 export const isWebPageKey = (value: unknown): value is WebPageKey => typeof value === "string" && Object.hasOwn(WEB_PAGE_DEFAULTS, value);
 
@@ -233,12 +234,15 @@ export function parseWebPageContent<K extends WebPageKey>(key: K, input: unknown
     if (typeof template === "string") {
       if (key.startsWith("audience") && /\.(slug|type|href|ctaHref)$/.test(path)) return template;
       if (typeof value !== "string" || value.length > 20000) throw new Error(`${path}: 문자열 길이와 형식을 확인하세요.`);
+      if (key === "resources" && path.endsWith(".href") && value !== "" && value !== "#" && !/^(?:\/(?!\/)[^\\\s]*|https:\/\/[^\s]+)$/.test(value)) throw new Error("자료 URL은 사이트 내부 경로나 HTTPS 주소로 입력하세요.");
+      if (key === "careers" && path.endsWith(".deadline") && value !== "" && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value)) || new Date(value).toISOString().slice(0,10) !== value)) throw new Error("마감일은 YYYY-MM-DD 형식으로 입력하세요.");
       if (key === "payment" && /\.(color|bg)$/.test(path) && !/^#[0-9a-f]{6}$/i.test(value)) throw new Error("색상은 #000000 형식으로 입력하세요.");
       if (key === "payment" && path.endsWith(".icon") && !["Shield", "HeartPulse", "FileText", "Phone", "ClipboardList", "Home", "HeartHandshake", "Star", "AlertCircle"].includes(value)) throw new Error("지원하는 아이콘 이름을 입력하세요.");
       if (path.endsWith(".hex") && !/^#[0-9a-f]{6}$/i.test(value)) throw new Error("색상은 #000000 형식으로 입력하세요.");
       if (((key === "home" && /\.(icon|src)$/.test(path)) || (key.startsWith("audience") && /\.(image|heroImageUrl|contentImageUrl)$/.test(path))) && !/^\/(?!\/)[^\\\s]+$/.test(value)) throw new Error(`${path}: 사이트 내부 이미지 경로를 입력하세요.`);
       return value;
     }
+    if (typeof template === "boolean") { if (typeof value !== "boolean") throw new Error(`${path}: 선택 값을 확인하세요.`); return value; }
     if (typeof template === "number") { if (typeof value !== "number" || !Number.isFinite(value) || (key === "home" && (value < 0 || value > 1000000000))) throw new Error(`${path}: 숫자를 입력하세요.`); return value; }
     if (Array.isArray(template)) {
       if (!Array.isArray(value) || value.length > 100) throw new Error(`${path}: 목록은 100개 이내로 입력하세요.`);

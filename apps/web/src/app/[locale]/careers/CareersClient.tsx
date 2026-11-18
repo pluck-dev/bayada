@@ -1,4 +1,5 @@
 "use client";
+import type { WEB_PAGE_DEFAULTS } from "@bayada/shared/web-page-content";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -29,15 +30,9 @@ import {
 } from "lucide-react";
 import { NeedsReview } from "@/components/shared/NeedsReview";
 
-const careers = [
-  { id: "1", title: "전문 간호사 (Skilled Nursing)", dept: "케어서비스팀", location: "서울", type: "정규직", deadline: "2026-03-31", active: true },
-  { id: "2", title: "요양보호사", dept: "케어서비스팀", location: "서울/경기", type: "정규직", deadline: "2026-03-31", active: true },
-  { id: "3", title: "물리치료사", dept: "재활팀", location: "서울", type: "정규직", deadline: "2026-02-28", active: true },
-  { id: "4", title: "케어 코디네이터", dept: "케어서비스팀", location: "서울", type: "정규직", deadline: "2026-03-15", active: true },
-  { id: "5", title: "AI 엔지니어 (DeiBud)", dept: "플랫폼팀", location: "서울", type: "정규직", deadline: "2025-12-31", active: false },
-];
 
-const DEPTS = ["전체", "케어서비스팀", "재활팀", "플랫폼팀"];
+
+
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -55,14 +50,19 @@ const stagger = {
 
 interface Props {
   locale: string;
+  careers: typeof WEB_PAGE_DEFAULTS.careers.jobs;
 }
 
-export function CareersClient({ locale }: Props) {
+export function CareersClient({ locale, careers }: Props) {
   const [activeTab, setActiveTab] = useState("전체");
   const [closedOpen, setClosedOpen] = useState(false);
+  const [shareStatus, setShareStatus] = useState("");
 
-  const activeJobs = careers.filter((c) => c.active);
-  const closedJobs = careers.filter((c) => !c.active);
+  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
+  const isOpen = (c: typeof careers[number]) => c.active && (!c.deadline || c.deadline >= today);
+  const DEPTS = ["전체", ...new Set(careers.map(c => c.dept))];
+  const activeJobs = careers.filter(isOpen);
+  const closedJobs = careers.filter((c) => !isOpen(c));
   const filteredJobs =
     activeTab === "전체"
       ? activeJobs
@@ -913,7 +913,7 @@ export function CareersClient({ locale }: Props) {
                 </h2>
                 <p className="mt-3 text-base leading-relaxed text-white/80">
                   구성원 여러분이 직접 BAYADA를 홍보하고, 주변의 훌륭한 인재를 소개해주세요.
-                  간편하게 카카오톡으로 공유하거나 추천서를 다운로드해 전달할 수 있습니다.
+                  채용 페이지 링크를 공유해 전달할 수 있습니다.
                 </p>
                 <ul className="mt-5 space-y-2">
                   {[
@@ -933,31 +933,25 @@ export function CareersClient({ locale }: Props) {
               <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col lg:min-w-[220px]">
                 {/* 카카오톡 공유 버튼 */}
                 <button
-                  onClick={() => {
-                    const url = encodeURIComponent(window.location.href);
-                    const text = encodeURIComponent(
-                      "BAYADA홈헬스케어에서 함께 일할 동료를 찾고 있어요! 채용 공고를 확인해보세요."
-                    );
-                    window.open(
-                      `https://sharer.kakao.com/talk/friends/picker/link?app_key=KAKAO_APP_KEY&url=${url}&text=${text}`,
-                      "_blank",
-                      "width=500,height=600"
-                    );
+                  onClick={async () => {
+                    try {
+                      if (navigator.share) await navigator.share({ title: "BAYADA 채용 정보", url: window.location.href });
+                      else { await navigator.clipboard.writeText(window.location.href); setShareStatus("채용 링크 복사 완료"); }
+                    } catch (error) { if (!(error instanceof Error && error.name === "AbortError")) setShareStatus("주소창의 링크를 복사해 주세요"); }
                   }}
                   className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#FEE500] py-3.5 px-6 text-sm font-bold text-[#191919] transition-opacity hover:opacity-90"
                 >
                   <Share2 className="h-4 w-4" />
-                  카카오톡으로 공유하기
+                  {shareStatus || "채용 링크 공유"}
                 </button>
 
-                {/* 추천서 다운로드 버튼 */}
+                {/* 추천서 자료 준비 중 버튼 */}
                 <a
-                  href="/files/bayada-referral-letter.pdf"
-                  download
+                  aria-disabled="true"
                   className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-white/15 py-3.5 px-6 text-sm font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/25"
                 >
                   <Download className="h-4 w-4" />
-                  추천서 다운로드
+                  추천서 자료 준비 중
                 </a>
               </div>
             </div>
