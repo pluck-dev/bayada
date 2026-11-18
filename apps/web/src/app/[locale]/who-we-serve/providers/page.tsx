@@ -24,7 +24,7 @@ export default async function ProvidersPage({
     (s) => s.slug === "hospitals" || s.slug === "clinics"
   );
   const serviceProvision = providerSegments.filter(
-    (s) => s.slug === "ltci-center" || s.slug === "nursing-visit-center" || s.slug === "daycare"
+    (s) => s.slug === "ltci-center" || s.slug === "nursing-visit-center"
   );
   const government = providerSegments.find((s) => s.slug === "local-government");
 
@@ -37,22 +37,6 @@ export default async function ProvidersPage({
 
       <section className="py-[var(--section-gap)]">
         <Container>
-          {/* CTA */}
-          <div className="mb-12 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href={`/${locale}/onboarding/paid`}
-              className="rounded-full bg-[#ce0e2d] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b00c27]"
-            >
-              유료 멤버십 시작
-            </Link>
-            <Link
-              href={`/${locale}/onboarding/free`}
-              className="rounded-full border border-[color:var(--border)] px-8 py-3 text-sm font-medium text-[color:var(--fg)] transition-colors hover:bg-[color:var(--surface)]"
-            >
-              무료로 시작
-            </Link>
-          </div>
-
           {/* Professionals */}
           <div className="mb-12">
             <h2 className="text-xl font-bold text-[color:var(--fg)]">Professionals</h2>

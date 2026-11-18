@@ -27,6 +27,11 @@ export function isWebFormType(v: unknown): v is WebFormType {
   return typeof v === "string" && Object.prototype.hasOwnProperty.call(WEB_FORM_TYPES, v);
 }
 
+/** 신규 공개 접수만 제한한다. 이전 접수 유형과 라벨은 관리자 이력 조회를 위해 유지한다. */
+export function isPublicWebFormType(v: unknown): v is WebFormType {
+  return isWebFormType(v) && !["vendor-qualification", "deicloud-early-access", "paid-onboarding", "free-onboarding"].includes(v);
+}
+
 export function webFormLabel(type: string): string {
   return isWebFormType(type) ? WEB_FORM_TYPES[type].label : type;
 }

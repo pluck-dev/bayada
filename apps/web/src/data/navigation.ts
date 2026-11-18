@@ -129,12 +129,6 @@ export const mainNavigation: MegaMenuItem[] = [
         titles: { ko: "함께하기", ja: "一緒に働く", zh: "携手合作" },
         items: [
           {
-            label: "Senior Living Solutions", labels: { ko: "시니어 주거시설 파트너십", ja: "シニア住居施設パートナーシップ", zh: "高龄住宅合作" },
-            href: "/senior-living",
-            description: "Senior living facility partnerships",
-            descriptions: { ko: "시니어 주거시설 파트너십", ja: "シニア住居施設パートナーシップ", zh: "高龄住宅设施合作" },
-          },
-          {
             label: "Partner with BAYADA", labels: { ko: "파트너십 신청", ja: "パートナーシップ申請", zh: "合作申请" },
             href: "/partnership",
             description: "Apply for partnership",
@@ -188,56 +182,11 @@ export const mainNavigation: MegaMenuItem[] = [
     ],
   },
   {
-    label: "Platform",
-    labels: { ko: "플랫폼", ja: "プラットフォーム", zh: "平台" },
-    href: "/platform",
-    children: [
-      {
-        title: "BAYADA Platform",
-        titles: { ko: "BAYADA 플랫폼", ja: "BAYADAプラットフォーム", zh: "BAYADA平台" },
-        items: [
-          {
-            label: "DeiBud", href: "/platform/deibud",
-            description: "AI Care Guide",
-            descriptions: { ko: "AI 케어 가이드", ja: "AIケアガイド", zh: "AI护理指南" },
-          },
-          {
-            label: "DeiCloud", href: "/platform/deicloud",
-            description: "Operations SaaS",
-            descriptions: { ko: "운영 SaaS", ja: "運営SaaS", zh: "运营SaaS" },
-          },
-          {
-            label: "DeiEdu", href: "/platform/deiedu",
-            description: "Education Platform",
-            descriptions: { ko: "교육 플랫폼", ja: "教育プラットフォーム", zh: "教育平台" },
-          },
-          {
-            label: "Dtx", href: "/platform/dtx",
-            description: "Digital Therapeutics",
-            descriptions: { ko: "디지털 치료제", ja: "デジタル治療", zh: "数字疗法" },
-          },
-        ],
-      },
-    ],
-  },
-  {
     label: "Careers",
     labels: { ko: "채용", ja: "採用情報", zh: "招聘" },
     href: "/careers",
   },
-  {
-    label: "Employees",
-    labels: { ko: "임직원", ja: "社員", zh: "员工" },
-    href: "/employees",
-  },
 ];
-
-// 우측 유틸리티 메뉴
-export const utilityNavigation = [
-  { label: "Shop", labels: { ko: "쇼핑", ja: "ショップ", zh: "商店" } as NavLabels, href: "/shop", icon: "shopping-bag" },
-  { label: "Membership", labels: { ko: "멤버십", ja: "メンバーシップ", zh: "会员" } as NavLabels, href: "/membership", icon: "award" },
-  { label: "My Page", labels: { ko: "마이페이지", ja: "マイページ", zh: "我的页面" } as NavLabels, href: "/my-page", icon: "user" },
-] as const;
 
 // Footer 네비게이션 구조
 export const footerNavigation = {
@@ -262,9 +211,7 @@ export const footerNavigation = {
     links: [
       { label: "About BAYADA", labels: { ko: "바야다홈헬스케어 소개", ja: "BAYADA紹介", zh: "关于BAYADA" } as NavLabels, href: "/about" },
       { label: "The BAYADA Way", labels: { ko: "The BAYADA Way", ja: "The BAYADA Way", zh: "The BAYADA Way" } as NavLabels, href: "/bayada-way" },
-      { label: "Senior Living Solutions", labels: { ko: "시니어 주거시설 파트너십", ja: "シニア住居施設", zh: "高龄住宅合作" } as NavLabels, href: "/senior-living" },
       { label: "Careers", labels: { ko: "채용", ja: "採用情報", zh: "招聘" } as NavLabels, href: "/careers" },
-      { label: "Employees", labels: { ko: "임직원", ja: "社員", zh: "员工" } as NavLabels, href: "/employees" },
       { label: "Work with Us", labels: { ko: "파트너십", ja: "パートナーシップ", zh: "合作" } as NavLabels, href: "/partnership" },
     ],
   },
@@ -278,18 +225,6 @@ export const footerNavigation = {
       { label: "Find Care", labels: { ko: "센터 찾기", ja: "センター検索", zh: "查找中心" } as NavLabels, href: "/find-care" },
       { label: "Blog", labels: { ko: "블로그", ja: "ブログ", zh: "博客" } as NavLabels, href: "/blog" },
       { label: "Reviews", labels: { ko: "고객 후기", ja: "お客様の声", zh: "客户评价" } as NavLabels, href: "/reviews" },
-    ],
-  },
-  platform: {
-    title: "Platform & Shop",
-    titles: { ko: "플랫폼 & 쇼핑", ja: "プラットフォーム & ショップ", zh: "平台 & 商店" } as NavLabels,
-    links: [
-      { label: "DeiBud", href: "/platform/deibud" },
-      { label: "DeiCloud", href: "/platform/deicloud" },
-      { label: "DeiEdu", href: "/platform/deiedu" },
-      { label: "Dtx", href: "/platform/dtx" },
-      { label: "Shop", labels: { ko: "쇼핑", ja: "ショップ", zh: "商店" } as NavLabels, href: "/shop" },
-      { label: "Membership", labels: { ko: "멤버십", ja: "メンバーシップ", zh: "会员" } as NavLabels, href: "/membership" },
     ],
   },
   legal: [

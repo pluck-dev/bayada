@@ -601,13 +601,7 @@ export default function WhatWeDoClient({
                   <PhoneCall className="h-5 w-5" />
                   무료 상담 신청
                 </Link>
-                <Link
-                  href={`/${locale}/membership`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#dfe6eb] py-[13px] px-6 text-base font-semibold text-black/[0.87] transition-colors hover:bg-[#cdd5dc]"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  AI 상담 시작하기
-                </Link>
+  
               </div>
 
               {/* 신뢰 배지 */}

@@ -1,0 +1,3114 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-125547-remove-retired-corporate-website-account-and-com",
+  "created_at": "2026-11-18T12:55:47+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "e18e6cc806d3a1b1ff62271844185481baab3bf6",
+  "request": "Remove website shopping and login features, connect administrator functionality and test before deployment",
+  "title": "Remove retired corporate website account and commerce features",
+  "purpose": "Align the corporate website with agreed exclusions while preserving academy authentication and historical records",
+  "files": [
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/web/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 13,
+          "old_end": 16,
+          "new_start": 12,
+          "new_end": 13
+        },
+        {
+          "old_start": 23,
+          "old_end": 23,
+          "new_start": 20,
+          "new_end": 20
+        },
+        {
+          "old_start": 34,
+          "old_end": 46,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 60,
+          "old_end": 60,
+          "new_start": 44,
+          "new_end": 44
+        }
+      ],
+      "working_tree_sha256": "81b5f96ad578ca0a46050cfa376a9824c3a792b85be2cc2cb9a199995f87d9ab",
+      "symbols": [
+        "WebDashboardPage"
+      ],
+      "purpose": "Dashboard focuses on retained CRM and content without old member/booking statistics.",
+      "previous_behavior": "Website dashboard queried and advertised member and booking operations.",
+      "new_behavior": "Dashboard focuses on retained CRM and content without old member/booking statistics.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/admin/src/components/Sidebar.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 102,
+          "old_end": 102,
+          "new_start": 102,
+          "new_end": 102
+        },
+        {
+          "old_start": 104,
+          "old_end": 106,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "13a95da28d8006a5a7f8a0c1105c539e7f137e7be3874813e52aee162ad670a3",
+      "symbols": [
+        "SidebarProps",
+        "Sidebar"
+      ],
+      "purpose": "Active navigation exposes retained website CRM/content/settings; legacy admin pages and stored records remain intact.",
+      "previous_behavior": "Website navigation advertised active member, booking and visit management.",
+      "new_behavior": "Active navigation exposes retained website CRM/content/settings; legacy admin pages and stored records remain intact.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/next-env.d.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 3,
+          "old_end": 3,
+          "new_start": 3,
+          "new_end": 3
+        }
+      ],
+      "working_tree_sha256": "7b550dda9686c16f36a17bf9051d5dbf31e98555b30d114ac49fc49a1e712651",
+      "symbols": [
+        "apps/web/next-env.d.ts"
+      ],
+      "purpose": "apps/web/next-env.d.ts removes obsolete member calls to action and presents retained public service content.",
+      "previous_behavior": "apps/web/next-env.d.ts contained links or cards for excluded membership features.",
+      "new_behavior": "apps/web/next-env.d.ts removes obsolete member calls to action and presents retained public service content.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 14,
+          "old_end": 14,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 16,
+          "new_end": 16
+        },
+        {
+          "old_start": 19,
+          "old_end": 19,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 23,
+          "old_end": 23,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 31,
+          "old_end": 31,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "73500eafdceeb35876b75f8a29ee0c066f00539be1388528c2474a729caa619f",
+      "symbols": [
+        "apps/web/package.json"
+      ],
+      "purpose": "Unused direct next-auth and bcrypt dependencies are removed; shared and academy dependencies remain.",
+      "previous_behavior": "Website directly depended on removed authentication implementations.",
+      "new_behavior": "Unused direct next-auth and bcrypt dependencies are removed; shared and academy dependencies remain.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/forgot-password/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 63,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "ForgotPasswordPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/forgot-password/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/forgot-password/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/forgot-password/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/layout.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 10,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "dynamic",
+        "AuthLayout"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/layout.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/layout.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/layout.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/login/LoginForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 122,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "LoginForm"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/login/LoginForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/login/LoginForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/login/LoginForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/login/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 36,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "LoginPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/login/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/login/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/login/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/register/RegisterForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 233,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "MEMBER_ICON",
+        "RegisterForm",
+        "MemberTypePicker"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/register/RegisterForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/register/RegisterForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/register/RegisterForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/register/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 20,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "RegisterPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/register/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/register/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/register/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/reset-password/ResetForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 53,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "ResetForm"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/reset-password/ResetForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/reset-password/ResetForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/reset-password/ResetForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/reset-password/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 34,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "ResetPasswordPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/reset-password/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/reset-password/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/reset-password/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/auth/verify-email/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 30,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "VerifyEmailPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/auth/verify-email/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/auth/verify-email/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/auth/verify-email/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/employees/EmployeesClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 383,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "EmployeesClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/employees/EmployeesClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/employees/EmployeesClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/employees/EmployeesClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/employees/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 35,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "EmployeesPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/employees/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/employees/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/employees/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/layout.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 39,
+          "old_end": 39,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "649ae089e686be075759f389d539f416833621953098f5ea014c1e02527f8d89",
+      "symbols": [
+        "revalidate",
+        "generateStaticParams",
+        "LocaleLayout"
+      ],
+      "purpose": "The shared layout no longer mounts the excluded AI feature.",
+      "previous_behavior": "All pages displayed the retired AI chat provider.",
+      "new_behavior": "The shared layout no longer mounts the excluded AI feature.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/membership/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 115,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "MembershipPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/membership/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/membership/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/membership/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/bookings/[id]/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 153,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "BookingDetailPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/bookings/[id]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/bookings/[id]/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/bookings/[id]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/bookings/new/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 52,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "NewBookingPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/bookings/new/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/bookings/new/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/bookings/new/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/bookings/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 111,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "BookingsPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/bookings/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/bookings/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/bookings/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/education/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 113,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "EducationPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/education/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/education/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/education/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/family/[patientId]/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 87,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "FamilyPatientPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/family/[patientId]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/family/[patientId]/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/family/[patientId]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/family/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 124,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "FamilyPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/family/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/family/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/family/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/health/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 26,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "HealthPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/health/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/health/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/health/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/inquiries/[id]/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 61,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "InquiryDetailPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/inquiries/[id]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/inquiries/[id]/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/inquiries/[id]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/inquiries/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 52,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "InquiriesPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/inquiries/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/inquiries/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/inquiries/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/layout.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 48,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "dynamic",
+        "metadata",
+        "MyPageLayout"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/layout.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/layout.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/layout.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/medications/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 58,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "MedicationsPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/medications/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/medications/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/medications/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/onboarding/OnboardingForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 55,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "OnboardingForm"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/onboarding/OnboardingForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/onboarding/OnboardingForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/onboarding/OnboardingForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/onboarding/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 21,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "OnboardingPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/onboarding/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/onboarding/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/onboarding/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/organization/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 80,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "OrganizationPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/organization/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/organization/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/organization/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 288,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "MyPageHome"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/schedule/[id]/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 73,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "ScheduleDetailPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/schedule/[id]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/schedule/[id]/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/schedule/[id]/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/schedule/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 74,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "SchedulePage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/schedule/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/schedule/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/schedule/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/settings/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 30,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "SettingsPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/settings/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/settings/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/settings/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/my-page/visits/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 44,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "VisitsPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/my-page/visits/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/my-page/visits/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/my-page/visits/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/onboarding/free/FreeOnboardingClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 480,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "FreeOnboardingClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/onboarding/free/FreeOnboardingClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/onboarding/free/FreeOnboardingClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/onboarding/free/FreeOnboardingClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/onboarding/free/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 20,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "FreeOnboardingPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/onboarding/free/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/onboarding/free/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/onboarding/free/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/onboarding/paid/PaidOnboardingClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 753,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "PaidOnboardingClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/onboarding/paid/PaidOnboardingClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/onboarding/paid/PaidOnboardingClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/onboarding/paid/PaidOnboardingClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/onboarding/paid/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 19,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "PaidOnboardingPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/onboarding/paid/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/onboarding/paid/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/onboarding/paid/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/deibud/DeiBudClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 564,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DeiBudClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/deibud/DeiBudClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/deibud/DeiBudClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/deibud/DeiBudClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/deibud/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 12,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "DeiBudPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/deibud/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/deibud/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/deibud/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/deicloud/DeiCloudClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 565,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DeiCloudClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/deicloud/DeiCloudClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/deicloud/DeiCloudClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/deicloud/DeiCloudClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/deicloud/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 12,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "DeiCloudPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/deicloud/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/deicloud/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/deicloud/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/deiedu/DeiEduClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 391,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DeiEduClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/deiedu/DeiEduClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/deiedu/DeiEduClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/deiedu/DeiEduClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/deiedu/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 8,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "DeiEduPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/deiedu/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/deiedu/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/deiedu/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/dtx/DtxClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 420,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DtxClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/dtx/DtxClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/dtx/DtxClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/dtx/DtxClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/dtx/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 8,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "DtxPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/dtx/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/dtx/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/dtx/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/platform/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 87,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "PlatformPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/platform/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/platform/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/platform/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/providers/qualification/QualificationClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 810,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "QualificationClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/providers/qualification/QualificationClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/providers/qualification/QualificationClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/providers/qualification/QualificationClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/providers/qualification/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 38,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "QualificationPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/providers/qualification/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/providers/qualification/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/providers/qualification/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/reviews/ReviewsClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 625,
+          "old_end": 631,
+          "new_start": 625,
+          "new_end": 625
+        }
+      ],
+      "working_tree_sha256": "88a1e41117e3728f91fca5612f0a151b6afb612472a172d7253d0125b1e67794",
+      "symbols": [
+        "ReviewsClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/reviews/ReviewsClient.tsx removes obsolete member calls to action and presents retained public service content.",
+      "previous_behavior": "apps/web/src/app/[locale]/reviews/ReviewsClient.tsx contained links or cards for excluded membership features.",
+      "new_behavior": "apps/web/src/app/[locale]/reviews/ReviewsClient.tsx removes obsolete member calls to action and presents retained public service content.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/senior-living/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 363,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "SeniorLivingPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/senior-living/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/senior-living/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/senior-living/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/shop/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 244,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "ShopPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/shop/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/shop/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/shop/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/smart-care/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 276,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "SmartCarePage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/smart-care/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/smart-care/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/smart-care/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/what-we-do/WhatWeDoClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 604,
+          "old_end": 610,
+          "new_start": 604,
+          "new_end": 604
+        }
+      ],
+      "working_tree_sha256": "67683fdfa641a91e44e42884855741a667844c37d4e714e6b3cc74fef68f53ca",
+      "symbols": [
+        "WhatWeDoClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/what-we-do/WhatWeDoClient.tsx removes obsolete member calls to action and presents retained public service content.",
+      "previous_behavior": "apps/web/src/app/[locale]/what-we-do/WhatWeDoClient.tsx contained links or cards for excluded membership features.",
+      "new_behavior": "apps/web/src/app/[locale]/what-we-do/WhatWeDoClient.tsx removes obsolete member calls to action and presents retained public service content.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 27,
+          "old_end": 27,
+          "new_start": 27,
+          "new_end": 27
+        },
+        {
+          "old_start": 40,
+          "old_end": 55,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "44edc9966a7deaa475640cf7b04078e600e1e90a9b543794a2dccfff321a80fc",
+      "symbols": [
+        "metadata",
+        "ProvidersPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/providers/page.tsx removes obsolete member calls to action and presents retained public service content.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/providers/page.tsx contained links or cards for excluded membership features.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/providers/page.tsx removes obsolete member calls to action and presents retained public service content.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/DaycareClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 436,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DaycareClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/DaycareClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/DaycareClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/DaycareClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 8,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "Page"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/daycare/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/ChronicDiseaseClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 520,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "ChronicDiseaseClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/ChronicDiseaseClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/ChronicDiseaseClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/ChronicDiseaseClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 9,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "Page"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/users/chronic-disease/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/disability/DisabilityClient.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 568,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DisabilityClient"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/users/disability/DisabilityClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/users/disability/DisabilityClient.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/users/disability/DisabilityClient.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/disability/page.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 9,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "metadata",
+        "Page"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/users/disability/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/users/disability/page.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/users/disability/page.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 34,
+          "old_end": 68,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 92,
+          "old_end": 92,
+          "new_start": 57,
+          "new_end": 57
+        },
+        {
+          "old_start": 109,
+          "old_end": 109,
+          "new_start": 74,
+          "new_end": 74
+        },
+        {
+          "old_start": 111,
+          "old_end": 111,
+          "new_start": 76,
+          "new_end": 76
+        },
+        {
+          "old_start": 114,
+          "old_end": 114,
+          "new_start": 79,
+          "new_end": 79
+        },
+        {
+          "old_start": 117,
+          "old_end": 117,
+          "new_start": 82,
+          "new_end": 82
+        }
+      ],
+      "working_tree_sha256": "b0c3e4c03864bcee564213d239251ac1950b94bf4c1f071628dad1866c48aced",
+      "symbols": [
+        "metadata",
+        "UsersPage"
+      ],
+      "purpose": "apps/web/src/app/[locale]/who-we-serve/users/page.tsx removes obsolete member calls to action and presents retained public service content.",
+      "previous_behavior": "apps/web/src/app/[locale]/who-we-serve/users/page.tsx contained links or cards for excluded membership features.",
+      "new_behavior": "apps/web/src/app/[locale]/who-we-serve/users/page.tsx removes obsolete member calls to action and presents retained public service content.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/api/auth/[...nextauth]/route.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 3,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "apps/web/src/app/api/auth/[...nextauth]/route.ts"
+      ],
+      "purpose": "apps/web/src/app/api/auth/[...nextauth]/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/api/auth/[...nextauth]/route.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/api/auth/[...nextauth]/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/api/auth/password/forgot/route.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 22,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "POST"
+      ],
+      "purpose": "apps/web/src/app/api/auth/password/forgot/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/api/auth/password/forgot/route.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/api/auth/password/forgot/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/api/auth/password/reset/route.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 12,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "POST"
+      ],
+      "purpose": "apps/web/src/app/api/auth/password/reset/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/api/auth/password/reset/route.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/api/auth/password/reset/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/api/auth/register/route.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 77,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "POST"
+      ],
+      "purpose": "apps/web/src/app/api/auth/register/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/app/api/auth/register/route.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/app/api/auth/register/route.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/app/sitemap.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 20,
+          "old_end": 24,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 27,
+          "old_end": 28,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 36,
+          "old_end": 36,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 39,
+          "old_end": 39,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 47,
+          "old_end": 47,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "945609e37f8f0e9a94f8aa8c7bf661e6cd2a0b68f737b09edb0172d5885b461e",
+      "symbols": [
+        "revalidate",
+        "sitemap"
+      ],
+      "purpose": "Only retained public pages are included in the static sitemap list.",
+      "previous_behavior": "Sitemap advertised removed capabilities.",
+      "new_behavior": "Only retained public pages are included in the static sitemap list.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/Footer.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 36,
+          "old_end": 36,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 42,
+          "old_end": 42,
+          "new_start": 41,
+          "new_end": 41
+        }
+      ],
+      "working_tree_sha256": "5b9a57571ea74c07842aa987acb7b7bbed14bb02dda422d8b5f387c7de464ca3",
+      "symbols": [
+        "Footer"
+      ],
+      "purpose": "Footer uses the three retained link groups with a matching grid.",
+      "previous_behavior": "Footer displayed a platform and commerce column.",
+      "new_behavior": "Footer uses the three retained link groups with a matching grid.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/Header.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 8,
+          "new_end": 8
+        },
+        {
+          "old_start": 12,
+          "old_end": 13,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 20,
+          "old_end": 29,
+          "new_start": 18,
+          "new_end": 18
+        },
+        {
+          "old_start": 133,
+          "old_end": 143,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 145,
+          "old_end": 147,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "319d975f2e6a47eeb8aef5486438204730b94a7991b443f0370dc5442f1a3de1",
+      "symbols": [
+        "Header"
+      ],
+      "purpose": "Corporate header renders public navigation without account sessions or commerce links.",
+      "previous_behavior": "Corporate header mounted NextAuth and displayed account and commerce links.",
+      "new_behavior": "Corporate header renders public navigation without account sessions or commerce links.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/deibud/DeiBudButton.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 45,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DeiBudButton"
+      ],
+      "purpose": "apps/web/src/components/deibud/DeiBudButton.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/deibud/DeiBudButton.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/deibud/DeiBudButton.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/deibud/DeiBudChat.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 146,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DeiBudChat"
+      ],
+      "purpose": "apps/web/src/components/deibud/DeiBudChat.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/deibud/DeiBudChat.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/deibud/DeiBudChat.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/deibud/DeiBudProvider.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 19,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "DeiBudProvider"
+      ],
+      "purpose": "apps/web/src/components/deibud/DeiBudProvider.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/deibud/DeiBudProvider.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/deibud/DeiBudProvider.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/header/AccountMenu.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 137,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "AccountMenu",
+        "MobileAccount"
+      ],
+      "purpose": "apps/web/src/components/header/AccountMenu.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/header/AccountMenu.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/header/AccountMenu.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/header/MobileMenu.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 82,
+          "old_end": 82,
+          "new_start": 81,
+          "new_end": 81
+        },
+        {
+          "old_start": 86,
+          "old_end": 86,
+          "new_start": 85,
+          "new_end": 85
+        },
+        {
+          "old_start": 88,
+          "old_end": 88,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "16f3eb3d972c87df8c8065f9a9671ce1847778c00a11d5ffb2fb31315c74806b",
+      "symbols": [
+        "MobileMenu"
+      ],
+      "purpose": "Mobile menu provides the retained contact action without account actions.",
+      "previous_behavior": "Mobile menu offered membership and account actions.",
+      "new_behavior": "Mobile menu provides the retained contact action without account actions.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/BookingActions.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 117,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "BookingActions",
+        "RatingForm"
+      ],
+      "purpose": "apps/web/src/components/member/BookingActions.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/BookingActions.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/BookingActions.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/BookingForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 109,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "BookingDefaults",
+        "BookingForm"
+      ],
+      "purpose": "apps/web/src/components/member/BookingForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/BookingForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/BookingForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/FamilyControls.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 74,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "FamilyRequestForm",
+        "RespondButtons",
+        "RevokeButton"
+      ],
+      "purpose": "apps/web/src/components/member/FamilyControls.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/FamilyControls.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/FamilyControls.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/HealthChart.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 163,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "HealthChart"
+      ],
+      "purpose": "apps/web/src/components/member/HealthChart.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/HealthChart.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/HealthChart.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/HealthEntryForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 88,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "HealthEntryForm",
+        "DeleteRecordButton"
+      ],
+      "purpose": "apps/web/src/components/member/HealthEntryForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/HealthEntryForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/HealthEntryForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/HealthRecords.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 47,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "HealthRecords"
+      ],
+      "purpose": "apps/web/src/components/member/HealthRecords.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/HealthRecords.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/HealthRecords.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/Medications.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 214,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "TodayChecklist",
+        "AddMedicationForm",
+        "MedicationRowActions"
+      ],
+      "purpose": "apps/web/src/components/member/Medications.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/Medications.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/Medications.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/MemberNav.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 69,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "MemberNav"
+      ],
+      "purpose": "apps/web/src/components/member/MemberNav.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/MemberNav.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/MemberNav.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/SettingsForms.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 166,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "ProfileForm",
+        "NotificationForm",
+        "PasswordForm",
+        "WithdrawalForm"
+      ],
+      "purpose": "apps/web/src/components/member/SettingsForms.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/SettingsForms.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/SettingsForms.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/VerifyEmailBanner.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 25,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "VerifyEmailBanner"
+      ],
+      "purpose": "apps/web/src/components/member/VerifyEmailBanner.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/VerifyEmailBanner.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/VerifyEmailBanner.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/VisitReport.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 62,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "vitalsText",
+        "VisitReport"
+      ],
+      "purpose": "apps/web/src/components/member/VisitReport.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/VisitReport.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/VisitReport.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/VisitReportForm.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 102,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "VisitReportForm"
+      ],
+      "purpose": "apps/web/src/components/member/VisitReportForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/VisitReportForm.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/VisitReportForm.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/controls.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 588,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "Select",
+        "DatePicker",
+        "Checkbox",
+        "Switch",
+        "ChoiceChips",
+        "ConfirmDialog",
+        "useMemberAction",
+        "ActionMessage"
+      ],
+      "purpose": "apps/web/src/components/member/controls.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/controls.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/controls.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/member/ui.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 180,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "inputClass",
+        "textareaClass",
+        "btnClass",
+        "Card",
+        "PageTitle",
+        "Badge",
+        "BOOKING_TONE",
+        "INQUIRY_TONE",
+        "CONDITION_TONE",
+        "EmptyState",
+        "Field",
+        "Notice",
+        "InfoList",
+        "TextLink",
+        "Timeline",
+        "fmtDateTime"
+      ],
+      "purpose": "apps/web/src/components/member/ui.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/member/ui.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/member/ui.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/templates/AudienceTemplate.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 399,
+          "old_end": 399,
+          "new_start": 399,
+          "new_end": 399
+        },
+        {
+          "old_start": 401,
+          "old_end": 403,
+          "new_start": 401,
+          "new_end": 403
+        }
+      ],
+      "working_tree_sha256": "374023d289acb998e1d7570e3736fd9edbcab898e8841b5186048b2882b9b882",
+      "symbols": [
+        "AudienceTemplate"
+      ],
+      "purpose": "apps/web/src/components/templates/AudienceTemplate.tsx removes obsolete member calls to action and presents retained public service content.",
+      "previous_behavior": "apps/web/src/components/templates/AudienceTemplate.tsx contained links or cards for excluded membership features.",
+      "new_behavior": "apps/web/src/components/templates/AudienceTemplate.tsx removes obsolete member calls to action and presents retained public service content.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/components/templates/PlatformDetailTemplate.tsx",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 267,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "PlatformDetailTemplate"
+      ],
+      "purpose": "apps/web/src/components/templates/PlatformDetailTemplate.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/components/templates/PlatformDetailTemplate.tsx implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/components/templates/PlatformDetailTemplate.tsx is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/data/audiences.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 558,
+          "old_end": 628,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 868,
+          "old_end": 1094,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "a1f6b2943cd7cc2ac4d3759d4e00f1642fb7cc28498f745fa1c7e53876e854c0",
+      "symbols": [
+        "providerSegments",
+        "userSegments"
+      ],
+      "purpose": "Those retired audience entries are removed; retained partner and senior entries remain.",
+      "previous_behavior": "Audience cards linked to retired daycare, chronic disease and disability pages.",
+      "new_behavior": "Those retired audience entries are removed; retained partner and senior entries remain.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/data/membership.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 83,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "membershipFeatures",
+        "userMembershipPlans",
+        "providerMembershipPlans",
+        "premiumPartners",
+        "membershipBenefits"
+      ],
+      "purpose": "apps/web/src/data/membership.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/data/membership.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/data/membership.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/data/navigation.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 131,
+          "old_end": 136,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 190,
+          "old_end": 222,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 228,
+          "old_end": 232,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 235,
+          "old_end": 241,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 265,
+          "old_end": 265,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 267,
+          "old_end": 267,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 283,
+          "old_end": 294,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "2da382be5cca670e593b152d9ed4231680a08cbb8797c7fcdeb9c6d9318c0b19",
+      "symbols": [
+        "getLabel",
+        "getTitle",
+        "getDescription",
+        "mainNavigation",
+        "footerNavigation"
+      ],
+      "purpose": "Retired platform, employee, membership, account, shop and senior landing links are removed.",
+      "previous_behavior": "Public navigation included retired corporate capabilities.",
+      "new_behavior": "Retired platform, employee, membership, account, shop and senior landing links are removed.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/data/platforms.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 394,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "platforms",
+        "getPlatformBySlug"
+      ],
+      "purpose": "apps/web/src/data/platforms.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/data/platforms.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/data/platforms.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/lib/auth.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 73,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "apps/web/src/lib/auth.ts"
+      ],
+      "purpose": "apps/web/src/lib/auth.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/lib/auth.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/lib/auth.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/lib/inquiry.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 16,
+          "old_end": 16,
+          "new_start": 16,
+          "new_end": 16
+        },
+        {
+          "old_start": 23,
+          "old_end": 23,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 104,
+          "old_end": 104,
+          "new_start": 103,
+          "new_end": 103
+        },
+        {
+          "old_start": 132,
+          "old_end": 136,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 149,
+          "old_end": 149,
+          "new_start": 143,
+          "new_end": 143
+        }
+      ],
+      "working_tree_sha256": "65e39f4adfc99e80f69c0fb786bb91f427b4f68a0bd1d40d813a2f20ca383c77",
+      "symbols": [
+        "InquiryInput",
+        "submitInquiry"
+      ],
+      "purpose": "Website inquiries are anonymous and reject retired onboarding/platform application types.",
+      "previous_behavior": "Website inquiries attempted to read a member session and accepted retired form types.",
+      "new_behavior": "Website inquiries are anonymous and reject retired onboarding/platform application types.",
+      "data_impact": "No production data mutated; existing member and inquiry history and shared academy tables remain. New website inquiries store userId=null.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/lib/member/actions.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 564,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "completeOnboarding",
+        "updateProfile",
+        "updateNotifications",
+        "changePassword",
+        "requestWithdrawal",
+        "cancelWithdrawal",
+        "resendVerification",
+        "BookingInput",
+        "createBooking",
+        "updateBooking",
+        "cancelBooking",
+        "rateBooking",
+        "addHealthRecord",
+        "deleteHealthRecord",
+        "addMedication",
+        "setMedicationActive"
+      ],
+      "purpose": "apps/web/src/lib/member/actions.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/lib/member/actions.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/lib/member/actions.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/lib/member/queries.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 200,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "bookingListSelect",
+        "listMemberBookings",
+        "getBookingDetail",
+        "listHealthRecords",
+        "todayMedications",
+        "weeklyAdherence",
+        "listVisits",
+        "listMemberInquiries",
+        "academySummary"
+      ],
+      "purpose": "apps/web/src/lib/member/queries.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/lib/member/queries.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/lib/member/queries.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/src/lib/member/session.ts",
+      "change_type": "deleted",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 58,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": null,
+      "symbols": [
+        "getMember",
+        "requireMember",
+        "canViewPatient",
+        "linkedPatients"
+      ],
+      "purpose": "apps/web/src/lib/member/session.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "previous_behavior": "apps/web/src/lib/member/session.ts implemented an excluded corporate website route, account operation, or component.",
+      "new_behavior": "apps/web/src/lib/member/session.ts is removed from the corporate app; its route or component is unavailable. Shared academy implementations and database tables are preserved.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "Corporate website authentication endpoints and account actions are removed; academy authentication and administrator authorization are preserved.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/tests/website-scope.http.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 14
+        }
+      ],
+      "working_tree_sha256": "5d6b986eeef5a539c0134f167d12e791fddc02074b01b9bc3b22d05bd523bde4",
+      "symbols": [
+        "apps/web/tests/website-scope.http.mts"
+      ],
+      "purpose": "website-scope.http.mts verifies removed routes, retained destinations, or public form restrictions without production writes.",
+      "previous_behavior": "No automated coverage for corporate feature exclusions.",
+      "new_behavior": "website-scope.http.mts verifies removed routes, retained destinations, or public form restrictions without production writes.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "apps/web/tests/website-scope.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 34
+        }
+      ],
+      "working_tree_sha256": "36217f4f0e4b75870067877f28a99f99b09d3ed88005ca5630ed1b155b01c83d",
+      "symbols": [
+        "apps/web/tests/website-scope.test.ts"
+      ],
+      "purpose": "website-scope.test.ts verifies removed routes, retained destinations, or public form restrictions without production writes.",
+      "previous_behavior": "No automated coverage for corporate feature exclusions.",
+      "new_behavior": "website-scope.test.ts verifies removed routes, retained destinations, or public form restrictions without production writes.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    },
+    {
+      "path": "packages/shared/src/web-content.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 30,
+          "new_end": 34
+        }
+      ],
+      "working_tree_sha256": "aed9219bc1965dbb9d8dda2e17452d4e7f464bb31a70b9e62c6ff2df28aedb18",
+      "symbols": [
+        "WEB_FORM_TYPES",
+        "WEB_FORM_TYPE_KEYS",
+        "isWebFormType",
+        "isPublicWebFormType",
+        "webFormLabel",
+        "WEB_FORM_REQUIRED",
+        "WEB_FORM_CONSENT_REQUIRED",
+        "WEB_FIELD_LABEL",
+        "WEB_VALUE_LABEL",
+        "CONTACT_SERVICE_OPTIONS",
+        "formatWebFieldValue",
+        "WEB_INQUIRY_STATUSES",
+        "WEB_INQUIRY_STATUS_LABEL",
+        "WEB_BLOG_CATEGORIES",
+        "WEB_SERVICE_OPTIONS",
+        "WEB_SNS_KEYS"
+      ],
+      "purpose": "isPublicWebFormType restricts new submissions while historical labels and types remain readable.",
+      "previous_behavior": "All historic form types were also valid public submissions.",
+      "new_behavior": "isPublicWebFormType restricts new submissions while historical labels and types remain readable.",
+      "data_impact": "None: source, navigation, UI, or tests only. No database schema or operational rows are deleted.",
+      "access_control_impact": "No permissions expanded. Retired public application types are rejected; historical admin access remains under existing authorization.",
+      "risks": [
+        "Old external links to removed corporate routes intentionally return 404. Existing DB-authored content may still mention retired capabilities and needs content review."
+      ],
+      "rollback": "Revert this commit with its lockfile and rebuild the web/admin apps. Existing DB schema and historical data remain compatible; no data restoration is needed."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production data read or written in this change. Runtime HTTP tests used a local DB-free production build.",
+    "schema_migration": "None: all shared tables and historical data are retained.",
+    "external_side_effects": [
+      "Local build servers on ports 3335/3336, dependency pruning, and local HTTP requests only. No production rollout or messages."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "evidence": "All 10 tasks passed after stale generated route types were removed and regenerated."
+    },
+    {
+      "command": "Next build --webpack with DATABASE_URL empty in the child process, apps/web cwd",
+      "result": "passed",
+      "evidence": "Compiled, type-checked and generated all 229 pages. Used permitted Windows execution after sandbox EPERM."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-content.test.ts ../../apps/web/tests/website-scope.test.ts",
+      "result": "passed",
+      "evidence": "4 tests passed covering CMS and feature exclusions."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx ../../apps/web/tests/website-scope.http.mts",
+      "result": "passed",
+      "evidence": "36 retired page requests and 3 authentication API requests returned 404; 9 retained page requests returned 200. Home HTML had no retired action links."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "All 9 workspace tests passed."
+    }
+  ],
+  "residual_risks": [
+    "Not deployed yet. Expanded website CRUD, academy/admin runtime cross-testing and AWS rollout remain pending in the active goal.",
+    "Stored FAQ/blog/legal content may still reference removed membership or platform offerings; review and editable content integration remain outstanding.",
+    "Legacy administrator member/booking pages remain accessible under existing permissions for historic records but are removed from active navigation.",
+    "Local DB-free build proves public route behavior, not production database integration."
+  ],
+  "commit": "same-as-metadata-file"
+}

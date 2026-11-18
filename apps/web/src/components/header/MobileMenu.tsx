@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { mainNavigation, getLabel, getTitle } from "@/data/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { MobileAccount } from "./AccountMenu";
 
 interface MobileMenuProps {
   locale: string;
@@ -79,13 +78,12 @@ export function MobileMenu({ locale, onClose }: MobileMenuProps) {
         {/* CTA */}
         <div className="mt-4 flex flex-col gap-3 pt-2">
           <Link
-            href={`/${locale}/membership`}
+            href={`/${locale}/contact`}
             className="block rounded-xl bg-[#ce0e2d] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#b00c27]"
             onClick={onClose}
           >
-            {{ ko: "시작하기", ja: "始める", zh: "开始" }[locale] ?? "Get Started"}
+            {{ ko: "상담 문의", ja: "お問い合わせ", zh: "联系我们" }[locale] ?? "Contact Us"}
           </Link>
-          <MobileAccount locale={locale} onClose={onClose} />
         </div>
       </nav>
     </div>

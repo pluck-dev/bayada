@@ -3,7 +3,6 @@ import type { Locale } from "@bayada/shared/i18n";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { DeiBudProvider } from "@/components/deibud/DeiBudProvider";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 import { getSiteInfo } from "@/lib/web-content";
 
@@ -36,7 +35,6 @@ export default async function LocaleLayout({
       <Header dict={dict} locale={locale} />
       <main>{children}</main>
       <Footer dict={dict} locale={locale} company={company} />
-      <DeiBudProvider />
     </>
   );
 }

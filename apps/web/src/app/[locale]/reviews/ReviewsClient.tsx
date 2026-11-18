@@ -622,13 +622,7 @@ export function ReviewsClient({ reviews, services, averageRating }: ReviewsClien
                 <Phone size={18} />
                 상담 신청하기
               </Link>
-              <Link
-                href="/membership"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#dfe6eb] py-[13px] px-6 text-base font-semibold text-black/[0.87] transition-colors hover:bg-[#cdd5dc] sm:w-auto"
-              >
-                <Sparkles size={18} />
-                무료 멤버십 시작
-              </Link>
+
             </div>
 
             {/* 미니 통계 */}

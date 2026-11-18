@@ -396,11 +396,11 @@ export function AudienceTemplate({ segment, dict, locale }: AudienceTemplateProp
             locale={locale}
             extra={[
               {
-                title: "BAYADA Membership",
+                title: "BAYADA 서비스 안내",
                 description:
-                  "멤버십에 가입하고 더 많은 혜택을 누리세요.",
-                ctaLabel: "멤버십 알아보기",
-                ctaHref: `/${locale}/membership`,
+                  "홈헬스케어 서비스와 이용 절차를 확인해 보세요.",
+                ctaLabel: "이용안내",
+                ctaHref: `/${locale}/guide`,
               },
             ]}
           />

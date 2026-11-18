@@ -13,14 +13,13 @@ import {
   WEB_FORM_TYPES,
   formatWebFieldValue,
   isEmail,
-  isWebFormType,
+  isPublicWebFormType,
   kstDate,
   normalizeWebSetting,
   parseEmailList,
   webFormLabel,
 } from "@bayada/shared/web-content";
 import type { FormSubmitResult } from "@/types";
-import { auth } from "@/lib/auth";
 
 export interface InquiryInput {
   formType: string;
@@ -101,7 +100,7 @@ async function notify(inquiry: { id: string; referenceNo: string; formType: stri
 }
 
 export async function submitInquiry(input: InquiryInput): Promise<InquiryResult> {
-  const formType = isWebFormType(input?.formType) ? input.formType : null;
+  const formType = isPublicWebFormType(input?.formType) ? input.formType : null;
   if (!formType) return fail("알 수 없는 신청서입니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.");
   const { prefix } = WEB_FORM_TYPES[formType];
 
@@ -129,11 +128,6 @@ export async function submitInquiry(input: InquiryInput): Promise<InquiryResult>
   });
   if (ip !== "unknown" && recent >= RATE_MAX) return fail("짧은 시간에 너무 많이 접수되었습니다. 잠시 후 다시 시도해 주세요.");
 
-  // 로그인한 회원이면 계정에 묶는다 → 마이페이지 '내 상담·문의'에서 처리 상태를 본다 (세션 확인 실패는 비회원 접수로)
-  const userId = await auth()
-    .then((s) => s?.user?.id ?? null)
-    .catch(() => null);
-
   const sourcePage = typeof input.sourcePage === "string" && input.sourcePage.startsWith("/") ? input.sourcePage.slice(0, 200) : null;
   const base = {
     formType,
@@ -146,7 +140,7 @@ export async function submitInquiry(input: InquiryInput): Promise<InquiryResult>
     sourcePage,
     ipHash,
     userAgent: h.get("user-agent")?.slice(0, 300) ?? null,
-    userId,
+    userId: null,
   };
 
   // 같은 순간 두 건이 같은 번호를 잡으면 unique 충돌 → 다시 번호를 받는다

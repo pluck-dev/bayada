@@ -99,11 +99,8 @@ const SYSTEM: NavItem[] = [
 
 // 웹사이트(홈페이지 apps/web) 작업 영역 — 경로는 /web/…
 const WEBSITE: NavItem[] = [
-  { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content", "web.bookings", "web.members"] },
+  { path: "/web", label: "웹사이트 대시보드", icon: Globe, permission: ["web.inquiries", "web.content", "web.settings"] },
   { path: "/web/inquiries", label: "문의 CRM", icon: Inbox, permission: "web.inquiries", badgeKey: "inquiries", group: "고객" },
-  { path: "/web/bookings", label: "서비스 예약", icon: CalendarCheck, permission: "web.bookings", badgeKey: "bookings", group: "고객" },
-  { path: "/web/visits", label: "방문 기록", icon: ClipboardList, permission: "web.bookings", group: "고객" },
-  { path: "/web/members", label: "홈페이지 회원", icon: UserRound, permission: "web.members", badgeKey: "withdrawals", group: "고객" },
   { path: "/web/blog", label: "블로그", icon: Newspaper, permission: "web.content", group: "콘텐츠" },
   { path: "/web/faq", label: "자주 묻는 질문", icon: HelpCircle, permission: "web.content", group: "콘텐츠" },
   { path: "/web/reviews", label: "이용자 후기", icon: MessageSquareQuote, permission: "web.content", group: "콘텐츠" },
