@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -114,7 +115,7 @@ function MetricCard({
 }
 
 export default function HospitalsClient({ locale }: { locale: string }) {
-  const segment = providerSegments.find((s) => s.slug === "hospitals")!;
+  const segment = useAudienceSegment("hospitals");
 
   // 메트릭 섹션 트리거
   const metricRef = useRef<HTMLDivElement>(null);

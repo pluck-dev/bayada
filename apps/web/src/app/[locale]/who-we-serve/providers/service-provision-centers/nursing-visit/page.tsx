@@ -1,3 +1,5 @@
+import { getWebPageContent } from "@/lib/web-pages";
+import { AudienceContent } from "@/components/shared/AudienceContent";
 import { createMetadata } from "@/lib/seo";
 import { NursingVisitClient } from "./NursingVisitClient";
 
@@ -5,5 +7,6 @@ export const metadata = createMetadata({ title: "방문간호 제공기관", des
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  return <NursingVisitClient locale={locale} />;
+  const segment = await getWebPageContent("audienceNursing");
+  return <AudienceContent segment={segment}><NursingVisitClient locale={locale} /></AudienceContent>;
 }

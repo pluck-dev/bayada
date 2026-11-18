@@ -1,3 +1,5 @@
+import { getWebPageContent } from "@/lib/web-pages";
+import { AudienceContent } from "@/components/shared/AudienceContent";
 import { createMetadata } from "@/lib/seo";
 import ClinicsClient from "./ClinicsClient";
 
@@ -14,5 +16,6 @@ export default async function Page({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  return <ClinicsClient locale={locale} />;
+  const segment = await getWebPageContent("audienceClinics");
+  return <AudienceContent segment={segment}><ClinicsClient locale={locale} /></AudienceContent>;
 }

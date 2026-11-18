@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
@@ -54,7 +55,7 @@ function AnimatedNumber({ value, suffix = "" }: { value: string; suffix?: string
 
 // ---------- 섹션 1: 품질 인증 - 번호 스텝 ----------
 function QualityCertSection() {
-  const segment = providerSegments.find((s) => s.slug === "ltci-center")!;
+  const segment = useAudienceSegment("ltci-center");
   const features = segment.features ?? [];
 
   return (
@@ -127,7 +128,7 @@ function QualityCertSection() {
 
 // ---------- 섹션 2: 통계 대시보드 ----------
 function StatsDashboard() {
-  const segment = providerSegments.find((s) => s.slug === "ltci-center")!;
+  const segment = useAudienceSegment("ltci-center");
   const stats = segment.stats ?? [];
 
   return (
@@ -284,7 +285,7 @@ interface LtciClientProps {
 }
 
 export function LtciClient({ locale }: LtciClientProps) {
-  const segment = providerSegments.find((s) => s.slug === "ltci-center")!;
+  const segment = useAudienceSegment("ltci-center");
 
   return (
     <>

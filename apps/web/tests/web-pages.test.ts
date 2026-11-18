@@ -71,3 +71,14 @@ test("payment guidance validates styling keys and preserves removed FAQ and supp
   payment.paymentOptions[0]!.icon = "Unsupported";
   assert.throws(() => parseWebPageContent("payment", payment), /아이콘/);
 });
+
+test("audience edits keep route identity, optional suffixes and explicitly removed sections", () => {
+ const original = structuredClone(WEB_PAGE_DEFAULTS.audienceHealthcare);
+ const edited = parseWebPageContent("audienceHealthcare", { ...original, slug:"other", type:"user", href:"/shop", ctaHref:"javascript:alert(1)", features:[] });
+ assert.equal(edited.slug, original.slug); assert.equal(edited.type,original.type);
+ assert.equal(edited.href,original.href);assert.equal(edited.ctaHref,original.ctaHref);
+ assert.deepEqual(edited.features,[]);assert.deepEqual(edited.stats,original.stats);
+ const senior = structuredClone(WEB_PAGE_DEFAULTS.audienceSenior);
+ senior.image="//outside.invalid/image.jpg";
+ assert.throws(()=>parseWebPageContent("audienceSenior",senior), /이미지 경로/);
+});

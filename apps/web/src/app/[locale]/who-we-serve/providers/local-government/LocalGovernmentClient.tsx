@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -59,7 +60,7 @@ const CONSULTING_FIELDS = [
 ];
 
 export default function LocalGovernmentClient() {
-  const segment = providerSegments.find((s) => s.slug === "local-government")!;
+  const segment = useAudienceSegment("local-government");
   const [formData, setFormData] = useState({
     organization: "",
     manager: "",

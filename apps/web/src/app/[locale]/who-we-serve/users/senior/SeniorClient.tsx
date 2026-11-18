@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -467,7 +468,7 @@ function FAQSection({ segment }: { segment: (typeof userSegments)[0] }) {
 }
 
 export function SeniorClient({ locale }: { locale: string }) {
-  const segment = userSegments.find((s) => s.slug === "senior")!;
+  const segment = useAudienceSegment("senior");
 
   return (
     <main>

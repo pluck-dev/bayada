@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { motion } from "framer-motion";
 import {
@@ -31,9 +32,7 @@ const featureIconMap = [
 ];
 
 export function HealthcareProfessionalsClient() {
-  const segment = providerSegments.find(
-    (s) => s.slug === "healthcare-professionals"
-  )!;
+  const segment = useAudienceSegment("healthcare-professionals");
 
   const stats = segment.stats ?? [];
   const features = segment.features ?? [];

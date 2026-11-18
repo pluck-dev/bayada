@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
-import { userSegments } from "@/data/audiences";
+import { getManagedAudienceSegments } from "@/lib/web-audiences";
 import { getServices } from "@/lib/web-services";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
@@ -20,6 +20,7 @@ export default async function UsersPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const userSegments = (await getManagedAudienceSegments()).filter(s => s.type === "user");
   const services = await getServices();
   const dict = await getDictionary(locale as Locale);
 

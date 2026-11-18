@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -23,7 +24,7 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 // ---------- 섹션 1: 클린 화이트 히어로 ----------
 function NursingHero({ locale }: { locale: string }) {
-  const segment = providerSegments.find((s) => s.slug === "nursing-visit-center")!;
+  const segment = useAudienceSegment("nursing-visit-center");
   const pills = [
     { value: "60+", label: "파트너 센터" },
     { value: "99%", label: "서비스 처리율" },
@@ -91,7 +92,7 @@ function NursingHero({ locale }: { locale: string }) {
 
 // ---------- 섹션 2: 가로 스크롤 피처 카드 ----------
 function HorizontalFeatureStrip() {
-  const segment = providerSegments.find((s) => s.slug === "nursing-visit-center")!;
+  const segment = useAudienceSegment("nursing-visit-center");
   const features = segment.features ?? [];
 
   return (
@@ -223,7 +224,7 @@ function SupportTierTable() {
 
 // ---------- 섹션 4: 풀-쿼트 테스티모니얼 ----------
 function PullQuoteTestimonial() {
-  const segment = providerSegments.find((s) => s.slug === "nursing-visit-center")!;
+  const segment = useAudienceSegment("nursing-visit-center");
   const testimonial = segment.testimonials?.[0];
   if (!testimonial) return null;
 
@@ -419,7 +420,7 @@ interface NursingVisitClientProps {
 }
 
 export function NursingVisitClient({ locale }: NursingVisitClientProps) {
-  const segment = providerSegments.find((s) => s.slug === "nursing-visit-center")!;
+  const segment = useAudienceSegment("nursing-visit-center");
 
   return (
     <>

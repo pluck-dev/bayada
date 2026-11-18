@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import { motion } from "framer-motion";
 import {
@@ -43,9 +44,7 @@ const growthMilestones = [
 ];
 
 export function OtherProfessionalsClient() {
-  const segment = providerSegments.find(
-    (s) => s.slug === "other-professionals"
-  )!;
+  const segment = useAudienceSegment("other-professionals");
 
   const stats = segment.stats ?? [];
   const features = segment.features ?? [];

@@ -1,3 +1,5 @@
+import { getWebPageContent } from "@/lib/web-pages";
+import { AudienceContent } from "@/components/shared/AudienceContent";
 import { createMetadata } from "@/lib/seo";
 import { LtciClient } from "./LtciClient";
 
@@ -5,5 +7,6 @@ export const metadata = createMetadata({ title: "장기요양 제공기관", des
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  return <LtciClient locale={locale} />;
+  const segment = await getWebPageContent("audienceLtci");
+  return <AudienceContent segment={segment}><LtciClient locale={locale} /></AudienceContent>;
 }

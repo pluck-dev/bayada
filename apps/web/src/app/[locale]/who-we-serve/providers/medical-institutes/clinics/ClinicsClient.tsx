@@ -1,4 +1,5 @@
 "use client";
+import { useAudienceSegment } from "@/components/shared/AudienceContent";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -38,7 +39,7 @@ const workflowSteps = [
 ];
 
 export default function ClinicsClient({ locale }: { locale: string }) {
-  const segment = providerSegments.find((s) => s.slug === "clinics")!;
+  const segment = useAudienceSegment("clinics");
 
   const stats = segment.stats ?? [];
   const features = segment.features ?? [];

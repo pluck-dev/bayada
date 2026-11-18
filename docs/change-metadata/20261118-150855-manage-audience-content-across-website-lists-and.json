@@ -1,0 +1,861 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-150855-manage-audience-content-across-website-lists-and",
+  "created_at": "2026-11-18T15:08:55+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "e6b04cb31b2ae1932cad44b67e867e6b58bcb511",
+  "request": "Complete website content CRUD and verify connected public screens",
+  "title": "Manage audience content across website lists and details",
+  "purpose": "Connect eight audience descriptions to shared administrator-managed documents",
+  "files": [
+    {
+      "path": "apps/admin/src/components/web/WebPageManager.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 10,
+          "new_end": 10
+        },
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 18,
+          "new_end": 18
+        }
+      ],
+      "working_tree_sha256": "2a866bc3cd8cfc5741fe589f72ff78e42920001f82a2d2d3be91b55a81bef4d0",
+      "symbols": [
+        "Fields"
+      ],
+      "purpose": "Adds Korean audience field labels and hides immutable route/type identity from editor.",
+      "previous_behavior": "Audience field names were not labelled or route fields protected in UI.",
+      "new_behavior": "Adds Korean audience field labels and hides immutable route/type identity from editor.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/healthcare-professionals/HealthcareProfessionalsClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 34,
+          "old_end": 36,
+          "new_start": 35,
+          "new_end": 35
+        }
+      ],
+      "working_tree_sha256": "50816ec3783a5c8a4a3332f0c8d32c697863c965f91822ce9d8484c935f2e403",
+      "symbols": [
+        "HealthcareProfessionalsClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/healthcare-professionals/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 7,
+          "old_end": 7,
+          "new_start": 9,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "a727396177073167c5582295dcf042089774735e570c6442cf061067a4f1c21f",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/local-government/LocalGovernmentClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 62,
+          "old_end": 62,
+          "new_start": 63,
+          "new_end": 63
+        }
+      ],
+      "working_tree_sha256": "817c12a6ea87c6222073db1709e445e45ff8f5f604687a7b5e4230dab0d0e8f0",
+      "symbols": [
+        "LocalGovernmentClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/local-government/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 7,
+          "old_end": 7,
+          "new_start": 9,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "626ff36442ec9a0febf824808f9a02cbbae3e6774625fc08f6322e6cb7f99896",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/medical-institutes/clinics/ClinicsClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 41,
+          "old_end": 41,
+          "new_start": 42,
+          "new_end": 42
+        }
+      ],
+      "working_tree_sha256": "2f4facfaae7cf95c64e78d11ff42ad0bc3cd73161e4636966a759b0a8b31e0ac",
+      "symbols": [
+        "ClinicsClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/medical-institutes/clinics/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 19,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "b7c762b60215f009d108157f309b0e8cdb625320305cc1abaabbe4a8bed0e3bc",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/medical-institutes/hospitals/HospitalsClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 117,
+          "old_end": 117,
+          "new_start": 118,
+          "new_end": 118
+        }
+      ],
+      "working_tree_sha256": "f5e8d971cd743be58c8186bfd6f5a3914c2f3d610d1ac87505b7d2093012e9e8",
+      "symbols": [
+        "HospitalsClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/medical-institutes/hospitals/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 19,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "2578578b929e0089e931deb8a46e2b624a6e50a22478b6206aa4a3390ee2e6b7",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/other-professionals/OtherProfessionalsClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 46,
+          "old_end": 48,
+          "new_start": 47,
+          "new_end": 47
+        }
+      ],
+      "working_tree_sha256": "f7a35aa3ba234ff4591762c946c49e0e7d7778fc9b7294f542dffbc1c1e5b2db",
+      "symbols": [
+        "OtherProfessionalsClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/other-professionals/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 7,
+          "old_end": 7,
+          "new_start": 9,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "d46f0112bbec1f92de401a76f49099c9c937dbcd4709a2205fc277a345bbc082",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 17,
+          "new_end": 17
+        }
+      ],
+      "working_tree_sha256": "063d7b17e7dc2e642e1ffb542ece559e6863dd74c9bd7f5290c080ecc5549f4e",
+      "symbols": [
+        "Audience list page"
+      ],
+      "purpose": "List cards load the same managed documents as corresponding detail pages.",
+      "previous_behavior": "Audience list cards read only static arrays.",
+      "new_behavior": "List cards load the same managed documents as corresponding detail pages.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/ltci/LtciClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 57,
+          "old_end": 57,
+          "new_start": 58,
+          "new_end": 58
+        },
+        {
+          "old_start": 130,
+          "old_end": 130,
+          "new_start": 131,
+          "new_end": 131
+        },
+        {
+          "old_start": 287,
+          "old_end": 287,
+          "new_start": 288,
+          "new_end": 288
+        }
+      ],
+      "working_tree_sha256": "90ef514063c3531035e5081bdcfa0fb6126f6fc0cab42f57b34fcb7e4e408bd3",
+      "symbols": [
+        "LtciClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/ltci/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 10,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "946785ccab0b8aaedfc631ae8173dc7347f1ae1b4015fd8776c9f41cc418e1d3",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/nursing-visit/NursingVisitClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 26,
+          "old_end": 26,
+          "new_start": 27,
+          "new_end": 27
+        },
+        {
+          "old_start": 94,
+          "old_end": 94,
+          "new_start": 95,
+          "new_end": 95
+        },
+        {
+          "old_start": 226,
+          "old_end": 226,
+          "new_start": 227,
+          "new_end": 227
+        },
+        {
+          "old_start": 422,
+          "old_end": 422,
+          "new_start": 423,
+          "new_end": 423
+        }
+      ],
+      "working_tree_sha256": "2a5dc081ed2261db9643857e426a97c58cc167f135f6932022e96c8fe88efed7",
+      "symbols": [
+        "NursingVisitClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/providers/service-provision-centers/nursing-visit/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 10,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "1fa4531e76003e89b58e702359bd14206fa1ee8a4ade8f472aab9857b2ffc54c",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 5,
+          "old_end": 5,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 23,
+          "new_end": 23
+        }
+      ],
+      "working_tree_sha256": "99b54b8f6dc61baac2923abc586f3a2940ebfb98b8bd03e53c6d5f46b8598b5b",
+      "symbols": [
+        "Audience list page"
+      ],
+      "purpose": "List cards load the same managed documents as corresponding detail pages.",
+      "previous_behavior": "Audience list cards read only static arrays.",
+      "new_behavior": "List cards load the same managed documents as corresponding detail pages.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/senior/SeniorClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 470,
+          "old_end": 470,
+          "new_start": 471,
+          "new_end": 471
+        }
+      ],
+      "working_tree_sha256": "604b7b105f69e13fccb3cffe9cfef237db49439370f0bc92922be4475d156531",
+      "symbols": [
+        "SeniorClient"
+      ],
+      "purpose": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "previous_behavior": "Detail sections looked up audience data from constant arrays.",
+      "new_behavior": "Reads the server-loaded managed audience document through context while retaining existing layout and animations.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/senior/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 10,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "9d9b44af5772bd627c94707c4cb09a98d6dd4765a7dd738b41b883df91e2bc18",
+      "symbols": [
+        "Audience detail Page"
+      ],
+      "purpose": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "previous_behavior": "Rendered static audience client without managed data context.",
+      "new_behavior": "Loads the matching managed document and wraps its detail client in AudienceContent.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/components/shared/AudienceContent.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "ddcbcfbac9cd544555b32c160f246883c25006fe06307fe6a87c8af9a2621cb9",
+      "symbols": [
+        "AudienceContent, useAudienceSegment"
+      ],
+      "purpose": "Provides one managed audience document to all nested detail sections and checks matching slug.",
+      "previous_behavior": "Nested audience components read static defaults independently.",
+      "new_behavior": "Provides one managed audience document to all nested detail sections and checks matching slug.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/data/audiences.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 797,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "96d049a49d452d1de2558af89161696c8de704d5791aab97dcabb963dbd29ce3",
+      "symbols": [
+        "providerSegments, userSegments"
+      ],
+      "purpose": "Reexports original shared defaults for remaining type references without duplicating data.",
+      "previous_behavior": "Contained duplicated website-local audience data.",
+      "new_behavior": "Reexports original shared defaults for remaining type references without duplicating data.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/src/lib/web-audiences.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 7
+        }
+      ],
+      "working_tree_sha256": "47b99efd887e10d25771783286817d69a0e757c3e7e61d53c171f7653e680fbf",
+      "symbols": [
+        "getManagedAudienceSegments"
+      ],
+      "purpose": "Loads eight managed audience documents for list page cards.",
+      "previous_behavior": "List pages used static audience arrays.",
+      "new_behavior": "Loads eight managed audience documents for list page cards.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "apps/web/tests/web-pages.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 74,
+          "new_end": 84
+        }
+      ],
+      "working_tree_sha256": "456fed9ed524d5b95a9a2a15efe9f61a6480017d97f59822370869a080568a12",
+      "symbols": [
+        "audience content regression test"
+      ],
+      "purpose": "Tests immutable routes, image path validation, empty sections and suffix preservation.",
+      "previous_behavior": "No route-identity or audience suffix regression coverage.",
+      "new_behavior": "Tests immutable routes, image path validation, empty sections and suffix preservation.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "packages/shared/src/web-audience-content.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 856
+        }
+      ],
+      "working_tree_sha256": "1a6c061dbeffb26e33188bbb71903e8d72a1a95bf654d9427e85fc026544ae8b",
+      "symbols": [
+        "AudienceSegment, WEB_AUDIENCE_DEFAULTS"
+      ],
+      "purpose": "Moves original eight audience definitions into shared defaults; normalizes optional stats suffix and testimonial role without dropping values.",
+      "previous_behavior": "Audience defaults lived only in website data module.",
+      "new_behavior": "Moves original eight audience definitions into shared defaults; normalizes optional stats suffix and testimonial role without dropping values.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    },
+    {
+      "path": "packages/shared/src/web-page-content.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 3
+        },
+        {
+          "old_start": 220,
+          "old_end": 220,
+          "new_start": 223,
+          "new_end": 223
+        },
+        {
+          "old_start": 223,
+          "old_end": 223,
+          "new_start": 226,
+          "new_end": 226
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 234,
+          "new_end": 234
+        },
+        {
+          "old_start": 235,
+          "old_end": 235,
+          "new_start": 239,
+          "new_end": 239
+        }
+      ],
+      "working_tree_sha256": "fbc96fc845cc5b7f32ec68ce629d1bf1378c9139906baf156515d6368e6d6b77",
+      "symbols": [
+        "WEB_PAGE_DEFAULTS, parseWebPageContent"
+      ],
+      "purpose": "Adds eight audience documents with immutable routing identity and internal image validation.",
+      "previous_behavior": "Audience documents were not recognized.",
+      "new_behavior": "Adds eight audience documents with immutable routing identity and internal image validation.",
+      "data_impact": "Additive Page web-page/audience* JSON reads and existing audited CAS saves. No DB schema or production backfill.",
+      "access_control_impact": "Existing web.content permission governs all editor saves/resets. Public read scope unchanged; URL identity cannot be edited.",
+      "risks": [
+        "Original marketing, staff statistics and benefits claims still need customer review. Some decorative section headings remain template text."
+      ],
+      "rollback": "Revert this commit and redeploy previous images. Additive audience Page rows may remain and are ignored by previous code. Do not restore business DB."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Only isolated synthetic QA audience row changed through admin UI. No production business records changed.",
+    "schema_migration": "None; existing Page and AuditLog.",
+    "external_side_effects": [
+      "Local QA servers started and stopped. QA Next generated manifest corruption resolved by recreating confirmed workspace cache; no source or DB deletion. No live PG calls, messages or production deployment for this update."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 tasks passed."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-pages.test.ts",
+      "result": "passed",
+      "evidence": "All 7 tests passed."
+    },
+    {
+      "command": "Oinzi admin audienceSenior save; sequential HTTP QA detail/list checks",
+      "result": "passed",
+      "evidence": "All 8 detail and 2 list pages HTTP200; changed description and headline visible on list/detail. output/qa-audience-content-evidence.json."
+    }
+  ],
+  "residual_risks": [
+    "Awaiting AWS deployment together with previous home and payment CMS updates.",
+    "Some local component-only headings/illustrative statistics remain fixed; further completion audit must distinguish these from managed audience data.",
+    "Customer review of original promotional claims and images remains necessary."
+  ],
+  "commit": "same-as-metadata-file"
+}

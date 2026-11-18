@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
-import { providerSegments } from "@/data/audiences";
+import { getManagedAudienceSegments } from "@/lib/web-audiences";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/layout/Container";
 import { createMetadata } from "@/lib/seo";
@@ -14,6 +14,7 @@ export default async function ProvidersPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const providerSegments = (await getManagedAudienceSegments()).filter(s => s.type === "provider");
   const dict = await getDictionary(locale as Locale);
 
   // 카테고리별 그룹핑

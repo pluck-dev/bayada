@@ -1,3 +1,5 @@
+import { getWebPageContent } from "@/lib/web-pages";
+import { AudienceContent } from "@/components/shared/AudienceContent";
 import { createMetadata } from "@/lib/seo";
 import { SeniorClient } from "./SeniorClient";
 
@@ -5,5 +7,6 @@ export const metadata = createMetadata({ title: "시니어 서비스", descripti
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  return <SeniorClient locale={locale} />;
+  const segment = await getWebPageContent("audienceSenior");
+  return <AudienceContent segment={segment}><SeniorClient locale={locale} /></AudienceContent>;
 }
