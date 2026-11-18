@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
+import { getServices } from "@/lib/web-services";
 import { getSiteInfo } from "@/lib/web-content";
 
 // 어드민에서 고친 콘텐츠(DB)를 다시 읽는 주기(초). 저장 즉시 반영은 어드민이 POST /api/revalidate 를 부른다
@@ -26,15 +27,15 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const [dict, company] = await Promise.all([getDictionary(locale as Locale), getSiteInfo()]);
+  const [dict, company, services] = await Promise.all([getDictionary(locale as Locale), getSiteInfo(), getServices()]);
 
   return (
     <>
       <OrganizationJsonLd />
       <WebSiteJsonLd />
-      <Header dict={dict} locale={locale} />
+      <Header services={services} dict={dict} locale={locale} />
       <main>{children}</main>
-      <Footer dict={dict} locale={locale} company={company} />
+      <Footer services={services} dict={dict} locale={locale} company={company} />
     </>
   );
 }

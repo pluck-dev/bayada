@@ -1,0 +1,920 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-132324-connect-corporate-service-content-crud-across-ad",
+  "created_at": "2026-11-18T13:23:24+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "3627415a83715d9570dcb5475a4b0e888a20e5d8",
+  "request": "Connect website CRUD to the administrator website tab and test complete behavior before deployment",
+  "title": "Connect corporate service content CRUD across admin and website",
+  "purpose": "Allow administrators to publish and manage complete service pages without source edits",
+  "files": [
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/web/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 69,
+          "new_end": 69
+        }
+      ],
+      "working_tree_sha256": "94a15566647f306bd423709825c854444ca97cf33705ea769667b319a4551e6a",
+      "symbols": [
+        "WebDashboardPage"
+      ],
+      "purpose": "Website dashboard also links complete service introduction editing.",
+      "previous_behavior": "Dashboard linked only the original content managers.",
+      "new_behavior": "Website dashboard also links complete service introduction editing.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Requires existing web.content permission on both page and server actions; no roles gain new permissions.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/web/services/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 12
+        }
+      ],
+      "working_tree_sha256": "f6b146087d7091976fb19176ce5b577ce8e97adae6ed14270b18d7942dadc570",
+      "symbols": [
+        "WebServicesPage"
+      ],
+      "purpose": "Authorized content operators can list stored service documents with concurrency timestamps.",
+      "previous_behavior": "No service content management route existed.",
+      "new_behavior": "Authorized content operators can list stored service documents with concurrency timestamps.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Requires existing web.content permission on both page and server actions; no roles gain new permissions.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/admin/src/components/Sidebar.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 104,
+          "new_end": 104
+        }
+      ],
+      "working_tree_sha256": "a141dd9e65c214c77643c4444f47740985b7c61f0ef097b65deb06e358cec5f2",
+      "symbols": [
+        "SidebarProps",
+        "Sidebar"
+      ],
+      "purpose": "Content-authorized users see service introduction in website content navigation.",
+      "previous_behavior": "No service introduction management link existed.",
+      "new_behavior": "Content-authorized users see service introduction in website content navigation.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Requires existing web.content permission on both page and server actions; no roles gain new permissions.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/admin/src/components/web/WebServiceManager.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 34
+        }
+      ],
+      "working_tree_sha256": "e9c0310b64413841a1f358ebd6084b2299434c3f4e9b193811d4c5f19e0a8c75",
+      "symbols": [
+        "WebServiceManager"
+      ],
+      "purpose": "Structured card/detail forms support adding, editing, visibility, ordered child lists and confirmed deletion, with accessible field/button labels.",
+      "previous_behavior": "Services were edited only in source files.",
+      "new_behavior": "Structured card/detail forms support adding, editing, visibility, ordered child lists and confirmed deletion, with accessible field/button labels.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Requires existing web.content permission on both page and server actions; no roles gain new permissions.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/admin/src/lib/actions/web-services.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 40
+        }
+      ],
+      "working_tree_sha256": "b0e8e74162eb74b415f33dd70e129adb0675cf6ff9b7504f9efbccc4b9fbc497",
+      "symbols": [
+        "saveWebService",
+        "deleteWebService"
+      ],
+      "purpose": "web.content-guarded actions validate documents, compare timestamps atomically and commit the content change and audit entry in one transaction.",
+      "previous_behavior": "No service CRUD actions existed.",
+      "new_behavior": "web.content-guarded actions validate documents, compare timestamps atomically and commit the content change and audit entry in one transaction.",
+      "data_impact": "Writes only namespaced Page rows and audit entries; importer additionally creates a SiteSetting marker. Existing schema remains unchanged. Operational production import is still pending.",
+      "access_control_impact": "Requires existing web.content permission on both page and server actions; no roles gain new permissions.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/layout.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 7,
+          "new_end": 7
+        },
+        {
+          "old_start": 29,
+          "old_end": 29,
+          "new_start": 30,
+          "new_end": 30
+        },
+        {
+          "old_start": 35,
+          "old_end": 35,
+          "new_start": 36,
+          "new_end": 36
+        },
+        {
+          "old_start": 37,
+          "old_end": 37,
+          "new_start": 38,
+          "new_end": 38
+        }
+      ],
+      "working_tree_sha256": "b87c15fab1cf09886619a55494bfaa42bdd01dedde5d378787610cbee53cd24a",
+      "symbols": [
+        "revalidate",
+        "generateStaticParams",
+        "LocaleLayout"
+      ],
+      "purpose": "Layout loads published services for both header and footer.",
+      "previous_behavior": "Layout loaded company information only.",
+      "new_behavior": "Layout loads published services for both header and footer.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 15,
+          "new_end": 15
+        },
+        {
+          "old_start": 43,
+          "old_end": 43,
+          "new_start": 44,
+          "new_end": 44
+        },
+        {
+          "old_start": 48,
+          "old_end": 48,
+          "new_start": 49,
+          "new_end": 49
+        }
+      ],
+      "working_tree_sha256": "9797561558615eb5f4395f42351edd7c400309b213039bf27606e90256752ccd",
+      "symbols": [
+        "metadata",
+        "HomePage"
+      ],
+      "purpose": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "previous_behavior": "Public page consumed a hardcoded service array.",
+      "new_behavior": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/reviews/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 3,
+          "old_end": 3,
+          "new_start": 3,
+          "new_end": 3
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 19,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "28490cd921d1c2332adb69b618e71afba5957b503001d513fce1ef47692ba761",
+      "symbols": [
+        "metadata",
+        "ReviewsPage"
+      ],
+      "purpose": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "previous_behavior": "Public page consumed a hardcoded service array.",
+      "new_behavior": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/what-we-do/[slug]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 3,
+          "old_end": 4,
+          "new_start": 3,
+          "new_end": 3
+        },
+        {
+          "old_start": 8,
+          "old_end": 9,
+          "new_start": 7,
+          "new_end": 8
+        },
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 17,
+          "new_end": 17
+        },
+        {
+          "old_start": 33,
+          "old_end": 34,
+          "new_start": 32,
+          "new_end": 34
+        },
+        {
+          "old_start": 41,
+          "old_end": 41,
+          "new_start": 41,
+          "new_end": 42
+        }
+      ],
+      "working_tree_sha256": "ced41031c12d16eedec18499f0e9db987a0268f5c48fea5dbd1a776e072267e5",
+      "symbols": [
+        "generateStaticParams",
+        "generateMetadata",
+        "ServicePage"
+      ],
+      "purpose": "Detail, metadata and related links use published CMS records and hidden/deleted slugs return 404.",
+      "previous_behavior": "Detail pages and metadata used static service definitions.",
+      "new_behavior": "Detail, metadata and related links use published CMS records and hidden/deleted slugs return 404.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/what-we-do/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 20,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "906f13dbd1604a79c9be3d98a23ad4aa390d461b9fb9182eb41b18c908269f36",
+      "symbols": [
+        "metadata",
+        "WhatWeDoPage"
+      ],
+      "purpose": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "previous_behavior": "Public page consumed a hardcoded service array.",
+      "new_behavior": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/who-we-serve/users/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 23,
+          "new_end": 23
+        }
+      ],
+      "working_tree_sha256": "a61b07c31963bbfd7c047ccb9bab678a1669b652caab0a7f5f430857108aa32f",
+      "symbols": [
+        "metadata",
+        "UsersPage"
+      ],
+      "purpose": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "previous_behavior": "Public page consumed a hardcoded service array.",
+      "new_behavior": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/app/sitemap.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 13,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "942ff547a9ad8bccf271d417e86b2aa17893352e83e4aa7cbbaf880522802889",
+      "symbols": [
+        "revalidate",
+        "sitemap"
+      ],
+      "purpose": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "previous_behavior": "Public page consumed a hardcoded service array.",
+      "new_behavior": "Public page consumes the published CMS services so source edits are no longer necessary.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/components/Footer.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 13,
+          "new_end": 13
+        },
+        {
+          "old_start": 25,
+          "old_end": 25,
+          "new_start": 26,
+          "new_end": 26
+        },
+        {
+          "old_start": 33,
+          "old_end": 33,
+          "new_start": 34,
+          "new_end": 34
+        }
+      ],
+      "working_tree_sha256": "0d1b392afbb1fead32007e6f8a094ebb88b650996d33117354e405c2483d0d9a",
+      "symbols": [
+        "Footer"
+      ],
+      "purpose": "Footer service links follow published CMS records.",
+      "previous_behavior": "Footer advertised static services even if deleted.",
+      "new_behavior": "Footer service links follow published CMS records.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/components/Header.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 8,
+          "new_end": 8
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 16,
+          "new_end": 16
+        },
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 19,
+          "new_end": 20
+        },
+        {
+          "old_start": 137,
+          "old_end": 137,
+          "new_start": 139,
+          "new_end": 139
+        }
+      ],
+      "working_tree_sha256": "e87661756dd7eaf54e1d0505e211a5134a1b07d35361c40c9ee1a30e67f0ce79",
+      "symbols": [
+        "Header"
+      ],
+      "purpose": "Header builds desktop and mobile menus from current public service props.",
+      "previous_behavior": "Header used fixed service links.",
+      "new_behavior": "Header builds desktop and mobile menus from current public service props.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/components/header/MobileMenu.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 10,
+          "new_end": 10
+        },
+        {
+          "old_start": 14,
+          "old_end": 14,
+          "new_start": 15,
+          "new_end": 16
+        }
+      ],
+      "working_tree_sha256": "ec736355a2afe65a55cb2c0db442ade64244eca1f147bbf62b165d177c20136c",
+      "symbols": [
+        "MobileMenu"
+      ],
+      "purpose": "Mobile menus use the same CMS-derived destinations as desktop.",
+      "previous_behavior": "Mobile service links were fixed.",
+      "new_behavior": "Mobile menus use the same CMS-derived destinations as desktop.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/components/home/ServicesByAge.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 3,
+          "new_end": 3
+        },
+        {
+          "old_start": 30,
+          "old_end": 123,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 33,
+          "new_end": 33
+        },
+        {
+          "old_start": 128,
+          "old_end": 128,
+          "new_start": 36,
+          "new_end": 37
+        },
+        {
+          "old_start": 156,
+          "old_end": 156,
+          "new_start": 65,
+          "new_end": 65
+        }
+      ],
+      "working_tree_sha256": "e4a63415c24fb46287d627d5a4f79807245162e28a1b0f8a9c1d23a61019ddb0",
+      "symbols": [
+        "ServicesByAge"
+      ],
+      "purpose": "Homepage cards use published CMS service props and age group filters; next index never becomes negative.",
+      "previous_behavior": "Homepage maintained a separate hardcoded service list.",
+      "new_behavior": "Homepage cards use published CMS service props and age group filters; next index never becomes negative.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/components/service-detail/ServiceDetailPage.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 582,
+          "old_end": 587,
+          "new_start": 582,
+          "new_end": 587
+        }
+      ],
+      "working_tree_sha256": "d4461ab30e28cb674c10605db769aceeaccc596893f6e4ddd08c853cbc39832e",
+      "symbols": [
+        "ServiceDetailPage"
+      ],
+      "purpose": "Empty optional learn-more, resource, team, recruitment and FAQ sections stay hidden.",
+      "previous_behavior": "Blank optional sections were rendered for sparse documents.",
+      "new_behavior": "Empty optional learn-more, resource, team, recruitment and FAQ sections stay hidden.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/data/navigation.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 237,
+          "new_end": 245
+        }
+      ],
+      "working_tree_sha256": "42f3b9f76378f71fbd329172aad7aa1857755a2fd1d7bc36bba11da88dfd0f71",
+      "symbols": [
+        "getLabel",
+        "getTitle",
+        "getDescription",
+        "mainNavigation",
+        "footerNavigation",
+        "navigationForServices"
+      ],
+      "purpose": "navigationForServices generates menu links from current public services and removes the menu when empty.",
+      "previous_behavior": "Service menu links were a fixed source list.",
+      "new_behavior": "navigationForServices generates menu links from current public services and removes the menu when empty.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/data/service-page-details.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 7,
+          "old_end": 33,
+          "new_start": 7,
+          "new_end": 8
+        }
+      ],
+      "working_tree_sha256": "563d959aa79d2f6bdee4107bd7a8e19b0cb43fec0107bd2d6c604ef71ec1a08a",
+      "symbols": [
+        "servicePageDetails",
+        "getServicePageDetail"
+      ],
+      "purpose": "Detail interfaces are shared with the validator; source defaults remain intact.",
+      "previous_behavior": "Detail interfaces lived in the source data module.",
+      "new_behavior": "Detail interfaces are shared with the validator; source defaults remain intact.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/lib/web-services.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 17
+        }
+      ],
+      "working_tree_sha256": "68964929a854f2d98901b45564c8c3d07616f05eb48426db07e87d2fae2dda7b",
+      "symbols": [
+        "getServiceDocuments",
+        "getServices",
+        "getServiceDocument"
+      ],
+      "purpose": "Public readers load published Page documents in sort order, preserve empty results and propagate runtime DB errors; DB-free builds retain source defaults.",
+      "previous_behavior": "Service readers used static source arrays.",
+      "new_behavior": "Public readers load published Page documents in sort order, preserve empty results and propagate runtime DB errors; DB-free builds retain source defaults.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/src/types/index.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 20,
+          "new_start": 6,
+          "new_end": 6
+        }
+      ],
+      "working_tree_sha256": "fb6fc4648b918431fc9918ed00d30df48b8c51797164889cfbe9b31b3955fa80",
+      "symbols": [
+        "PlatformProduct",
+        "AudienceSegment",
+        "BlogPost",
+        "BlogCategory",
+        "Review",
+        "MembershipPlan",
+        "MembershipFeature",
+        "TimelineEvent",
+        "FAQCategory",
+        "FAQItem",
+        "NavLabels",
+        "MegaMenuItem",
+        "MegaMenuGroup",
+        "MegaMenuLink",
+        "PartnershipType",
+        "CareerPosting",
+        "KeyNumber",
+        "ServiceRegion",
+        "FormSubmitResult",
+        "HeroSlide"
+      ],
+      "purpose": "ServiceData is re-exported from the shared module for one consistent document type.",
+      "previous_behavior": "ServiceData interface was local.",
+      "new_behavior": "ServiceData is re-exported from the shared module for one consistent document type.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "apps/web/tests/web-services.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 54
+        }
+      ],
+      "working_tree_sha256": "3ff28fb54f9b798caee31c776bf826273247f24721d0e5afa1f1d03ef95a779a",
+      "symbols": [
+        "web-services.test"
+      ],
+      "purpose": "Tests cover all source definitions, unsafe documents, public sorting/visibility/deletion, DB failure and navigation filtering.",
+      "previous_behavior": "No tests covered service import/visibility or malformed content.",
+      "new_behavior": "Tests cover all source definitions, unsafe documents, public sorting/visibility/deletion, DB failure and navigation filtering.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "packages/db/scripts/import-web-services.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 23
+        }
+      ],
+      "working_tree_sha256": "f2643f26d68df9ee17c4521b8f6af18fc8699a9951afc87d68d51344b514357f",
+      "symbols": [
+        "import-web-services"
+      ],
+      "purpose": "Explicit one-time importer creates 20 documents and an import marker in a transaction; reruns preserve edits and do not resurrect deleted documents.",
+      "previous_behavior": "Existing service definitions had no CMS rows.",
+      "new_behavior": "Explicit one-time importer creates 20 documents and an import marker in a transaction; reruns preserve edits and do not resurrect deleted documents.",
+      "data_impact": "Writes only namespaced Page rows and audit entries; importer additionally creates a SiteSetting marker. Existing schema remains unchanged. Operational production import is still pending.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "packages/shared/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 17,
+          "new_end": 18
+        }
+      ],
+      "working_tree_sha256": "f98e05d4494bd2f4382032de0b884d36ebb8c52ffa42a59f3db02a7eb25b50d7",
+      "symbols": [
+        "package"
+      ],
+      "purpose": "web-services types and validation are available to both applications.",
+      "previous_behavior": "No web-services package export existed.",
+      "new_behavior": "web-services types and validation are available to both applications.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    },
+    {
+      "path": "packages/shared/src/web-services.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 95
+        }
+      ],
+      "working_tree_sha256": "a155cd958de378e9965860fde9051583257fea16b9695993565ddfffe1efcc24",
+      "symbols": [
+        "ServiceData",
+        "ServiceLearnMoreItem",
+        "ServiceFAQ",
+        "ServicePageDetail",
+        "WEB_SERVICE_PREFIX",
+        "WebServiceDocument",
+        "parseWebServiceDocument"
+      ],
+      "purpose": "Shared types and bounded document validation derive safe service links, sequential steps, image URLs and allowed age groups.",
+      "previous_behavior": "Service types were local and no document validator existed.",
+      "new_behavior": "Shared types and bounded document validation derive safe service links, sequential steps, image URLs and allowed age groups.",
+      "data_impact": "Reads published namespaced Page records or displays supplied content; no schema changes. Tests mock clients without operational writes.",
+      "access_control_impact": "Public access is limited to published service documents; hidden/deleted detail routes return 404.",
+      "risks": [
+        "Before rollout, importer must run once with an approved backup; otherwise a connected database with no service rows intentionally shows no services.",
+        "Published content and image correctness require customer editorial review."
+      ],
+      "rollback": "Revert this commit and rebuild web/admin apps. Leave namespaced Page rows and the import marker intact for later reapplication; no destructive schema rollback is needed."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production records or credentials were copied or mutated. A separate empty Postgres QA container received the current schema, 20 synthetic imported service records, three synthetic accounts and a temporary test service that was subsequently deleted.",
+    "schema_migration": "No production schema change. Existing Page and SiteSetting tables store namespaced documents. QA schema was generated only in the separate empty QA container.",
+    "external_side_effects": [
+      "Created bayada-functional-qa-db on existing AWS Docker network without a public port. SSH local forward 55433 connects only that synthetic DB.",
+      "Ran local QA apps at ports 3340/3341/3342 and browser flows through Oinzi. Those app processes were stopped after verification; QA DB and tunnel remain for the active task.",
+      "No production rollout, external mail or user messages."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "evidence": "All 10 turbo tasks succeeded after final source edits."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-content.test.ts ../../apps/web/tests/website-scope.test.ts ../../apps/web/tests/web-services.test.ts",
+      "result": "passed",
+      "evidence": "8 tests passed."
+    },
+    {
+      "command": "Next build --webpack for apps/web and apps/admin with DATABASE_URL empty in child process env",
+      "result": "passed",
+      "evidence": "Both final builds compiled and typechecked. Web generated 229 pages; admin includes /[locale]/web/services."
+    },
+    {
+      "command": "QA importer twice against the synthetic DB",
+      "result": "passed",
+      "evidence": "First run imported 20 documents; second run imported 0."
+    },
+    {
+      "command": "Oinzi QA service CRUD plus direct synthetic DB/read-only HTTP verification",
+      "result": "passed",
+      "evidence": "UI create persisted title/body/FAQ and public detail rendered them. Synthetic concurrent writer caused stale UI save conflict; latest DB title was preserved. UI hide removed home/list/sitemap links and detail returned 404. UI confirmed delete removed row and audit web.service.delete remained. Evidence: output/qa-service-crud-evidence.json, output/qa-service-detail.png."
+    }
+  ],
+  "residual_risks": [
+    "AWS production rollout and one-time service import have not occurred.",
+    "Role-specific unauthorized write runtime verification and full academy/admin cross-testing remain pending in the active goal.",
+    "Other hardcoded corporate content (about, policy, audience-specific bodies and homepage sections) still needs editable content integration/review.",
+    "Current browser CRUD evidence uses a development runtime; final production deployment verification is still pending.",
+    "Source default service images include legacy placeholder paths and need content/image review."
+  ],
+  "commit": "same-as-metadata-file"
+}

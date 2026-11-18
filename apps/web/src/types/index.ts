@@ -3,21 +3,7 @@
 // =============================================
 
 // --- 서비스 (What We Do) ---
-export interface ServiceData {
-  slug: string;
-  nameEn: string;
-  nameKo: string;
-  description: string;
-  icon: string;
-  image: string;
-  href: string;
-  highlights: string[];
-  targetAudience: string[];
-  process: { step: number; title: string; description: string }[];
-  relatedServices: string[]; // slug 참조
-  badge?: string; // "인기", "NEW" 등
-  subServices?: { name: string; description: string }[]; // 노인장기요양 하위 4개 등
-}
+export type { ServiceData } from "@bayada/shared/web-services";
 
 // --- 플랫폼 (Platform) ---
 export interface PlatformProduct {

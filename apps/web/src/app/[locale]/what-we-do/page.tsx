@@ -1,7 +1,7 @@
 import { getDictionary } from "@bayada/shared/i18n";
 import type { Locale } from "@bayada/shared/i18n";
 import { createMetadata } from "@/lib/seo";
-import { services } from "@/data/services";
+import { getServices } from "@/lib/web-services";
 import WhatWeDoClient from "./WhatWeDoClient";
 
 export const metadata = createMetadata({
@@ -17,6 +17,7 @@ export default async function WhatWeDoPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const services = await getServices();
   await getDictionary(locale as Locale);
 
   return <WhatWeDoClient services={services} locale={locale} />;

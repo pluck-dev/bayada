@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
 import { createMetadata, SITE_URL } from "@/lib/seo";
-import { services, getServiceBySlug, getRelatedServices } from "@/data/services";
-import { getServicePageDetail } from "@/data/service-page-details";
+import { getServices, getServiceDocument } from "@/lib/web-services";
 import { ServiceDetailPage } from "@/components/service-detail/ServiceDetailPage";
 import { ServiceJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
-export function generateStaticParams() {
-  return services.map((s) => ({ slug: s.slug }));
+export async function generateStaticParams() {
+  return (await getServices()).map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({
@@ -15,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const service = getServiceBySlug(slug);
+  const service = (await getServiceDocument(slug))?.service;
   if (!service) return {};
   return createMetadata({
     title: `${service.nameKo} (${service.nameEn})`,
@@ -30,15 +29,17 @@ export default async function ServicePage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const service = getServiceBySlug(slug);
-  const detail = getServicePageDetail(slug);
+  const doc = await getServiceDocument(slug);
+  const service = doc?.service;
+  const detail = doc?.detail;
 
   if (!service || !detail) {
     notFound();
   }
 
   // 관련 서비스 + 현재 서비스 제외한 나머지에서 최대 7개
-  const related = getRelatedServices(slug, 3);
+  const services = await getServices();
+  const related = services.filter((entry) => service.relatedServices.includes(entry.slug) && entry.slug !== slug).slice(0, 3);
   const otherServices = services
     .filter((s) => s.slug !== slug && !related.find((r) => r.slug === s.slug))
     .slice(0, 4);

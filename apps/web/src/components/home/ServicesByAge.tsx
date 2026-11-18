@@ -1,5 +1,6 @@
 "use client";
 
+import type { ServiceData } from "@bayada/shared/web-services";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,105 +28,13 @@ const ageGroups = [
   },
 ];
 
-// 서비스 데이터 (8개)
-const allServices = [
-  {
-    id: "aba-therapy",
-    title: "자폐증 및 ABA 치료",
-    titleEn: "Autism & ABA Therapy",
-    description:
-      "자폐가 있는 아동이 소통하고 성장하며 독립성을 기를 수 있도록 1:1 맞춤 치료를 제공합니다.",
-    image: "/images/services/cards/aba-therapy.webp",
-    href: "/what-we-do/aba-therapy",
-    groups: ["children"],
-  },
-  {
-    id: "companion-care",
-    title: "동반자 케어",
-    titleEn: "Companion Care",
-    description:
-      "대화와 우정, 편안함을 제공하여 소중한 분의 일상에 활력을 더합니다.",
-    image: "/images/services/cards/companion-care.jpg",
-    href: "/what-we-do/companion-care",
-    groups: ["seniors"],
-  },
-  {
-    id: "habilitation",
-    title: "재활 서비스",
-    titleEn: "Habilitation",
-    description:
-      "지적·발달 장애가 있는 성인이 자신감을 갖고 새로운 기술을 배울 수 있도록 돕습니다.",
-    image: "/images/services/cards/habilitation.webp",
-    href: "/what-we-do/habilitation",
-    groups: ["adults"],
-  },
-  {
-    id: "home-health",
-    title: "방문간호",
-    titleEn: "Home Health",
-    description:
-      "전문 간호와 치료를 가정으로 직접 제공하여 건강을 관리하고 불필요한 입원을 줄입니다.",
-    image: "/images/services/cards/home-health.webp",
-    href: "/what-we-do/home-health",
-    groups: ["seniors", "adults"],
-  },
-  {
-    id: "hospice-care",
-    title: "호스피스 케어",
-    titleEn: "Hospice Care",
-    description:
-      "환자와 가족에게 편안함, 존엄성, 그리고 맞춤형 돌봄을 제공합니다.",
-    image: "/images/services/cards/hospice-care.webp",
-    href: "/what-we-do/hospice-care",
-    groups: ["seniors", "adults"],
-  },
-  {
-    id: "pediatric-home-health",
-    title: "소아 방문간호",
-    titleEn: "Pediatric Home Health",
-    description:
-      "일상적 필요부터 ICU 수준의 케어까지, 아이가 안전하게 성장할 수 있도록 전문 간호를 제공합니다.",
-    image: "/images/services/cards/pediatric-home-care.webp",
-    href: "/what-we-do/pediatric-home-health",
-    groups: ["children"],
-  },
-  {
-    id: "personal-care",
-    title: "개인 돌봄",
-    titleEn: "Personal Care",
-    description:
-      "일상 생활 지원과 안전, 편안함을 돕는 맞춤형 홈케어입니다.",
-    image: "/images/services/cards/personal-care.webp",
-    href: "/what-we-do/personal-care",
-    groups: ["seniors"],
-  },
-  {
-    id: "private-duty-nursing",
-    title: "전문 간호",
-    titleEn: "Private Duty Nursing",
-    description:
-      "전문 성인 간호로 독립적인 생활을 지원하고 삶의 질을 높입니다.",
-    image: "/images/services/cards/private-duty-nursing.webp",
-    href: "/what-we-do/private-duty-nursing",
-    groups: ["seniors", "adults"],
-  },
-  {
-    id: "veterans",
-    title: "국가유공자 돌봄",
-    titleEn: "Veterans Care",
-    description:
-      "국가를 위해 헌신하신 분들께 최고 수준의 전문 돌봄과 깊은 존중, 실질적인 지원을 제공합니다.",
-    image: "/images/services/cards/private-duty-nursing.webp",
-    href: "/what-we-do/veterans",
-    groups: ["seniors", "adults"],
-  },
-];
-
 interface ServicesByAgeProps {
   locale: string;
+  services: ServiceData[];
 }
 
-export function ServicesByAge({ locale }: ServicesByAgeProps) {
+export function ServicesByAge({ locale, services }: ServicesByAgeProps) {
+  const allServices = services.map((service) => ({ id: service.slug, title: service.nameKo, titleEn: service.nameEn, description: service.description, image: service.image, href: service.href, groups: service.ageGroups ?? ["seniors", "adults", "children"] }));
   // null = 전체 보기, string = 선택된 그룹 id
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -153,7 +62,7 @@ export function ServicesByAge({ locale }: ServicesByAgeProps) {
   }
 
   function handleNext() {
-    setCurrentIndex((prev) => Math.min(prev + 1, total - 1));
+    setCurrentIndex((prev) => Math.max(0, Math.min(prev + 1, total - 1)));
   }
 
   return (

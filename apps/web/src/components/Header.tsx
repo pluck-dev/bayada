@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 import type { Dictionary } from "@bayada/shared/i18n";
-import { mainNavigation, getLabel } from "@/data/navigation";
+import { navigationForServices, getLabel } from "@/data/navigation";
 import { MegaMenu } from "./header/MegaMenu";
 import { MobileMenu } from "./header/MobileMenu";
 import { LanguageSwitcher } from "./header/LanguageSwitcher";
@@ -13,9 +13,11 @@ import { LanguageSwitcher } from "./header/LanguageSwitcher";
 interface HeaderProps {
   dict: Dictionary;
   locale: string;
+  services: import("@bayada/shared/web-services").ServiceData[];
 }
 
-export function Header({ locale }: HeaderProps) {
+export function Header({ locale, services }: HeaderProps) {
+  const mainNavigation = navigationForServices(services);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMega, setOpenMega] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -134,7 +136,7 @@ export function Header({ locale }: HeaderProps) {
 
       {/* 모바일 메뉴 */}
       {isMobileMenuOpen && (
-        <MobileMenu locale={locale} onClose={() => setIsMobileMenuOpen(false)} />
+        <MobileMenu services={services} locale={locale} onClose={() => setIsMobileMenuOpen(false)} />
       )}
     </header>
   );

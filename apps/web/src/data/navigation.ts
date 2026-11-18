@@ -234,3 +234,12 @@ export const footerNavigation = {
     { label: "Policy & Procedure", href: "/policy" },
   ],
 };
+
+/** 서비스 메뉴도 공개 콘텐츠와 같은 목록을 사용한다. */
+export function navigationForServices(services: import("@bayada/shared/web-services").ServiceData[]): MegaMenuItem[] {
+  return mainNavigation.flatMap((item) => {
+    if (item.href !== "/what-we-do") return [item];
+    if (!services.length) return [];
+    return [{ ...item, children: [{ title: "Our Services", titles: { ko: "서비스", ja: "サービス", zh: "服务" }, items: services.map((service) => ({ label: service.nameEn, labels: { ko: service.nameKo }, href: service.href, description: service.description })) }] }];
+  });
+}

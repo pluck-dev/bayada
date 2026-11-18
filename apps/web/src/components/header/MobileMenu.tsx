@@ -3,15 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { mainNavigation, getLabel, getTitle } from "@/data/navigation";
+import { navigationForServices, getLabel, getTitle } from "@/data/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface MobileMenuProps {
+  services: import("@bayada/shared/web-services").ServiceData[];
   locale: string;
   onClose: () => void;
 }
 
-export function MobileMenu({ locale, onClose }: MobileMenuProps) {
+export function MobileMenu({ locale, onClose, services }: MobileMenuProps) {
+  const mainNavigation = navigationForServices(services);
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   function toggleSection(label: string) {

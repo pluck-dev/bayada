@@ -579,12 +579,12 @@ export function ServiceDetailPage({
     <main>
       <HeroBanner service={service} locale={locale} />
       <ContentSection detail={detail} locale={locale} />
-      <RelatedServicesSection services={relatedServices} locale={locale} />
-      <LearnMoreSection service={service} detail={detail} />
-      <LeadMagnetSection detail={detail} />
-      <CareTeamSection detail={detail} />
-      <JoinTeamSection detail={detail} locale={locale} />
-      <FAQSection detail={detail} />
+      {relatedServices.length > 0 && <RelatedServicesSection services={relatedServices} locale={locale} />}
+      {detail.learnMoreItems.length > 0 && <LearnMoreSection service={service} detail={detail} />}
+      {detail.leadMagnet?.title && <LeadMagnetSection detail={detail} />}
+      {detail.careTeamTitle && <CareTeamSection detail={detail} />}
+      {detail.joinTeamTitle && <JoinTeamSection detail={detail} locale={locale} />}
+      {detail.faqs.length > 0 && <FAQSection detail={detail} />}
       <BottomCTASection locale={locale} />
       <ContactCTASection locale={locale} />
     </main>

@@ -10,6 +10,7 @@ import type { SiteInfo } from "@/types";
 
 interface FooterProps {
   dict: Dictionary;
+  services: import("@bayada/shared/web-services").ServiceData[];
   locale: string;
   /** 사이트 정보 (어드민 웹사이트 > 사이트 정보, 서버에서 읽어 넘긴다) */
   company: SiteInfo;
@@ -22,7 +23,7 @@ const SNS_ICONS = [
   { key: "youtube", icon: Youtube },
 ] as const;
 
-export function Footer({ dict, locale, company }: FooterProps) {
+export function Footer({ dict, locale, company, services }: FooterProps) {
   const socialLinks = SNS_ICONS.map(({ key, icon }) => ({
     icon,
     href: company.sns[key],
@@ -30,7 +31,7 @@ export function Footer({ dict, locale, company }: FooterProps) {
     external: /^https?:/i.test(company.sns[key]),
   }));
   const sections = [
-    footerNavigation.services,
+    { ...footerNavigation.services, links: services.map((service) => ({ label: service.nameEn, labels: { ko: service.nameKo }, href: service.href })) },
     footerNavigation.company,
     footerNavigation.resources,
   ];

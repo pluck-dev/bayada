@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { i18nConfig } from "@bayada/shared/i18n";
 import { getPublishedPosts } from "@/lib/web-content";
-import { services } from "@/data/services";
+import { getServices } from "@/lib/web-services";
 
 // 블로그 글이 DB 에서 오므로 주기적으로 다시 만든다
 export const revalidate = 300;
@@ -10,6 +10,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.bayada.co.kr";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPublishedPosts();
+  const services = await getServices();
   const locales = i18nConfig.locales;
 
   // 정적 페이지 목록

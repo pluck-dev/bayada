@@ -12,6 +12,7 @@ import { AcademyCTA } from "@/components/home/AcademyCTA";
 import { Certifications } from "@/components/home/Certifications";
 import { LatestBlog } from "@/components/home/LatestBlog";
 import { NeedsReview } from "@/components/shared/NeedsReview";
+import { getServices } from "@/lib/web-services";
 import { averageRating, getHeroSlides, getReviews } from "@/lib/web-content";
 
 export const metadata = createMetadata({
@@ -40,12 +41,12 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const [slides, reviews] = await Promise.all([getHeroSlides(), getReviews()]);
+  const [slides, reviews, services] = await Promise.all([getHeroSlides(), getReviews(), getServices()]);
 
   return (
     <>
       <HeroSection locale={locale} slides={slides} />
-      <ServicesByAge locale={locale} />
+      <ServicesByAge locale={locale} services={services} />
       <BayadaWaySection />
       <ServiceAreaMap />
       <WhyBayada />

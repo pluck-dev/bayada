@@ -1,6 +1,6 @@
 import { createMetadata } from "@/lib/seo";
 import { averageRating, getReviews } from "@/lib/web-content";
-import { services } from "@/data/services";
+import { getServices } from "@/lib/web-services";
 import { ReviewsClient } from "./ReviewsClient";
 
 export const metadata = createMetadata({
@@ -16,6 +16,7 @@ export default async function ReviewsPage({
   params: Promise<{ locale: string }>;
 }) {
   await params;
+  const services = await getServices();
   const reviews = await getReviews();
   const avg = averageRating(reviews);
 

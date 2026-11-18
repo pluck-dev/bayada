@@ -4,33 +4,8 @@
  * 엑셀 기획서 기반 업데이트
  */
 
-export interface ServiceLearnMoreItem {
-  title: string;
-  content: string;
-}
-
-export interface ServiceFAQ {
-  question: string;
-  answer: string;
-}
-
-export interface ServicePageDetail {
-  slug: string;
-  heroImage: string;
-  headline: string;
-  longDescription: string;
-  learnMoreItems: ServiceLearnMoreItem[];
-  faqs: ServiceFAQ[];
-  leadMagnet?: {
-    title: string;
-    description: string;
-  };
-  careTeamTitle: string;
-  careTeamDescription: string;
-  careTeamFeatures: string[];
-  joinTeamTitle: string;
-  joinTeamDescription: string;
-}
+import type { ServicePageDetail } from "@bayada/shared/web-services";
+export type { ServicePageDetail } from "@bayada/shared/web-services";
 
 export const servicePageDetails: Record<string, ServicePageDetail> = {
   // ── 1. Autism & ABA Therapy (자폐 스펙트럼 장애 중재 및 ABA 치료) ──
