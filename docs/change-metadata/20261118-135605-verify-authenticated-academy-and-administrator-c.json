@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-135605-verify-authenticated-academy-and-administrator-c",
+  "created_at": "2026-11-18T13:56:05+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "665a246197cc9c8b35dde36f7a72b406acef3a3f",
+  "request": "Cross-test academy and administrator features and report verified behavior before AWS deployment",
+  "title": "Verify authenticated academy and administrator cross flows",
+  "purpose": "Exercise real authorization and learning HTTP behavior against isolated QA data",
+  "files": [
+    {
+      "path": "apps/academy/tests/api-cross.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 98
+        }
+      ],
+      "working_tree_sha256": "c2dcae7c5252b889a04c5e6229c657b5d8b2883536bac80e574035e47dced47e",
+      "symbols": [
+        "Client",
+        "status",
+        "main"
+      ],
+      "purpose": "Verify actual authenticated academy and admin HTTP routes with synthetic fixtures and no external payment approval.",
+      "previous_behavior": "Helper and UI regressions existed, but no repeatable real-session cross-application API test covered these ownership boundaries.",
+      "new_behavior": "QA-only script tests 31 real HTTP flows spanning authentication, enrollment, progress, quiz, certificate verification/printing, checkout price, order ownership, institution assignment and customer/content-admin restrictions.",
+      "data_impact": "Creates synthetic users, organizations, roles, courses, lessons, enrollments, progress, attempts, certificates, assignments and pending orders only in the hard-guarded local synthetic QA DB. No production rows are touched by the test.",
+      "access_control_impact": "No application permissions change. Tests prove unauthorized and cross-owner/organization operations are rejected.",
+      "risks": [
+        "Test fixtures remain in the disposable QA database until QA cleanup.",
+        "QA uses local development apps and simulated elapsed watch time, not a real media playback or live merchant payment."
+      ],
+      "rollback": "Remove the test and its metadata in a revert. Dispose only the separate synthetic QA container after verification; no production schema or record rollback is involved."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Test writes only synthetic QA records. Separately in the same task, four production Lecture.duration values were repaired from existing MP4 mvhd metadata in a conditionally guarded transaction after a verified server-only backup, with server audit rows. Two missing media sources were confirmed unrecoverable from the supplied backup; no source video was fabricated.",
+    "schema_migration": "None. No schema changes, user-data backfills or production account changes.",
+    "external_side_effects": [
+      "QA authentication and 31 HTTP checks against local 3340/3342 apps only; no external payment confirmation or SMTP messages.",
+      "AWS-only media audit and duration repair: detailed metadata stays on AWS. Backup /srv/bayada/backups/bayada-pre-video-duration-repair-20261118.dump verified via pg_restore --list. Source comparison and audit reports remain under /srv/bayada/backups. Only aggregate counts returned locally.",
+      "Automatic approval review rejected an initial detailed metadata export; that action was not executed. The performed alternative retained all detailed data on AWS."
+    ]
+  },
+  "verification": [
+    {
+      "command": "tsx --tsconfig ../../apps/academy/tsconfig.json ../../apps/academy/tests/api-cross.integration.mts with isolated QA DB and QA_TEST_PASSWORD environment",
+      "result": "passed",
+      "evidence": "31 checks passed against real local Next HTTP routes with Auth.js sessions. Evidence output/qa-api-cross-evidence.json. No application source changed after the successful run."
+    },
+    {
+      "command": "Server-only MP4 audit and conditional duration repair with verified database backup",
+      "result": "passed",
+      "evidence": "4 of 6 missing durations were measured directly from local MP4 files and repaired with audit entries. Remaining 2 have no media URL; original source UID matched but no backup file was recoverable."
+    }
+  ],
+  "residual_risks": [
+    "AWS application rollout remains pending; current test proves local QA route behavior only.",
+    "Live PG authorization/refund calls and actual media playback are not covered by this script.",
+    "Two source video assets are absent from the supplied backup; new content must be supplied by the owner to make those legacy lessons playable.",
+    "Further coverage of partner ownership, credential review, practice registration and other requested functions remains part of the active goal.",
+    "Duration repair rollback must restore only the four affected metadata fields from the AWS audit plan, conditionally checking the current values; never overwrite the whole current database with an old backup."
+  ],
+  "commit": "same-as-metadata-file"
+}
