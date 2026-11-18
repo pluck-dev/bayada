@@ -1,0 +1,317 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-145552-manage-fixed-home-content-in-website-cms",
+  "created_at": "2026-11-18T14:55:52+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "70c18c0658a4f02c273cffda28430cd9224746c0",
+  "request": "Complete website editable content CRUD in admin website menu",
+  "title": "Manage fixed home content in website CMS",
+  "purpose": "Allow operators to edit home metrics, reasons and certification badges without code changes",
+  "files": [
+    {
+      "path": "apps/admin/src/components/web/WebPageManager.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 10,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "d86b2831ac99cb2d1a9f86092af72f8cedd6a8e5a2471524fd7ce005527cb638",
+      "symbols": [
+        "Fields labels"
+      ],
+      "purpose": "Korean labels expose home metrics, feature text/icons and certification image entries.",
+      "previous_behavior": "Home fields used raw property names or were unavailable.",
+      "new_behavior": "Korean labels expose home metrics, feature text/icons and certification image entries.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 44,
+          "old_end": 44,
+          "new_start": 45,
+          "new_end": 45
+        },
+        {
+          "old_start": 52,
+          "old_end": 52,
+          "new_start": 53,
+          "new_end": 53
+        },
+        {
+          "old_start": 54,
+          "old_end": 54,
+          "new_start": 55,
+          "new_end": 55
+        },
+        {
+          "old_start": 66,
+          "old_end": 66,
+          "new_start": 67,
+          "new_end": 67
+        }
+      ],
+      "working_tree_sha256": "5c919dff5965efed370bed79425550a20cb4411c77828114abf75b5121f954c2",
+      "symbols": [
+        "HomePage"
+      ],
+      "purpose": "HomePage reads validated web-page/home content and passes structured lists to the existing sections.",
+      "previous_behavior": "Home sections read constant arrays from component files.",
+      "new_behavior": "HomePage reads validated web-page/home content and passes structured lists to the existing sections.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "apps/web/src/components/home/Certifications.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 3,
+          "old_end": 11,
+          "new_start": 4,
+          "new_end": 5
+        }
+      ],
+      "working_tree_sha256": "65a90e5cdd1f9d107751977d91fc4d93bc5c14a07b5e9e84dbff39ca50ac7995",
+      "symbols": [
+        "Certifications"
+      ],
+      "purpose": "Certification logos render managed props and an empty list hides the section.",
+      "previous_behavior": "Certification logos were hardcoded and always rendered.",
+      "new_behavior": "Certification logos render managed props and an empty list hides the section.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "apps/web/src/components/home/KeyNumbers.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 7,
+          "old_end": 14,
+          "new_start": 8,
+          "new_end": 9
+        }
+      ],
+      "working_tree_sha256": "684878eda1134544c87effea97931b633dfc8436d592276741c079095c95d9d6",
+      "symbols": [
+        "KeyNumbers"
+      ],
+      "purpose": "Managed metrics render with existing animation; empty list hides the section.",
+      "previous_behavior": "Metrics were hardcoded in the component.",
+      "new_behavior": "Managed metrics render with existing animation; empty list hides the section.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "apps/web/src/components/home/WhyBayada.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 6,
+          "old_end": 29,
+          "new_start": 7,
+          "new_end": 8
+        }
+      ],
+      "working_tree_sha256": "daf663fe26f65892e0f326e4c6a6f89beb38b7c0b8dd8487836fa41f10631304",
+      "symbols": [
+        "WhyBayada"
+      ],
+      "purpose": "Feature icons and text use managed props; empty list hides the section.",
+      "previous_behavior": "Feature icon and text list was hardcoded.",
+      "new_behavior": "Feature icons and text use managed props; empty list hides the section.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "apps/web/tests/web-pages.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 52,
+          "new_end": 63
+        }
+      ],
+      "working_tree_sha256": "6a72f126c16a62070ffdb287f4183daae31fcc7deef41ee3acc1cbaecba178a0",
+      "symbols": [
+        "home content validation test"
+      ],
+      "purpose": "Tests enforce empty-list preservation, local image paths and bounded positive metric values.",
+      "previous_behavior": "No home content validation regression coverage.",
+      "new_behavior": "Tests enforce empty-list preservation, local image paths and bounded positive metric values.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "packages/shared/src/web-home-content.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 39
+        }
+      ],
+      "working_tree_sha256": "4fd7698b0ffc039021962570e5a3871e2e93aaef80cb7ccd4acdeb6bfce0e742",
+      "symbols": [
+        "WEB_HOME_DEFAULTS"
+      ],
+      "purpose": "Preserves original metric, feature and certification values as structured shared defaults.",
+      "previous_behavior": "No shared home schema/default source.",
+      "new_behavior": "Preserves original metric, feature and certification values as structured shared defaults.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    },
+    {
+      "path": "packages/shared/src/web-page-content.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 218,
+          "old_end": 218,
+          "new_start": 219,
+          "new_end": 219
+        },
+        {
+          "old_start": 221,
+          "old_end": 221,
+          "new_start": 222,
+          "new_end": 222
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 232,
+          "new_end": 232
+        },
+        {
+          "old_start": 233,
+          "old_end": 233,
+          "new_start": 235,
+          "new_end": 235
+        }
+      ],
+      "working_tree_sha256": "3ffff1e5ec95e6bfd7c13d280f88f01b74248bb0d6aafa482bc61c952afc6418",
+      "symbols": [
+        "WEB_PAGE_DEFAULTS, parseWebPageContent"
+      ],
+      "purpose": "Home is a managed page key; image paths are internal and metric numbers bounded.",
+      "previous_behavior": "Home was not a managed page key.",
+      "new_behavior": "Home is a managed page key; image paths are internal and metric numbers bounded.",
+      "data_impact": "No schema migration. Existing Page web-page/home JSON is read on web; existing permission-guarded save/reset actions store JSON and audit entries. Tests only changed isolated synthetic QA records.",
+      "access_control_impact": "No permission expansion; existing web.content permission and CAS save/reset guards remain.",
+      "risks": [
+        "Empty list intentionally hides the section; invalid image path is rejected; original certification claims still require customer editorial review."
+      ],
+      "rollback": "Revert this commit and redeploy prior images. Leave additive web-page/home row intact; prior code ignores it. Do not restore production DB wholesale."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production business records changed for this CMS update; only isolated synthetic QA content was saved.",
+    "schema_migration": "None; reuses Page JSON and AuditLog.",
+    "external_side_effects": [
+      "Local QA admin/web started and stopped; synthetic content changed through UI. No customer mail or PG calls. AWS deployment of this new home CMS change remains pending."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 workspace tasks passed."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-pages.test.ts",
+      "result": "passed",
+      "evidence": "All 5 tests passed."
+    },
+    {
+      "command": "Oinzi admin localhost:3440 /ko/web/pages?page=home save; HTTP localhost:3441/ko",
+      "result": "passed",
+      "evidence": "Saved QA label in metric row through admin action; web HTTP200 contained QA 관리자 변경 수치."
+    }
+  ],
+  "residual_risks": [
+    "New home CMS code not yet deployed; public AWS remains 70c18c0.",
+    "Images currently require site-internal paths; upload UI and further fixed audience/payment guide sections remain to review.",
+    "Customer must verify certification and numeric marketing claims; defaults preserve existing content."
+  ],
+  "commit": "same-as-metadata-file"
+}
