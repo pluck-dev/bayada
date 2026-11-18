@@ -45,7 +45,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/src/app/[locale]/careers/CareersClient.tsx",
@@ -143,7 +143,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/src/app/[locale]/careers/page.tsx",
@@ -181,7 +181,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/src/app/[locale]/resources/page.tsx",
@@ -231,7 +231,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/src/components/shared/NeedsReview.tsx",
@@ -263,7 +263,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/src/lib/resource-links.ts",
@@ -289,7 +289,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/tests/web-pages.test.ts",
@@ -315,7 +315,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "apps/web/tests/website-operations.test.ts",
@@ -341,7 +341,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "packages/shared/src/web-operational-content.ts",
@@ -367,7 +367,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     },
     {
       "path": "packages/shared/src/web-page-content.ts",
@@ -417,7 +417,7 @@
       "risks": [
         "Future job deadlines depend on correct admin input. HTTPS resource availability is not fetched server-side. Review annotations depend on the existing review-session endpoint."
       ],
-      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. No schema rollback or production DB restore required."
+      "rollback": "Revert this commit and redeploy previous images; additive Page rows can remain. Schema is unchanged; keep all production business data."
     }
   ],
   "production_safety": {
