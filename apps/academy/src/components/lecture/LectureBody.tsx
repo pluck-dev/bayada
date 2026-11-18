@@ -3,7 +3,7 @@
 import { Button, buttonVariants, cn, useFeedback } from "@bayada/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ArrowRight, Award, Check, ChevronLeft, FileText, HelpCircle, PartyPopper, PlayCircle } from "lucide-react";
 import { VideoPlayer } from "@/components/VideoPlayer";
 
@@ -55,20 +55,30 @@ export function LectureBody({
   const { toast } = useFeedback();
   const [completed, setCompleted] = useState(initialCompleted);
   const [saving, setSaving] = useState(false);
+  const completionInFlight = useRef(false);
   const [justFinishedCourse, setJustFinishedCourse] = useState(false);
 
   // 영상은 본 지점·길이를 같이 보내고 서버가 95% 이상 봤는지 확인한다. 읽기는 그대로 완료
   const complete = useCallback(async (watchedSec?: number, duration?: number) => {
-    if (!enrolled || completed || saving) return;
+    if (!enrolled || completed || completionInFlight.current) return;
+    completionInFlight.current = true;
     setSaving(true);
     try {
-      const res = await fetch(`/api/v1/progress/${lectureId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(type === "VIDEO" ? { completed: true, watchedSec, duration } : { completed: true }),
-      });
-      const data = (await res.json().catch(() => ({}))) as { courseCompleted?: boolean; error?: string };
-      if (!res.ok) {
+      let data: { courseCompleted?: boolean; error?: string; code?: string } = {};
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const res = await fetch(`/api/v1/progress/${lectureId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(type === "VIDEO" ? { completed: true, watchedSec, duration } : { completed: true }),
+        });
+        data = await res.json().catch(() => ({}));
+        if (res.ok) break;
+        // A slow earlier progress write can temporarily leave the server clock behind playback.
+        // Retry only this explicit state; never relax the server's watched-time threshold.
+        if (type === "VIDEO" && res.status === 409 && data.code === "WATCH_TIME_PENDING" && attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          continue;
+        }
         toast("error", data.error ?? "진도를 저장하지 못했어요.");
         return;
       }
@@ -79,9 +89,10 @@ export function LectureBody({
     } catch {
       toast("error", "네트워크 오류로 진도를 저장하지 못했어요.");
     } finally {
+      completionInFlight.current = false;
       setSaving(false);
     }
-  }, [enrolled, completed, saving, lectureId, router, toast, courseAlreadyDone, type]);
+  }, [enrolled, completed, lectureId, router, toast, courseAlreadyDone, type]);
 
   const reportTime = useCallback(
     (sec: number, duration: number) => {

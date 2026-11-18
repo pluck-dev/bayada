@@ -14,7 +14,7 @@ test("expired jobs are closed and active departments derive from managed jobs", 
  assert.ok(output.includes("QA future job"));assert.ok(output.includes("QA 신규 부서"));assert.ok(!output.includes("QA expired job"));assert.ok(!output.includes("KAKAO_APP_KEY"));assert.ok(!output.includes('href="/files/bayada-referral-letter.pdf"'));
 });
 test("public markup has no internal review annotations", () => {
- const output=renderToStaticMarkup(createElement(NeedsReview,{label:"QA internal review",note:"QA internal note"},"Public content"));
+ const output=renderToStaticMarkup(createElement(NeedsReview,{label:"QA internal review",note:"QA internal note",children:"Public content"}));
  assert.equal(output,"Public content");
 });
 test("local resources require a real file inside the public root", () => {

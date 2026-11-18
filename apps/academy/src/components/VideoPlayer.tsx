@@ -92,6 +92,12 @@ export function VideoPlayer({
     return () => document.removeEventListener("fullscreenchange", onFs);
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    // Cached metadata can arrive before hydration attaches the media event handlers.
+    if (video && Number.isFinite(video.duration) && video.duration > 0) setDuration(video.duration);
+  }, [videoUrl]);
+
   const togglePlay = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -221,6 +227,10 @@ export function VideoPlayer({
           const v = videoRef.current;
           if (v && lockForward && v.currentTime > furthestRef.current + 1) v.currentTime = furthestRef.current;
         }}
+        onDurationChange={() => {
+          const video = videoRef.current;
+          if (video && Number.isFinite(video.duration) && video.duration > 0) setDuration(video.duration);
+        }}
         onLoadedMetadata={() => {
           const v = videoRef.current;
           if (!v) return;
@@ -247,6 +257,7 @@ export function VideoPlayer({
           const v = videoRef.current;
           if (!v) return;
           setCurrent(v.currentTime);
+          if (Number.isFinite(v.duration) && v.duration > 0) setDuration(v.duration);
           // 이어서 재생한 구간만 '본 지점'으로 늘린다 (건너뛴 구간은 안 셈)
           if (!v.seeking && v.currentTime > furthestRef.current && v.currentTime <= furthestRef.current + 3) {
             furthestRef.current = v.currentTime;

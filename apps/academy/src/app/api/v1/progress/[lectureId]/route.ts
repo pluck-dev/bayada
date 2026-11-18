@@ -38,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ lect
           return NextResponse.json({ error: "영상 길이 정보가 없어 수료를 확인할 수 없습니다. 운영자에게 문의해 주세요." }, { status: 409 });
         }
         if (!row?.completed && !watchedEnough(row?.watchedSec ?? 0, info.lecture.duration)) {
-          return NextResponse.json({ error: "영상을 끝까지 시청해야 완료돼요" }, { status: 409 });
+          return NextResponse.json({ error: "영상을 끝까지 시청해야 완료돼요", code: "WATCH_TIME_PENDING" }, { status: 409 });
         }
       }
       const enrollment = await markLectureComplete(viewer.id, lectureId, info.courseId);

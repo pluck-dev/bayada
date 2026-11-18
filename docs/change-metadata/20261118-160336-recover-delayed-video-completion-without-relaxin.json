@@ -1,0 +1,222 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-160632-recover-delayed-video-completion-without-relaxin",
+  "created_at": "2026-11-18T16:06:32+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "bf88d81c5bc277e3028e15eb720e43098c3687a9",
+  "request": "Cross-test actual academy playback and fix connected completion behavior before deployment",
+  "title": "Recover delayed video completion without relaxing watch validation",
+  "purpose": "Real headless playback exposed completion rejection after delayed progress writes and stale duration labels",
+  "files": [
+    {
+      "path": "apps/academy/src/app/api/v1/progress/[lectureId]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 41,
+          "old_end": 41,
+          "new_start": 41,
+          "new_end": 41
+        }
+      ],
+      "working_tree_sha256": "3e09c11be2a2d83aa3cbdbb7023c2195af5f17348450d72b7572a2de60f296eb",
+      "symbols": [
+        "PUT progress"
+      ],
+      "purpose": "Adds WATCH_TIME_PENDING code to the same 409 response; 95% server threshold and rate limits stay unchanged.",
+      "previous_behavior": "Insufficient saved watch time returned only a generic 409 message.",
+      "new_behavior": "Adds WATCH_TIME_PENDING code to the same 409 response; 95% server threshold and rate limits stay unchanged.",
+      "data_impact": "No schema migration. Existing progress/enrollment/certificate writes remain server-validated. Headless test creates and deletes only its own records in guarded bayada_functional_qa.",
+      "access_control_impact": "No permission or threshold expansion. Existing authenticated enrollment ownership and watched-time checks remain enforced.",
+      "risks": [
+        "Retries can send up to four completion requests; requests retain existing idempotent certificate logic. Test assumes local QA app and installed ffmpeg/Playwright."
+      ],
+      "rollback": "Revert this source commit and redeploy bf88d81 app images. Existing progress data is compatible; keep all production business records."
+    },
+    {
+      "path": "apps/academy/src/components/VideoPlayer.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 95,
+          "new_end": 100
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 230,
+          "new_end": 233
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 260,
+          "new_end": 260
+        }
+      ],
+      "working_tree_sha256": "33fd0f3cba9f6cc7f702f54ccbc3e475e82aa7d4d5d121887b4e309bc5dec61a",
+      "symbols": [
+        "VideoPlayer metadata synchronization"
+      ],
+      "purpose": "Syncs finite duration on mount, duration-change and time-update events so cached metadata is reflected in controls.",
+      "previous_behavior": "Metadata arriving before hydration could leave displayed total duration at zero.",
+      "new_behavior": "Syncs finite duration on mount, duration-change and time-update events so cached metadata is reflected in controls.",
+      "data_impact": "No schema migration. Existing progress/enrollment/certificate writes remain server-validated. Headless test creates and deletes only its own records in guarded bayada_functional_qa.",
+      "access_control_impact": "No permission or threshold expansion. Existing authenticated enrollment ownership and watched-time checks remain enforced.",
+      "risks": [
+        "Retries can send up to four completion requests; requests retain existing idempotent certificate logic. Test assumes local QA app and installed ffmpeg/Playwright."
+      ],
+      "rollback": "Revert this source commit and redeploy bf88d81 app images. Existing progress data is compatible; keep all production business records."
+    },
+    {
+      "path": "apps/academy/src/components/lecture/LectureBody.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 58,
+          "new_end": 58
+        },
+        {
+          "old_start": 62,
+          "old_end": 62,
+          "new_start": 63,
+          "new_end": 64
+        },
+        {
+          "old_start": 65,
+          "old_end": 71,
+          "new_start": 67,
+          "new_end": 81
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 92,
+          "new_end": 92
+        },
+        {
+          "old_start": 84,
+          "old_end": 84,
+          "new_start": 95,
+          "new_end": 95
+        }
+      ],
+      "working_tree_sha256": "64d3a42f871ee298cf0075b8417653b5853ab58d0e2d467780ba523d35b06f7d",
+      "symbols": [
+        "complete"
+      ],
+      "purpose": "Uses synchronous in-flight ref and up to four attempts with one-second delay only for WATCH_TIME_PENDING; success updates completion UI as before.",
+      "previous_behavior": "An earlier delayed progress request could cause end-of-video completion to fail permanently until replay; state-only pending guard could duplicate completion calls.",
+      "new_behavior": "Uses synchronous in-flight ref and up to four attempts with one-second delay only for WATCH_TIME_PENDING; success updates completion UI as before.",
+      "data_impact": "No schema migration. Existing progress/enrollment/certificate writes remain server-validated. Headless test creates and deletes only its own records in guarded bayada_functional_qa.",
+      "access_control_impact": "No permission or threshold expansion. Existing authenticated enrollment ownership and watched-time checks remain enforced.",
+      "risks": [
+        "Retries can send up to four completion requests; requests retain existing idempotent certificate logic. Test assumes local QA app and installed ffmpeg/Playwright."
+      ],
+      "rollback": "Revert this source commit and redeploy bf88d81 app images. Existing progress data is compatible; keep all production business records."
+    },
+    {
+      "path": "apps/academy/tests/video-playback.e2e.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 89
+        }
+      ],
+      "working_tree_sha256": "5435871fbaa527ba5a32e9205f1eb1b071d51387e94a4f01405ecff5db2bf1eb",
+      "symbols": [
+        "headless synthetic playback regression"
+      ],
+      "purpose": "Creates its own eight-second WebM video and guarded QA fixtures; delays first progress PUT, asserts 200/409/200 recovery, ended playback, correct time label, DB 100% and one certificate, then cleans fixtures.",
+      "previous_behavior": "No actual media playback and delayed completion browser regression existed.",
+      "new_behavior": "Creates its own eight-second WebM video and guarded QA fixtures; delays first progress PUT, asserts 200/409/200 recovery, ended playback, correct time label, DB 100% and one certificate, then cleans fixtures.",
+      "data_impact": "No schema migration. Existing progress/enrollment/certificate writes remain server-validated. Headless test creates and deletes only its own records in guarded bayada_functional_qa.",
+      "access_control_impact": "No permission or threshold expansion. Existing authenticated enrollment ownership and watched-time checks remain enforced.",
+      "risks": [
+        "Retries can send up to four completion requests; requests retain existing idempotent certificate logic. Test assumes local QA app and installed ffmpeg/Playwright."
+      ],
+      "rollback": "Revert this source commit and redeploy bf88d81 app images. Existing progress data is compatible; keep all production business records."
+    },
+    {
+      "path": "apps/web/tests/website-operations.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 17,
+          "new_end": 17
+        }
+      ],
+      "working_tree_sha256": "e8054564b7d1dd3106d1d5104ddc5a5f3e4bf2b286b8509fa3c7e4ab22db980a",
+      "symbols": [
+        "public review SSR test"
+      ],
+      "purpose": "Passes the same child through props so the test typechecks without changing its assertion or runtime behavior.",
+      "previous_behavior": "React createElement children were passed as third arg despite props requiring children, causing typecheck failure.",
+      "new_behavior": "Passes the same child through props so the test typechecks without changing its assertion or runtime behavior.",
+      "data_impact": "No schema migration. Existing progress/enrollment/certificate writes remain server-validated. Headless test creates and deletes only its own records in guarded bayada_functional_qa.",
+      "access_control_impact": "No permission or threshold expansion. Existing authenticated enrollment ownership and watched-time checks remain enforced.",
+      "risks": [
+        "Retries can send up to four completion requests; requests retain existing idempotent certificate logic. Test assumes local QA app and installed ffmpeg/Playwright."
+      ],
+      "rollback": "Revert this source commit and redeploy bf88d81 app images. Existing progress data is compatible; keep all production business records."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production business records changed during verification; self-generated QA records were cleaned.",
+    "schema_migration": "None.",
+    "external_side_effects": [
+      "Headless automated test uses only localhost QA and blocks other browser origins. No live payment or messages.",
+      "Synthetic MP4 and WebM diagnosed browser codecs; only WebM headless playback passed. Local QA server stopped after checks."
+    ]
+  },
+  "verification": [
+    {
+      "command": "python apps/academy/tests/video-playback.e2e.py",
+      "result": "passed",
+      "evidence": "8-second video really ended; 200/409/200 response sequence; time label 0:08/0:08; DB watchedSec8/completed/progress100/one certificate; fixturesCleaned true. output/qa-headless-video-evidence.json."
+    },
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 workspace tasks passed after final source edits."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/academy/tsconfig.json --test ../../apps/academy/tests/learning.test.ts",
+      "result": "passed",
+      "evidence": "4 anti-spoof/rounding/quiz tests passed."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/website-operations.test.ts",
+      "result": "passed",
+      "evidence": "All 3 operations tests passed."
+    }
+  ],
+  "residual_risks": [
+    "Current AWS runtime still bf88d81; patch deployment and post-deploy verification remain pending.",
+    "Headless H.264 test environment reported unsupported stream; actual customer MP4 files remain subject to browser opening verification.",
+    "The test uses synthetic video, not customer content; original missing two videos remain external dependencies.",
+    "Long outages beyond bounded retries still show the existing error message."
+  ],
+  "commit": "same-as-metadata-file"
+}
