@@ -1,0 +1,92 @@
+import assert from "node:assert/strict";
+import { prisma } from "@bayada/db";
+import { PaymentService } from "../src/order/payment";
+const target = new URL(process.env.DATABASE_URL ?? "http://invalid");
+const qaEndpoint = (target.hostname === "127.0.0.1" && target.port === "55433") || (target.hostname === "bayada-functional-qa-db" && target.port === "5432");
+if (!qaEndpoint || target.pathname !== "/bayada_functional_qa") throw new Error("Only isolated synthetic QA DB is permitted.");
+const previousFetch = globalThis.fetch, previousKey = process.env.TOSS_SECRET_KEY;
+const payments = new Map<string, any>(), cache = new Map<string, any>();
+const calls: { path: string; key: string }[] = [];
+const checks: string[] = [];
+let failNextCancel = false;
+process.env.TOSS_SECRET_KEY = "test_sk_synthetic_no_network";
+globalThis.fetch = (async (input: any, init: any) => {
+  const url = new URL(String(input));
+  assert.equal(url.origin, "https://api.tosspayments.com");
+  const body = JSON.parse(init.body), key = init.headers["Idempotency-Key"];
+  calls.push({ path: url.pathname, key });
+  if (cache.has(key)) return Response.json(cache.get(key));
+  let result;
+  if (url.pathname.endsWith("/confirm")) {
+    result = { paymentKey: body.paymentKey, orderId: body.orderId, totalAmount: body.amount, balanceAmount: body.amount, status: "DONE", method: "카드", approvedAt: new Date().toISOString() };
+    payments.set(result.paymentKey, structuredClone(result));
+  } else {
+    if (failNextCancel) { failNextCancel = false; throw new Error("synthetic network failure before processor action"); }
+    const paymentKey = decodeURIComponent(url.pathname.split("/")[3]!);
+    const payment = payments.get(paymentKey);
+    assert.ok(payment, "synthetic payment exists");
+    const amount = body.cancelAmount ?? payment.balanceAmount;
+    assert.ok(amount <= payment.balanceAmount);
+    payment.balanceAmount -= amount;
+    payment.status = payment.balanceAmount ? "PARTIAL_CANCELED" : "CANCELED";
+    result = structuredClone(payment);
+    // Give simultaneous requests a chance to reach the simulated processor.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  cache.set(key, result);
+  return Response.json(result);
+}) as typeof fetch;
+async function main() {
+  const suffix = Date.now().toString(36);
+  const user = await prisma.user.create({ data: { email: `qa-payment-${suffix}@qa.invalid`, password: "not-a-login-hash", name: "QA 결제", role: "STUDENT" } });
+  const admin = await prisma.user.findUniqueOrThrow({ where: { email: "qa-admin@qa.invalid" } });
+  const service = new PaymentService(prisma);
+  const makeCourse = (tag: string) => prisma.course.create({ data: { title: `QA payment ${tag}`, slug: `qa-payment-${suffix}-${tag}`, price: 10000, status: "PUBLISHED", visibility: "PUBLIC", audiences: [], objectives: [] } });
+  const course = await makeCourse("normal");
+  const { order } = await service.createCheckoutOrder(user.id, { courseId: course.id });
+  await assert.rejects(service.confirmPayment({ userId: user.id, orderNo: order.orderNo, paymentKey: "qa-pay-" + suffix, amount: 1 }));
+  assert.equal(calls.length, 0); checks.push("amount mismatch rejected before processor");
+  const confirm = { userId: user.id, orderNo: order.orderNo, paymentKey: "qa-pay-" + suffix, amount: 10000 };
+  await service.confirmPayment(confirm);
+  assert.equal((await service.confirmPayment(confirm)).already, true);
+  assert.equal(calls.length, 1); assert.equal(await prisma.enrollment.count({ where: { userId: user.id, courseId: course.id } }), 1); checks.push("confirmation and enrollment idempotent");
+  await assert.rejects(service.requestRefund(order.id, admin.id, "다른 사용자 환불")); checks.push("refund request ownership enforced");
+  await service.requestRefund(order.id, user.id, "QA 환불 요청");
+  await assert.rejects(service.requestRefund(order.id, user.id, "QA 중복 환불 요청")); checks.push("duplicate refund request rejected");
+  await service.rejectRefundRequest(order.id, admin.id, "QA 반려 사유");
+  assert.equal((await service.refundState(order.id)).status, "rejected"); checks.push("refund rejection recorded");
+  await service.refund({ orderId: order.id, amount: 2000, reason: "QA 부분 환불", actorId: admin.id });
+  assert.equal(await prisma.enrollment.count({ where: { userId: user.id, courseId: course.id } }), 1); checks.push("partial refund retains enrollment");
+  await service.refund({ orderId: order.id, amount: 8000, reason: "QA 나머지 환불", actorId: admin.id });
+  assert.equal((await prisma.order.findUniqueOrThrow({ where: { id: order.id } })).status, "REFUNDED");
+  assert.equal(await prisma.enrollment.count({ where: { userId: user.id, courseId: course.id } }), 0); checks.push("full refund revokes purchased enrollment");
+  const beforeRepeat = calls.length;
+  await assert.rejects(service.refund({ orderId: order.id, amount: 10000, reason: "QA 중복 환불", actorId: admin.id }));
+  assert.equal(calls.length, beforeRepeat); checks.push("already refunded order never calls processor again");
+  const plan = await prisma.passPlan.create({ data: { name: "QA paid pass", price: 10000, durationDays: 30, includes: ["COURSE"] } });
+  const passOrder = (await service.createCheckoutOrder(user.id, { planId: plan.id })).order;
+  await service.confirmPayment({ userId: user.id, orderNo: passOrder.orderNo, paymentKey: "qa-pass-" + suffix, amount: 10000 });
+  assert.equal(await service.passCovers(user.id, "COURSE"), true);
+  await service.refund({ orderId: passOrder.id, amount: 10000, reason: "QA 패스 환불", actorId: admin.id });
+  assert.equal(await service.passCovers(user.id, "COURSE"), false); checks.push("pass purchase grants access and full refund cancels it");
+  const raceCourse = await makeCourse("race"), raceOrder = (await service.createCheckoutOrder(user.id, { courseId: raceCourse.id })).order;
+  const raceKey = "qa-race-" + suffix;
+  await service.confirmPayment({ userId: user.id, orderNo: raceOrder.orderNo, paymentKey: raceKey, amount: 10000 });
+  const beforeRace = calls.length;
+  const results = await Promise.allSettled([2000, 3000].map((amount) => service.refund({ orderId: raceOrder.id, amount, reason: "QA 동시 부분 환불", actorId: admin.id })));
+  const stored = await prisma.order.findUniqueOrThrow({ where: { id: raceOrder.id } });
+  const processorRefund = 10000 - payments.get(raceKey).balanceAmount;
+  assert.equal(stored.refundAmount, processorRefund, "database refund total must match processor total after concurrent requests");
+  assert.equal(calls.length - beforeRace, 1, "busy same-order refund is rejected before another processor call");
+  assert.equal(results.filter((r) => r.status === "fulfilled").length, 1); checks.push("concurrent refunds cannot diverge from processor");
+  const rejected = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
+  assert.equal(rejected.reason.statusCode, 409);
+  failNextCancel = true;
+  await assert.rejects(service.refund({ orderId: raceOrder.id, amount: 1000, reason: "QA 통신 오류", actorId: admin.id }));
+  assert.equal((await prisma.order.findUniqueOrThrow({ where: { id: raceOrder.id } })).refundAmount, stored.refundAmount);
+  await service.refund({ orderId: raceOrder.id, amount: 1000, reason: "QA 오류 후 재시도", actorId: admin.id });
+  assert.equal((await prisma.order.findUniqueOrThrow({ where: { id: raceOrder.id } })).refundAmount, stored.refundAmount! + 1000);
+  checks.push("processor failure leaves DB unchanged and releases order lock");
+  console.log(JSON.stringify({ passed: true, count: checks.length, checks, externalNetworkCalls: 0, processor: "in-process synthetic fetch only" }));
+}
+main().catch((error) => { console.error(error instanceof Error ? error.message : "Payment test failed"); console.error(JSON.stringify({ passedBeforeFailure: checks })); process.exitCode = 1; }).finally(async () => { globalThis.fetch = previousFetch; if (previousKey === undefined) delete process.env.TOSS_SECRET_KEY; else process.env.TOSS_SECRET_KEY = previousKey; await prisma.$disconnect(); });

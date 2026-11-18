@@ -342,25 +342,29 @@ export class PaymentService {
   async refund(input: { orderId: string; amount: number; reason: string; actorId: string }) {
     const reason = input.reason.trim().slice(0, 200);
     if (reason.length < 2) throw new ValidationError("환불 사유를 입력해 주세요");
-    const order = await this.prisma.order.findUnique({ where: { id: input.orderId } });
-    if (!order) throw new NotFoundError("주문");
-    if (order.status !== "CONFIRMED" || !order.paymentKey) throw new ConflictError("결제 완료 상태의 주문만 환불할 수 있습니다");
-    const prev = order.refundAmount ?? 0;
-    const remaining = order.totalAmount - prev;
-    if (!Number.isInteger(input.amount) || input.amount <= 0 || input.amount > remaining) {
-      throw new ValidationError(`환불 금액은 1원 이상 ${remaining.toLocaleString()}원 이하여야 합니다`);
-    }
+    return this.prisma.$transaction(async (tx) => {
+      // 결제사 호출 전에 같은 주문을 잠근다. 외부 취소 후 DB에서만 경쟁을 막으면 실제 환불액과 어긋난다.
+      const locks = await tx.$queryRaw<{ locked: boolean }[]>`
+        SELECT pg_try_advisory_xact_lock(hashtext(${`refund:${input.orderId}`})) AS locked`;
+      if (!locks[0]?.locked) throw new ConflictError("이 주문의 환불을 처리 중입니다. 잠시 후 다시 확인해 주세요");
+      const order = await tx.order.findUnique({ where: { id: input.orderId } });
+      if (!order) throw new NotFoundError("주문");
+      if (order.status !== "CONFIRMED" || !order.paymentKey) throw new ConflictError("결제 완료 상태의 주문만 환불할 수 있습니다");
+      const prev = order.refundAmount ?? 0;
+      const remaining = order.totalAmount - prev;
+      if (!Number.isInteger(input.amount) || input.amount <= 0 || input.amount > remaining) {
+        throw new ValidationError(`환불 금액은 1원 이상 ${remaining.toLocaleString()}원 이하여야 합니다`);
+      }
 
-    const payment = await cancelTossPayment(
-      order.paymentKey,
-      reason,
-      input.amount,
-      `cancel-${order.id}-${prev}-${input.amount}`,
-    );
+      const payment = await cancelTossPayment(
+        order.paymentKey,
+        reason,
+        input.amount,
+        `cancel-${order.id}-${prev}-${input.amount}`,
+      );
 
-    const total = prev + input.amount;
-    const full = total >= order.totalAmount;
-    const revoked = await this.prisma.$transaction(async (tx) => {
+      const total = prev + input.amount;
+      const full = total >= order.totalAmount;
       // 동시에 두 번 처리되지 않게 이전 환불액을 조건으로 건다
       const updated = await tx.order.updateMany({
         where: { id: order.id, status: "CONFIRMED", refundAmount: order.refundAmount },
@@ -372,7 +376,7 @@ export class PaymentService {
         },
       });
       if (updated.count === 0) throw new ConflictError("다른 환불 처리와 겹쳤습니다. 새로고침 후 확인해 주세요");
-      const r = full ? await this.revokeAccess(tx, order.id, order.userId, input.actorId) : null;
+      const revoked = full ? await this.revokeAccess(tx, order.id, order.userId, input.actorId) : null;
       await tx.auditLog.create({
         data: {
           actorId: input.actorId,
@@ -385,13 +389,12 @@ export class PaymentService {
             reason,
             tossStatus: payment.status,
             balanceAmount: payment.balanceAmount,
-            ...(r ? { revoked: r } : {}),
+            ...(revoked ? { revoked } : {}),
           },
         },
       });
-      return r;
-    });
-    return { full, refundTotal: total, revoked };
+      return { full, refundTotal: total, revoked };
+    }, { timeout: 30000, maxWait: 5000 });
   }
 
   private async revokeAccess(tx: Tx, orderId: string, userId: string, actorId: string) {

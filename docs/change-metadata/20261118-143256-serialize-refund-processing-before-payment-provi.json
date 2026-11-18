@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-143256-serialize-refund-processing-before-payment-provi",
+  "created_at": "2026-11-18T14:32:56+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "6c9dd71ef08e04c06c7ead93d2c1ea10e92b8119",
+  "request": "Cross-test payment/refund behavior and fix discovered defects before final deployment verification",
+  "title": "Serialize refund processing before payment provider calls",
+  "purpose": "Prevent concurrent partial refunds from diverging between the processor and database",
+  "files": [
+    {
+      "path": "packages/services/src/order/payment.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 345,
+          "old_end": 352,
+          "new_start": 345,
+          "new_end": 357
+        },
+        {
+          "old_start": 354,
+          "old_end": 359,
+          "new_start": 359,
+          "new_end": 364
+        },
+        {
+          "old_start": 361,
+          "old_end": 363,
+          "new_start": 366,
+          "new_end": 367
+        },
+        {
+          "old_start": 375,
+          "old_end": 375,
+          "new_start": 379,
+          "new_end": 379
+        },
+        {
+          "old_start": 388,
+          "old_end": 388,
+          "new_start": 392,
+          "new_end": 392
+        },
+        {
+          "old_start": 392,
+          "old_end": 394,
+          "new_start": 396,
+          "new_end": 397
+        }
+      ],
+      "working_tree_sha256": "7024245a7c5062a9e922f6cd713993dc7bf7015e54418a00390a4b8a51f65234",
+      "symbols": [
+        "PaymentService.refund"
+      ],
+      "purpose": "Serialize same-order refunds before external side effects.",
+      "previous_behavior": "Concurrent different partial refund amounts could both reach the processor before a database compare-and-set rejected one, leaving totals inconsistent.",
+      "new_behavior": "A nonblocking per-order PostgreSQL transaction lock is acquired before reading totals or invoking the processor. A busy request returns ConflictError without a second processor call; refund records, revocation and audit commit within the same bounded transaction.",
+      "data_impact": "Updates the same Order, Enrollment, Subscription and AuditLog records as before. No schema or production-data migration.",
+      "access_control_impact": "Existing commerce authorization is unchanged. Same-order competing refund requests now fail before provider access.",
+      "risks": [
+        "The transaction holds one DB connection for the provider call, bounded by a 30-second transaction timeout and a 20-second provider request timeout.",
+        "A provider-success/database-failure outcome still needs reconciliation/retry using the existing idempotency key; live PG behavior is not proven by a synthetic test."
+      ],
+      "rollback": "Revert this commit and rebuild apps consuming @bayada/services. Preserve all financial and audit records; reverting restores the concurrency weakness and must not be treated as a data rollback."
+    },
+    {
+      "path": "packages/services/tests/payment.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 92
+        }
+      ],
+      "working_tree_sha256": "c8398c437fcece6e31c0644a3c79e3b493223893d2a284d7c374b44ca17712c2",
+      "symbols": [
+        "main",
+        "synthetic fetch processor"
+      ],
+      "purpose": "Verify payment and refund persistence with real QA transactions while completely replacing external fetch.",
+      "previous_behavior": "No integration coverage proved simultaneous refunds kept processor and database totals aligned.",
+      "new_behavior": "Eleven QA checks cover price validation, duplicate confirmation, request ownership, request rejection, partial/full refund access, pass cancellation, concurrency and failure/retry. Non-QA DB endpoints are refused and fetch never reaches the network.",
+      "data_impact": "Writes synthetic QA accounts, courses, plans, orders and their access/audit records only; no production changes or real processor operations.",
+      "access_control_impact": "Existing commerce authorization is unchanged. Same-order competing refund requests now fail before provider access.",
+      "risks": [
+        "The transaction holds one DB connection for the provider call, bounded by a 30-second transaction timeout and a 20-second provider request timeout.",
+        "A provider-success/database-failure outcome still needs reconciliation/retry using the existing idempotency key; live PG behavior is not proven by a synthetic test."
+      ],
+      "rollback": "Revert this commit and rebuild apps consuming @bayada/services. Preserve all financial and audit records; reverting restores the concurrency weakness and must not be treated as a data rollback."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production payment/order/enrollment data touched. Tests wrote only to the separate synthetic QA database and intercepted every payment-provider fetch in process.",
+    "schema_migration": "None. PostgreSQL advisory transaction locks require no persistent schema objects.",
+    "external_side_effects": [
+      "Zero actual payment-provider network calls; only synthetic QA database traffic. No mail or public routing changes in this patch."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 package/app tasks passed."
+    },
+    {
+      "command": "tsx ../../packages/services/tests/payment.integration.mts with isolated QA environment",
+      "result": "passed",
+      "evidence": "11 checks passed. Before the fix, concurrent partial refunds reproduced DB total 2000 vs synthetic processor total 5000. After the fix, one request is rejected with 409 before provider access; totals agree, and retry after a simulated network failure succeeds. Evidence output/qa-payment-integration-evidence.json."
+    }
+  ],
+  "residual_risks": [
+    "Application images containing this patch still need to be built, verified and deployed; currently active runtime remains 31240ce.",
+    "Live merchant payment approval/refund is not exercised; configuration and external payment outcome remain separately reported dependencies.",
+    "External merchant-dashboard cancellations or provider success followed by a DB outage need operational reconciliation beyond the concurrency regression tested here.",
+    "Broader goal verification and final report remain active."
+  ],
+  "commit": "same-as-metadata-file"
+}
