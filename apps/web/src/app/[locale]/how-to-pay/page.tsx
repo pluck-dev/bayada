@@ -1,3 +1,4 @@
+import { getWebPageContent } from "@/lib/web-pages";
 import { createMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/layout/PageHero";
 import { HowToPayClient } from "./HowToPayClient";
@@ -22,6 +23,7 @@ export default async function HowToPayPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const content = await getWebPageContent("payment");
 
   return (
     <>
@@ -29,7 +31,7 @@ export default async function HowToPayPage({
         title="홈케어 비용 안내"
         subtitle="다양한 지원 제도를 활용하여 합리적인 비용으로 서비스를 이용하세요"
       />
-      <HowToPayClient locale={locale} />
+      <HowToPayClient locale={locale} content={content} />
     </>
   );
 }

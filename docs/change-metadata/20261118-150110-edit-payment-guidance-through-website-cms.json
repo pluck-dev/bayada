@@ -1,0 +1,277 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261118-150110-edit-payment-guidance-through-website-cms",
+  "created_at": "2026-11-18T15:01:10+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "d93b5fd8a337f46cc5d99666549f2375fcd2d026",
+  "request": "Complete website content CRUD in admin website menu",
+  "title": "Edit payment guidance through website CMS",
+  "purpose": "Replace hardcoded cost guidance lists with admin-managed content",
+  "files": [
+    {
+      "path": "apps/admin/src/components/web/WebPageManager.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 10,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "6eff092b0fb5f6117ca26eb5cc1825e94c03f262c242c322374130702954b139",
+      "symbols": [
+        "Fields labels"
+      ],
+      "purpose": "Adds Korean labels for insurance options, support programs, nested details and FAQs.",
+      "previous_behavior": "Payment guidance was absent from the editor.",
+      "new_behavior": "Adds Korean labels for insurance options, support programs, nested details and FAQs.",
+      "data_impact": "Reuses existing Page web-page/payment JSON and existing AuditLog save/reset mechanism. No schema migration or production backfill.",
+      "access_control_impact": "None; existing web.content authorization and CAS updatedAt guards remain.",
+      "risks": [
+        "Insurance and subsidy claims remain the original text and require client editorial confirmation. Empty lists intentionally remove entries."
+      ],
+      "rollback": "Revert this source commit and redeploy previous app images. Additive web-page/payment data can remain; previous code ignores it. Do not restore business DB from backup."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/how-to-pay/HowToPayClient.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 24,
+          "old_end": 61,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 63,
+          "old_end": 94,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 96,
+          "old_end": 118,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 120,
+          "old_end": 137,
+          "new_start": 28,
+          "new_end": 31
+        },
+        {
+          "old_start": 239,
+          "old_end": 239,
+          "new_start": 133,
+          "new_end": 136
+        },
+        {
+          "old_start": 253,
+          "old_end": 253,
+          "new_start": 150,
+          "new_end": 150
+        },
+        {
+          "old_start": 307,
+          "old_end": 307,
+          "new_start": 204,
+          "new_end": 204
+        },
+        {
+          "old_start": 358,
+          "old_end": 358,
+          "new_start": 255,
+          "new_end": 255
+        }
+      ],
+      "working_tree_sha256": "14d2729203af6f58e3be5f399f1e5917d0ccaa17241673d6f113867024208c17",
+      "symbols": [
+        "HowToPayClient"
+      ],
+      "purpose": "Consumes validated structured content props and resolves stored icon names through a fixed icon map.",
+      "previous_behavior": "Insurance, support, steps and FAQ data were hardcoded with component references.",
+      "new_behavior": "Consumes validated structured content props and resolves stored icon names through a fixed icon map.",
+      "data_impact": "Reuses existing Page web-page/payment JSON and existing AuditLog save/reset mechanism. No schema migration or production backfill.",
+      "access_control_impact": "None; existing web.content authorization and CAS updatedAt guards remain.",
+      "risks": [
+        "Insurance and subsidy claims remain the original text and require client editorial confirmation. Empty lists intentionally remove entries."
+      ],
+      "rollback": "Revert this source commit and redeploy previous app images. Additive web-page/payment data can remain; previous code ignores it. Do not restore business DB from backup."
+    },
+    {
+      "path": "apps/web/src/app/[locale]/how-to-pay/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 26,
+          "new_end": 26
+        },
+        {
+          "old_start": 32,
+          "old_end": 32,
+          "new_start": 34,
+          "new_end": 34
+        }
+      ],
+      "working_tree_sha256": "092727d4bcc2e243c4f192d83fd935c5f48b4e7277000a3121bcfd029ee0d735",
+      "symbols": [
+        "HowToPayPage"
+      ],
+      "purpose": "Loads payment JSON through existing getWebPageContent and passes it to the page.",
+      "previous_behavior": "Rendered client without managed content.",
+      "new_behavior": "Loads payment JSON through existing getWebPageContent and passes it to the page.",
+      "data_impact": "Reuses existing Page web-page/payment JSON and existing AuditLog save/reset mechanism. No schema migration or production backfill.",
+      "access_control_impact": "None; existing web.content authorization and CAS updatedAt guards remain.",
+      "risks": [
+        "Insurance and subsidy claims remain the original text and require client editorial confirmation. Empty lists intentionally remove entries."
+      ],
+      "rollback": "Revert this source commit and redeploy previous app images. Additive web-page/payment data can remain; previous code ignores it. Do not restore business DB from backup."
+    },
+    {
+      "path": "apps/web/tests/web-pages.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 64,
+          "new_end": 73
+        }
+      ],
+      "working_tree_sha256": "052be285f743aa89ac75ff5a7754fb098374ab2bdd6d02ac28a4d70f2f4a780d",
+      "symbols": [
+        "payment guidance validation test"
+      ],
+      "purpose": "Tests preserve empty FAQ lists and reject unsafe styling and unknown icon keys.",
+      "previous_behavior": "No payment content validation coverage.",
+      "new_behavior": "Tests preserve empty FAQ lists and reject unsafe styling and unknown icon keys.",
+      "data_impact": "Reuses existing Page web-page/payment JSON and existing AuditLog save/reset mechanism. No schema migration or production backfill.",
+      "access_control_impact": "None; existing web.content authorization and CAS updatedAt guards remain.",
+      "risks": [
+        "Insurance and subsidy claims remain the original text and require client editorial confirmation. Empty lists intentionally remove entries."
+      ],
+      "rollback": "Revert this source commit and redeploy previous app images. Additive web-page/payment data can remain; previous code ignores it. Do not restore business DB from backup."
+    },
+    {
+      "path": "packages/shared/src/web-page-content.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 219,
+          "old_end": 219,
+          "new_start": 220,
+          "new_end": 220
+        },
+        {
+          "old_start": 222,
+          "old_end": 222,
+          "new_start": 223,
+          "new_end": 223
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 232,
+          "new_end": 233
+        }
+      ],
+      "working_tree_sha256": "a3845c885c059b585c765eb37075b72f2cae0c2aad5d8de149c2844d9314b781",
+      "symbols": [
+        "WEB_PAGE_DEFAULTS, parseWebPageContent"
+      ],
+      "purpose": "Adds payment key and explicit hex color/icon name validation.",
+      "previous_behavior": "Payment was not a supported managed page key.",
+      "new_behavior": "Adds payment key and explicit hex color/icon name validation.",
+      "data_impact": "Reuses existing Page web-page/payment JSON and existing AuditLog save/reset mechanism. No schema migration or production backfill.",
+      "access_control_impact": "None; existing web.content authorization and CAS updatedAt guards remain.",
+      "risks": [
+        "Insurance and subsidy claims remain the original text and require client editorial confirmation. Empty lists intentionally remove entries."
+      ],
+      "rollback": "Revert this source commit and redeploy previous app images. Additive web-page/payment data can remain; previous code ignores it. Do not restore business DB from backup."
+    },
+    {
+      "path": "packages/shared/src/web-payment-content.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 116
+        }
+      ],
+      "working_tree_sha256": "f82a68498f9400b458994a16051e77d899ed21ad7073457ca5f849d9d31556d9",
+      "symbols": [
+        "WEB_PAYMENT_DEFAULTS"
+      ],
+      "purpose": "Preserves original cost guidance as shared JSON-compatible defaults.",
+      "previous_behavior": "No shared payment defaults existed.",
+      "new_behavior": "Preserves original cost guidance as shared JSON-compatible defaults.",
+      "data_impact": "Reuses existing Page web-page/payment JSON and existing AuditLog save/reset mechanism. No schema migration or production backfill.",
+      "access_control_impact": "None; existing web.content authorization and CAS updatedAt guards remain.",
+      "risks": [
+        "Insurance and subsidy claims remain the original text and require client editorial confirmation. Empty lists intentionally remove entries."
+      ],
+      "rollback": "Revert this source commit and redeploy previous app images. Additive web-page/payment data can remain; previous code ignores it. Do not restore business DB from backup."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Only synthetic QA payment content changed through admin UI. No production business records changed.",
+    "schema_migration": "None; existing Page JSON.",
+    "external_side_effects": [
+      "Local QA admin/web were started then stopped. No messages, live PG calls or production deployment for this change."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm exec turbo run typecheck --only",
+      "result": "passed",
+      "evidence": "All 9 tasks passed."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/web/tests/web-pages.test.ts",
+      "result": "passed",
+      "evidence": "All 6 tests passed."
+    },
+    {
+      "command": "Oinzi /ko/web/pages?page=payment save; HTTP localhost:3441/ko/how-to-pay",
+      "result": "passed",
+      "evidence": "Saved insurance title via admin action; web HTTP200 contains QA 비용 안내 변경."
+    }
+  ],
+  "residual_risks": [
+    "Public AWS remains 70c18c0; this update and previous home editor update await deployment.",
+    "Original insurance claims not independently revalidated; customer content confirmation needed.",
+    "Audience-specific page content still needs CMS integration review."
+  ],
+  "commit": "same-as-metadata-file"
+}

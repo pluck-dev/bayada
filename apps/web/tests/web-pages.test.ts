@@ -61,3 +61,13 @@ test("home content supports section removal and rejects unsafe image paths and i
   home.numbers[0]!.value = -1;
   assert.throws(() => parseWebPageContent("home", home), /숫자/);
 });
+
+test("payment guidance validates styling keys and preserves removed FAQ and support programs", () => {
+  const payment = structuredClone(WEB_PAGE_DEFAULTS.payment);
+  assert.deepEqual(parseWebPageContent("payment", { ...payment, faqs: [], supportPrograms: [] }).faqs, []);
+  payment.paymentOptions[0]!.color = "url(javascript:alert(1))";
+  assert.throws(() => parseWebPageContent("payment", payment), /色|색상/);
+  payment.paymentOptions[0]!.color = "#ce0e2d";
+  payment.paymentOptions[0]!.icon = "Unsupported";
+  assert.throws(() => parseWebPageContent("payment", payment), /아이콘/);
+});
