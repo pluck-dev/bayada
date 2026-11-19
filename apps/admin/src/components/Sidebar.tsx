@@ -46,7 +46,6 @@ import {
 import { signOut } from "next-auth/react";
 import { can, type Permission } from "@/lib/rbac";
 import { cx } from "./ui";
-import { Segmented } from "./ui/kit/Segmented";
 import { useHelp } from "./help/HelpProvider";
 
 interface NavItem {
@@ -109,6 +108,16 @@ const WEBSITE: NavItem[] = [
   { path: "/web/hero", label: "메인 히어로", icon: Images, permission: "web.content", group: "콘텐츠" },
   { path: "/web/settings", label: "사이트 정보", icon: Settings2, permission: "web.settings", group: "설정" },
   { path: "/feedback", label: "피드백", icon: MessageSquareText, permission: "feedback", group: "설정" },
+];
+
+const KOREA: NavItem[] = [
+  { path: "/korea", label: "페이지·메뉴·이미지", icon: Globe, permission: "korea.content" },
+  { path: "/korea/menu", label: "공통 메뉴", icon: Route, permission: "korea.content" },
+  { path: "/korea/partners", label: "협력기관 로고", icon: Handshake, permission: "korea.content" },
+  { path: "/korea/boards", label: "공지·뉴스·영상·FAQ", icon: Newspaper, permission: "korea.content" },
+  { path: "/korea/inquiries", label: "서비스 상담", icon: Inbox, permission: "korea.inquiries" },
+  { path: "/korea/settings", label: "접수·알림 설정", icon: Settings2, permission: "korea.inquiries" },
+  { path: "/korea/archive", label: "원본 이관 검토", icon: ClipboardList, permission: "korea.content" },
 ];
 
 /** 연속된 같은 group 끼리 묶는다 */
@@ -212,7 +221,7 @@ export function Sidebar({
   const isActive = (path: string) => {
     const href = base + path;
     // /web 은 하위 메뉴(/web/inquiries …)가 따로 있어 정확히 같을 때만 활성
-    return path === "" || path === "/web" ? pathname === href : pathname === href || pathname.startsWith(href + "/");
+    return path === "" || path === "/web" || path === "/korea" ? pathname === href : pathname === href || pathname.startsWith(href + "/");
   };
 
   const allowed = (perm: NavItem["permission"]) =>
@@ -227,24 +236,27 @@ export function Sidebar({
   ];
   const website = visible(WEBSITE);
 
-  // 작업 영역은 URL 로 정한다 (/web/… = 웹사이트). 한쪽 권한만 있으면 그쪽만 보인다
+  const korea = visible(KOREA);
   const hasAcademy = primary.length + commerce.length + system.length > 0;
   const onWeb = pathname === `${base}/web` || pathname.startsWith(`${base}/web/`);
-  // 피드백(/feedback)은 두 작업 영역 공용 메뉴 → 들어오기 직전 작업 영역을 유지한다
+  const onKorea = pathname === `${base}/korea` || pathname.startsWith(`${base}/korea/`);
   const onShared = pathname === `${base}/feedback` || pathname.startsWith(`${base}/feedback/`);
-  const [lastWorkspace, setLastWorkspace] = useState<"academy" | "web">("academy");
+  type Workspace = "academy" | "web" | "korea";
+  const [lastWorkspace, setLastWorkspace] = useState<Workspace>("academy");
   useEffect(() => {
     if (onShared) {
-      if (sessionStorage.getItem("bayada-admin.workspace") === "web") setLastWorkspace("web");
-    } else {
-      sessionStorage.setItem("bayada-admin.workspace", onWeb ? "web" : "academy");
-    }
-  }, [onShared, onWeb]);
-  const workspace: "academy" | "web" =
-    website.length > 0 && (onWeb || !hasAcademy || (onShared && lastWorkspace === "web")) ? "web" : "academy";
-  // 첫 화면 순서는 예전 메뉴 순서(운영 메뉴 → 시스템 → B2B) 그대로
-  const academyHome = base + ([...primary, ...system, ...commerce].find((i) => !i.phase)?.path ?? "");
-  const webHome = base + (website[0]?.path ?? "/web");
+      const saved = sessionStorage.getItem("bayada-admin.workspace");
+      if (saved === "web" || saved === "korea") setLastWorkspace(saved);
+    } else sessionStorage.setItem("bayada-admin.workspace", onKorea ? "korea" : onWeb ? "web" : "academy");
+  }, [onShared, onWeb, onKorea]);
+  const choices = [
+    ...(korea.length ? [{ value: "korea" as const, label: "바야다코리아", href: base + (korea[0]?.path ?? "/korea"), Icon: Globe }] : []),
+    ...(website.length ? [{ value: "web" as const, label: "리뉴얼 브랜드", href: base + (website[0]?.path ?? "/web"), Icon: Images }] : []),
+    ...(hasAcademy ? [{ value: "academy" as const, label: "아카데미", href: base + ([...primary, ...system, ...commerce].find(i => !i.phase)?.path ?? ""), Icon: GraduationCap }] : []),
+  ];
+  const desired = onKorea ? "korea" : onWeb ? "web" : onShared ? lastWorkspace : "academy";
+  const workspace = choices.find(c => c.value === desired)?.value ?? choices[0]?.value ?? "academy";
+  const workspaceHome = choices.find(c => c.value === workspace)?.href ?? base;
 
   // 서랍은 언제나 펼친 모양
   const compact = rail && !drawer;
@@ -331,7 +343,7 @@ export function Sidebar({
     >
       <div className={cx("mb-6 flex h-[22px] items-center", compact ? "justify-center" : "justify-between gap-2")}>
         <Link
-          href={workspace === "web" ? webHome : academyHome}
+          href={workspaceHome}
           className={cx("flex items-center gap-2", !compact && "px-3.5")}
           aria-label="BAYADA 관리자 홈"
           {...railTip("BAYADA 관리자 홈")}
@@ -358,53 +370,10 @@ export function Sidebar({
         )}
       </div>
 
-      {hasAcademy &&
-        website.length > 0 &&
-        (compact ? (
-          <div className="mb-6 flex flex-col items-center gap-1 rounded-[22px] bg-side-raised p-1" role="group" aria-label="관리할 사이트" data-tour="side-workspace">
-            {(
-              [
-                { value: "academy", label: "아카데미", href: academyHome, Icon: GraduationCap },
-                { value: "web", label: "웹사이트", href: webHome, Icon: Globe },
-              ] as const
-            ).map(({ value, label, href, Icon }) => (
-              <Link
-                key={value}
-                href={href}
-                aria-label={`관리할 사이트: ${label}`}
-                aria-current={workspace === value ? "true" : undefined}
-                data-tip={`관리할 사이트 · ${label}`}
-                data-tip-side="right"
-                className={cx(
-                  "flex size-10 items-center justify-center rounded-full transition-colors",
-                  workspace === value ? "bg-brand text-white shadow-[0_4px_14px_-4px_rgb(227_27_52/0.6)]" : "text-side-fg hover:text-white",
-                )}
-              >
-                <Icon className="size-[18px]" aria-hidden />
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="mb-6 px-1" data-tour="side-workspace">
-            <p className="mb-2 px-2.5 text-[11px] font-bold tracking-[0.02em] text-side-label" id="workspace-label">
-              관리할 사이트
-            </p>
-            <Segmented
-              aria-label="관리할 사이트"
-              tone="dark"
-              size="lg"
-              fullWidth
-              value={workspace}
-              options={[
-                { value: "academy", label: "아카데미", href: academyHome, icon: <GraduationCap aria-hidden /> },
-                { value: "web", label: "웹사이트", href: webHome, icon: <Globe aria-hidden /> },
-              ]}
-            />
-          </div>
-        ))}
+      {choices.length > 1 && <nav className="mb-6 grid gap-1 rounded-2xl bg-side-raised p-1" aria-label="관리할 사이트" data-tour="side-workspace">{choices.map(({value,label,href,Icon}) => <Link key={value} href={href} aria-label={`관리할 사이트: ${label}`} aria-current={workspace === value ? "page" : undefined} className={cx("flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold", compact && "justify-center px-0", workspace === value ? "bg-brand text-white" : "text-side-fg hover:text-white")}><Icon className="size-[18px]" aria-hidden />{!compact && label}</Link>)}</nav>}
 
       <nav className="flex flex-1 flex-col gap-5" aria-label="주 메뉴" data-tour="side-nav">
-        {workspace === "web" ? renderGroups(website) : renderGroups([...primary, ...commerce, ...system])}
+        {workspace === "korea" ? renderGroups(korea) : workspace === "web" ? renderGroups(website) : renderGroups([...primary, ...commerce, ...system])}
       </nav>
 
       <div className={cx("mt-6 flex gap-1", compact ? "flex-col items-center" : "items-center")}>

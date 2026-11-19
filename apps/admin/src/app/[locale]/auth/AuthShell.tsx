@@ -15,7 +15,7 @@ export function AuthShell({ children, note }: { children: React.ReactNode; note?
           <span className="text-brand">CONSOLE.</span>
         </p>
         <p className="max-w-[440px] text-[13.5px] leading-[1.65] text-white/55">
-          {note ?? "아카데미와 웹사이트를 함께 운영하는 관리자 전용 공간입니다. 모든 변경은 감사 로그에 남습니다."}
+          {note ?? "바야다코리아·리뉴얼 브랜드·아카데미를 함께 운영하는 관리자 전용 공간입니다. 콘텐츠 변경은 감사 로그에 남습니다."}
         </p>
       </div>
       <div className="flex flex-1 items-center justify-center p-6">

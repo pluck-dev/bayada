@@ -1,4 +1,4 @@
-# 아카데미(academy) / 어드민(admin) / 홈페이지(web) 공용 이미지.
+# 아카데미(academy) / 어드민(admin) / 브랜드(web) / 기존 홈페이지(korea) 공용 이미지.
 #   docker build --build-arg APP=academy -t bayada-academy .
 #   docker build --build-arg APP=admin   -t bayada-admin .
 # 로컬은 deploy/docker-compose.yml, 운영(AWS ECS 등)도 같은 이미지에 환경변수만 바꿔 쓴다.

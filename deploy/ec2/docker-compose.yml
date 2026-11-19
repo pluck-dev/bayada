@@ -11,6 +11,7 @@ services:
     environment:
       ACME_EMAIL: ${ACME_EMAIL}
       WEB_HOST: ${WEB_HOST}
+      KOREA_HOST: ${KOREA_HOST}
       ACADEMY_HOST: ${ACADEMY_HOST}
       ADMIN_HOST: ${ADMIN_HOST}
       MEDIA_HOST: ${MEDIA_HOST}
@@ -19,7 +20,7 @@ services:
       - /srv/bayada/media:/srv/media:ro
       - caddy_data:/data
       - caddy_config:/config
-    depends_on: [web, academy, admin]
+    depends_on: [web, academy, admin, korea]
 
   db:
     image: postgres:16-alpine
@@ -70,6 +71,23 @@ services:
       REVIEW_ACCESS_PASSWORD: ${REVIEW_ACCESS_PASSWORD:-}
       REVIEW_ACCESS_SECRET: ${REVIEW_ACCESS_SECRET:-}
 
+  korea:
+    build: { context: ../.., args: { APP: korea } }
+    image: bayada-korea:prod
+    restart: unless-stopped
+    depends_on: { db: { condition: service_healthy } }
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/bayada
+      DIRECT_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/bayada
+      KOREA_MEDIA_DIR: /korea-media
+      SMTP_URL: ${SMTP_URL:-smtp://mailpit:1025}
+      MAIL_FROM: ${KOREA_MAIL_FROM:-BAYADA Korea <no-reply@bayada.co.kr>}
+      ADMIN_PUBLIC_URL: https://${ADMIN_HOST}
+    volumes:
+      - /srv/bayada/korea-static/wp-content:/app/apps/korea/public/wp-content:ro
+      - /srv/bayada/korea-static/wp-includes:/app/apps/korea/public/wp-includes:ro
+      - /srv/bayada/korea-media:/korea-media:ro
+
   academy:
     build: { context: ../.., args: { APP: academy, NEXT_PUBLIC_SITE_URL: "https://${ACADEMY_HOST}" } }
     image: bayada-academy:prod
@@ -102,6 +120,7 @@ services:
     restart: unless-stopped
     volumes:
       - /srv/bayada/legacy-private:/legacy-private:ro
+      - /srv/bayada/korea-media:/korea-media
     depends_on: { db: { condition: service_healthy } }
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/bayada
@@ -115,6 +134,8 @@ services:
       WEB_REVALIDATE_SECRET: ${WEB_REVALIDATE_SECRET:?WEB_REVALIDATE_SECRET 필요}
       # 피드백 "위치 보기" 링크가 여는 공개 주소 (WEB_URL 은 내부 재생성 요청용이라 따로 둔다)
       WEB_PUBLIC_URL: https://${WEB_HOST}
+      KOREA_PUBLIC_URL: https://${KOREA_HOST}
+      KOREA_MEDIA_DIR: /korea-media
       TOSS_SECRET_KEY: ${TOSS_SECRET_KEY:-}
       SMTP_URL: ${SMTP_URL:-smtp://mailpit:1025}
       MAIL_FROM: ${MAIL_FROM:-BAYADA Academy <no-reply@bayada.co.kr>}

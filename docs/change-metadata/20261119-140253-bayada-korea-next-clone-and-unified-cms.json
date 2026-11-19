@@ -1,0 +1,1594 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261119-143325-bayada-korea-next-clone-and-unified-cms",
+  "created_at": "2026-11-19T14:33:25+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "c78e3027f7d9c997d493583bf4ac2b7c508a35db",
+  "request": "Clone bayadakorea.com using Next.js, add Korea CMS, deploy three websites and one administrator on existing AWS",
+  "title": "BAYADA Korea Next clone and unified CMS",
+  "purpose": "Preserve the original public site and operate all three sites from the existing admin",
+  "files": [
+    {
+      "path": "Dockerfile",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 1,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "6707aada0da3ddd526efbceca8672fdd297cbf4df478a5bbf2bb21fa223cdb0f",
+      "symbols": [
+        "Shared image documentation"
+      ],
+      "purpose": "Documents Korea as the fourth deployable app; generic APP build behavior is retained.",
+      "previous_behavior": "The image documented three apps.",
+      "new_behavior": "Documents Korea as the fourth deployable app; generic APP build behavior is retained.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 24,
+          "old_end": 24,
+          "new_start": 24,
+          "new_end": 25
+        }
+      ],
+      "working_tree_sha256": "ef96a865a413a5b622fc11a60b94423af372606a46e5b3175d77b8a8d4104daa",
+      "symbols": [
+        "Workspace dependency"
+      ],
+      "purpose": "Links the Korea model/server package for typed shared CMS reads and writes.",
+      "previous_behavior": "The admin had no original-site content package.",
+      "new_behavior": "Links the Korea model/server package for typed shared CMS reads and writes.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/archive/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 7
+        }
+      ],
+      "working_tree_sha256": "78a04ec79e4d7e328f87ad3d616ff26ba5d33dbaa60cf970d52ab9089f117349",
+      "symbols": [
+        "archive server page"
+      ],
+      "purpose": "Loads the Korea archive screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea archive screen.",
+      "new_behavior": "Loads the Korea archive screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/boards/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "35b9a1e5f45cc6a9b36614d5b2b83e528ae1e8077f1357faecbe50417471eed3",
+      "symbols": [
+        "boards server page"
+      ],
+      "purpose": "Loads the Korea boards screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea boards screen.",
+      "new_behavior": "Loads the Korea boards screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/inquiries/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 28
+        }
+      ],
+      "working_tree_sha256": "1a63063338000404701f26a2674d7f420a4f5dd7e160d4c9862ed0bd4014448d",
+      "symbols": [
+        "inquiries server page"
+      ],
+      "purpose": "Loads the Korea inquiries screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea inquiries screen.",
+      "new_behavior": "Loads the Korea inquiries screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/menu/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 8
+        }
+      ],
+      "working_tree_sha256": "a8e3d97874e426db110b67d0c8366fcb0cf1c6cf9fe2b1da1d983b8b6afb4ac4",
+      "symbols": [
+        "menu server page"
+      ],
+      "purpose": "Loads the Korea menu screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea menu screen.",
+      "new_behavior": "Loads the Korea menu screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 21
+        }
+      ],
+      "working_tree_sha256": "bed15afa0d9db23a92d215df99cdccf10fd19f2d28017f7ad0c5c138ede53504",
+      "symbols": [
+        "page.tsx server page"
+      ],
+      "purpose": "Loads the Korea page.tsx screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea page.tsx screen.",
+      "new_behavior": "Loads the Korea page.tsx screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/partners/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 8
+        }
+      ],
+      "working_tree_sha256": "29b74b27027a4ee502c38e3591e7fbfc17e58ed85e40321404db7b157c8996cb",
+      "symbols": [
+        "partners server page"
+      ],
+      "purpose": "Loads the Korea partners screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea partners screen.",
+      "new_behavior": "Loads the Korea partners screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/settings/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 9
+        }
+      ],
+      "working_tree_sha256": "6f2aae5b4150261a1629a31ac4b0a8409a7e5a24eecfbf3c896f772f9c39d4a0",
+      "symbols": [
+        "settings server page"
+      ],
+      "purpose": "Loads the Korea settings screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "previous_behavior": "The unified admin had no Korea settings screen.",
+      "new_behavior": "Loads the Korea settings screen behind its dedicated permission and supplies only its scoped data to the editor.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/pages/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 11,
+          "old_end": 11,
+          "new_start": 11,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "cdc720b656e97639ab7ca7067ae9b1b9a074a3e0042459d60a0642fd7e8111bd",
+      "symbols": [
+        "PagesPage query"
+      ],
+      "purpose": "Restricts its query to known legal slugs so unrelated Korea/private documents are not loaded.",
+      "previous_behavior": "The legal page screen read every Page row.",
+      "new_behavior": "Restricts its query to known legal slugs so unrelated Korea/private documents are not loaded.",
+      "data_impact": "Reads only the permission-scoped page, post, menu, setting or inquiry namespace for this screen; mutations run through guarded server actions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/auth/AuthShell.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 18,
+          "old_end": 18,
+          "new_start": 18,
+          "new_end": 18
+        }
+      ],
+      "working_tree_sha256": "c3bf1588651413f54b01bed8b1c7cb5a0906690d5603f8ed302e47cd0bfbdf2b",
+      "symbols": [
+        "AuthShell"
+      ],
+      "purpose": "Describes the three-site console and its audit behavior.",
+      "previous_behavior": "Login copy described two sites.",
+      "new_behavior": "Describes the three-site console and its audit behavior.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/app/api/korea/media/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 33
+        }
+      ],
+      "working_tree_sha256": "ddcd8e883f278648d871c5f3df2804a271e795136366a439e833b32d9909bc11",
+      "symbols": [
+        "POST /api/korea/media"
+      ],
+      "purpose": "Requires content permission and same-origin requests, checks file signatures/size, writes UUID files and audits without exposing filenames supplied by users.",
+      "previous_behavior": "Korea shared media upload was absent.",
+      "new_behavior": "Requires content permission and same-origin requests, checks file signatures/size, writes UUID files and audits without exposing filenames supplied by users.",
+      "data_impact": "Writes only validated Korea Page/SiteSetting/media and AuditLog data; reception is private and inquiry deletion logs only a reference/status.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/Sidebar.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 49,
+          "old_end": 49,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 113,
+          "new_end": 122
+        },
+        {
+          "old_start": 215,
+          "old_end": 215,
+          "new_start": 224,
+          "new_end": 224
+        },
+        {
+          "old_start": 230,
+          "old_end": 230,
+          "new_start": 239,
+          "new_end": 239
+        },
+        {
+          "old_start": 233,
+          "old_end": 233,
+          "new_start": 242,
+          "new_end": 242
+        },
+        {
+          "old_start": 235,
+          "old_end": 235,
+          "new_start": 244,
+          "new_end": 245
+        },
+        {
+          "old_start": 238,
+          "old_end": 247,
+          "new_start": 248,
+          "new_end": 259
+        },
+        {
+          "old_start": 334,
+          "old_end": 334,
+          "new_start": 346,
+          "new_end": 346
+        },
+        {
+          "old_start": 361,
+          "old_end": 404,
+          "new_start": 373,
+          "new_end": 373
+        },
+        {
+          "old_start": 407,
+          "old_end": 407,
+          "new_start": 376,
+          "new_end": 376
+        }
+      ],
+      "working_tree_sha256": "25fd50cb00260e64f92dcee7764b736f4810c3c829811811ebb841c0f3807354",
+      "symbols": [
+        "Sidebar, KOREA, workspace choices"
+      ],
+      "purpose": "Provides three named workspaces and filters every menu by the existing effective permissions.",
+      "previous_behavior": "The workspace selector exposed brand and academy.",
+      "new_behavior": "Provides three named workspaces and filters every menu by the existing effective permissions.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/help/manual.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 48,
+          "old_end": 50,
+          "new_start": 48,
+          "new_end": 50
+        },
+        {
+          "old_start": 52,
+          "old_end": 54,
+          "new_start": 52,
+          "new_end": 55
+        },
+        {
+          "old_start": 56,
+          "old_end": 57,
+          "new_start": 57,
+          "new_end": 58
+        }
+      ],
+      "working_tree_sha256": "a1f35b5488e5b882eb873f241c9652c23ab8ddab7af5e35acaa0b931354d35b6",
+      "symbols": [
+        "Korea CMS help entries"
+      ],
+      "purpose": "Explains page edits, menus, uploads, board publication, private intake and scope boundaries.",
+      "previous_behavior": "No Korea operating instructions existed.",
+      "new_behavior": "Explains page edits, menus, uploads, board publication, private intake and scope boundaries.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/help/tours.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 17,
+          "old_end": 17,
+          "new_start": 17,
+          "new_end": 17
+        }
+      ],
+      "working_tree_sha256": "1f2190cde169a5bb95eacaef5ccc7d5781aec1535c7fa5bc7e92d89cf4d8e12c",
+      "symbols": [
+        "Workspace tour"
+      ],
+      "purpose": "Names the Korea, renewal brand and academy workspaces.",
+      "previous_behavior": "The tour described two workspaces.",
+      "new_behavior": "Names the Korea, renewal brand and academy workspaces.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaInquiryEditor.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 9
+        }
+      ],
+      "working_tree_sha256": "923340bc18757a9032b31c2c33dc36f10e5a24479e12c4b0be7c58a7b7cb77a8",
+      "symbols": [
+        "KoreaInquiryEditor"
+      ],
+      "purpose": "Processes private intake with status/memo and explicit deletion confirmation. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Processes private intake with status/memo and explicit deletion confirmation. Uses server actions with permission checks and revision conflicts.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaMediaUpload.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "3ae7d8129db1a2b0a4d75fe675ff15e545d4af14183126e1c27baf88d69b4cb1",
+      "symbols": [
+        "KoreaMediaUpload"
+      ],
+      "purpose": "Uploads accepted public media and exposes a reusable URL with explicit error feedback. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Uploads accepted public media and exposes a reusable URL with explicit error feedback. Uses server actions with permission checks and revision conflicts.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaMenuEditor.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 15
+        }
+      ],
+      "working_tree_sha256": "7c52b4f0c53ec658921bfafe80efa4871a0a2295b3efa41f5c539db9cbf204ef",
+      "symbols": [
+        "KoreaMenuEditor"
+      ],
+      "purpose": "Edits nested menu labels, links, new-tab flags, ordering and children. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Edits nested menu labels, links, new-tab flags, ordering and children. Uses server actions with permission checks and revision conflicts.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPageEditor.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 21
+        }
+      ],
+      "working_tree_sha256": "1a5b63a913ff5d9873e79d23c604dfd8d822dc33e08a3bbc0ec32054441b8b23",
+      "symbols": [
+        "KoreaPageEditor"
+      ],
+      "purpose": "Filters page fields by type/search, supports images/links/text and reset to captured baseline. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Filters page fields by type/search, supports images/links/text and reset to captured baseline. Uses server actions with permission checks and revision conflicts.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPartnersEditor.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 12
+        }
+      ],
+      "working_tree_sha256": "71231f45a61a6b9478589eb2d83d9ee48603d4997c2c9c2b4f5feb7d6d391a13",
+      "symbols": [
+        "KoreaPartnersEditor"
+      ],
+      "purpose": "Edits partner logos, labels, links, ordering and additions/removals. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Edits partner logos, labels, links, ordering and additions/removals. Uses server actions with permission checks and revision conflicts.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPostEditor.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 22
+        }
+      ],
+      "working_tree_sha256": "caf51c37ba4f0e6881e50fd87b35ca618b667bf26256663ba3f763f7373c1c5f",
+      "symbols": [
+        "KoreaPostEditor"
+      ],
+      "purpose": "Creates, edits, publishes and deletes posts/attachments, navigating to the saved record after creation. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Creates, edits, publishes and deletes posts/attachments, navigating to the saved record after creation. Uses server actions with permission checks and revision conflicts. Provides editable FAQ display ordering.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaSettingsEditor.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "d82139c8dfdd01ba47c6f4410c99c27c031495a11caa516365241e88a547c811",
+      "symbols": [
+        "KoreaSettingsEditor"
+      ],
+      "purpose": "Configures separate consultation/career recipients and the reception enable flag. Uses server actions with permission checks and revision conflicts.",
+      "previous_behavior": "No corresponding original-site CMS editor existed.",
+      "new_behavior": "Configures separate consultation/career recipients and the reception enable flag. Uses server actions with permission checks and revision conflicts.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/lib/actions/korea.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 110
+        }
+      ],
+      "working_tree_sha256": "c728ff07d689c7e66001c0058961567ede7a5b10bc9989348a5fadb51bb4ad51",
+      "symbols": [
+        "saveKoreaPage, saveKoreaMenu, saveKoreaPartners, saveKoreaPost, processKoreaInquiry"
+      ],
+      "purpose": "Validates typed edits, enforces content/inquiry permissions, rejects stale revisions and writes audit records; inquiry deletion redacts audit data.",
+      "previous_behavior": "Korea CMS mutations did not exist.",
+      "new_behavior": "Validates typed edits, enforces content/inquiry permissions, rejects stale revisions and writes audit records; inquiry deletion redacts audit data.",
+      "data_impact": "Writes only validated Korea Page/SiteSetting/media and AuditLog data; reception is private and inquiry deletion logs only a reference/status.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/src/lib/rbac.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 46,
+          "new_end": 47
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 146,
+          "new_end": 147
+        }
+      ],
+      "working_tree_sha256": "6a5af6aa44fa70493ed139f060dd7daf33dab24e18c2401cee6171bf11d7ab8d",
+      "symbols": [
+        "PERMISSION_DEFS, HOME_ORDER"
+      ],
+      "purpose": "Adds independently assignable Korea content and inquiry permissions without extending existing brand roles.",
+      "previous_behavior": "Original-site permissions and landing pages were absent.",
+      "new_behavior": "Adds independently assignable Korea content and inquiry permissions without extending existing brand roles.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/admin/tests/korea.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 118
+        }
+      ],
+      "working_tree_sha256": "068bc59f1e8a2e0a8781105c844531a702801b4f9b6c9284a9609cbacc503d2e",
+      "symbols": [
+        "Synthetic QA suite"
+      ],
+      "purpose": "Exercises permissions, CSRF, upload signatures, private intake, atomic throttling, views, 59 public routes and 127 quarantined routes on a strictly isolated DB.",
+      "previous_behavior": "There was no running-app regression suite for Korea.",
+      "new_behavior": "Exercises permissions, CSRF, upload signatures, private intake, atomic throttling, views, 59 public routes and 127 quarantined routes on a strictly isolated DB.",
+      "data_impact": "Only synthetic QA writes or anonymous public reads; never production user/order/enrollment mutations.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/next-env.d.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 6
+        }
+      ],
+      "working_tree_sha256": "7b550dda9686c16f36a17bf9051d5dbf31e98555b30d114ac49fc49a1e712651",
+      "symbols": [
+        "next-env.d.ts workspace setup"
+      ],
+      "purpose": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "previous_behavior": "The Korea app/package had no workspace configuration.",
+      "new_behavior": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/next.config.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "aa81f5157b3476e978073c4cd8426c5fef33f5d57bec87b18c8216c7b68eb054",
+      "symbols": [
+        "NextConfig"
+      ],
+      "purpose": "Enables standalone monorepo output and Prisma tracing without the framework advertising header.",
+      "previous_behavior": "The Korea Next build was absent.",
+      "new_behavior": "Enables standalone monorepo output and Prisma tracing without the framework advertising header.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/package.json",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 25
+        }
+      ],
+      "working_tree_sha256": "8b9da03b05057f7302d28a7b969e3aacbf6ec4013ef3e58c331cfcf8834cc5cb",
+      "symbols": [
+        "package.json workspace setup"
+      ],
+      "purpose": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "previous_behavior": "The Korea app/package had no workspace configuration.",
+      "new_behavior": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/public/korea-runtime.css",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "4de6b88099d387cdf2111edda00e06054280c69a63697f5bd0883ea85d0ff603",
+      "symbols": [
+        "Intake status rendering"
+      ],
+      "purpose": "Preserves multiline reception messages without altering the original design.",
+      "previous_behavior": "Intake status had no portable style.",
+      "new_behavior": "Preserves multiline reception messages without altering the original design.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/public/korea-runtime.js",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 30
+        }
+      ],
+      "working_tree_sha256": "a109bcf132606c1cfcb17a39c4a84d7137a5037525c0716b639a23f2cf0eb5a7",
+      "symbols": [
+        "responsiveBoards, form handlers"
+      ],
+      "purpose": "Preserves responsive board classes and submits consented consultation/career forms to the new private API with visible success/failure status.",
+      "previous_behavior": "Legacy board and contact behavior depended on PHP/AJAX.",
+      "new_behavior": "Preserves responsive board classes and submits consented consultation/career forms to the new private API with visible success/failure status.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/src/app/[[...slug]]/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "426c85b5b1c59c570ab5f17f5d59cdd9de1aad2c1e68bca36ae1144bebfde5a2",
+      "symbols": [
+        "GET legacy public route"
+      ],
+      "purpose": "Serves preserved HTML by original path/legacy ID, counts published article views with a cookie and returns 404 for unpublished/unrecognized pages.",
+      "previous_behavior": "The original public website depended on a WordPress backend.",
+      "new_behavior": "Serves preserved HTML by original path/legacy ID, counts published article views with a cookie and returns 404 for unpublished/unrecognized pages.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/src/app/api/inquiries/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 60
+        }
+      ],
+      "working_tree_sha256": "d20c547c26dda2da8d541b2619e1a6639a7ff2c5d2d11be8710dd2aaa9c439af",
+      "symbols": [
+        "POST /api/inquiries"
+      ],
+      "purpose": "Validates origin, body size, consent and form fields, atomically throttles IP namespaces, persists private intake and records the actual notification state.",
+      "previous_behavior": "Consultation and careers were handled by WordPress plugins.",
+      "new_behavior": "Validates origin, body size, consent and form fields, atomically throttles IP namespaces, persists private intake and records the actual notification state.",
+      "data_impact": "Writes only validated Korea Page/SiteSetting/media and AuditLog data; reception is private and inquiry deletion logs only a reference/status.",
+      "access_control_impact": "Korea content and inquiry permissions remain separate; existing brand/academy/project-customer restrictions are preserved.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/src/app/layout.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "33c3f1ba45412949cc0b8e653f14baa18c2efcce98263635f256001a27d95a13",
+      "symbols": [
+        "RootLayout"
+      ],
+      "purpose": "Provides the minimal root layout for the App Router route-handler app.",
+      "previous_behavior": "The Korea Next app was absent.",
+      "new_behavior": "Provides the minimal root layout for the App Router route-handler app.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/src/app/media/[name]/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "22f35d82052734bbf7fba39ce1a4b805ce699c25a723a7904abe31a16ec0e2ea",
+      "symbols": [
+        "GET UUID media"
+      ],
+      "purpose": "Serves only validated UUID image/PDF names from the media mount with fixed content types and nosniff.",
+      "previous_behavior": "No shared Korea upload serving existed.",
+      "new_behavior": "Serves only validated UUID image/PDF names from the media mount with fixed content types and nosniff.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/src/app/robots.txt/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 5
+        }
+      ],
+      "working_tree_sha256": "c5b047457de7310066d8220ce2fb434300bff8c593b43c1912bbd3be472b30cf",
+      "symbols": [
+        "GET robots.txt"
+      ],
+      "purpose": "Advertises the local sitemap and excludes the API path; AWS preview adds noindex at Caddy.",
+      "previous_behavior": "Robots rules belonged to WordPress.",
+      "new_behavior": "Advertises the local sitemap and excludes the API path; AWS preview adds noindex at Caddy.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/src/app/sitemap.xml/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "8bfab3dd45c89cb333b2a78c29fb2e0d7e23d16bcac3fde9b6a18a08b6af2473",
+      "symbols": [
+        "GET sitemap.xml"
+      ],
+      "purpose": "Emits published supported pages on the request host and excludes quarantined paths.",
+      "previous_behavior": "The sitemap belonged to WordPress.",
+      "new_behavior": "Emits published supported pages on the request host and excludes quarantined paths.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/tests/visual.e2e.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 79
+        }
+      ],
+      "working_tree_sha256": "da6db2dcafeecdda53ee2332b71c270613264cbc20954454ccabb959fb54599b",
+      "symbols": [
+        "Public visual regression suite"
+      ],
+      "purpose": "Compares anonymous desktop/mobile captures, measures viewport geometry and pixel ratios, checks overflow/mobile navigation and blocks analytics during testing.",
+      "previous_behavior": "No repeatable original-versus-clone screenshot comparison existed.",
+      "new_behavior": "Compares anonymous desktop/mobile captures, measures viewport geometry and pixel ratios, checks overflow/mobile navigation and blocks analytics during testing.",
+      "data_impact": "Only synthetic QA writes or anonymous public reads; never production user/order/enrollment mutations.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "apps/korea/tsconfig.json",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 41
+        }
+      ],
+      "working_tree_sha256": "f70b288c3af6635001481b32d8f9d12df250fd446d0943b6ed31294cdafd9428",
+      "symbols": [
+        "tsconfig.json workspace setup"
+      ],
+      "purpose": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "previous_behavior": "The Korea app/package had no workspace configuration.",
+      "new_behavior": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "deploy/ec2/backup.sh",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": 5,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 21
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 23,
+          "new_end": 23
+        }
+      ],
+      "working_tree_sha256": "461859826eb863456a27acba0cfdfe4504852d631925e079a13f8a0fd82f1220",
+      "symbols": [
+        "Daily backup job"
+      ],
+      "purpose": "Verifies atomic database archives and mutable Korea media backups with 14-day retention and private file permissions.",
+      "previous_behavior": "The dump pipeline could hide pg_dump failure and did not archive Korea uploads.",
+      "new_behavior": "Verifies atomic database archives and mutable Korea media backups with 14-day retention and private file permissions.",
+      "data_impact": "Reads the operational DB and uploaded media into private server backups; expires only matching backup archives older than 14 days.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "deploy/ec2/deploy-korea.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 185
+        }
+      ],
+      "working_tree_sha256": "4bd19ae7079488ff8d782614d5f49d9ea08509d2c0fce155fc30548da7712f42",
+      "symbols": [
+        "prepare and activate phases"
+      ],
+      "purpose": "Builds Korea/admin only, verifies public assets, takes and validates a DB backup, imports public posts, validates candidate routes, reloads an explicit Caddy config and preserves rollback containers.",
+      "previous_behavior": "The AWS deployment had no Korea service.",
+      "new_behavior": "Builds Korea/admin only, verifies public assets, takes and validates a DB backup, imports public posts, validates candidate routes, reloads an explicit Caddy config and preserves rollback containers.",
+      "data_impact": "Planned deployment: read live configuration in memory, create server-side backup, insert only namespaced public posts/import marker, create containers and update routing/manifest; no global DB restore or deletion.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "deploy/ec2/docker-compose.yml",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 14,
+          "new_end": 14
+        },
+        {
+          "old_start": 22,
+          "old_end": 22,
+          "new_start": 23,
+          "new_end": 23
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 74,
+          "new_end": 90
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 123,
+          "new_end": 123
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 137,
+          "new_end": 138
+        }
+      ],
+      "working_tree_sha256": "0d4c9df7825cc9c5ce1b0935731ddde20c0d0bc3777446da0bfa2ac09bd808d0",
+      "symbols": [
+        "korea, admin, caddy services"
+      ],
+      "purpose": "Adds Korea runtime/static mounts and admin media/public URL settings on the existing DB/network.",
+      "previous_behavior": "Compose defined two public sites and one admin.",
+      "new_behavior": "Adds Korea runtime/static mounts and admin media/public URL settings on the existing DB/network.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Incorrect deployment/configuration could affect service availability; validate candidates before switching."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "packages/korea/package.json",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "ef87705f18dca0fc3784f594363c69e35536bbc1a20b5ddea6679a4def3b7cd2",
+      "symbols": [
+        "package.json workspace setup"
+      ],
+      "purpose": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "previous_behavior": "The Korea app/package had no workspace configuration.",
+      "new_behavior": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "packages/korea/src/import.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "3f584b07ddbca7c6fa4b55ed62ad29405b52b38a2a9fff5c83d3d74d6f87d856",
+      "symbols": [
+        "main public content import"
+      ],
+      "purpose": "Imports 145 public board posts once with a durable marker and duplicate-safe inserts; later runs preserve edits and deletions.",
+      "previous_behavior": "Original MangBoard posts were only in WordPress backup.",
+      "new_behavior": "Imports 152 public board posts once with a durable marker and duplicate-safe inserts; later runs preserve edits and deletions.",
+      "data_impact": "Writes Korea public-post Page rows and a one-time SiteSetting marker transactionally; skipDuplicates and marker prevent destructive replay.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "packages/korea/src/model.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 103
+        }
+      ],
+      "working_tree_sha256": "853fc571151bfe3e2d38f1997ee82692a65788270d8f0ada7a518738450eca5f",
+      "symbols": [
+        "parseEdits, parseMenu, parsePartners, parsePost, renderTemplate"
+      ],
+      "purpose": "Converts bounded validated fields to escaped HTML, preserves responsive image/background behavior and blocks executable URLs.",
+      "previous_behavior": "There were no typed original-site CMS models.",
+      "new_behavior": "Converts bounded validated fields to escaped HTML, preserves responsive image/background behavior and blocks executable URLs. Validates FAQ sortOrder and describes archive-origin field links.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "packages/korea/src/server.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 127
+        }
+      ],
+      "working_tree_sha256": "e62199434b3297b07cd6b044145ad37253b2b348afeda3c080f350100c080cce",
+      "symbols": [
+        "renderPage, listPosts, incrementBoardView, cleanRichText"
+      ],
+      "purpose": "Combines public captured templates with namespaced DB overrides, menus, partner logos and sanitized board content; keeps view counts outside edit revisions. Preserves twenty-item board pages and bounded pagination, renders editable FAQ accordion items, propagates original-post title/image overrides to category/author cards and hides unpublished cards.",
+      "previous_behavior": "No Next renderer existed for the preserved original.",
+      "new_behavior": "Combines public captured templates with namespaced DB overrides, menus, partner logos and sanitized board content; keeps view counts outside edit revisions. Preserves twenty-item board pages and bounded pagination, renders editable FAQ accordion items, propagates original-post title/image overrides to category/author cards and hides unpublished cards.",
+      "data_impact": "Reads namespaced Page/SiteSetting overrides and public post records; writes isolated view-counter SiteSetting values without modifying edit revisions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "packages/korea/tests/model.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 56
+        }
+      ],
+      "working_tree_sha256": "0b9e69c800dbb15867eb5fdab0c9d1737e35ee13e94b4fc9c63478374454182f",
+      "symbols": [
+        "Six model regressions"
+      ],
+      "purpose": "Checks URL attacks, image/srcset edits, nested menus, media query backgrounds, rich HTML and public template invariants including mobile table classes.",
+      "previous_behavior": "No Korea input and template regressions existed.",
+      "new_behavior": "Checks URL attacks, image/srcset edits, nested menus, media query backgrounds, rich HTML and public template invariants including mobile table classes. Asserts 74 unique routes, fifteen archive-origin boundaries and FAQ template presence.",
+      "data_impact": "Only synthetic QA writes or anonymous public reads; never production user/order/enrollment mutations.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "packages/korea/tsconfig.json",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "7e97d43b87a23b4fe5ec074bca8fda552b5e4a04ad07c709a7721cb72d501990",
+      "symbols": [
+        "tsconfig.json workspace setup"
+      ],
+      "purpose": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "previous_behavior": "The Korea app/package had no workspace configuration.",
+      "new_behavior": "Declares the app/package compiler, runtime and workspace dependencies needed for reproducible Next builds and model tests.",
+      "data_impact": "No direct operational writes; presentation/configuration or typed inputs only, with persistence delegated to guarded Korea server functions.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "scripts/build-korea-content.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 417
+        }
+      ],
+      "working_tree_sha256": "24b7be75526fd3c2fea6f50a3674c1d2f40021949c2718f6f1c47ab28a80e8b2",
+      "symbols": [
+        "main, board_template, fields_for, background_rules"
+      ],
+      "purpose": "Produces immutable editable templates and a checksum manifest from anonymous captures and referenced public assets; quarantines uncategorized posts and excludes backend/admin scripts. Includes fifteen category/filtered-author archive routes and eight editable FAQ items; removes captured Owl runtime wrappers for responsive reinitialization and maps archive fields to original posts.",
+      "previous_behavior": "Original public HTML/assets were not a portable Next bundle.",
+      "new_behavior": "Produces immutable editable templates and a checksum manifest from anonymous captures and referenced public assets; quarantines uncategorized posts and excludes backend/admin scripts. Includes fifteen category/filtered-author archive routes and eight editable FAQ items; removes captured Owl runtime wrappers for responsive reinitialization and maps archive fields to original posts.",
+      "data_impact": "Reads local WordPress backup/captures and writes generated public-only templates/assets; private SQL/config/submissions stay outside public output and Git.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    },
+    {
+      "path": "scripts/prepare-korea-posts.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 41
+        }
+      ],
+      "working_tree_sha256": "769c83e56cf4a7c7a0467c960bed9f8a5a3511143e9c38a366e2f8b106f24105",
+      "symbols": [
+        "Public board extraction"
+      ],
+      "purpose": "Extracts public board metadata, decodes entities and preserves dates, thumbnails, attachments and flags; does not import private submissions or WordPress accounts.",
+      "previous_behavior": "MangBoard records were embedded in the backed-up WordPress database.",
+      "new_behavior": "Extracts public board metadata, decodes entities and preserves dates, thumbnails, attachments and flags; does not import private submissions or WordPress accounts.",
+      "data_impact": "Reads local WordPress backup/captures and writes generated public-only templates/assets; private SQL/config/submissions stay outside public output and Git.",
+      "access_control_impact": "No new account privileges; public reads expose published content only and private intake is served only by the authenticated admin.",
+      "risks": [
+        "Original third-party animation/video/provider behavior and editing validation can affect parity; keep captured baseline and existing services available."
+      ],
+      "rollback": "Restore this file from baseline c78e302, rebuild the affected app and route back to the retained admin container; remove only the new Korea host route if rolling back the site. Preserve Korea inquiry rows/media and import marker; do not restore the whole live database over later transactions."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Before this commit, production AWS/container/routing metadata and the user-authorized WordPress public site/backups were read. QA writes are confined to bayada_functional_qa at localhost:55433. Production Korea import/deployment is planned after commit and will be recorded separately; no production users, courses, payments or orders were changed.",
+    "schema_migration": "None: existing Page, SiteSetting and AuditLog tables are reused under korea/ and korea. namespaces. Public-only import has a durable replay guard.",
+    "external_side_effects": [
+      "Anonymous original-site read/capture and private local backup storage; no messages sent to real recipients.",
+      "QA SMTP is pointed at a closed localhost port and configured recipient lists are empty.",
+      "AWS deployment script is prepared; activation evidence will be recorded after execution."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter @bayada/korea test",
+      "result": "passed",
+      "evidence": "Six URL/sanitization/template/responsive regressions passed."
+    },
+    {
+      "command": "pnpm --filter korea typecheck; pnpm --filter admin typecheck; production builds of both apps",
+      "result": "passed",
+      "evidence": "Both typechecks and final Next standalone builds completed."
+    },
+    {
+      "command": "node --import=./packages/db/node_modules/tsx/dist/loader.mjs apps/admin/tests/korea.integration.mts",
+      "result": "passed",
+      "evidence": "34 checks; 74 published paths respond, 127 quarantined paths return404. Synthetic DB only. output/korea-integration-evidence.json."
+    },
+    {
+      "command": "pnpm --filter @bayada/db exec tsx --test ../../apps/admin/tests/project-workspace.test.ts",
+      "result": "passed",
+      "evidence": "Nine existing project-workspace/customer permission regressions passed."
+    },
+    {
+      "command": "python -m py_compile deploy/ec2/deploy-korea.py; git diff --check",
+      "result": "passed",
+      "evidence": "Deployment Python compiles and Git patch has no whitespace errors."
+    },
+    {
+      "command": "Supplemental Git diff hunk and SHA-256 checks for .gitignore/.dockerignore/Caddyfile/.env.example",
+      "result": "passed",
+      "evidence": "All four authored configurations match their recorded Git-derived ranges and current file hashes."
+    },
+    {
+      "command": "Oinzi synthetic admin UI save/public inspection and two-tab revision conflict",
+      "result": "passed",
+      "evidence": "Text/image/menu/partner save and restore, board create/edit/delete, new record navigation, inquiry status/memo and stale-tab rejection observed. output/korea-cms-ui-evidence.json."
+    },
+    {
+      "command": "152 public board/FAQ detail HTTP checks against final standalone QA runtime",
+      "result": "passed",
+      "evidence": "All titles and status200 validated; output/korea-board-detail-evidence.json."
+    },
+    {
+      "command": "Direct final renderer test on isolated QA database",
+      "result": "passed",
+      "evidence": "Short original-post title propagates to its category card; unpublished card is removed; prior override restored. output/korea-archive-cms-evidence.json."
+    },
+    {
+      "command": "Oinzi FAQ title save and original accordion inspection",
+      "result": "passed",
+      "evidence": "Edited question appeared on public FAQ; original restored. Existing menu/partner/board/inquiry/CAS evidence retained."
+    },
+    {
+      "command": "Public asset tar manifest verification",
+      "result": "passed",
+      "evidence": "989 referenced frontend assets match their SHA-256 manifest; no SQL/private root config or private submissions are included."
+    },
+    {
+      "command": "Public desktop/mobile visual regression: original59 + additions + final runtime rerun",
+      "result": "passed",
+      "evidence": "118 baseline captures, 20 archive/FAQ/newsroom captures and 12 affected-screen recaptures completed. Final captures have no horizontal overflow. FAQ1.000, main newsroom0.9986/0.9996, blog archive0.9923/0.9858; dynamic homepage0.9945/0.9664 and archive thumbnail rounding differences remain. Evidence under output/korea-visual-*."
+    }
+  ],
+  "residual_risks": [
+    "Original official www DNS remains unchanged until preview review and deliberate cutover.",
+    "127 uncategorized unrelated/spam-like legacy posts are retained privately for review, not published by default; original backup is not deleted.",
+    "External SMTP delivery is not configured or demonstrated; intake persists in admin.",
+    "WordPress historical private inquiries/accounts are backed up but not imported into the new CMS.",
+    "Five unused source assets already return404 on the original; third-party Vimeo/provider uptime remains external.",
+    "Visual equality is measured at finite viewports with timing-dependent sliders/videos; do not interpret measured ratios as universal 100% identity.",
+    "Locally served originals can differ slightly from Photon CDN image resizing/cropping; animation/video timing and finite viewport measurements do not establish universal pixel equality."
+  ],
+  "commit": "same-as-metadata-file",
+  "configuration_changes": [
+    {
+      "path": ".gitignore",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 17,
+          "new_end": 23
+        }
+      ],
+      "working_tree_sha256": "89ecd7c7b1f719f1a4dc1bf142e7ba8c6e98127e573b44364bba1b338a2ee7eb",
+      "purpose": "Exclude generated public assets, local captures/private backups and Python caches from source tracking.",
+      "previous_behavior": "The original-site service and private capture exclusions were not represented.",
+      "new_behavior": "Exclude generated public assets, local captures/private backups and Python caches from source tracking.",
+      "data_impact": "Configuration only; no operational rows are modified.",
+      "access_control_impact": "Keeps private backup artifacts out of source/images and preserves authenticated admin routing.",
+      "risks": [
+        "Host/environment values must match the deployed preview."
+      ],
+      "rollback": "Restore the baseline configuration and explicitly reload the saved prior Caddy configuration; retain backups and media."
+    },
+    {
+      "path": ".dockerignore",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 23,
+          "new_end": 25
+        }
+      ],
+      "working_tree_sha256": "4164703d1d4926e1be0abf6b7c9c40ed0cd741e82ef2c463c3b4e5b2103ffcd3",
+      "purpose": "Exclude private output/backups and separately mounted original frontend assets from Docker build context.",
+      "previous_behavior": "The original-site service and private capture exclusions were not represented.",
+      "new_behavior": "Exclude private output/backups and separately mounted original frontend assets from Docker build context.",
+      "data_impact": "Configuration only; no operational rows are modified.",
+      "access_control_impact": "Keeps private backup artifacts out of source/images and preserves authenticated admin routing.",
+      "risks": [
+        "Host/environment values must match the deployed preview."
+      ],
+      "rollback": "Restore the baseline configuration and explicitly reload the saved prior Caddy configuration; retain backups and media."
+    },
+    {
+      "path": "deploy/ec2/Caddyfile",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 11,
+          "new_end": 15
+        }
+      ],
+      "working_tree_sha256": "aa138eb30a3d36ec21d02b78b7faafdf5389674bc4dfd516084ed060a9798a8c",
+      "purpose": "Declare the Korea host beside the three existing app hosts.",
+      "previous_behavior": "The original-site service and private capture exclusions were not represented.",
+      "new_behavior": "Declare the Korea host beside the three existing app hosts.",
+      "data_impact": "Configuration only; no operational rows are modified.",
+      "access_control_impact": "Keeps private backup artifacts out of source/images and preserves authenticated admin routing.",
+      "risks": [
+        "Host/environment values must match the deployed preview."
+      ],
+      "rollback": "Restore the baseline configuration and explicitly reload the saved prior Caddy configuration; retain backups and media."
+    },
+    {
+      "path": "deploy/ec2/.env.example",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 24,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "99af3cf320070fc73e15a9243e77bd7f5ea8460c52a29984ed04e35806e7d4c0",
+      "purpose": "Document Korea public host and mail sender settings without credentials.",
+      "previous_behavior": "The original-site service and private capture exclusions were not represented.",
+      "new_behavior": "Document Korea public host and mail sender settings without credentials.",
+      "data_impact": "Configuration only; no operational rows are modified.",
+      "access_control_impact": "Keeps private backup artifacts out of source/images and preserves authenticated admin routing.",
+      "risks": [
+        "Host/environment values must match the deployed preview."
+      ],
+      "rollback": "Restore the baseline configuration and explicitly reload the saved prior Caddy configuration; retain backups and media."
+    }
+  ],
+  "generated_content": [
+    {
+      "path": "packages/korea/content/assets-manifest.json",
+      "bytes": 206823,
+      "sha256": "478fcb9295da2eb831231af0d15de85f0f2f04cb4a65be57ef4dd25e31a1e496",
+      "provenance": "Generated public-only capture/board/FAQ data; 127 uncategorized posts remain quarantined."
+    },
+    {
+      "path": "packages/korea/content/boards.json",
+      "bytes": 1344170,
+      "sha256": "5cbc221d0ecec4d24a7bc4881652198da011f46b9a352959a650ac6cce416771",
+      "provenance": "Generated public-only capture/board/FAQ data; 127 uncategorized posts remain quarantined."
+    },
+    {
+      "path": "packages/korea/content/quarantine.json",
+      "bytes": 34479,
+      "sha256": "46e2ebdc1263f626273cba49a86c48a6e3cde6cf20900e9b35da3d65f7276941",
+      "provenance": "Generated public-only capture/board/FAQ data; 127 uncategorized posts remain quarantined."
+    },
+    {
+      "path": "packages/korea/content/templates.json",
+      "bytes": 3837135,
+      "sha256": "9df3d6d1de6c3a3ea0def9cf36d501ec26872f88ba33b31f892d158f082d5c98",
+      "provenance": "Generated public-only capture/board/FAQ data; 127 uncategorized posts remain quarantined."
+    }
+  ]
+}

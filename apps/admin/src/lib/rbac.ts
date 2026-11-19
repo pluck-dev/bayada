@@ -43,6 +43,8 @@ export const PERMISSION_DEFS = [
   { key: "web.settings", group: "웹사이트", label: "홈페이지 사이트 정보", desc: "푸터·문의 페이지의 회사·연락처 정보, SNS 링크, 문의 알림 메일을 바꿉니다." },
   { key: "web.members", group: "웹사이트", label: "홈페이지 회원", desc: "홈페이지 회원(이용자·보호자·제공자·기관) 목록·상세를 보고 회원 유형·방문 인력 지정·탈퇴 처리를 합니다." },
   { key: "web.bookings", group: "웹사이트", label: "서비스 예약·방문 기록", desc: "방문 서비스 예약을 확정·담당자 배정·완료·취소하고 방문 기록과 만족도를 봅니다." },
+  { key: "korea.content", group: "바야다코리아", label: "기존 홈페이지 콘텐츠", desc: "바야다코리아 페이지·메뉴·이미지·게시판을 편집합니다. 리뉴얼 브랜드 콘텐츠와 분리됩니다." },
+  { key: "korea.inquiries", group: "바야다코리아", label: "기존 홈페이지 상담", desc: "바야다코리아에서 접수한 상담을 조회·처리·삭제합니다." },
 ] as const;
 
 export type Permission = (typeof PERMISSION_DEFS)[number]["key"];
@@ -141,6 +143,8 @@ const HOME_ORDER: [Permission, string][] = [
   ["web.bookings", "/web/bookings"],
   ["web.members", "/web/members"],
   ["web.settings", "/web/settings"],
+  ["korea.content", "/korea"],
+  ["korea.inquiries", "/korea/inquiries"],
 ];
 
 /** 사용자별 첫 화면 — 가진 권한 중 사이드바 순서로 첫 번째 (권한이 하나도 없으면 로그인 자체가 막힌다) */

@@ -8,6 +8,11 @@
 	reverse_proxy web:3000
 }
 
+{$KOREA_HOST} {
+	encode zstd gzip
+	reverse_proxy korea:3000
+}
+
 {$ACADEMY_HOST} {
 	encode zstd gzip
 	reverse_proxy academy:3000

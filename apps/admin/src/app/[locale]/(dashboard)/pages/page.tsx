@@ -8,7 +8,7 @@ import { Badge, LinkButton, PageHeader, cx, tableClass, tableWrap, tdClass, thCl
 export default async function PagesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   await requirePage("pages", locale);
-  const rows = await prisma.page.findMany({ select: { slug: true, title: true, updatedAt: true, content: true } });
+  const rows = await prisma.page.findMany({ where: { slug: { in: PAGE_DOCS.map(doc => doc.slug) } }, select: { slug: true, title: true, updatedAt: true, content: true } });
   const bySlug = new Map(rows.map((r) => [r.slug, r]));
   const base = `/${locale}/pages`;
 

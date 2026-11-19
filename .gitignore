@@ -14,3 +14,10 @@ packages/db/src/generated
 search/
 LM/
 docs/
+
+# Generated public WordPress asset bundle is transferred separately to AWS.
+apps/korea/public/wp-content/
+apps/korea/public/wp-includes/
+# Local captures, backups and QA evidence can contain operational/private data.
+/output/
+__pycache__/
