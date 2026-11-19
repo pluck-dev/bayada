@@ -1,0 +1,725 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261119-220116-improve-korea-admin-editing-and-intake-usability",
+  "created_at": "2026-11-19T22:01:16+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "2c50be9649c0d44540e4b60f7284a47cccb8b690",
+  "request": "관리자 UI 인지와 사용성 개선",
+  "title": "Improve Korea admin editing and intake usability",
+  "purpose": "Make CMS selection, editing and saved state recognizable on desktop and mobile",
+  "files": [
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/boards/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 8,
+          "new_end": 8
+        },
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 11,
+          "new_end": 11
+        },
+        {
+          "old_start": 12,
+          "old_end": 12,
+          "new_start": 13,
+          "new_end": 13
+        }
+      ],
+      "working_tree_sha256": "a33a3b7604e22f882c497f8b020adb06b4fe0479491c7b212744e687b1de45b8",
+      "symbols": [
+        "BoardsPage"
+      ],
+      "purpose": "Show searchable post summaries, selected editor or guidance; sanitize initial rich HTML.",
+      "previous_behavior": "Unfiltered list opened a blank editor by default.",
+      "new_behavior": "Show searchable post summaries, selected editor or guidance; sanitize initial rich HTML.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/inquiries/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 5,
+          "new_start": 4,
+          "new_end": 5
+        },
+        {
+          "old_start": 20,
+          "old_end": 27,
+          "new_start": 20,
+          "new_end": 26
+        }
+      ],
+      "working_tree_sha256": "9526321a08865643117903a6112cdfd4c033d92fa78947553adb5e30fdc72b4c",
+      "symbols": [
+        "InquiriesPage"
+      ],
+      "purpose": "Load guarded inbox records with status totals, filters, working reset and pagination.",
+      "previous_behavior": "Private records and controls were long disclosure rows.",
+      "new_behavior": "Load guarded inbox records with status totals, filters, working reset and pagination.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 1,
+          "new_start": null,
+          "new_end": null
+        },
+        {
+          "old_start": 3,
+          "old_end": 3,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 6,
+          "old_end": 20,
+          "new_start": 5,
+          "new_end": 14
+        }
+      ],
+      "working_tree_sha256": "2911ec5af3ee30d116b5184a018b2a737970ae2b16d045347fe53a1ccba2a972",
+      "symbols": [
+        "KoreaPage"
+      ],
+      "purpose": "Use searchable page selection and categorized editing with public preview.",
+      "previous_behavior": "All captured paths were mixed in one select.",
+      "new_behavior": "Use searchable page selection and categorized editing with public preview.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/partners/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 7,
+          "old_end": 7,
+          "new_start": 7,
+          "new_end": 7
+        }
+      ],
+      "working_tree_sha256": "163819414ce7de03a257a49b561ee245c0736c1af32516da7e55849e07654abb",
+      "symbols": [
+        "PartnersPage"
+      ],
+      "purpose": "Pass public origin into selected logo editor.",
+      "previous_behavior": "Relative logo URLs had no preview origin.",
+      "new_behavior": "Pass public origin into selected logo editor.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/Sidebar.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 114,
+          "old_end": 115,
+          "new_start": 114,
+          "new_end": 115
+        },
+        {
+          "old_start": 118,
+          "old_end": 118,
+          "new_start": 118,
+          "new_end": 118
+        }
+      ],
+      "working_tree_sha256": "bc070302d74d94940ec219a76d138ffc78b61a704a4dec5d4ea24cada063fc12",
+      "symbols": [
+        "KOREA"
+      ],
+      "purpose": "Use direct task names and label consultation and recruitment together.",
+      "previous_behavior": "Task labels mixed page and menu actions and omitted recruitment.",
+      "new_behavior": "Use direct task names and label consultation and recruitment together.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaEditorTools.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 45
+        }
+      ],
+      "working_tree_sha256": "467b79bc9e22805f21dea2a58934feb5bcce595871deb940e66ba89b6c9a16d5",
+      "symbols": [
+        "useKoreaDraft, KoreaSaveBar, KoreaAssetInput, uploadKoreaFile"
+      ],
+      "purpose": "Share discard confirmation, sticky save feedback, image preview and authenticated uploads.",
+      "previous_behavior": "No shared editor draft warning or image replacement control existed.",
+      "new_behavior": "Share discard confirmation, sticky save feedback, image preview and authenticated uploads.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaInquiryEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 2,
+          "old_end": 2,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": 6,
+          "old_end": 8,
+          "new_start": 6,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "1c76b36a989053fc183ac44472720e3675b326a92a45b8d83ad369e8b53c8f24",
+      "symbols": [
+        "KoreaInquiryEditor"
+      ],
+      "purpose": "Separate processing and privacy controls and expose draft and saved state.",
+      "previous_behavior": "Processing and destructive controls were visually mixed.",
+      "new_behavior": "Separate processing and privacy controls and expose draft and saved state.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaInquiryInbox.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 18
+        }
+      ],
+      "working_tree_sha256": "98cf32dadb16c5ccd70ae7bf1346769f89a6b1657ab7df448ec1da7cc46b241a",
+      "symbols": [
+        "KoreaInquiryInbox"
+      ],
+      "purpose": "Show a selected inquiry, contact, message, notes and status beside its summary list.",
+      "previous_behavior": "Details were embedded in a long collapsed list.",
+      "new_behavior": "Show a selected inquiry, contact, message, notes and status beside its summary list.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaMediaUpload.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 2,
+          "old_end": 9,
+          "new_start": 2,
+          "new_end": 7
+        }
+      ],
+      "working_tree_sha256": "46759f8094c24a445e1f04a669240854f1dc450f730f58993d84f8ad5a553e95",
+      "symbols": [
+        "KoreaMediaUpload"
+      ],
+      "purpose": "Use file-drop controls, feedback and a copy-address button.",
+      "previous_behavior": "Native file selection had weak upload feedback.",
+      "new_behavior": "Use file-drop controls, feedback and a copy-address button.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaMenuEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 7
+        },
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 11,
+          "new_end": 11
+        },
+        {
+          "old_start": 14,
+          "old_end": 14,
+          "new_start": 15,
+          "new_end": 16
+        }
+      ],
+      "working_tree_sha256": "c8adcd1cb8566431b117597c04496cd9ebcd65738a80d3ffb052971823662b7d",
+      "symbols": [
+        "MenuTree, KoreaMenuEditor"
+      ],
+      "purpose": "Make branches expandable and keep save feedback visible.",
+      "previous_behavior": "Every nested menu row stayed expanded.",
+      "new_behavior": "Make branches expandable and keep save feedback visible.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPageBrowser.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 16
+        }
+      ],
+      "working_tree_sha256": "af9efdd0e9397c34e38d86e4dc1bd469a2a68b7d708806651a29e2ee6d320e7b",
+      "symbols": [
+        "KoreaPageBrowser"
+      ],
+      "purpose": "Separate business pages and archives with searchable selection and a mobile disclosure.",
+      "previous_behavior": "Page selection had no search or mobile collapse.",
+      "new_behavior": "Separate business pages and archives with searchable selection and a mobile disclosure.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPageEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 3,
+          "new_end": 3
+        },
+        {
+          "old_start": 5,
+          "old_end": 5,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": 7,
+          "old_end": 9,
+          "new_start": 8,
+          "new_end": 10
+        },
+        {
+          "old_start": 11,
+          "old_end": 20,
+          "new_start": 12,
+          "new_end": 29
+        }
+      ],
+      "working_tree_sha256": "3fe7d9f788b8354e0596accc6e013d995ae6a46b2b17810a1362691b4bd20030",
+      "symbols": [
+        "KoreaPageEditor"
+      ],
+      "purpose": "Separate text, media and links with search, compact short inputs, image replacement and dirty markers.",
+      "previous_behavior": "Text and media URLs were undifferentiated fields.",
+      "new_behavior": "Separate text, media and links with search, compact short inputs, image replacement and dirty markers.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPartnersEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 5,
+          "old_end": 5,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": 7,
+          "old_end": 11,
+          "new_start": 7,
+          "new_end": 14
+        }
+      ],
+      "working_tree_sha256": "c3ea498772927e2ffa6bbbefabeda9fe68423c56536e451f95396a1d391d744a",
+      "symbols": [
+        "KoreaPartnersEditor"
+      ],
+      "purpose": "Provide institution search and selection, logo preview/upload and ordering.",
+      "previous_behavior": "All logo editors were expanded as raw addresses.",
+      "new_behavior": "Provide institution search and selection, logo preview/upload and ordering.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPostEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 2,
+          "old_end": 2,
+          "new_start": 2,
+          "new_end": 2
+        },
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 8,
+          "new_end": 8
+        },
+        {
+          "old_start": 9,
+          "old_end": 9,
+          "new_start": 10,
+          "new_end": 10
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 13,
+          "new_end": 13
+        },
+        {
+          "old_start": 13,
+          "old_end": 14,
+          "new_start": 15,
+          "new_end": 16
+        },
+        {
+          "old_start": 16,
+          "old_end": 20,
+          "new_start": 18,
+          "new_end": 22
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 25,
+          "new_end": 31
+        }
+      ],
+      "working_tree_sha256": "5c05df4a64fbf3c848af5cb0ea4d0fe6da88e3475d4812d2923027f477f973f5",
+      "symbols": [
+        "KoreaPostEditor, KoreaRichText"
+      ],
+      "purpose": "Provide simple rich text, plaintext paste, sanitized initial content, image replacement and save state.",
+      "previous_behavior": "Bodies exposed raw HTML and publication checkboxes.",
+      "new_behavior": "Provide simple rich text, plaintext paste, sanitized initial content, image replacement and save state.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaPostList.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 8
+        }
+      ],
+      "working_tree_sha256": "c280f13d70cf5788ece69989ae6e9519244ef9fd71ffb97504c963b52a31a7ca",
+      "symbols": [
+        "KoreaPostList"
+      ],
+      "purpose": "Filter titles and highlight selected articles with publication badges.",
+      "previous_behavior": "Post rows had no search or selection emphasis.",
+      "new_behavior": "Filter titles and highlight selected articles with publication badges.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/src/components/korea/KoreaSettingsEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 5,
+          "old_end": 5,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 7,
+          "new_end": 7
+        },
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 11,
+          "new_end": 12
+        }
+      ],
+      "working_tree_sha256": "ec3c1de0754a2a67f33167f20260343e7229e3a5be08ac6c050c3e3a5dda13ac",
+      "symbols": [
+        "KoreaSettingsEditor"
+      ],
+      "purpose": "Use a switch and saved-state bar while retaining mail behavior.",
+      "previous_behavior": "Reception settings had no draft feedback.",
+      "new_behavior": "Use a switch and saved-state bar while retaining mail behavior.",
+      "data_impact": "Uses existing guarded CMS reads and save actions; no schema change or backfill. Authorized file selection creates UUID public media through the existing API.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Unsaved changes can be discarded after confirmation; pasted rich text intentionally loses external formatting."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "apps/admin/tests/korea-ui.e2e.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "dc0fb5f60257d194d214e2dc21a2dfd33a6a65859fe64f3251dd62e69b0cef9c",
+      "symbols": [
+        "Isolated headless UI checks"
+      ],
+      "purpose": "Check search, discard cancellation, saved edits, articles, inquiry notes, reset and 390px navigation.",
+      "previous_behavior": "No regression covered these editor workflows.",
+      "new_behavior": "Check search, discard cancellation, saved edits, articles, inquiry notes, reset and 390px navigation.",
+      "data_impact": "Synthetic QA edits only, guarded to localhost:55433/bayada_functional_qa and example.test accounts.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "QA fixtures remain in the isolated test DB."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    },
+    {
+      "path": "deploy/ec2/deploy-korea.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 40,
+          "new_end": 40
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 42,
+          "new_end": 44
+        },
+        {
+          "old_start": 51,
+          "old_end": 51,
+          "new_start": 55,
+          "new_end": 55
+        },
+        {
+          "old_start": 75,
+          "old_end": 93,
+          "new_start": 79,
+          "new_end": 99
+        },
+        {
+          "old_start": 96,
+          "old_end": 96,
+          "new_start": 102,
+          "new_end": 102
+        },
+        {
+          "old_start": 112,
+          "old_end": 112,
+          "new_start": 118,
+          "new_end": 118
+        },
+        {
+          "old_start": 129,
+          "old_end": 129,
+          "new_start": 135,
+          "new_end": 135
+        },
+        {
+          "old_start": 142,
+          "old_end": 142,
+          "new_start": 148,
+          "new_end": 150
+        },
+        {
+          "old_start": 153,
+          "old_end": 153,
+          "new_start": 161,
+          "new_end": 161
+        },
+        {
+          "old_start": 157,
+          "old_end": 157,
+          "new_start": 165,
+          "new_end": 165
+        },
+        {
+          "old_start": 184,
+          "old_end": 184,
+          "new_start": 192,
+          "new_end": 192
+        }
+      ],
+      "working_tree_sha256": "eb44b2fd3c5ecbaa988a47e9e9fe974a4c00390ec6d8793b1900abd3febd8fd8",
+      "symbols": [
+        "main --admin-only"
+      ],
+      "purpose": "Prepare and switch only admin while preserving public containers, static assets and per-app commits.",
+      "previous_behavior": "Deployment replaced both Korea and admin and needed an asset bundle.",
+      "new_behavior": "Prepare and switch only admin while preserving public containers, static assets and per-app commits.",
+      "data_impact": "Reads deployment manifest and import marker, verifies a DB backup, and switches only admin. No import or migration in admin-only mode.",
+      "access_control_impact": "No permission expansion; korea.content and korea.inquiries guards, revision checks and audit writes remain unchanged.",
+      "risks": [
+        "Candidate startup or health may fail; the previous Caddy config and containers are retained for rollback."
+      ],
+      "rollback": "Restore the prior admin image and saved Caddy config; JSON documents and media remain compatible and need no database rollback."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No live operational rows created, updated or deleted by this task. Production UI checks are read-only; functional edits use isolated synthetic QA.",
+    "schema_migration": "None; existing namespaced JSON documents and actions stay compatible.",
+    "external_side_effects": [
+      "Admin-only container deployment on existing AWS host; no new paid resources, SMTP changes or messages."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter admin build",
+      "result": "passed",
+      "evidence": "Final Next production build and TypeScript passed; output/admin-ui-build.log."
+    },
+    {
+      "command": "korea.integration.mts",
+      "result": "passed",
+      "evidence": "34 guarded API and permission checks and 74 public paths passed in synthetic QA; output/korea-integration-evidence.json."
+    },
+    {
+      "command": "python apps/admin/tests/korea-ui.e2e.py",
+      "result": "passed",
+      "evidence": "7 workflow groups passed including persisted edits and mobile overflow; output/admin-ui-e2e-evidence.json and reviewed screenshots."
+    },
+    {
+      "command": "python -m py_compile deploy/ec2/deploy-korea.py; git diff --check",
+      "result": "passed",
+      "evidence": "Deployment script compiles and diff has no whitespace errors."
+    }
+  ],
+  "residual_risks": [
+    "Browser rich-text commands can normalize legacy formatting; pasted content retains plain text.",
+    "This pass focuses on the Korea CMS and common task labels; academy and renewal-brand feature layouts are unchanged."
+  ],
+  "commit": "same-as-metadata-file"
+}

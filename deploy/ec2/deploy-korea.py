@@ -37,7 +37,11 @@ def main():
     parser.add_argument('--expected-active', required=True)
     parser.add_argument('--phase', choices=['prepare', 'activate'], required=True)
     parser.add_argument('--skip-content-import', action='store_true', help='Asset/code-only release; verify the earlier import marker instead')
+    parser.add_argument('--admin-only', action='store_true', help='Replace only admin and preserve all public-site containers and assets')
     args = parser.parse_args()
+    if args.admin_only and not args.skip_content_import:
+        parser.error('--admin-only needs --skip-content-import')
+    services = ['admin'] if args.admin_only else ['korea', 'admin']
     if not re.fullmatch(r'[a-f0-9]{40}', args.commit):
         raise ValueError('Use a full commit hash')
     app = Path(__file__).resolve().parents[2]
@@ -48,7 +52,7 @@ def main():
     if previous['commit'] != args.expected_active:
         raise RuntimeError('Active deployment changed; review before continuing')
     short = args.commit[:8]
-    names = {a: f'bayada-live-{short}-{a}' for a in ['korea', 'admin']}
+    names = {a: f'bayada-live-{short}-{a}' for a in services}
     state_path = release / 'korea-deployment.json'
     old_admin = previous['containers']['admin']
     admin = inspect(old_admin)
@@ -72,28 +76,30 @@ def main():
             raise RuntimeError('This release was already prepared')
         if any(inspect_name in run('docker', 'ps', '-a', '--format', '{{.Names}}', capture=True).splitlines() for inspect_name in names.values()):
             raise RuntimeError('Candidate container name already exists')
-        static.mkdir()
-        bundle = release / 'public-assets.tar.gz'
-        approved = json.loads((app / 'packages/korea/content/assets-manifest.json').read_text())
-        entries = approved if isinstance(approved, list) else approved['assets']
-        # Only manifest-listed public frontend assets, never SQL or private submissions.
-        expected = {x['path'].lstrip('/'): x for x in entries}
-        with tarfile.open(bundle) as archive:
-            for member in archive.getmembers():
-                if not member.isfile() or member.name not in expected or '..' in Path(member.name).parts:
-                    raise RuntimeError('Unexpected static asset in bundle: ' + member.name)
-                data = archive.extractfile(member).read()
-                if hashlib.sha256(data).hexdigest() != expected[member.name]['sha256']:
-                    raise RuntimeError('Static checksum mismatch: ' + member.name)
-                target = static / member.name
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(data)
-        for name in expected:
-            if not (static / name).is_file():
-                raise RuntimeError('Missing static asset: ' + name)
+        expected = {}
+        if not args.admin_only:
+            static.mkdir()
+            bundle = release / 'public-assets.tar.gz'
+            approved = json.loads((app / 'packages/korea/content/assets-manifest.json').read_text())
+            entries = approved if isinstance(approved, list) else approved['assets']
+            # Only manifest-listed public frontend assets, never SQL or private submissions.
+            expected = {x['path'].lstrip('/'): x for x in entries}
+            with tarfile.open(bundle) as archive:
+                for member in archive.getmembers():
+                    if not member.isfile() or member.name not in expected or '..' in Path(member.name).parts:
+                        raise RuntimeError('Unexpected static asset in bundle: ' + member.name)
+                    data = archive.extractfile(member).read()
+                    if hashlib.sha256(data).hexdigest() != expected[member.name]['sha256']:
+                        raise RuntimeError('Static checksum mismatch: ' + member.name)
+                    target = static / member.name
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(data)
+            for name in expected:
+                if not (static / name).is_file():
+                    raise RuntimeError('Missing static asset: ' + name)
         media.mkdir(mode=0o750, exist_ok=True)
         os.chown(media, 1000, 1000)
-        for service in ['korea', 'admin']:
+        for service in services:
             run('docker', 'build', '--build-arg', 'APP=' + service, '--build-arg', 'NEXT_PUBLIC_SITE_URL=' + previous['publicUrls']['academy'], '-t', f'bayada-{service}:release-{short}', '.')
         if not args.skip_content_import:
             run('docker', 'build', '--target', 'build', '--build-arg', 'APP=korea', '-t', 'bayada-korea-import:' + short, '.')
@@ -109,7 +115,7 @@ def main():
         else:
             import_env = dict(os.environ, DATABASE_URL=environment['DATABASE_URL'], DIRECT_URL=environment['DATABASE_URL'])
             subprocess.run(['docker', 'run', '--rm', '--network', 'bayada_default', '-e', 'DATABASE_URL', '-e', 'DIRECT_URL', 'bayada-korea-import:' + short, 'pnpm', '--filter', '@bayada/korea', 'exec', 'tsx', 'src/import.ts'], env=import_env, check=True)
-        for service in ['korea', 'admin']:
+        for service in services:
             env = dict(environment) if service == 'admin' else {k: environment[k] for k in ['DATABASE_URL', 'SMTP_URL', 'MAIL_FROM', 'ADMIN_PUBLIC_URL'] if k in environment}
             env.update(DIRECT_URL=environment['DATABASE_URL'], KOREA_MEDIA_DIR='/korea-media', HOSTNAME='0.0.0.0', PORT='3000')
             if service == 'admin':
@@ -126,7 +132,7 @@ def main():
                 command += ['-e', key]
             command += [f'bayada-{service}:release-{short}']
             subprocess.run(command, env=dict(os.environ, **env), check=True, stdout=subprocess.DEVNULL)
-        for service, path in [('korea', '/'), ('admin', '/ko/auth/login')]:
+        for service, path in [(s, '/' if s == 'korea' else '/ko/auth/login') for s in services]:
             for attempt in range(30):
                 test = subprocess.run(['docker', 'exec', names[service], 'node', '-e', f'fetch("http://127.0.0.1:3000{path}").then(r=>process.exit(r.status===200?0:1))'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if test.returncode == 0:
@@ -139,7 +145,9 @@ def main():
         if before.count(needle) != 1:
             raise RuntimeError('Unexpected existing admin route')
         candidate = before.replace(needle, 'reverse_proxy ' + names['admin'] + ':3000')
-        if previous['containers'].get('korea'):
+        if args.admin_only:
+            pass
+        elif previous['containers'].get('korea'):
             old_route = 'reverse_proxy ' + previous['containers']['korea'] + ':3000'
             if candidate.count(old_route) != 1: raise RuntimeError('Unexpected Korea route')
             candidate = candidate.replace(old_route, 'reverse_proxy ' + names['korea'] + ':3000')
@@ -150,11 +158,11 @@ def main():
         for kind in ['previous', 'candidate']:
             run('docker', 'cp', str(release / ('Caddyfile.' + kind)), caddy_name + ':/tmp/korea-' + short + '-' + kind)
         run('docker', 'exec', caddy_name, 'caddy', 'validate', '--config', '/tmp/korea-' + short + '-candidate', '--adapter', 'caddyfile')
-        atomic(state_path, dict(commit=args.commit, preparedAt=time.time(), containers=names, backup=str(backup), backupVerified=True, staticAssets=len(expected), publicUrl=url, previousCommit=previous['commit'], status='prepared'))
+        atomic(state_path, dict(commit=args.commit, preparedAt=time.time(), containers=names, adminOnly=args.admin_only, backup=str(backup), backupVerified=True, staticAssets=len(expected), publicUrl=url, previousCommit=previous['commit'], status='prepared'))
         print(json.dumps({'status': 'prepared', 'containers': names, 'staticAssets': len(expected)}))
         return
     state = json.loads(state_path.read_text())
-    if state['status'] != 'prepared' or state['commit'] != args.commit:
+    if state['status'] != 'prepared' or state['commit'] != args.commit or state.get('adminOnly', False) != args.admin_only:
         raise RuntimeError('Candidate was not prepared')
     try:
         run('docker', 'exec', caddy_name, 'caddy', 'reload', '--config', '/tmp/korea-' + short + '-candidate', '--adapter', 'caddyfile')
@@ -181,7 +189,7 @@ def main():
         temp_link = Path('/srv/bayada/current-korea-next')
         temp_link.symlink_to(app)
         temp_link.replace(current)
-        result = dict(previous, commit=args.commit, release=str(app), previousDeployment=previous, containers=dict(previous['containers'], **names), publicUrls=dict(previous['publicUrls'], korea=url), status='active', switchedAt=time.time(), publicHealth=health, backup=state['backup'], backupVerified=True, appCommits={'web': previous.get('appCommits', {}).get('web', previous['commit']), 'academy': previous.get('appCommits', {}).get('academy', previous['commit']), 'korea': args.commit, 'admin': args.commit}, caddySource=str(source), previousCaddy=str(release / 'Caddyfile.previous'), candidateCaddy=str(release / 'Caddyfile.candidate'))
+        result = dict(previous, commit=args.commit, release=str(app), previousDeployment=previous, containers=dict(previous['containers'], **names), publicUrls=dict(previous['publicUrls'], korea=url), status='active', switchedAt=time.time(), publicHealth=health, backup=state['backup'], backupVerified=True, appCommits={'web': previous.get('appCommits', {}).get('web', previous['commit']), 'academy': previous.get('appCommits', {}).get('academy', previous['commit']), 'korea': previous.get('appCommits', {}).get('korea', previous['commit']) if args.admin_only else args.commit, 'admin': args.commit}, caddySource=str(source), previousCaddy=str(release / 'Caddyfile.previous'), candidateCaddy=str(release / 'Caddyfile.candidate'))
         atomic(manifest_path, result)
         state.update(status='active', publicHealth=health, activatedAt=time.time())
         atomic(state_path, state)

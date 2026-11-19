@@ -111,11 +111,11 @@ const WEBSITE: NavItem[] = [
 ];
 
 const KOREA: NavItem[] = [
-  { path: "/korea", label: "페이지·메뉴·이미지", icon: Globe, permission: "korea.content" },
-  { path: "/korea/menu", label: "공통 메뉴", icon: Route, permission: "korea.content" },
+  { path: "/korea", label: "페이지 편집", icon: Globe, permission: "korea.content" },
+  { path: "/korea/menu", label: "메뉴 구성", icon: Route, permission: "korea.content" },
   { path: "/korea/partners", label: "협력기관 로고", icon: Handshake, permission: "korea.content" },
   { path: "/korea/boards", label: "공지·뉴스·영상·FAQ", icon: Newspaper, permission: "korea.content" },
-  { path: "/korea/inquiries", label: "서비스 상담", icon: Inbox, permission: "korea.inquiries" },
+  { path: "/korea/inquiries", label: "상담·채용 접수", icon: Inbox, permission: "korea.inquiries" },
   { path: "/korea/settings", label: "접수·알림 설정", icon: Settings2, permission: "korea.inquiries" },
   { path: "/korea/archive", label: "원본 이관 검토", icon: ClipboardList, permission: "korea.content" },
 ];

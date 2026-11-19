@@ -1,10 +1,8 @@
 "use client";
-import { useState } from "react";
-export function KoreaMediaUpload() {
-  const [url, setUrl] = useState(""), [message, setMessage] = useState(""), [pending, setPending] = useState(false);
-  return <details className="my-4 rounded-xl border border-line bg-white p-4"><summary className="cursor-pointer text-sm font-bold">이미지·PDF 업로드</summary><div className="mt-3 space-y-3"><input type="file" aria-label="업로드할 이미지·PDF" accept="image/png,image/jpeg,image/gif,image/webp,application/pdf" disabled={pending} onChange={async event => {
-    const file = event.target.files?.[0]; if (!file) return;
-    setPending(true); setMessage("업로드 중입니다.");
-    try { const data = new FormData(); data.append("file", file); const response = await fetch("/api/korea/media", { method: "POST", body: data }); const result = await response.json(); if (!response.ok) throw new Error(result.error); setUrl(result.url); setMessage("업로드했습니다. 주소를 이미지·첨부 항목에 넣어 주세요."); } catch (error) { setMessage(error instanceof Error ? error.message : "업로드하지 못했습니다."); } finally { setPending(false); }
-  }} /><p role="status" className="text-sm">{message}</p>{url && <input className="w-full rounded border border-line px-3 py-2 text-sm" aria-label="업로드된 파일 주소" value={url} readOnly onFocus={e => e.target.select()} />}</div></details>;
+import { useState } from 'react';
+import { Button, FileDrop, inputClass } from '@/components/ui';
+import { uploadKoreaFile } from './KoreaEditorTools';
+export function KoreaMediaUpload(){
+ const [url,setUrl]=useState(''),[message,setMessage]=useState(''),[pending,setPending]=useState(false);
+ return <div className="my-3 space-y-3"><FileDrop title="첨부할 이미지·PDF 선택" hint="PNG·JPG·GIF·WebP·PDF, 최대 10MB" accept="image/png,image/jpeg,image/gif,image/webp,application/pdf" maxBytes={10*1024*1024} busy={pending} onFile={async file=>{setPending(true);setMessage('');try{setUrl(await uploadKoreaFile(file));setMessage('첨부 주소를 복사해 아래 항목에 넣으세요.');}catch(e){setMessage(e instanceof Error?e.message:'업로드하지 못했습니다.');}finally{setPending(false);}}}/><p role="status" className="text-xs text-muted">{message}</p>{url&&<div className="flex gap-2"><input className={inputClass} aria-label="업로드된 파일 주소" value={url} readOnly onFocus={e=>e.target.select()}/><Button size="sm" onClick={async()=>{try{await navigator.clipboard.writeText(url);setMessage('주소를 복사했습니다.');}catch{setMessage('주소를 선택해 복사해 주세요.');}}}>주소 복사</Button></div>}</div>;
 }
