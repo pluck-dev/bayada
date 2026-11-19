@@ -1,0 +1,369 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261119-163206-fix-inquiry-email-acceptance-and-submission-conf",
+  "created_at": "2026-11-19T16:32:06+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "72329d7fdaa067cfef5fe2a6e823d01322bf5a5f",
+  "request": "User reports rejected valid inquiry input and an unprofessional raw success message; fix and verify actual form submission through CMS",
+  "title": "Fix inquiry email acceptance and submission confirmation",
+  "purpose": "Make the real contact form accept the email/phone options it advertises and show a clear accessible completion state",
+  "files": [
+    {
+      "path": "apps/admin/src/app/[locale]/(dashboard)/korea/inquiries/page.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 25,
+          "old_end": 25,
+          "new_start": 25,
+          "new_end": 25
+        }
+      ],
+      "working_tree_sha256": "c2363f1a5b580d8c10937d58921342f7008e956704cc12fa9fa414a5d8b6cc4e",
+      "symbols": [
+        "Private inquiry contact rendering"
+      ],
+      "purpose": "Displays new contact or legacy phone/email fallback; keeps separate careers email and position information.",
+      "previous_behavior": "The contact line assumed a phone; email appeared separately without a consultation label.",
+      "new_behavior": "Displays new contact or legacy phone/email fallback; keeps separate careers email and position information.",
+      "data_impact": "Reads existing/new private inquiry records without rewriting them.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "apps/korea/public/korea-runtime.css",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 21
+        }
+      ],
+      "working_tree_sha256": "fdc6535a0c35c0e8824e7fa29e542ee639b329c910e18d95ca74adb59dbea160",
+      "symbols": [
+        "Scoped intake feedback styles"
+      ],
+      "purpose": "Adds brand-consistent responsive confirmation, receipt/action layout, visible invalid fields and safe hidden-form styling.",
+      "previous_behavior": "Success/error feedback was an unstyled paragraph.",
+      "new_behavior": "Adds brand-consistent responsive confirmation, receipt/action layout, visible invalid fields and safe hidden-form styling.",
+      "data_impact": "None: scoped presentation only.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "apps/korea/public/korea-runtime.js",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 12,
+          "old_end": 12,
+          "new_start": 12,
+          "new_end": 44
+        },
+        {
+          "old_start": 15,
+          "old_end": 15,
+          "new_start": 47,
+          "new_end": 48
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 51,
+          "new_end": 51
+        },
+        {
+          "old_start": 19,
+          "old_end": 20,
+          "new_start": 53,
+          "new_end": 54
+        },
+        {
+          "old_start": 22,
+          "old_end": 22,
+          "new_start": 56,
+          "new_end": 56
+        },
+        {
+          "old_start": 24,
+          "old_end": 27,
+          "new_start": 58,
+          "new_end": 68
+        }
+      ],
+      "working_tree_sha256": "4d895f042b32daec4f3a7e4030cc49b326acb6efc408e78ca3d644116a4cd413",
+      "symbols": [
+        "Form submit handler, clearErrors, reveal, showSuccess"
+      ],
+      "purpose": "Submits explicit contact, prevents concurrent submissions, shows inline focused errors while retaining input, replaces successful forms with an accessible confirmation card, clears completed private input and supports deliberate additional inquiries.",
+      "previous_behavior": "The form always serialized contact as phone and reset to an empty form with a raw message at its bottom.",
+      "new_behavior": "Submits explicit contact, prevents concurrent submissions, shows inline focused errors while retaining input, replaces successful forms with an accessible confirmation card, clears completed private input and supports deliberate additional inquiries.",
+      "data_impact": "Only successful submissions are persisted by the API. Error input stays client-side; no private values are injected into HTML strings.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "apps/korea/src/app/api/inquiries/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 8,
+          "new_end": 8
+        },
+        {
+          "old_start": 24,
+          "old_end": 24,
+          "new_start": 24,
+          "new_end": 24
+        },
+        {
+          "old_start": 26,
+          "old_end": 30,
+          "new_start": 26,
+          "new_end": 28
+        },
+        {
+          "old_start": 42,
+          "old_end": 42,
+          "new_start": 40,
+          "new_end": 40
+        },
+        {
+          "old_start": 51,
+          "old_end": 51,
+          "new_start": 49,
+          "new_end": 49
+        },
+        {
+          "old_start": 58,
+          "old_end": 58,
+          "new_start": 56,
+          "new_end": 56
+        }
+      ],
+      "working_tree_sha256": "c77d1e99898979ecbcaf13c544fb13ee31ade5b2cfdd5b0eb9ada3335c78424b",
+      "symbols": [
+        "POST, reply"
+      ],
+      "purpose": "Uses typed contact validation, returns a precise field error and structured receipt, stores correct contact/email/phone privately and preserves consent/origin/body-size/atomic throttling safeguards.",
+      "previous_behavior": "Email entered in the public contact field returned the generic title/name/phone error. Success exposed only a long plain message.",
+      "new_behavior": "Uses typed contact validation, returns a precise field error and structured receipt, stores correct contact/email/phone privately and preserves consent/origin/body-size/atomic throttling safeguards.",
+      "data_impact": "New intake rows contain contact/contactType plus existing email/phone fields; no schema change or prior inquiry rewrite. Staff notification text uses the actual contact.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "apps/korea/tests/inquiry.e2e.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 93
+        }
+      ],
+      "working_tree_sha256": "3ac16156080a4e3a591afad9b0d97917bd55f3820198ee6e60b500bbe418e928",
+      "symbols": [
+        "Real HTML/mobile and desktop submit regression"
+      ],
+      "purpose": "Clicks the real mobile form through invalid contact, email success and additional phone inquiry; submits careers on desktop, checks complete-card visibility, receipt, field clearing and absence of overflow. Restricts runs to local QA and isolates rate-limit IPs.",
+      "previous_behavior": "API-only verification did not cover the advertised email input or the actual completion screen.",
+      "new_behavior": "Clicks the real mobile form through invalid contact, email success and additional phone inquiry; submits careers on desktop, checks complete-card visibility, receipt, field clearing and absence of overflow. Restricts runs to local QA and isolates rate-limit IPs.",
+      "data_impact": "Creates only clearly synthetic local QA intake records; no production submits or external messages from this automated test.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "packages/korea/src/inquiry.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 36
+        }
+      ],
+      "working_tree_sha256": "2b04555be75f0ece9c25f0047fa4801e70fdcabb91c61171a726faa9e2d100ba",
+      "symbols": [
+        "validateInquiryFields, InquiryFields"
+      ],
+      "purpose": "Validates consultation email OR phone, keeps careers phone/email/position separate, accepts common phone separators, supports cached clients using phone, and identifies the invalid field.",
+      "previous_behavior": "The consultation field advertises email or phone but the API accepted only phone-shaped input.",
+      "new_behavior": "Validates consultation email OR phone, keeps careers phone/email/position separate, accepts common phone separators, supports cached clients using phone, and identifies the invalid field.",
+      "data_impact": "Adds contact/contactType to new private JSON records through the route; no existing record migration.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "packages/korea/src/model.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 2,
+          "new_end": 2
+        }
+      ],
+      "working_tree_sha256": "73d76409af95c70f6fc52a18d3e5a71b1881367d3171aea02b56592079a85db6",
+      "symbols": [
+        "Inquiry validator exports"
+      ],
+      "purpose": "Exports the pure typed validator for the intake route and its regression tests.",
+      "previous_behavior": "Shared models did not expose contact semantics.",
+      "new_behavior": "Exports the pure typed validator for the intake route and its regression tests.",
+      "data_impact": "None: exports only; persistence stays in the guarded intake route.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "packages/korea/src/server.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 121,
+          "old_end": 121,
+          "new_start": 121,
+          "new_end": 121
+        }
+      ],
+      "working_tree_sha256": "eba51a75e8503ecbeb348baa0af164684fae4c2318243e00e8ac211069eb547d",
+      "symbols": [
+        "Public runtime asset URLs"
+      ],
+      "purpose": "Versions the intake runtime URLs so refreshed pages load the updated form behavior and styles.",
+      "previous_behavior": "Runtime scripts/styles used an unversioned URL.",
+      "new_behavior": "Versions the intake runtime URLs so refreshed pages load the updated form behavior and styles.",
+      "data_impact": "None: asset cache identity only; existing content/data reads remain unchanged.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    },
+    {
+      "path": "packages/korea/tests/inquiry.test.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 30
+        }
+      ],
+      "working_tree_sha256": "9748ca04a6ca8fbb4f2c0dcbe0183234c44a0aa17ecf247023677c0afdba2c94",
+      "symbols": [
+        "Contact validation regressions"
+      ],
+      "purpose": "Covers email and phone consultation, punctuation/fullwidth phone input, old payload compatibility, invalid/missing fields and distinct careers inputs.",
+      "previous_behavior": "Tests exercised phone submissions but missed the label promising email input.",
+      "new_behavior": "Covers email and phone consultation, punctuation/fullwidth phone input, old payload compatibility, invalid/missing fields and distinct careers inputs.",
+      "data_impact": "None: pure synthetic fixtures without database writes.",
+      "access_control_impact": "Existing public intake validation, private korea.inquiries permission and role boundaries are preserved; no new permission is granted.",
+      "risks": [
+        "Cached open browser pages retain old JavaScript until refreshed; receipt/message compatibility is retained for them.",
+        "New contact JSON fields must remain optional when reading old records."
+      ],
+      "rollback": "Restore the retained prior Korea/admin images and explicit Caddy configuration. Preserve all real intake rows, including the user-provided receipt. Old clients still send phone and old readers can use the stored email/phone fields; no database restore is needed."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Production read-only reproduction confirmed an email rejection and that the user-supplied receipt exists. QA submitted synthetic records and verified their private DB/admin representation. No real user inquiry was modified or deleted before commit.",
+    "schema_migration": "None: optional contact/contactType properties are added to JSON for new intake; prior rows use contact/phone/email fallbacks.",
+    "external_side_effects": [
+      "A deliberately rejected synthetic email request reproduced the live bug; it created no intake and sent no email.",
+      "Synthetic QA real-browser submits and authenticated CMS checks use isolated localhost DB and closed SMTP.",
+      "AWS deployment and a clearly identified real-browser production verification are planned after commit; check that notification recipients remain empty before any successful production test."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter @bayada/korea test",
+      "result": "passed",
+      "evidence": "Ten contact/model/HTML/asset validation regressions passed."
+    },
+    {
+      "command": "pnpm --filter korea typecheck; pnpm --filter admin typecheck; production builds",
+      "result": "passed",
+      "evidence": "TypeScript and final Korea/admin standalone builds pass. Later public runtime-only edits are served/copied as static files and syntax-checked."
+    },
+    {
+      "command": "python apps/korea/tests/inquiry.e2e.py",
+      "result": "passed",
+      "evidence": "Three real browser submissions: mobile email, additional phone and desktop careers. Invalid contact stays inline with input preserved; successful form is hidden/cleared and whole confirmation card is in viewport. Screenshots under output/korea-inquiry-e2e."
+    },
+    {
+      "command": "Synthetic QA DB and authenticated CMS receipt verification",
+      "result": "passed",
+      "evidence": "Three actual browser receipt references stored correct email/phone/formType/consent and appeared in permission-guarded CMS HTML."
+    },
+    {
+      "command": "node --import=./packages/db/node_modules/tsx/dist/loader.mjs apps/admin/tests/korea.integration.mts",
+      "result": "passed",
+      "evidence": "34 existing permission/consent/storage/throttling/upload/public path checks passed."
+    },
+    {
+      "command": "node --check apps/korea/public/korea-runtime.js; python -m py_compile apps/korea/tests/inquiry.e2e.py; git diff --check",
+      "result": "passed",
+      "evidence": "Runtime JS/Python syntax and patch whitespace checks pass."
+    }
+  ],
+  "residual_risks": [
+    "Email input validation checks format, not mailbox existence or delivery. External notification SMTP configuration is unchanged.",
+    "Browser pages already open before deployment need refresh to display the new completion card.",
+    "Network loss after persistence can leave the client unsure of the receipt; simultaneous-click duplication is blocked but cross-reload idempotency is not introduced in this fix."
+  ],
+  "commit": "same-as-metadata-file"
+}

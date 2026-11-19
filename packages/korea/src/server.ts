@@ -118,7 +118,7 @@ export async function renderPage(page: KoreaPage, query: URLSearchParams, origin
   const title = current.edits?.title || page.title;
   body = body.replaceAll(encodeURIComponent('https://www.bayadakorea.com'), encodeURIComponent(origin)).replaceAll(encodeURIComponent('http://www.bayadakorea.com'), encodeURIComponent(origin));
   const head = page.head.replace(/<title>[\s\S]*?<\/title>/i, `<title>${e(title)}</title>`);
-  return `<!doctype html><html lang="ko-KR"><head>${head}<link rel="canonical" href="${e(origin + page.path)}"><link rel="stylesheet" href="/korea-runtime.css"></head><body class="${e(page.bodyClass)}">${body}<script src="/korea-runtime.js" defer></script></body></html>`;
+  return `<!doctype html><html lang="ko-KR"><head>${head}<link rel="canonical" href="${e(origin + page.path)}"><link rel="stylesheet" href="/korea-runtime.css?v=inquiry-20261119"></head><body class="${e(page.bodyClass)}">${body}<script src="/korea-runtime.js?v=inquiry-20261119" defer></script></body></html>`;
 }
 export function pageByPath(path: string) {
   const normalized = decodeURIComponent(path).replace(/\/+$/, "") || "/";

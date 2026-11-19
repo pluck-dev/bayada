@@ -1,11 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
 import { prisma } from "@bayada/db";
 import { getInquirySettings } from '@bayada/korea/server';
-import { escapeHtml } from '@bayada/korea';
+import { escapeHtml, validateInquiryFields } from '@bayada/korea';
 import { sendMail } from '@bayada/services/account';
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const reply = (message: string, status = 400) => Response.json({ message }, { status, headers: { "cache-control": "no-store" } });
+const reply = (message: string, status = 400, extra: { field?: string; reference?: string } = {}) => Response.json({ message, ...extra }, { status, headers: { "cache-control": "no-store" } });
 export async function POST(request: Request) {
   const origin = request.headers.get("origin");
   const url = new URL(request.url);
@@ -21,13 +21,11 @@ export async function POST(request: Request) {
   } catch { return reply("입력값을 확인하세요."); }
   if (!x || typeof x !== "object" || Array.isArray(x)) return reply("입력값을 확인하세요.");
   if (x.website) return reply("접수가 완료되었습니다.", 200);
-  if (x.privacyConsent !== true) return reply("개인정보 수집·이용에 동의해 주세요.");
+  if (x.privacyConsent !== true) return reply("개인정보 수집·이용에 동의해 주세요.", 400, { field: 'privacyConsent' });
   const value = (key: string, length: number) => typeof x[key] === "string" ? (x[key] as string).trim().slice(0, length) : "";
-  const name = value("name", 80), phone = value("phone", 30), title = value("title", 200), message = value("message", 5000);
-  const formType = x.formType === 'CAREERS' ? 'CAREERS' : x.formType === undefined || x.formType === 'CONSULTATION' ? 'CONSULTATION' : null;
-  const email = value('email', 200), position = value('position', 200);
-  if (!formType || (formType === 'CAREERS' && (!position || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))) return reply("지원 이메일·지원 분야·신청 유형을 확인하세요.");
-  if (!name || !title || !/^[0-9+() -]{7,20}$/.test(phone)) return reply("제목·성함·연락처를 확인하세요.");
+  const validated = validateInquiryFields(x);
+  if (!validated.ok) return reply(validated.message, 400, { field: validated.field });
+  const { name, phone, title, message, formType, email, position, contact, contactType } = validated.data;
   const { settings } = await getInquirySettings();
   if (!settings.enabled) return reply('현재 온라인 접수를 받지 않습니다. 전화로 문의해 주세요.', 503);
   const ipHash = createHash("sha256").update(request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown").digest("hex");
@@ -39,7 +37,7 @@ export async function POST(request: Request) {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${prefix}))`;
       const count = await tx.page.count({ where: { slug: { startsWith: prefix }, updatedAt: { gte: new Date(Date.now() - 600000) } } });
       if (count >= 5) return false;
-      const content = { id, reference, formType, name, phone, email, position, title, message, location: value("location", 200), services: Array.isArray(x.services) ? x.services.filter(s => typeof s === "string").slice(0, 10).map(s => String(s).slice(0, 100)) : [], privacyConsent: true, receivedAt: new Date().toISOString(), status: "NEW", notes: [] };
+      const content = { id, reference, formType, name, contact, contactType, phone, email, position, title, message, location: value("location", 200), services: Array.isArray(x.services) ? x.services.filter(s => typeof s === "string").slice(0, 10).map(s => String(s).slice(0, 100)) : [], privacyConsent: true, receivedAt: new Date().toISOString(), status: "NEW", notes: [] };
       await tx.page.create({ data: { slug: prefix + id, title: reference, content: JSON.stringify(content) } });
       return true;
     });
@@ -48,13 +46,13 @@ export async function POST(request: Request) {
     let delivery = 'NOT_CONFIGURED';
     if (recipients.length && process.env.SMTP_URL && process.env.MAIL_FROM) {
       delivery = 'SENT';
-      const text = [`접수번호: ${reference}`, `유형: ${formType === 'CAREERS' ? '채용' : '서비스 상담'}`, `이름: ${name}`, `연락처: ${phone}`, `이메일: ${email}`, `지원 분야: ${position}`, '', message, '', (process.env.ADMIN_PUBLIC_URL || '') + '/ko/korea/inquiries'].join('\n');
+      const text = [`접수번호: ${reference}`, `유형: ${formType === 'CAREERS' ? '채용' : '서비스 상담'}`, `이름: ${name}`, `연락처: ${contact}`, `이메일: ${email}`, `지원 분야: ${position}`, '', message, '', (process.env.ADMIN_PUBLIC_URL || '') + '/ko/korea/inquiries'].join('\n');
       for (const to of recipients) {
         try { await sendMail({ to, subject: `[바야다코리아 접수] ${reference}`, text, html: `<pre>${escapeHtml(text)}</pre>` }); }
         catch (error) { delivery = 'FAILED'; console.error('[korea inquiry notification]', error instanceof Error ? error.name : 'failed'); }
       }
     }
     await prisma.page.create({ data: { slug: 'korea/delivery/' + id, title: reference, content: JSON.stringify({ state: delivery, at: new Date().toISOString() }) } }).catch(() => {});
-    return reply(`접수가 완료되었습니다. 접수번호: ${reference}`, 201);
+    return reply(`접수가 완료되었습니다. 접수번호: ${reference}`, 201, { reference });
   } catch (error) { console.error("[korea inquiry] persistence failed", error instanceof Error ? error.name : "error"); return reply("접수하지 못했습니다. 잠시 후 다시 시도해 주세요.", 500); }
 }

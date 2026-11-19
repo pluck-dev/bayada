@@ -1,1 +1,21 @@
 [data-korea-result]{white-space:pre-line}
+form[data-korea-inquiry][hidden]{display:none!important}
+form[data-korea-inquiry] [aria-invalid="true"]{border-color:#c91435!important;outline:1px solid #c91435}
+body .korea-field-error{display:block;margin-top:8px;color:#b1122e;font-size:14px;line-height:1.6;font-weight:500}
+[data-korea-result]:empty,[data-korea-result][hidden]{display:none!important}
+[data-korea-result][data-state="pending"]{color:#59616a;font-size:14px}
+[data-korea-result][data-state="error"]{padding:16px 18px;border:1px solid #f0c3cc;background:#fff7f8;color:#96132b;font-size:15px;line-height:1.6}
+body .korea-submission-success{box-sizing:border-box;max-width:640px;margin:32px auto;padding:48px 36px;text-align:center;border:1px solid #e4e7eb;background:#fff;border-radius:12px;outline:none;scroll-margin-top:24px}
+body .korea-success-icon{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 24px;border-radius:50%;background:#fff0f3;color:#c91435}
+.korea-success-icon svg{width:36px;height:36px}
+body .korea-submission-success h2{margin:0 0 14px;color:#252a30;font-size:28px;line-height:1.45;font-weight:700;word-break:keep-all}
+body .korea-success-description{max-width:360px;margin:0 auto;color:#626970;font-size:16px;line-height:1.8;word-break:keep-all}
+body .korea-success-reference{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 12px;margin:28px 0;padding:15px 10px;background:#f7f8f9;font-size:14px;line-height:1.6}
+body .korea-success-reference dt{color:#777d84;font-weight:400}
+body .korea-success-reference dd{margin:0;color:#343b43;white-space:nowrap}
+body .korea-success-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+body .korea-home-link,body button.korea-new-inquiry{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:4px;font-size:15px;font-weight:600;line-height:1.4;text-decoration:none;cursor:pointer}
+body .korea-home-link{border:1px solid #c91435;background:#c91435;color:#fff}
+body button.korea-new-inquiry{border:1px solid #d5d9df;background:#fff;color:#454d56}
+body .korea-home-link:focus-visible,body button.korea-new-inquiry:focus-visible{outline:3px solid #8f112b;outline-offset:3px}
+@media(max-width:600px){body .korea-submission-success{margin:24px auto;padding:32px 20px}body .korea-submission-success h2{font-size:24px}body .korea-success-description{font-size:15px}body .korea-success-actions{flex-direction:column}body .korea-success-actions>*{width:100%}}

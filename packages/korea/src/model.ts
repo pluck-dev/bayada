@@ -1,4 +1,5 @@
 import { normalizeAssetPaths } from "./assets";
+export { validateInquiryFields, type InquiryFields } from "./inquiry";
 export { normalizeAssetPaths, normalizeAssetData } from "./assets";
 export const KOREA_PREFIX = "korea/";
 export type InquirySettings = { consultationRecipients: string[]; careersRecipients: string[]; enabled: boolean };
