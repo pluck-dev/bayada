@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261119-220830-preserve-advanced-html-editing-alongside-the-vis",
+  "created_at": "2026-11-19T22:08:30+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "619c0030e53daf1198aefa4c6594f3cacb35bb50",
+  "request": "관리자 UI 개선 중 기존 게시글 편집 기능 보존",
+  "title": "Preserve advanced HTML editing alongside the visual editor",
+  "purpose": "Keep video embeds and legacy article formatting editable without executing draft HTML",
+  "files": [
+    {
+      "path": "apps/admin/src/components/korea/KoreaPostEditor.tsx",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 6,
+          "new_start": 6,
+          "new_end": 6
+        },
+        {
+          "old_start": 27,
+          "old_end": 29,
+          "new_start": 27,
+          "new_end": 30
+        }
+      ],
+      "working_tree_sha256": "2530cfa319f70a8ebc644f98b6dc48249cf82fbb2c4afb41087983a8c81c1960",
+      "symbols": [
+        "KoreaRichText"
+      ],
+      "purpose": "Retain explicit advanced HTML editing without injecting untrusted draft markup.",
+      "previous_behavior": "Only visual text editing was available after the UI redesign.",
+      "new_behavior": "HTML draft stays in a plain textarea until the guarded save action sanitizes and reloads it; the visual editor remains the default.",
+      "data_impact": "Synthetic QA article edits only during verification; production writes still use the existing revision-checked, sanitized save action.",
+      "access_control_impact": "No role or permission changes; initial and saved rich HTML use the existing server sanitizer.",
+      "risks": [
+        "Advanced HTML mode returns to visual mode after a successful save or reload."
+      ],
+      "rollback": "Restore the prior component and test from commit 619c003; stored sanitized HTML remains compatible."
+    },
+    {
+      "path": "apps/admin/tests/korea-ui.e2e.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 19,
+          "old_end": 19,
+          "new_start": 19,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "c810fbed84eee9ac4d9146492ca1e35bb6263eb87d6afcd3a73fc8617bc7ab96",
+      "symbols": [
+        "isolated UI regression"
+      ],
+      "purpose": "Retain explicit advanced HTML editing without injecting untrusted draft markup.",
+      "previous_behavior": "Only visual text editing was available after the UI redesign.",
+      "new_behavior": "HTML draft stays in a plain textarea until the guarded save action sanitizes and reloads it; the visual editor remains the default.",
+      "data_impact": "Synthetic QA article edits only during verification; production writes still use the existing revision-checked, sanitized save action.",
+      "access_control_impact": "No role or permission changes; initial and saved rich HTML use the existing server sanitizer.",
+      "risks": [
+        "Advanced HTML mode returns to visual mode after a successful save or reload."
+      ],
+      "rollback": "Restore the prior component and test from commit 619c003; stored sanitized HTML remains compatible."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production content changes during development or verification. Tests use isolated synthetic articles.",
+    "schema_migration": "None; existing article JSON and sanitizer remain unchanged.",
+    "external_side_effects": [
+      "Include this compatibility fix in the pending admin-only AWS deployment."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter admin build",
+      "result": "passed",
+      "evidence": "Final production build and TypeScript passed."
+    },
+    {
+      "command": "python apps/admin/tests/korea-ui.e2e.py",
+      "result": "passed",
+      "evidence": "7 workflow groups pass; advanced draft script/onerror markup is not executed and saved markup is sanitized."
+    }
+  ],
+  "residual_risks": [
+    "Pasted rich text retains plain text; advanced HTML is available for existing embedded content workflows."
+  ],
+  "commit": "same-as-metadata-file"
+}

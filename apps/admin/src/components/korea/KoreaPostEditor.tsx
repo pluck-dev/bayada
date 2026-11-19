@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { BOARDS, type BoardPost } from "@bayada/korea";
 import { saveKoreaPost, deleteKoreaPost } from "@/lib/actions/korea";
-import { Button, Card, Disclosure, Field, Select, Switch, inputClass } from "@/components/ui";
+import { Button, Card, Disclosure, Field, Select, Switch, inputClass, textareaClass } from "@/components/ui";
 import { useAction } from "@/components/ui/feedback";
 import { KoreaAssetInput, KoreaSaveBar, useKoreaDraft } from "./KoreaEditorTools";
 import { KoreaMediaUpload } from "./KoreaMediaUpload";
@@ -24,8 +24,9 @@ export function KoreaPostEditor({ initial, updatedAt, publicOrigin }: { initial:
 }
 
 function KoreaRichText({value,onChange}:{value:string;onChange:(value:string)=>void}){
- const editor=useRef<HTMLDivElement>(null);
- useEffect(()=>{if(editor.current&&editor.current.innerHTML!==value)editor.current.innerHTML=value;},[value]);
- return <div className="overflow-hidden rounded-xl border border-line"><div className="flex flex-wrap gap-1 border-b border-line bg-wash p-2" role="toolbar" aria-label="본문 서식">{[['bold','굵게'],['italic','기울임'],['insertUnorderedList','목록'],['removeFormat','서식 지우기']].map(([command,label])=><Button key={command} size="sm" variant="ghost" onMouseDown={e=>e.preventDefault()} onClick={()=>{editor.current?.focus();document.execCommand(command);onChange(editor.current?.innerHTML||'');}}>{label}</Button>)}</div><div ref={editor} role="textbox" aria-label="본문" aria-multiline="true" contentEditable suppressContentEditableWarning className="min-h-64 max-h-[60vh] overflow-auto break-words p-4 text-sm leading-7 outline-none focus:ring-2 focus:ring-inset focus:ring-brand/30 [&_img]:max-w-full [&_iframe]:max-w-full [&_iframe]:pointer-events-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6" style={{contain:'layout paint'}} onClick={e=>{if(e.target instanceof Element && e.target.closest("a"))e.preventDefault();}} onInput={e=>onChange(e.currentTarget.innerHTML)} onDrop={e=>e.preventDefault()} onPaste={e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'));onChange(e.currentTarget.innerHTML);}}/>
+ const editor=useRef<HTMLDivElement>(null); const [htmlMode,setHtmlMode]=useState(false);
+ useEffect(()=>{if(!htmlMode&&editor.current&&editor.current.innerHTML!==value)editor.current.innerHTML=value;},[value,htmlMode]);
+ if(htmlMode)return <div className="space-y-2"><p className="text-xs text-muted">HTML 편집 중 · 저장하면 안전한 서식으로 정리해 일반 편집 화면으로 돌아갑니다.</p><textarea aria-label="본문 HTML" rows={14} className={textareaClass} value={value} onChange={e=>onChange(e.target.value)}/></div>;
+ return <div className="overflow-hidden rounded-xl border border-line"><div className="flex flex-wrap gap-1 border-b border-line bg-wash p-2" role="toolbar" aria-label="본문 서식">{[['bold','굵게'],['italic','기울임'],['insertUnorderedList','목록'],['removeFormat','서식 지우기']].map(([command,label])=><Button key={command} size="sm" variant="ghost" onMouseDown={e=>e.preventDefault()} onClick={()=>{editor.current?.focus();document.execCommand(command);onChange(editor.current?.innerHTML||'');}}>{label}</Button>)}<Button size="sm" variant="ghost" onClick={()=>setHtmlMode(true)}>HTML 편집</Button></div><div ref={editor} role="textbox" aria-label="본문" aria-multiline="true" contentEditable suppressContentEditableWarning className="min-h-64 max-h-[60vh] overflow-auto break-words p-4 text-sm leading-7 outline-none focus:ring-2 focus:ring-inset focus:ring-brand/30 [&_img]:max-w-full [&_iframe]:max-w-full [&_iframe]:pointer-events-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6" style={{contain:'layout paint'}} onClick={e=>{if(e.target instanceof Element && e.target.closest("a"))e.preventDefault();}} onInput={e=>onChange(e.currentTarget.innerHTML)} onDrop={e=>e.preventDefault()} onPaste={e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'));onChange(e.currentTarget.innerHTML);}}/>
  </div>;
 }
