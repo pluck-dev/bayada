@@ -1,0 +1,45 @@
+{
+  "kind": "deployment-evidence",
+  "generated": true,
+  "sourceCommit": "411f43e252fa38898e37e338891028b7628f040b",
+  "status": "active",
+  "problem": "Public consultation promised email or phone but rejected email; successful submissions reset to a blank form and raw receipt paragraph.",
+  "fix": "Typed email/phone contact validation, precise inline errors with preserved input, structured receipts and a responsive focus/scroll-safe completion card that hides and clears the completed form. Careers remains separate.",
+  "qa": {
+    "realBrowserSubmissions": 3,
+    "mobileEmailPhoneAndDesktopCareers": true,
+    "invalidContactInlineAndInputRetained": true,
+    "wholeSuccessCardInViewport": true,
+    "privateDbAndAuthenticatedCmsChecked": true,
+    "pureTests": 10,
+    "existingIntegrationChecks": 34
+  },
+  "production": {
+    "sourceCommit": "411f43e252fa38898e37e338891028b7628f040b",
+    "productionEmailAndPhoneSubmitted": true,
+    "actualCmsContactsVerified": true,
+    "ownSyntheticReceiptsRetained": [
+      "KR-20261119-5816304F",
+      "KR-20261119-110FDAD6"
+    ],
+    "userReceiptPreserved": "KR-20261119-93C6C1B2",
+    "cleanup": "not executed: automatic approval review rejected permanent production record deletion without explicit user approval",
+    "externalMessagesSent": false
+  },
+  "actualCmsVerified": true,
+  "operationalDataImpact": {
+    "created": "Two clearly identified synthetic consultation records for real production UI verification; no external notification recipients.",
+    "read": "Only scoped synthetic receipts, configuration presence and existence of the user-provided receipt.",
+    "updated": "Korea/admin images, explicit Caddy routes, manifest/current/static links; no prior real inquiry rewrite.",
+    "deleted": "No production inquiry deleted. Automatic approval review rejected the proposed test-record cleanup, so both remain labelled as system tests. Local synthetic QA fixtures were removed."
+  },
+  "pendingApproval": {
+    "action": "Permanently remove only the two own synthetic production inquiries and their delivery metadata",
+    "receipts": [
+      "KR-20261119-5816304F",
+      "KR-20261119-110FDAD6"
+    ],
+    "reason": "Automatic approval review requested explicit authorization for permanent production-record deletion"
+  },
+  "rollback": "Retain previous b1e4ddb9 Korea/admin containers and explicit Caddy snapshot. New JSON fields are optional; old email/phone values remain compatible. Preserve real inquiries and do not restore the whole live DB."
+}
