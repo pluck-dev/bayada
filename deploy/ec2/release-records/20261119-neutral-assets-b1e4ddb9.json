@@ -1,0 +1,38 @@
+{
+  "kind": "deployment-evidence",
+  "generated": true,
+  "sourceCommit": "b1e4ddb98264203173893c7c643f9ce5cdafe7c5",
+  "status": "active",
+  "request": "Remove WordPress-style public asset paths and show ordinary asset URLs in the Next site and CMS.",
+  "verification": {
+    "passed": true,
+    "sourceCommit": "b1e4ddb98264203173893c7c643f9ce5cdafe7c5",
+    "assets": 990,
+    "pages": 74,
+    "oldSavedPostDetails": 152,
+    "legacyLogoRedirect": "https://korea.54-116-157-4.sslip.io/assets/media/2025/04/%EA%B3%A0%EB%A0%A4%EB%8C%80%ED%95%99%EA%B5%90%EC%9D%98%EB%A3%8C%EC%9B%90.png",
+    "managedWpRootsInPublicHtml": 0,
+    "operationalDataWrites": "none: existing article view counters skipped using test cookies"
+  },
+  "operations": {
+    "active": true,
+    "sourceCommit": "b1e4ddb98264203173893c7c643f9ce5cdafe7c5",
+    "oldStaticTarget": "/srv/bayada/releases/korea-20261119-32e19a84/korea-static",
+    "newStaticTarget": "/srv/bayada/releases/korea-assets-20261119-b1e4ddb9/korea-static",
+    "publicDirectoryEntries": [
+      "assets",
+      "korea-runtime.css",
+      "korea-runtime.js"
+    ],
+    "onlyNeutralStaticMount": true,
+    "publicPostsUnchanged": 152,
+    "contentImportSkipped": true,
+    "brandAcademyUnchanged": true,
+    "backupsAndPreviousReleasePreserved": true
+  },
+  "actualAdminLogoField": "/assets/media/2025/04/%EA%B3%A0%EB%A0%A4%EB%8C%80%ED%95%99%EA%B5%90%EC%9D%98%EB%A3%8C%EC%9B%90.png",
+  "dataImpact": "No production content rows migrated or imported. Legacy URLs are normalized on read; future nontext CMS edits use canonical URLs. Private inquiries, accounts, roles and edit revisions were not rewritten.",
+  "storage": "The new live public directory has assets plus runtime.js/css only. Old static directories remain in retained rollback releases/backups.",
+  "rollback": "Use the saved explicit previous Caddy configuration and retained32e19a84 Korea/admin containers. If new URLs have since been saved, retain neutral-root compatibility aliases or reverse only managed public asset URLs before using the old renderer. Preserve private intake/media and never overwrite the live database.",
+  "sourceMetadata": "docs/change-metadata/20261119-151235-use-neutral-assets-paths-for-korea-site.json"
+}
