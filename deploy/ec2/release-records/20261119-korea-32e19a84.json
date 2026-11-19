@@ -1,0 +1,117 @@
+{
+  "kind": "deployment-evidence",
+  "generated": true,
+  "sourceCommit": "32e19a84fc51e7b5df536ade2d01649d15df0aa6",
+  "previousRuntimeCommit": "3263a5f6ad0953b9e275a5e2a450fcc856f1edad",
+  "activatedAt": 1795066870.8305535,
+  "status": "active",
+  "publicUrls": {
+    "바야다코리아 복제": "https://korea.54-116-157-4.sslip.io/",
+    "리뉴얼 브랜드": "https://54-116-157-4.sslip.io/ko",
+    "아카데미": "https://academy.54-116-157-4.sslip.io/ko",
+    "통합 관리자": "https://admin.54-116-157-4.sslip.io/ko/korea"
+  },
+  "appCommits": {
+    "korea": "32e19a84fc51e7b5df536ade2d01649d15df0aa6",
+    "admin": "32e19a84fc51e7b5df536ade2d01649d15df0aa6",
+    "web": "3263a5f6ad0953b9e275a5e2a450fcc856f1edad",
+    "academy": "3263a5f6ad0953b9e275a5e2a450fcc856f1edad"
+  },
+  "productionVerification": {
+    "passed": true,
+    "checkedAt": 1795067039.656662,
+    "sourceCommit": "32e19a84fc51e7b5df536ade2d01649d15df0aa6",
+    "publicUrl": "https://korea.54-116-157-4.sslip.io",
+    "adminUrl": "https://admin.54-116-157-4.sslip.io",
+    "publishedRoutes": 74,
+    "boardFaqDetails": 152,
+    "quarantined404": 127,
+    "assetChecksums": [
+      "/wp-content/plugins/all-in-one-seo-pack/dist/Lite/assets/css/table-of-contents/global.e90f6d47.css",
+      "/wp-content/plugins/elementor-pro/assets/js/1b816ba777b14157325b.bundle.min.js",
+      "/wp-content/plugins/mangboard/plugins/datepicker/css/images/ui-icons_444444_256x240.png",
+      "/wp-content/uploads/2019/01/3방문요양.jpg",
+      "/wp-content/plugins/mangboard/skins/bbs_basic/images/bg_paging_bar.gif",
+      "/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.woff2",
+      "/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.ttf"
+    ],
+    "httpsVerified": true,
+    "previewNoindex": true,
+    "anonymousWritesBlocked": true,
+    "missingConsentRejected": true,
+    "originalWwwUnchanged": true,
+    "brandAcademyHealthy": true,
+    "articleCountersSkippedWithTestCookies": true,
+    "operationalDataWrites": "none: read-only requests and rejected submissions"
+  },
+  "operations": {
+    "active": true,
+    "sourceCommit": "32e19a84fc51e7b5df536ade2d01649d15df0aa6",
+    "importedPublicEntries": 152,
+    "FAQ": 8,
+    "importMarker": 152,
+    "dailyBackupInstalled": true,
+    "databaseArchiveVerified": "/srv/bayada/backups/bayada-20261119-1442.sql.gz",
+    "mediaArchiveVerified": "/srv/bayada/backups/korea-media-20261119-1442.tar.gz",
+    "previousBackupScript": "/srv/bayada/releases/korea-20261119-32e19a84/backup-script.previous",
+    "staticLink": "/srv/bayada/korea-static",
+    "newServerAdded": false,
+    "activeUpstreams": [
+      "bayada-live-3263a5f-academy:3000",
+      "bayada-live-3263a5f-web:3000",
+      "bayada-live-32e19a84-admin:3000",
+      "bayada-live-32e19a84-korea:3000"
+    ],
+    "brandAcademyContainersUnchanged": true,
+    "sharedMediaAdminWritable": true,
+    "sharedMediaPublicReadOnly": true,
+    "probeRemoved": true,
+    "officialDnsChanged": false
+  },
+  "visualSummary": {
+    "completed": true,
+    "sourceCommit": "32e19a84fc51e7b5df536ade2d01649d15df0aa6",
+    "publicRoutes": 74,
+    "boardFaqItems": 152,
+    "quarantined": 127,
+    "visualRuns": 150,
+    "uniqueVisualCases": 134,
+    "comparedPaths": 67,
+    "horizontalOverflowCases": [],
+    "viewportPixelRatioMean": 0.997,
+    "viewportPixelRatioMin": 0.9664,
+    "limits": [
+      "Viewport/header comparison, not every scroll position or universal pixel identity.",
+      "Dynamic carousel/video timing and original Photon CDN resampling vary.",
+      "Seven author listing pages intentionally show reviewed content only, not the quarantined original author feed."
+    ]
+  },
+  "manualBrowser": {
+    "publicHomeObserved": true,
+    "authenticatedAdminObserved": true,
+    "threeWorkspacesObserved": [
+      "바야다코리아",
+      "리뉴얼 브랜드",
+      "아카데미"
+    ]
+  },
+  "operationalDataImpact": {
+    "productionCreated": "152 public Page posts/FAQ plus one import marker; no schema migration",
+    "productionRead": "Public content, scoped CMS runtime, infrastructure/configuration in memory and private server-side DB backup",
+    "productionUpdated": "Caddy route/source, deployment manifest/current link, Korea static link, daily backup script and KOREA_HOST configuration",
+    "productionDeleted": "Only a unique temporary shared-media permission probe; no user/course/order/enrollment or historical WordPress data deleted",
+    "syntheticQa": "28 test accounts,21 roles and25 intake fixtures removed; QA server/tunnel/DB stopped"
+  },
+  "rollback": {
+    "previousAdmin": "bayada-live-3263a5f-admin",
+    "previousCaddy": "/srv/bayada/releases/korea-20261119-32e19a84/Caddyfile.previous",
+    "method": "Copy previous configuration to a distinct /tmp path in Caddy, validate and reload that explicit path; restore host startup source and previous manifest/current link. Retain new inquiry/media data. Do not overwrite the live database with an old dump."
+  },
+  "remaining": [
+    "Official www DNS remains on the original host pending cutover.",
+    "External SMTP/real mailbox receipt not configured; intake is available in the admin.",
+    "127 uncategorized unrelated/spam-like posts remain in private review; original backups retained.",
+    "Historical private WordPress inquiries/accounts were not imported.",
+    "Dynamic video/carousel timing and original CDN image resampling prevent a universal 100% pixel-equality claim."
+  ]
+}
