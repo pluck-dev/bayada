@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--commit', required=True)
     parser.add_argument('--expected-active', required=True)
     parser.add_argument('--phase', choices=['prepare', 'activate'], required=True)
+    parser.add_argument('--skip-content-import', action='store_true', help='Asset/code-only release; verify the earlier import marker instead')
     args = parser.parse_args()
     if not re.fullmatch(r'[a-f0-9]{40}', args.commit):
         raise ValueError('Use a full commit hash')
@@ -94,15 +95,20 @@ def main():
         os.chown(media, 1000, 1000)
         for service in ['korea', 'admin']:
             run('docker', 'build', '--build-arg', 'APP=' + service, '--build-arg', 'NEXT_PUBLIC_SITE_URL=' + previous['publicUrls']['academy'], '-t', f'bayada-{service}:release-{short}', '.')
-        run('docker', 'build', '--target', 'build', '--build-arg', 'APP=korea', '-t', 'bayada-korea-import:' + short, '.')
+        if not args.skip_content_import:
+            run('docker', 'build', '--target', 'build', '--build-arg', 'APP=korea', '-t', 'bayada-korea-import:' + short, '.')
         backup = Path('/srv/bayada/backups') / ('bayada-pre-korea-' + short + '.dump')
         with backup.open('xb') as handle:
             os.chmod(backup, 0o600)
             subprocess.run(['docker', 'exec', 'bayada-db-1', 'pg_dump', '-U', 'postgres', '-Fc', 'bayada'], stdout=handle, check=True)
         subprocess.run(['docker', 'exec', '-i', 'bayada-db-1', 'pg_restore', '--list'], stdin=backup.open('rb'), stdout=subprocess.DEVNULL, check=True)
         # Use environment inheritance instead of placing credentials in arguments/files.
-        import_env = dict(os.environ, DATABASE_URL=environment['DATABASE_URL'], DIRECT_URL=environment['DATABASE_URL'])
-        subprocess.run(['docker', 'run', '--rm', '--network', 'bayada_default', '-e', 'DATABASE_URL', '-e', 'DIRECT_URL', 'bayada-korea-import:' + short, 'pnpm', '--filter', '@bayada/korea', 'exec', 'tsx', 'src/import.ts'], env=import_env, check=True)
+        if args.skip_content_import:
+            marker = run('docker', 'exec', 'bayada-db-1', 'psql', '-U', 'postgres', '-d', 'bayada', '-Atc', 'SELECT EXISTS (SELECT 1 FROM "SiteSetting" WHERE key=\'korea.wordpress.public-content.v1\')', capture=True)
+            if marker.strip() != 't': raise RuntimeError('Public content was not previously imported')
+        else:
+            import_env = dict(os.environ, DATABASE_URL=environment['DATABASE_URL'], DIRECT_URL=environment['DATABASE_URL'])
+            subprocess.run(['docker', 'run', '--rm', '--network', 'bayada_default', '-e', 'DATABASE_URL', '-e', 'DIRECT_URL', 'bayada-korea-import:' + short, 'pnpm', '--filter', '@bayada/korea', 'exec', 'tsx', 'src/import.ts'], env=import_env, check=True)
         for service in ['korea', 'admin']:
             env = dict(environment) if service == 'admin' else {k: environment[k] for k in ['DATABASE_URL', 'SMTP_URL', 'MAIL_FROM', 'ADMIN_PUBLIC_URL'] if k in environment}
             env.update(DIRECT_URL=environment['DATABASE_URL'], KOREA_MEDIA_DIR='/korea-media', HOSTNAME='0.0.0.0', PORT='3000')
@@ -114,7 +120,7 @@ def main():
             if service == 'admin':
                 command += ['-v', '/srv/bayada/legacy-private:/legacy-private:ro']
             else:
-                for directory in ['wp-content', 'wp-includes']:
+                for directory in ['assets']:
                     command += ['-v', str(static / directory) + ':/app/apps/korea/public/' + directory + ':ro']
             for key in env:
                 command += ['-e', key]
@@ -133,7 +139,12 @@ def main():
         if before.count(needle) != 1:
             raise RuntimeError('Unexpected existing admin route')
         candidate = before.replace(needle, 'reverse_proxy ' + names['admin'] + ':3000')
-        candidate += '\n' + host + ' {\n encode zstd gzip\n header X-Robots-Tag "noindex, nofollow"\n reverse_proxy ' + names['korea'] + ':3000\n}\n'
+        if previous['containers'].get('korea'):
+            old_route = 'reverse_proxy ' + previous['containers']['korea'] + ':3000'
+            if candidate.count(old_route) != 1: raise RuntimeError('Unexpected Korea route')
+            candidate = candidate.replace(old_route, 'reverse_proxy ' + names['korea'] + ':3000')
+        else:
+            candidate += '\n' + host + ' {\n encode zstd gzip\n header X-Robots-Tag "noindex, nofollow"\n reverse_proxy ' + names['korea'] + ':3000\n}\n'
         (release / 'Caddyfile.previous').write_text(before)
         (release / 'Caddyfile.candidate').write_text(candidate)
         for kind in ['previous', 'candidate']:
@@ -170,7 +181,7 @@ def main():
         temp_link = Path('/srv/bayada/current-korea-next')
         temp_link.symlink_to(app)
         temp_link.replace(current)
-        result = dict(previous, commit=args.commit, release=str(app), previousDeployment=previous, containers=dict(previous['containers'], **names), publicUrls=dict(previous['publicUrls'], korea=url), status='active', switchedAt=time.time(), publicHealth=health, backup=state['backup'], backupVerified=True, appCommits={'web': previous['commit'], 'academy': previous['commit'], 'korea': args.commit, 'admin': args.commit}, caddySource=str(source), previousCaddy=str(release / 'Caddyfile.previous'), candidateCaddy=str(release / 'Caddyfile.candidate'))
+        result = dict(previous, commit=args.commit, release=str(app), previousDeployment=previous, containers=dict(previous['containers'], **names), publicUrls=dict(previous['publicUrls'], korea=url), status='active', switchedAt=time.time(), publicHealth=health, backup=state['backup'], backupVerified=True, appCommits={'web': previous.get('appCommits', {}).get('web', previous['commit']), 'academy': previous.get('appCommits', {}).get('academy', previous['commit']), 'korea': args.commit, 'admin': args.commit}, caddySource=str(source), previousCaddy=str(release / 'Caddyfile.previous'), candidateCaddy=str(release / 'Caddyfile.candidate'))
         atomic(manifest_path, result)
         state.update(status='active', publicHealth=health, activatedAt=time.time())
         atomic(state_path, state)

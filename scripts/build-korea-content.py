@@ -9,7 +9,7 @@ import json
 import re
 import zipfile
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import unquote, urlsplit, parse_qsl, urlencode, urljoin
 
 from bs4 import BeautifulSoup, NavigableString, Comment
 import tinycss2
@@ -19,6 +19,31 @@ ORIGIN = re.compile(r'https?://(?:www\.)?bayadakorea\.com', re.I)
 PROXY = re.compile(r'https?://i[0-3]\.wp\.com/(?:www\.)?bayadakorea\.com', re.I)
 CDN = re.compile(r'https?://c0\.wp\.com/c/[^/]+', re.I)
 SAFE_EXT = {'.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.otf', '.mp4', '.webm', '.pdf', '.hwp', '.hwpx', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx'}
+ASSET_ROOTS = {'/wp-content/uploads/': '/assets/media/', '/wp-content/plugins/': '/assets/vendor/', '/wp-content/themes/': '/assets/theme/', '/wp-includes/': '/assets/runtime/'}
+
+
+def clean_asset_paths(text):
+    for old, new in ASSET_ROOTS.items():
+        text = text.replace('sourceURL=' + old, 'sourceURL=' + new)
+        text = re.sub(r'(?<![\w.:/\\?=&%~-])' + re.escape(old), lambda _: new, text)
+        text = re.sub(r'(?<![\w.:/\\?=&%~-])' + re.escape(old.replace('/', r'\/')), lambda _: new.replace('/', r'\/'), text)
+        for escaped in [False, True]:
+            old_base, new_base = old.rstrip('/'), new.rstrip('/')
+            if escaped: old_base, new_base = old_base.replace('/', r'\/'), new_base.replace('/', r'\/')
+            text = re.sub(r'(?<![\w.:/\\?=&%~-])' + re.escape(old_base) + r'''(?=$|[?#"'\s<>)]|\\["'])''', lambda _: new_base, text)
+    def query(match):
+        params = [(k, v) for k, v in parse_qsl(match[2].replace('&amp;', '&'), keep_blank_values=True) if k not in ['fit', 'resize', 'ssl', 'w', 'h', 'quality', 'strip']]
+        encoded = urlencode(params)
+        if '&amp;' in match[2]: encoded = encoded.replace('&', '&amp;')
+        return match[1] + ('?' + encoded if encoded else '')
+    return re.sub(r'''(/assets/[^\s"'<>\\)?]+)\?([^\s"'<>\\)#]*)''', query, text)
+
+
+def clean_asset_data(value):
+    if isinstance(value, str): return clean_asset_paths(value)
+    if isinstance(value, list): return [clean_asset_data(v) for v in value]
+    if isinstance(value, dict): return {k: clean_asset_data(v) for k, v in value.items()}
+    return value
 
 
 def localize(text):
@@ -119,6 +144,7 @@ def main():
     wanted = set()
 
     def assets(text):
+        for old, new in ASSET_ROOTS.items(): text = text.replace(new, old)
         for match in re.findall(r'(?:https?://[^\s"\'<>\\)]+|/(?:wp-content|wp-includes)/[^\s"\'<>\\)]+)', localize(text).replace(r'\/', '/')):
             try:
                 path = unquote(urlsplit(match.replace('&amp;', '&')).path)
@@ -343,7 +369,10 @@ def main():
             if target.is_file():
                 copied.add(path)
                 if target.suffix in ['.css', '.js']:
-                    assets(target.read_text(encoding='utf-8', errors='replace'))
+                    cached = target.read_text(encoding='utf-8', errors='replace')
+                    assets(cached)
+                    for ref in re.findall(r'url\(["\']?([^\)"\']+)', cached):
+                        assets(urljoin('https://assets.local' + path, ref))
             else:
                 missing.add(path)
             continue
@@ -404,8 +433,30 @@ def main():
             matches = candidates.get((field['kind'], field['value']), [])
             if len(matches) == 1: field['source'] = matches[0]
     bundle = {'source': 'https://www.bayadakorea.com', 'pages': documents, 'fragments': fragments, 'navigation': navigation, 'partners': partners, 'partnerRow': partner_row, 'boards': board_templates, 'boardView': detail_template, 'faqRow': faq_row}
-    (content / 'templates.json').write_text(json.dumps(bundle, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
-    manifest = [{'path': path, 'bytes': (public / path.lstrip('/')).stat().st_size, 'sha256': hashlib.sha256((public / path.lstrip('/')).read_bytes()).hexdigest()} for path in sorted(copied)]
+    (content / 'templates.json').write_text(json.dumps(clean_asset_data(bundle), ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    posts_file = content / 'boards.json'
+    posts_file.write_text(json.dumps(clean_asset_data(json.loads(posts_file.read_text(encoding='utf-8'))), ensure_ascii=False, indent=2), encoding='utf-8')
+    exported = []
+    for old_path in sorted(copied):
+        new_path = clean_asset_paths(old_path)
+        old_file, new_file = public / old_path.lstrip('/'), public / new_path.lstrip('/')
+        data = old_file.read_bytes()
+        if old_file.suffix in ['.css', '.js']:
+            text = data.decode('utf-8')
+            if old_file.suffix == '.css':
+                def css_url(match):
+                    ref = match[2]
+                    if ref.startswith(('data:', '#', 'http:', 'https:')): return match[0]
+                    absolute = urljoin('https://assets.local' + old_path, ref)
+                    parsed = urlsplit(absolute)
+                    local = clean_asset_paths(parsed.path + ('?' + parsed.query if parsed.query else '') + ('#' + parsed.fragment if parsed.fragment else ''))
+                    return 'url(' + match[1] + local + match[1] + ')'
+                text = re.sub(r'''url\(\s*(["']?)([^)"']+)\1\s*\)''', css_url, text)
+            data = clean_asset_paths(text).encode('utf-8')
+        new_file.parent.mkdir(parents=True, exist_ok=True)
+        new_file.write_bytes(data)
+        exported.append(new_path)
+    manifest = [{'path': path, 'bytes': (public / path.lstrip('/')).stat().st_size, 'sha256': hashlib.sha256((public / path.lstrip('/')).read_bytes()).hexdigest()} for path in exported]
     (content / 'assets-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
     (args.capture / 'missing-assets.json').write_text(json.dumps(sorted(missing), ensure_ascii=False, indent=2), encoding='utf-8')
     report = {'pages': len(documents), 'fields': sum(len(x['fields']) for x in documents), 'assetsCopied': len(copied), 'missingAssets': sorted(missing), 'bundleSha256': hashlib.sha256((content / 'templates.json').read_bytes()).hexdigest()}

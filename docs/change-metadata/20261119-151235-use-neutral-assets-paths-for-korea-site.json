@@ -1,0 +1,464 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261119-151235-use-neutral-assets-paths-for-korea-site",
+  "created_at": "2026-11-19T15:12:35+09:00",
+  "repository": "bayada",
+  "branch": "main",
+  "baseline_commit": "0550a991a1f04699e72bc91e9eeda4167af4d962",
+  "request": "User dislikes WordPress-style paths on the Next site; use ordinary asset folders and deploy the correction",
+  "title": "Use neutral assets paths for Korea site",
+  "purpose": "Replace WordPress-shaped public asset storage and CMS links while preserving the original appearance and legacy links",
+  "files": [
+    {
+      "path": "apps/korea/src/app/[[...slug]]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 7,
+          "new_end": 9
+        },
+        {
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": null,
+          "new_end": null
+        }
+      ],
+      "working_tree_sha256": "c5b89227904cc14edf387a5e6a428d7c93d8416e38cf373fee81f25a48842a02",
+      "symbols": [
+        "GET legacy asset compatibility"
+      ],
+      "purpose": "Returns a 308 redirect from managed old paths and obsolete CDN options to the canonical asset address on the forwarded public origin.",
+      "previous_behavior": "Legacy asset links were served directly from WordPress-shaped directories.",
+      "new_behavior": "Returns a 308 redirect from managed old paths and obsolete CDN options to the canonical asset address on the forwarded public origin.",
+      "data_impact": "No operational writes for asset redirects; ordinary page/view behavior is retained.",
+      "access_control_impact": "Redirect destinations stay under assets on the current public host; unpublished/unknown pages remain inaccessible.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "deploy/ec2/deploy-korea.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 39,
+          "new_end": 39
+        },
+        {
+          "old_start": 97,
+          "old_end": 97,
+          "new_start": 98,
+          "new_end": 99
+        },
+        {
+          "old_start": 104,
+          "old_end": 105,
+          "new_start": 106,
+          "new_end": 111
+        },
+        {
+          "old_start": 117,
+          "old_end": 117,
+          "new_start": 123,
+          "new_end": 123
+        },
+        {
+          "old_start": 136,
+          "old_end": 136,
+          "new_start": 142,
+          "new_end": 147
+        },
+        {
+          "old_start": 173,
+          "old_end": 173,
+          "new_start": 184,
+          "new_end": 184
+        }
+      ],
+      "working_tree_sha256": "291a4a52bc5d6cc6bd305cb7d93d845373f4c075e3013aba6d9ae5dcaf62dc99",
+      "symbols": [
+        "prepare, activate, skip-content-import"
+      ],
+      "purpose": "Mounts only assets, replaces the existing Korea route safely, preserves actual inherited brand/academy app commits and supports code-only releases after verifying the import marker.",
+      "previous_behavior": "Deployment mounted wp folders, appended the first Korea host and assigned inherited app commits from the global commit.",
+      "new_behavior": "Mounts only assets, replaces the existing Korea route safely, preserves actual inherited brand/academy app commits and supports code-only releases after verifying the import marker.",
+      "data_impact": "Planned AWS operation creates a server-side DB backup and new containers/routing. This release skips public-content import and does not rewrite production rows.",
+      "access_control_impact": "Candidates use the existing admin secrets in memory and keep the public media mount read-only; existing brand/academy containers stay unchanged.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "deploy/ec2/docker-compose.yml",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 87,
+          "old_end": 88,
+          "new_start": 87,
+          "new_end": 87
+        }
+      ],
+      "working_tree_sha256": "fac3cf1b58a9285957048db30de3d183370f9b18e49f65bcd6a04051ea15acb1",
+      "symbols": [
+        "korea static mount"
+      ],
+      "purpose": "Uses one read-only assets directory mount.",
+      "previous_behavior": "The Korea service mounted wp-content and wp-includes folders.",
+      "new_behavior": "Uses one read-only assets directory mount.",
+      "data_impact": "Runtime file configuration only; no operational row changes.",
+      "access_control_impact": "The public asset mount remains read-only; CMS upload permission separation is unchanged.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "packages/korea/src/assets.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 40
+        }
+      ],
+      "working_tree_sha256": "8ca4f60e9f3124cfa8eaa262d8b7a1660d07b481246cda70bfdd515e2c153d01",
+      "symbols": [
+        "normalizeAssetPaths, normalizeAssetData"
+      ],
+      "purpose": "Converts only local/owned legacy asset roots, including escaped JSON and root-only settings, to media/vendor/theme/runtime under assets; removes unused CDN options and preserves unrelated external URLs.",
+      "previous_behavior": "Saved links and public templates used WordPress directory names and unused Photon query options.",
+      "new_behavior": "Converts only local/owned legacy asset roots, including escaped JSON and root-only settings, to media/vendor/theme/runtime under assets; removes unused CDN options and preserves unrelated external URLs.",
+      "data_impact": "Reads legacy JSON values in memory without modifying operational records.",
+      "access_control_impact": "No new privileges; normalization does not admit executable URLs or redirect to another host.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "packages/korea/src/model.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 2
+        },
+        {
+          "old_start": 68,
+          "old_end": 68,
+          "new_start": 70,
+          "new_end": 70
+        }
+      ],
+      "working_tree_sha256": "c57368327b45efc873e28587cbb4a5f3d12d97fa7ef330be9139fcab0f300cad",
+      "symbols": [
+        "parseEdits and exported asset helpers"
+      ],
+      "purpose": "Exports shared compatibility helpers and canonicalizes valid managed URL edits before saving. Existing field validation remains in place.",
+      "previous_behavior": "CMS nontext values were persisted exactly as entered.",
+      "new_behavior": "Exports shared compatibility helpers and canonicalizes valid managed URL edits before saving. Existing field validation remains in place.",
+      "data_impact": "New CMS nontext edits use neutral asset URLs; existing rows and revision timestamps are not migrated.",
+      "access_control_impact": "Existing validation and permission checks remain in effect.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "packages/korea/src/server.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 5,
+          "old_end": 5,
+          "new_start": 5,
+          "new_end": 5
+        },
+        {
+          "old_start": 16,
+          "old_end": 16,
+          "new_start": 16,
+          "new_end": 16
+        },
+        {
+          "old_start": 34,
+          "old_end": 34,
+          "new_start": 34,
+          "new_end": 34
+        },
+        {
+          "old_start": 38,
+          "old_end": 38,
+          "new_start": 38,
+          "new_end": 38
+        },
+        {
+          "old_start": 42,
+          "old_end": 42,
+          "new_start": 42,
+          "new_end": 42
+        },
+        {
+          "old_start": 54,
+          "old_end": 54,
+          "new_start": 54,
+          "new_end": 54
+        },
+        {
+          "old_start": 85,
+          "old_end": 85,
+          "new_start": 85,
+          "new_end": 85
+        },
+        {
+          "old_start": 87,
+          "old_end": 87,
+          "new_start": 87,
+          "new_end": 87
+        },
+        {
+          "old_start": 99,
+          "old_end": 99,
+          "new_start": 99,
+          "new_end": 99
+        }
+      ],
+      "working_tree_sha256": "108d065f25308fadf35778b07d65bfe548551d228b4921d882c6cb8b7d4213c4",
+      "symbols": [
+        "getEdits, getMenu, getPartners, listPosts, cleanRichText, boardHtml"
+      ],
+      "purpose": "Normalizes saved public content on read, serves neutral board icon paths and normalizes sanitized post HTML without changing its revision.",
+      "previous_behavior": "Old saved page/partner/post links appeared as wp-content addresses.",
+      "new_behavior": "Normalizes saved public content on read, serves neutral board icon paths and normalizes sanitized post HTML without changing its revision.",
+      "data_impact": "Reads scoped public Page rows; no bulk content rewrite, private inquiry change or schema mutation. Article counter behavior is unchanged.",
+      "access_control_impact": "Korea content/inquiry permissions and published-only rendering are unchanged.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "packages/korea/tests/model.test.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 3,
+          "old_end": 3,
+          "new_start": 3,
+          "new_end": 3
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 6,
+          "new_end": 17
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 63,
+          "new_end": 64
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 66,
+          "new_end": 67
+        }
+      ],
+      "working_tree_sha256": "6798b7bb279ac82a1e0e9cabca98d4070e11ea1aeca5be108f597fe0ea0767f1",
+      "symbols": [
+        "Legacy URL and public template regression checks"
+      ],
+      "purpose": "Covers the exact logo query, version/fragment preservation, external WP/Vimeo links, escaped/root-only URLs and absence of old roots in generated page sources.",
+      "previous_behavior": "Tests did not require neutral public URL roots or external URL preservation.",
+      "new_behavior": "Covers the exact logo query, version/fragment preservation, external WP/Vimeo links, escaped/root-only URLs and absence of old roots in generated page sources.",
+      "data_impact": "Pure fixture reads; no operational database mutations.",
+      "access_control_impact": "Regression checks preserve safe URL and HTML boundaries.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    },
+    {
+      "path": "scripts/build-korea-content.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 12,
+          "old_end": 12,
+          "new_start": 12,
+          "new_end": 12
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 22,
+          "new_end": 46
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 147,
+          "new_end": 147
+        },
+        {
+          "old_start": 346,
+          "old_end": 346,
+          "new_start": 372,
+          "new_end": 375
+        },
+        {
+          "old_start": 407,
+          "old_end": 408,
+          "new_start": 436,
+          "new_end": 459
+        }
+      ],
+      "working_tree_sha256": "ae701d6868c9c0912f8aaa782ab7becb3c387ac9f3c71dffc190b52ae216f782",
+      "symbols": [
+        "clean_asset_paths, clean_asset_data, cached CSS dependency traversal, neutral export"
+      ],
+      "purpose": "Exports neutral-only public assets and manifests, rewrites relative CSS dependencies to correct absolute asset paths, removes unused query options and imports the source media control icon that a cached CSS dependency referenced.",
+      "previous_behavior": "Generated files retained original wp roots and CSS relative links.",
+      "new_behavior": "Exports neutral-only public assets and manifests, rewrites relative CSS dependencies to correct absolute asset paths, removes unused query options and imports the source media control icon that a cached CSS dependency referenced.",
+      "data_impact": "Reads local backups/public captures and writes generated public-only output. SQL, private root config and private inquiries are not included in the asset tar.",
+      "access_control_impact": "Only referenced public files are exported; original private backups stay outside public output and Docker context.",
+      "risks": [
+        "A missed CSS/script dependency or URL boundary could break media; all generated files and public pages are checked before deployment."
+      ],
+      "rollback": "Reload the retained previous explicit Caddy configuration and route the old admin/Korea containers. Keep their original static directories. If content has since been saved with neutral URLs, retain the neutral asset mapping or reverse only those managed public URLs before using an old renderer; never restore the entire live DB over subsequent activity."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "Before this commit, only isolated synthetic QA data was read; no production content or inquiry rows were edited. The asset release will normalize legacy data on read, skip content import, and retain backups/history.",
+    "schema_migration": "None: existing Page/SiteSetting/AuditLog schemas and revision timestamps are retained.",
+    "external_side_effects": [
+      "Read one original public media-control SVG, without changing WordPress.",
+      "Local asset/runtime verification and existing-site screenshot comparisons; no messages sent.",
+      "AWS code-only deployment is planned after commit; execution evidence will be recorded separately."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter @bayada/korea test",
+      "result": "passed",
+      "evidence": "Seven model, sanitization, template and URL compatibility checks passed after the final generator run."
+    },
+    {
+      "command": "pnpm --filter korea typecheck; pnpm --filter admin typecheck; production builds of korea and admin",
+      "result": "passed",
+      "evidence": "TypeScript and both final standalone builds completed; logs output/korea-assets-build-final.log and output/admin-assets-build-final.log."
+    },
+    {
+      "command": "Synthetic QA actual HTTP scan without mounted wp directories",
+      "result": "passed",
+      "evidence": "All990 assets match their SHA-256 hashes; all74 rendered pages have no old roots, including escaped configuration. Exact user logo URL redirects to assets/media without fit/ssl. output/korea-neutral-assets-qa.json."
+    },
+    {
+      "command": "Desktop/mobile visual regression of home, about, notice, video, FAQ and blog archive",
+      "result": "passed",
+      "evidence": "Twelve captures completed with no horizontal overflow and a functioning mobile menu; output/korea-neutral-assets-visual/results.json. Later changes only corrected hidden URL settings/debug references and external URL boundaries."
+    },
+    {
+      "command": "python -m py_compile scripts/build-korea-content.py deploy/ec2/deploy-korea.py; git diff --check",
+      "result": "passed",
+      "evidence": "Python syntax and patch whitespace checks pass."
+    }
+  ],
+  "residual_risks": [
+    "Historical backups and retained rollback releases deliberately preserve old directory names; the new live mount contains only neutral assets.",
+    "Original finite-viewport/dynamic video/CDN resampling limits remain; a path migration does not rebuild vendor frontend libraries as React components.",
+    "Five unused assets already absent from the original backup remain absent; no new missing CSS dependency is introduced.",
+    "Newly saved neutral URLs need their mapping retained if a future rollback uses the old renderer.",
+    "Official www DNS and external SMTP remain unchanged by this path-only release."
+  ],
+  "commit": "same-as-metadata-file",
+  "configuration_changes": [
+    {
+      "path": ".gitignore",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 24,
+          "new_end": 25
+        }
+      ],
+      "working_tree_sha256": "0bad028ba43167c970bce7d80ab3c4f43e279bb5ad2953b3748dc98b8aac2422",
+      "purpose": "Exclude generated neutral assets; transfer only the separately verified asset bundle.",
+      "previous_behavior": "Only the old generated static directories were excluded.",
+      "new_behavior": "Generated assets stay outside source tracking and Docker build context.",
+      "data_impact": "No operational row changes; private backup exclusions remain.",
+      "access_control_impact": "No new access is granted.",
+      "risks": [
+        "The verified static bundle must be mounted for the live site."
+      ],
+      "rollback": "Restore this ignore rule only if packaging is also changed; never include private output/backups in images."
+    },
+    {
+      "path": ".dockerignore",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 26,
+          "new_end": 27
+        }
+      ],
+      "working_tree_sha256": "9478084284fae8ce759d461146ad58a363ada7ce15c312e89f6dda00ee620d25",
+      "purpose": "Exclude generated neutral assets; transfer only the separately verified asset bundle.",
+      "previous_behavior": "Only the old generated static directories were excluded.",
+      "new_behavior": "Generated assets stay outside source tracking and Docker build context.",
+      "data_impact": "No operational row changes; private backup exclusions remain.",
+      "access_control_impact": "No new access is granted.",
+      "risks": [
+        "The verified static bundle must be mounted for the live site."
+      ],
+      "rollback": "Restore this ignore rule only if packaging is also changed; never include private output/backups in images."
+    }
+  ],
+  "generated_content": [
+    {
+      "path": "packages/korea/content/templates.json",
+      "sha256": "142e875bf4f8237f8729a7f4ff03b5aa3c4887765ba1e6b4a77d04df24ec1dae",
+      "provenance": "Generated public-only templates,152 posts/FAQ and990 neutral static assets."
+    },
+    {
+      "path": "packages/korea/content/boards.json",
+      "sha256": "af1e511652caf9ba380ddecf5cc7b9f4f48b1b9cb7f51280b26b2047da567cb2",
+      "provenance": "Generated public-only templates,152 posts/FAQ and990 neutral static assets."
+    },
+    {
+      "path": "packages/korea/content/assets-manifest.json",
+      "sha256": "a05a35169c1c9e444323cd1108f276c269768c4119e1be45daa42186ae5cd65c",
+      "provenance": "Generated public-only templates,152 posts/FAQ and990 neutral static assets."
+    }
+  ]
+}

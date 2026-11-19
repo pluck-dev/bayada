@@ -21,3 +21,5 @@ apps/korea/public/wp-includes/
 # Local captures, backups and QA evidence can contain operational/private data.
 /output/
 __pycache__/
+
+apps/korea/public/assets/

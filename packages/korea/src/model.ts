@@ -1,3 +1,5 @@
+import { normalizeAssetPaths } from "./assets";
+export { normalizeAssetPaths, normalizeAssetData } from "./assets";
 export const KOREA_PREFIX = "korea/";
 export type InquirySettings = { consultationRecipients: string[]; careersRecipients: string[]; enabled: boolean };
 export const DEFAULT_INQUIRY_SETTINGS: InquirySettings = { consultationRecipients: [], careersRecipients: [], enabled: true };
@@ -65,7 +67,7 @@ export function parseEdits(input: unknown, template: Template): PageEdits {
     const field = template.fields.find(f => f.key === key);
     if (!field || typeof value !== "string" || value.length > 20000) throw new Error("수정 항목을 확인하세요.");
     if (field.kind !== "text" && !safeUrl(value, field.kind !== "link")) throw new Error("이미지·링크 주소를 확인하세요.");
-    values[key] = value;
+    values[key] = field.kind === "text" ? value : normalizeAssetPaths(value);
   }
   return { title: x.title.trim(), published: x.published, values };
 }

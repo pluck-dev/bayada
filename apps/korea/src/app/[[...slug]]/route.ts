@@ -1,13 +1,16 @@
+import { normalizeAssetPaths } from "@bayada/korea";
 import { pageByPath, pages, renderPage, incrementBoardView } from "@bayada/korea/server";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const origin = `${request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1)}://${request.headers.get("host") || url.host}`;
+  const legacyAsset = normalizeAssetPaths(url.pathname + url.search);
+  if (legacyAsset !== url.pathname + url.search && legacyAsset.startsWith("/assets/")) return Response.redirect(new URL(legacyAsset, origin), 308);
   let page;
   const legacyId = url.searchParams.get("page_id") || url.searchParams.get("p");
   try { page = legacyId && ["/", "/index.php"].includes(url.pathname) ? pages.find(p => p.legacyId > 0 && String(p.legacyId) === legacyId) : pageByPath(url.pathname); } catch { return new Response("Not found", { status: 404 }); }
   if (!page) return new Response("Not found", { status: 404 });
-  const origin = `${request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1)}://${request.headers.get("host") || url.host}`;
   const html = await renderPage(page, url.searchParams, origin);
   if (html === null) return new Response("Not found", { status: 404 });
   const headers = new Headers({ "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff", "referrer-policy": "strict-origin-when-cross-origin" });

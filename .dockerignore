@@ -23,3 +23,5 @@ deploy/db-init
 output
 apps/korea/public/wp-content
 apps/korea/public/wp-includes
+
+apps/korea/public/assets

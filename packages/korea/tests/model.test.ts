@@ -1,7 +1,19 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseEdits, parseMenu, parsePartners, parsePost, renderTemplate, safeUrl } from "../src/model";
+import { normalizeAssetPaths, normalizeAssetData, parseEdits, parseMenu, parsePartners, parsePost, renderTemplate, safeUrl } from "../src/model";
 import { cleanRichText, templates } from "../src/server";
+
+test('old saved asset URLs use neutral roots and discard unused CDN options', () => {
+  assert.equal(normalizeAssetPaths('/wp-content/uploads/2025/04/logo.png?fit=500%2C200&ssl=1'), '/assets/media/2025/04/logo.png');
+  assert.equal(normalizeAssetPaths('https://www.bayadakorea.com/wp-content/plugins/example/app.js?ver=2'), '/assets/vendor/example/app.js?ver=2');
+  assert.equal(normalizeAssetPaths('/wp-includes/font.svg?ver=1#glyph'), '/assets/runtime/font.svg?ver=1#glyph');
+  assert.equal(normalizeAssetPaths('https://player.vimeo.com/video/1?w=500&h=200'), 'https://player.vimeo.com/video/1?w=500&h=200');
+  assert.equal(normalizeAssetPaths('https://example.org/wp-content/uploads/photo.png?fit=20'), 'https://example.org/wp-content/uploads/photo.png?fit=20');
+  assert.equal(normalizeAssetPaths(String.raw`https:\/\/www.bayadakorea.com\/wp-content\/uploads\/a.png`), String.raw`\/assets\/media\/a.png`);
+  assert.equal(normalizeAssetPaths(String.raw`"uploadUrl":"\/wp-content\/uploads"`), String.raw`"uploadUrl":"\/assets\/media"`);
+  assert.deepEqual(normalizeAssetData({ values: { f0: '/wp-content/themes/example/a.css' }, published: false }), { values: { f0: '/assets/theme/example/a.css' }, published: false });
+  assert.equal(normalizeAssetPaths(String.raw`\/wp-content\/plugins\/example\/`), String.raw`\/assets\/vendor\/example\/`);
+});
 
 test("URL validation rejects executable, protocol-relative and attribute-breaking URLs", () => {
   for (const value of ['javascript:alert(1)', '//evil.test/x', '/x" onerror="a', '/x\n', 'data:text/html,x', 'https://user:pass@example.test/x']) assert.equal(safeUrl(value), false, value);
@@ -48,7 +60,11 @@ test("all public templates are route-unique, contain no admin bar and preserve t
     for (const field of page.fields.filter(f => f.source)) assert.ok(templates.pages.find(p => p.key === field.source!.key)?.fields.some(f => f.key === field.source!.field));
   }
   assert.match(templates.faqRow, /elementor-accordion-title/);
+  assert.ok(!JSON.stringify(templates).includes('/wp-content/'));
+  assert.ok(!JSON.stringify(templates).includes('/wp-includes/'));
   for (const page of templates.pages) {
+    const renderedSource = (page.head + page.template).replaceAll('\\/', '/');
+    assert.ok(!renderedSource.includes('/wp-content/') && !renderedSource.includes('/wp-includes/'), page.path);
     assert.ok(!page.template.includes('id="wpadminbar"'));
     for (const f of page.fields) { assert.ok(!f.value.startsWith('{{KOREA_')); assert.ok(!f.value.includes('nonce')); }
     assert.ok(!page.head.includes('googletagmanager.com'));

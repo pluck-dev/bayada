@@ -2,7 +2,7 @@ import { prisma } from "@bayada/db";
 import sanitizeHtml from "sanitize-html";
 import bundle from "../content/templates.json";
 import quarantined from "../content/quarantine.json";
-import { BOARDS, KOREA_PREFIX, escapeHtml, renderTemplate, parseMenu, parsePartners, parseInquirySettings, DEFAULT_INQUIRY_SETTINGS, type Partner, type MenuItem, type BoardPost, type KoreaPage, type PageEdits, type Template } from "./model";
+import { normalizeAssetData, normalizeAssetPaths, BOARDS, KOREA_PREFIX, escapeHtml, renderTemplate, parseMenu, parsePartners, parseInquirySettings, DEFAULT_INQUIRY_SETTINGS, type Partner, type MenuItem, type BoardPost, type KoreaPage, type PageEdits, type Template } from "./model";
 
 export const templates = bundle as unknown as { pages: KoreaPage[]; fragments: Record<string, Template>; navigation: MenuItem[]; partners: Partner[]; partnerRow: string; boards: Record<string, {list: string; row: string; gallery: boolean}>; boardView: string; faqRow: string };
 export const pages = templates.pages;
@@ -13,7 +13,7 @@ export async function getInquirySettings() {
 }
 export const documentSlug = (key: string) => `${KOREA_PREFIX}page/${key}`;
 export function cleanRichText(html: string) {
-  return sanitizeHtml(html, {
+  return sanitizeHtml(normalizeAssetPaths(html), {
     allowedTags: [...sanitizeHtml.defaults.allowedTags, "img", "iframe", "video", "source"],
     allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, "*": ["class", "style"], img: ["src", "alt", "width", "height"], iframe: ["src", "title", "width", "height", "allowfullscreen"], video: ["src", "controls", "poster"], source: ["src", "type"] },
     allowedIframeHostnames: ["www.youtube.com", "www.youtube-nocookie.com", "player.vimeo.com"],
@@ -31,15 +31,15 @@ export function cleanRichText(html: string) {
 }
 export async function getEdits(key: string): Promise<{ edits: PageEdits | null; updatedAt: string | null }> {
   const row = await prisma.page.findUnique({ where: { slug: documentSlug(key) } });
-  return { edits: row ? JSON.parse(row.content) as PageEdits : null, updatedAt: row?.updatedAt.toISOString() ?? null };
+  return { edits: row ? normalizeAssetData(JSON.parse(row.content)) as PageEdits : null, updatedAt: row?.updatedAt.toISOString() ?? null };
 }
 export async function getMenu() {
   const row = await prisma.page.findUnique({ where: { slug: "korea/navigation" } });
-  return { items: row ? parseMenu(JSON.parse(row.content)) : templates.navigation, updatedAt: row?.updatedAt.toISOString() ?? null };
+  return { items: row ? parseMenu(normalizeAssetData(JSON.parse(row.content))) : templates.navigation, updatedAt: row?.updatedAt.toISOString() ?? null };
 }
 export async function getPartners() {
   const row = await prisma.page.findUnique({ where: { slug: 'korea/partners' } });
-  return { items: row ? parsePartners(JSON.parse(row.content)) : templates.partners, updatedAt: row?.updatedAt.toISOString() ?? null };
+  return { items: row ? parsePartners(normalizeAssetData(JSON.parse(row.content))) : templates.partners, updatedAt: row?.updatedAt.toISOString() ?? null };
 }
 function renderMenu(items: MenuItem[], path: string, depth = 0): string {
   const active = (item: MenuItem): boolean => {
@@ -51,7 +51,7 @@ export async function listPosts(board?: string, publicOnly = false): Promise<(Bo
   const rows = await prisma.page.findMany({ where: { slug: { startsWith: KOREA_PREFIX + "post/" + (board ? board + "/" : "") } }, orderBy: { updatedAt: "desc" } });
   const counters = await prisma.siteSetting.findMany({ where: { key: { startsWith: 'korea.views.' + (board ? board + '.' : '') } }, select: { key: true, value: true } });
   const counts = new Map(counters.map(row => [row.key, Number((row.value as { count?: number }).count) || 0]));
-  return rows.map(row => { const post = JSON.parse(row.content) as BoardPost; return { ...post, viewCount: counts.get('korea.views.' + post.board + '.' + post.id) || 0, updatedAt: row.updatedAt.toISOString() }; }).filter(row => !publicOnly || row.published).sort((a, b) => Number(b.notice) - Number(a.notice) || b.date.localeCompare(a.date) || b.id.localeCompare(a.id, undefined, { numeric: true }));
+  return rows.map(row => { const post = normalizeAssetData(JSON.parse(row.content)) as BoardPost; return { ...post, viewCount: counts.get('korea.views.' + post.board + '.' + post.id) || 0, updatedAt: row.updatedAt.toISOString() }; }).filter(row => !publicOnly || row.published).sort((a, b) => Number(b.notice) - Number(a.notice) || b.date.localeCompare(a.date) || b.id.localeCompare(a.id, undefined, { numeric: true }));
 }
 export async function incrementBoardView(board: string, id: string) {
   if (!Object.hasOwn(BOARDS, board) || !/^[a-zA-Z0-9_-]{1,80}$/.test(id)) return;
@@ -82,9 +82,9 @@ function boardHtml(board: string, posts: (BoardPost & { viewCount?: number })[],
     return `<div id="${e(board)}_board" class="mb-board"><div class="mb-level-0 mb-mode-view mb-skin-bbs-basic"><div class="mb-style1 board-view">${table}${post.attachments.map(a => `<p><a href="${e(a.url)}" download>${e(a.label)}</a></p>`).join("")}<div class="view-btn"><a class="btn btn-default" href="?">목록</a></div></div></div></div>`;
   }
   if (source) {
-    const rows = visible.map((p, i) => substitute(source.row, { ID: e(p.id), TITLE: e(p.title), TITLE_CLASS: p.notice ? 'mb-notice mb-notice-title' : '', AUTHOR: e(p.author), AUTHOR_ENCODED: encodeURIComponent(p.author), ICON: p.hasImage ? '<img alt="img" class="list-i-img" src="/wp-content/plugins/mangboard/skins/bbs_basic/images/icon_image.gif">' : '', DATE: e(p.date), HITS: String((p.hits || 0) + (p.viewCount || 0)), RANK: p.notice ? "공지" : String(matches.length - (index - 1) * pageSize - i), ROW_CLASS: p.notice ? "mb-notice" : "", IMAGE: e(p.image) })).join("");
+    const rows = visible.map((p, i) => substitute(source.row, { ID: e(p.id), TITLE: e(p.title), TITLE_CLASS: p.notice ? 'mb-notice mb-notice-title' : '', AUTHOR: e(p.author), AUTHOR_ENCODED: encodeURIComponent(p.author), ICON: p.hasImage ? '<img alt="img" class="list-i-img" src="/assets/vendor/mangboard/skins/bbs_basic/images/icon_image.gif">' : '', DATE: e(p.date), HITS: String((p.hits || 0) + (p.viewCount || 0)), RANK: p.notice ? "공지" : String(matches.length - (index - 1) * pageSize - i), ROW_CLASS: p.notice ? "mb-notice" : "", IMAGE: e(p.image) })).join("");
     const href = (page: number) => { const q = new URLSearchParams(query); q.delete('vid'); q.delete('board_pid'); q.delete('page'); q.set('board_page', String(page)); return '?' + e(q.toString()); };
-    const arrow = (page: number, label: string, kind: string, icon: string, hidden = false) => `<td class="page_arrow${page === index ? ' mb-disabled' : ''}${hidden ? ' mb-mobile-hide' : ''}"><a${page !== index ? ` href="${href(page)}"` : ''} title="${label}" class="btn-${kind}" role="button"><span><img src="/wp-content/plugins/mangboard/skins/bbs_basic/images/btn_paging_${icon}.gif" alt="${label}" style="width:15px;"></span></a></td>`;
+    const arrow = (page: number, label: string, kind: string, icon: string, hidden = false) => `<td class="page_arrow${page === index ? ' mb-disabled' : ''}${hidden ? ' mb-mobile-hide' : ''}"><a${page !== index ? ` href="${href(page)}"` : ''} title="${label}" class="btn-${kind}" role="button"><span><img src="/assets/vendor/mangboard/skins/bbs_basic/images/btn_paging_${icon}.gif" alt="${label}" style="width:15px;"></span></a></td>`;
     const start = Math.floor((index - 1) / 7) * 7 + 1;
     const paging = `<tbody><tr>${arrow(1, '처음', 'start', 'pprev', true)}${arrow(Math.max(1, index - 1), '이전', 'prev', 'prev')}${Array.from({ length: Math.min(7, count - start + 1) }, (_, i) => { const number = start + i; return `<td class="btn-page ${number === index ? "active" : ""}"><a class="btn-page-num${number === 1 ? ' first' : ''}" href="${href(number)}" title="Page ${number}">${number}</a></td>`; }).join("")}${arrow(Math.min(count, index + 1), '다음', 'next', 'next')}${arrow(count, '맨끝', 'end', 'nnext', true)}</tr></tbody>`;
     return substitute(source.list, { ROWS: rows, PAGER: paging, SEARCH: e(search) });
@@ -96,7 +96,7 @@ export async function renderPage(page: KoreaPage, query: URLSearchParams, origin
   if (current.edits?.published === false) return null;
   const values = { ...current.edits?.values };
   const origins = page.origins?.length ? await prisma.page.findMany({ where: { slug: { in: page.origins.map(documentSlug) } }, select: { slug: true, content: true } }) : [];
-  const originEdits = new Map(origins.map(row => [row.slug, JSON.parse(row.content) as PageEdits]));
+  const originEdits = new Map(origins.map(row => [row.slug, normalizeAssetData(JSON.parse(row.content)) as PageEdits]));
   for (const field of page.fields) if (field.source && values[field.key] === undefined) {
     const source = originEdits.get(documentSlug(field.source.key));
     if (source?.values[field.source.field] !== undefined) values[field.key] = source.values[field.source.field]!;
