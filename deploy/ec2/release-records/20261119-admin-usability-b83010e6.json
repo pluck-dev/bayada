@@ -1,0 +1,37 @@
+{
+  "commit": "b83010e6dc4c78ca511796b95fdbf2146b3aac78",
+  "containers": {
+    "web": "bayada-live-3263a5f-web",
+    "academy": "bayada-live-3263a5f-academy",
+    "admin": "bayada-live-b83010e6-admin",
+    "korea": "bayada-live-411f43e2-korea"
+  },
+  "publicHealth": {
+    "https://korea.54-116-157-4.sslip.io/": 200,
+    "https://korea.54-116-157-4.sslip.io/wp-admin/": 404,
+    "https://korea.54-116-157-4.sslip.io/api/inquiries": 405,
+    "https://admin.54-116-157-4.sslip.io/ko/auth/login": 200,
+    "https://admin.54-116-157-4.sslip.io/api/project-workspace": 401,
+    "https://54-116-157-4.sslip.io/ko": 200,
+    "https://academy.54-116-157-4.sslip.io/ko": 200
+  },
+  "backupVerified": true,
+  "appCommits": {
+    "web": "3263a5f6ad0953b9e275a5e2a450fcc856f1edad",
+    "academy": "3263a5f6ad0953b9e275a5e2a450fcc856f1edad",
+    "korea": "411f43e252fa38898e37e338891028b7628f040b",
+    "admin": "b83010e6dc4c78ca511796b95fdbf2146b3aac78"
+  },
+  "status": "active",
+  "scope": "Korea CMS usability and common sidebar labels; admin-only deployment",
+  "verification": {
+    "integrationChecks": 34,
+    "publicRoutesInIsolatedQA": 74,
+    "uiWorkflowGroups": 7,
+    "mobileViewport": 390,
+    "productionUi": "Existing authenticated account; page controls and all seven displayed image previews verified"
+  },
+  "operationalData": "Production reads and backup only; no content/intake rows changed or deleted",
+  "rollback": "Reload /tmp/korea-b83010e6-previous in bayada-caddy-1; retain prior containers and compatible DB/media",
+  "supersededCandidate": "619c0030 candidate was never live and has been stopped"
+}
