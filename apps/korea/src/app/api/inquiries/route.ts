@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const reply = (message: string, status = 400, extra: { field?: string; reference?: string } = {}) => Response.json({ message, ...extra }, { status, headers: { "cache-control": "no-store" } });
 export async function POST(request: Request) {
+  if (process.env.KOREA_PREVIEW_BRANCH) return reply('브랜치 미리보기에서는 실제 상담을 접수하지 않습니다.', 409);
   const origin = request.headers.get("origin");
   const url = new URL(request.url);
   const expectedOrigin = `${request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1)}://${request.headers.get("host") || url.host}`;

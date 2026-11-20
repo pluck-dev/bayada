@@ -1,0 +1,223 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261120-131228-add-isolated-korea-branch-preview-deployment",
+  "created_at": "2026-11-20T13:12:28+09:00",
+  "repository": "bayada",
+  "branch": "feat/renewal",
+  "baseline_commit": "fb77dd8be070403a4a1a7e00cc4cec45c9546c71",
+  "request": "View branches like Vercel previews",
+  "title": "Add isolated Korea branch preview deployment",
+  "purpose": "Make renewal review accessible at a separate HTTPS branch URL without production writes",
+  "files": [
+    {
+      "path": "apps/korea/public/preview.css",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "1b8430b4183ccaf595130c3c8fed2363ed88a3ada81f46e1cbe777ef53870edc",
+      "symbols": [
+        "Preview notice"
+      ],
+      "purpose": "Styles a compact noninteractive branch notice at desktop and mobile widths.",
+      "previous_behavior": "Pages had no visible branch context.",
+      "new_behavior": "Styles a compact noninteractive branch notice at desktop and mobile widths.",
+      "data_impact": "Preview uses a separate read-only public-fixture DB. Runtime preview POST and view-count writes are disabled; normal-mode behavior is retained.",
+      "access_control_impact": "Adds deployment input restrictions and read-only preview DB permissions; does not expand production admin roles or permissions.",
+      "risks": [
+        "Preview URLs are public and excluded from indexing; they contain public source fixtures only."
+      ],
+      "rollback": "Restore the saved pre-preview Caddy config by its explicit /tmp path and host startup source, then stop the new preview container. Return to prior source for app guards; no operational data rollback."
+    },
+    {
+      "path": "apps/korea/src/app/[[...slug]]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 1,
+          "new_start": 1,
+          "new_end": 1
+        },
+        {
+          "old_start": 15,
+          "old_end": 15,
+          "new_start": 15,
+          "new_end": 15
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 17,
+          "new_end": 20
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 22,
+          "new_end": 22
+        },
+        {
+          "old_start": 19,
+          "old_end": 19,
+          "new_start": 24,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "39666bbb555ce26d4afef54a13d9da4f53b4f13cec346c65de9328555f87403d",
+      "symbols": [
+        "GET"
+      ],
+      "purpose": "When KOREA_PREVIEW_BRANCH is set, add an escaped branch notice and noindex header and skip view-count writes; normal mode stays unchanged.",
+      "previous_behavior": "Branch builds had no preview marker and article visits wrote view counts.",
+      "new_behavior": "When KOREA_PREVIEW_BRANCH is set, add an escaped branch notice and noindex header and skip view-count writes; normal mode stays unchanged.",
+      "data_impact": "Preview uses a separate read-only public-fixture DB. Runtime preview POST and view-count writes are disabled; normal-mode behavior is retained.",
+      "access_control_impact": "Adds deployment input restrictions and read-only preview DB permissions; does not expand production admin roles or permissions.",
+      "risks": [
+        "Preview URLs are public and excluded from indexing; they contain public source fixtures only."
+      ],
+      "rollback": "Restore the saved pre-preview Caddy config by its explicit /tmp path and host startup source, then stop the new preview container. Return to prior source for app guards; no operational data rollback."
+    },
+    {
+      "path": "apps/korea/src/app/api/inquiries/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 10,
+          "new_end": 10
+        }
+      ],
+      "working_tree_sha256": "6c33aac9007d3ad0a14531cad3ca4b7f8175ab8ec70225a45cdc652b3edbbd0d",
+      "symbols": [
+        "POST"
+      ],
+      "purpose": "Reject preview-mode POST with 409 before reading, validating or storing the body or sending email.",
+      "previous_behavior": "All deployed environments could process valid inquiries.",
+      "new_behavior": "Reject preview-mode POST with 409 before reading, validating or storing the body or sending email.",
+      "data_impact": "Preview uses a separate read-only public-fixture DB. Runtime preview POST and view-count writes are disabled; normal-mode behavior is retained.",
+      "access_control_impact": "Adds deployment input restrictions and read-only preview DB permissions; does not expand production admin roles or permissions.",
+      "risks": [
+        "Preview URLs are public and excluded from indexing; they contain public source fixtures only."
+      ],
+      "rollback": "Restore the saved pre-preview Caddy config by its explicit /tmp path and host startup source, then stop the new preview container. Return to prior source for app guards; no operational data rollback."
+    },
+    {
+      "path": "apps/korea/tests/preview.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "a9dd426c2492bc2e47f1db66abab5c39996fd5e4494848d8ab4b370ec1f44c57",
+      "symbols": [
+        "Synthetic preview regressions"
+      ],
+      "purpose": "Verify notice/noindex, valid inquiry rejection with unchanged private-row count and unchanged article view counter on a strictly isolated QA DB.",
+      "previous_behavior": "No running-app test covered preview isolation.",
+      "new_behavior": "Verify notice/noindex, valid inquiry rejection with unchanged private-row count and unchanged article view counter on a strictly isolated QA DB.",
+      "data_impact": "Tests use generated in-memory fixtures or strictly guarded isolated QA DB reads; no production data changes.",
+      "access_control_impact": "Adds deployment input restrictions and read-only preview DB permissions; does not expand production admin roles or permissions.",
+      "risks": [
+        "Preview URLs are public and excluded from indexing; they contain public source fixtures only."
+      ],
+      "rollback": "Restore the saved pre-preview Caddy config by its explicit /tmp path and host startup source, then stop the new preview container. Return to prior source for app guards; no operational data rollback."
+    },
+    {
+      "path": "deploy/ec2/deploy-korea-preview.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 219
+        }
+      ],
+      "working_tree_sha256": "96a1ef67ee7b6d0f00a8d550e59f76de53234de8aec716669bdeeebb5b40be7c",
+      "symbols": [
+        "identity, fixture_sql, main"
+      ],
+      "purpose": "Build an isolated branch container, seed only public source fixtures into its own DB, grant SELECT-only credentials, validate candidate and preserve production routes with explicit rollback configuration.",
+      "previous_behavior": "No branch-specific HTTPS deployment command existed.",
+      "new_behavior": "Build an isolated branch container, seed only public source fixtures into its own DB, grant SELECT-only credentials, validate candidate and preserve production routes with explicit rollback configuration.",
+      "data_impact": "Creates a new branch-specific DB and restricted login and seeds 152 public source posts. Reads the production manifest, Caddy routing and grants to verify isolation; never copies live rows or SMTP/auth secrets. Adds one HTTPS preview route without switching production containers.",
+      "access_control_impact": "Adds deployment input restrictions and read-only preview DB permissions; does not expand production admin roles or permissions.",
+      "risks": [
+        "Preview URLs are public and excluded from indexing; they contain public source fixtures only."
+      ],
+      "rollback": "Restore the saved pre-preview Caddy config by its explicit /tmp path and host startup source, then stop the new preview container. Return to prior source for app guards; no operational data rollback."
+    },
+    {
+      "path": "deploy/ec2/test_preview.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 31
+        }
+      ],
+      "working_tree_sha256": "0f52472f154806ee80114680d838a4bbcb9f9b93ac2ef337c37368d0f2d45412",
+      "symbols": [
+        "PreviewSafety"
+      ],
+      "purpose": "Check branch identity separation, rejection of production/config-injection hosts and malformed commits, SQL escaping and public-only source fixture validation.",
+      "previous_behavior": "Deployment input boundaries and seed namespaces had no tests.",
+      "new_behavior": "Check branch identity separation, rejection of production/config-injection hosts and malformed commits, SQL escaping and public-only source fixture validation.",
+      "data_impact": "Tests use generated in-memory fixtures or strictly guarded isolated QA DB reads; no production data changes.",
+      "access_control_impact": "Adds deployment input restrictions and read-only preview DB permissions; does not expand production admin roles or permissions.",
+      "risks": [
+        "Preview URLs are public and excluded from indexing; they contain public source fixtures only."
+      ],
+      "rollback": "Restore the saved pre-preview Caddy config by its explicit /tmp path and host startup source, then stop the new preview container. Return to prior source for app guards; no operational data rollback."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No live operational rows are read or changed. Read infrastructure manifests, routing and role grants only. Preview DB is seeded from committed public source fixtures; isolated QA is read for regression evidence.",
+    "schema_migration": "No production schema migration. New branch DB contains only Page and SiteSetting read models with public data.",
+    "external_side_effects": [
+      "Build and run one resource-limited preview container on existing AWS, create its read-only DB/login and add one HTTPS host. No new paid service, production app replacement, external messages or SMTP credentials. Git push does not trigger deployment automatically."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter korea build; pnpm --filter korea typecheck",
+      "result": "passed",
+      "evidence": "Preview-mode source builds and typechecks; output/korea-preview-build.log."
+    },
+    {
+      "command": "python -m unittest discover -s deploy/ec2 -p test_preview.py",
+      "result": "passed",
+      "evidence": "5 deployment safety tests pass; actual source fixture generation is bounded to 152 public board posts."
+    },
+    {
+      "command": "preview.integration.mts in isolated QA",
+      "result": "passed",
+      "evidence": "3 runtime checks pass: notice/noindex, no inquiry insert and no article counter write; output/korea-preview-integration.json."
+    }
+  ],
+  "residual_risks": [
+    "Existing server CPU, RAM and storage are shared; each preview container is capped at 384MB and 0.75 CPU. More branches consume additional existing capacity.",
+    "This adds explicit commit deployment at stable branch URLs, not a push listener or GitHub Actions integration.",
+    "External DNS and certificate issuance must succeed during activation; prior Caddy configuration is retained for rollback."
+  ],
+  "commit": "same-as-metadata-file"
+}
