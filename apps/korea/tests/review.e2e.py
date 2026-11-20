@@ -1,0 +1,9 @@
+import json,time
+from pathlib import Path
+from playwright.sync_api import sync_playwright,expect
+with sync_playwright() as p:
+ b=p.chromium.launch(headless=True);page=b.new_page(viewport={'width':1440,'height':950});page.set_default_timeout(15000)
+ page.goto('http://localhost:3300/review-access');page.wait_for_load_state('networkidle');page.get_by_label('비밀번호',exact=True).fill('qa-review-only');page.get_by_role('button',name='리뷰 모드 열기',exact=True).click();page.wait_for_url('http://localhost:3300/');expect(page.get_by_role('button',name='리뷰 피드백 메뉴 열기',exact=True)).to_be_visible()
+ page.get_by_role('button',name='리뷰 피드백 메뉴 열기',exact=True).click();page.get_by_role('button',name='새 피드백 남기기',exact=False).click();page.get_by_role('button',name='디자인 수정',exact=False).click();page.locator('h1,h2').first.click();page.get_by_label('작성자 이름',exact=False).fill('시안 검증');note='UI review '+str(time.time_ns());page.get_by_label('상세 내용',exact=True).fill(note);page.get_by_role('button',name='피드백 저장',exact=True).click();expect(page.get_by_text('피드백을 저장했습니다.',exact=True)).to_be_visible();page.screenshot(path='output/korea-review-qa-ui.png',full_page=False)
+ page.reload();expect(page.get_by_role('button',name='리뷰 피드백 메뉴 열기',exact=True)).to_be_visible();page.get_by_role('button',name='리뷰 피드백 메뉴 열기',exact=True).click();page.get_by_role('button',name='전체 피드백',exact=True).click();expect(page.get_by_text(note,exact=True)).to_be_visible();page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth <= innerWidth');page.screenshot(path='output/korea-review-qa-mobile.png',full_page=False);b.close()
+Path('output/korea-review-ui.json').write_text(json.dumps({'passed':True,'checks':['Review password unlock','Standalone element selection and review save','Review persists after reload in list','Mobile review layout fits viewport']},ensure_ascii=False,indent=2),encoding='utf-8');print('Passed review UI workflow')
