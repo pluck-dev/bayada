@@ -58,7 +58,7 @@ importers:
         version: 16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-auth:
         specifier: ^5.0.0-beta.28
-        version: 5.0.0-beta.30(next@16.1.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+        version: 5.0.0-beta.30(next@16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -131,7 +131,7 @@ importers:
         version: 16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-auth:
         specifier: ^5.0.0-beta.28
-        version: 5.0.0-beta.30(next@16.1.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+        version: 5.0.0-beta.30(next@16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -175,6 +175,12 @@ importers:
       '@bayada/korea':
         specifier: workspace:*
         version: link:../../packages/korea
+      '@bayada/review':
+        specifier: workspace:*
+        version: link:../../packages/review
+      '@bayada/review-ui':
+        specifier: workspace:*
+        version: link:../../packages/review-ui
       '@bayada/services':
         specifier: workspace:*
         version: link:../../packages/services
@@ -197,6 +203,12 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
+      postcss:
+        specifier: ^8.5.33
+        version: 8.5.33
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -400,7 +412,7 @@ importers:
         version: 16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-auth:
         specifier: ^5.0.0-beta.28
-        version: 5.0.0-beta.30(next@16.1.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+        version: 5.0.0-beta.30(next@16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@types/bcryptjs':
         specifier: ^2.4.6
@@ -2645,11 +2657,6 @@ packages:
     resolution: {integrity: sha512-Tz09sEL2EEuv5fFowm419c1+a/jSMiBjI9gHxVLrVdbUkkNUUfjsVYs9pVZu5oCon/kmRh9TfLEObFtkVxmY0w==}
     engines: {node: '>=8.0.0'}
 
-  nanoid@3.3.11:
-    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
   nanoid@3.3.20:
     resolution: {integrity: sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -2836,10 +2843,6 @@ packages:
 
   postcss@8.5.33:
     resolution: {integrity: sha512-RVHEU9/Pp1Fnjr/MpAJsZoADukCKhfIi15OunEYiGktIkYLkPVvC1sioWolGDS7XByMTx9m/IGbro0Js13zhnQ==}
-    engines: {node: ^10 || ^12 || >=14}
-
-  postcss@8.5.6:
-    resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
   preact-render-to-string@6.5.11:
@@ -3049,10 +3052,6 @@ packages:
   side-channel@1.1.0:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
-
-  source-map-js@1.2.1:
-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
-    engines: {node: '>=0.10.0'}
 
   source-map-js@1.2.3:
     resolution: {integrity: sha512-xj+WrAkyv5Qp+t7r9N5HvCBu7g1qOe6CKRNpq22X1GGcPEQADFU54v5qsPVs3/vrUFQ7XivFrcAVKA2stI0kWA==}
@@ -4052,7 +4051,7 @@ snapshots:
       jiti: 2.6.1
       lightningcss: 1.30.2
       magic-string: 0.30.21
-      source-map-js: 1.2.1
+      source-map-js: 1.2.3
       tailwindcss: 4.1.18
 
   '@tailwindcss/oxide-android-arm64@4.1.18':
@@ -4111,7 +4110,7 @@ snapshots:
       '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.1.18
       '@tailwindcss/oxide': 4.1.18
-      postcss: 8.5.6
+      postcss: 8.5.33
       tailwindcss: 4.1.18
 
   '@tybys/wasm-util@0.10.1':
@@ -4856,7 +4855,7 @@ snapshots:
       '@next/eslint-plugin-next': 16.1.4
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@9.39.2(jiti@2.6.1))
@@ -4899,7 +4898,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -4914,11 +4913,36 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1)):
+    dependencies:
+      '@nolyfill/is-core-module': 1.0.39
+      debug: 4.4.3
+      eslint: 9.39.2(jiti@2.6.1)
+      get-tsconfig: 4.13.1
+      is-bun-module: 2.0.0
+      stable-hash: 0.0.5
+      tinyglobby: 0.2.15
+      unrs-resolver: 1.11.1
+    optionalDependencies:
+      eslint-plugin-import: 2.32.0(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.39.2(jiti@2.6.1)
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1)):
+    dependencies:
+      debug: 3.2.7
+    optionalDependencies:
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1))
@@ -4936,7 +4960,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -4965,7 +4989,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -5613,15 +5637,13 @@ snapshots:
     dependencies:
       lru.min: 1.1.5
 
-  nanoid@3.3.11: {}
-
   nanoid@3.3.20: {}
 
   napi-postinstall@0.3.4: {}
 
   natural-compare@1.4.0: {}
 
-  next-auth@5.0.0-beta.30(next@16.1.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3):
+  next-auth@5.0.0-beta.30(next@16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3):
     dependencies:
       '@auth/core': 0.41.0
       next: 16.1.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -5778,21 +5800,15 @@ snapshots:
 
   postcss@8.4.31:
     dependencies:
-      nanoid: 3.3.11
+      nanoid: 3.3.20
       picocolors: 1.1.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.3
 
   postcss@8.5.33:
     dependencies:
       nanoid: 3.3.20
       picocolors: 1.1.1
       source-map-js: 1.2.3
-
-  postcss@8.5.6:
-    dependencies:
-      nanoid: 3.3.11
-      picocolors: 1.1.1
-      source-map-js: 1.2.1
 
   preact-render-to-string@6.5.11(preact@10.24.3):
     dependencies:
@@ -6053,8 +6069,6 @@ snapshots:
       side-channel-list: 1.0.0
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
-
-  source-map-js@1.2.1: {}
 
   source-map-js@1.2.3: {}
 

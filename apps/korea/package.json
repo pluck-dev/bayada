@@ -3,23 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack -p 3300",
-    "build": "next build --webpack",
+    "dev": "node scripts/build-review.mjs && next dev --webpack -p 3300",
+    "build": "node scripts/build-review.mjs && next build --webpack",
     "start": "next start",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@bayada/db": "workspace:*",
     "@bayada/korea": "workspace:*",
+    "@bayada/review": "workspace:*",
+    "@bayada/review-ui": "workspace:*",
+    "@bayada/services": "workspace:*",
     "next": "16.1.4",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "@bayada/services": "workspace:*"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
+    "postcss": "^8.5.33",
     "typescript": "^5"
   }
 }

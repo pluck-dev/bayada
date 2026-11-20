@@ -1,0 +1,765 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261120-154611-enable-isolated-reviewer-tools-on-korea-and-rene",
+  "created_at": "2026-11-20T15:46:11+09:00",
+  "repository": "bayada",
+  "branch": "feat/renewal",
+  "baseline_commit": "7de875ad059ca3adf0a40c72cf2a3a83be511a4f",
+  "request": "Enable review comments on main Korea and feat/renewal",
+  "title": "Enable isolated reviewer tools on Korea and renewal preview",
+  "purpose": "Reuse element feedback tools with separate reviewer storage and preserved content permissions",
+  "files": [
+    {
+      "path": "apps/korea/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 6,
+          "old_end": 7,
+          "new_start": 6,
+          "new_end": 7
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 14,
+          "new_end": 16
+        },
+        {
+          "old_start": 16,
+          "old_end": 17,
+          "new_start": 19,
+          "new_end": 19
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 25,
+          "new_end": 26
+        }
+      ],
+      "working_tree_sha256": "094932feb1addd61f53c870c0e2fc12de8470eb8b30258620379462060427624",
+      "symbols": [
+        "Korea build scripts and dependencies"
+      ],
+      "purpose": "Bundles the existing reviewer UI for raw HTML pages and adds shared review modules.",
+      "previous_behavior": "Only the captured site runtime was built.",
+      "new_behavior": "Bundles the existing reviewer UI for raw HTML pages and adds shared review modules.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/public/review-entry.css",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "055b73b5feb3a76113e844fd82859b616ae08178b740a8bed254e373c88303e5",
+      "symbols": [
+        "Reviewer entry styles"
+      ],
+      "purpose": "Shows a compact review access link with mobile placement.",
+      "previous_behavior": "No visible protected review entry existed.",
+      "new_behavior": "Shows a compact review access link with mobile placement.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/public/review-loader.js",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 1
+        }
+      ],
+      "working_tree_sha256": "03192fdd36f9dcd138dbd5e9ca707e6154faac93135f26b12ccbbae3cf39cb98",
+      "symbols": [
+        "Session-based reviewer loader"
+      ],
+      "purpose": "Loads tool CSS/JS only after a valid reviewer session is confirmed.",
+      "previous_behavior": "Raw HTML pages did not hydrate reviewer tools.",
+      "new_behavior": "Loads tool CSS/JS only after a valid reviewer session is confirmed.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/scripts/build-review.mjs",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 15
+        }
+      ],
+      "working_tree_sha256": "ff8f78dc66e384a55b6a36d20ec9b17b3b1ab2ac69574379fca12c2314bf8e8b",
+      "symbols": [
+        "Standalone review build"
+      ],
+      "purpose": "Bundles React tools, licensed fonts and a scoped style reset; prefixes reviewer CSS to avoid legacy style collisions.",
+      "previous_behavior": "Review tools depended on Next React layouts.",
+      "new_behavior": "Bundles React tools, licensed fonts and a scoped style reset; prefixes reviewer CSS to avoid legacy style collisions.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/app/[[...slug]]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 4,
+          "new_end": 4
+        },
+        {
+          "old_start": 32,
+          "old_end": 32,
+          "new_start": 33,
+          "new_end": 33
+        }
+      ],
+      "working_tree_sha256": "00f086c52058a66074aad753f388856d62ffd390527b55671ff5afde9007e5cd",
+      "symbols": [
+        "GET reviewer entry injection"
+      ],
+      "purpose": "Adds the optional access link and loader through a pure HTML adapter; existing page rendering is retained.",
+      "previous_behavior": "Korea HTML pages had no reviewer entry.",
+      "new_behavior": "Adds the optional access link and loader through a pure HTML adapter; existing page rendering is retained.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/app/api/review/feedback/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 4
+        }
+      ],
+      "working_tree_sha256": "b928eddda5bef1eb411024ab1306df1596b6da4f8da877df03a8d0c0ac5dc362",
+      "symbols": [
+        "Feedback handlers"
+      ],
+      "purpose": "Exposes existing password-protected, origin-checked review handlers.",
+      "previous_behavior": "Korea had no feedback routes.",
+      "new_behavior": "Exposes existing password-protected, origin-checked review handlers.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/app/api/review/replies/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 4
+        }
+      ],
+      "working_tree_sha256": "5d6163419f942d0b9aaac4be1538a2e4df6d3fa5e9ea8595a1c9b986b97f8c57",
+      "symbols": [
+        "Reply handlers"
+      ],
+      "purpose": "Exposes existing guarded reply thread handlers.",
+      "previous_behavior": "Korea had no review reply routes.",
+      "new_behavior": "Exposes existing guarded reply thread handlers.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/app/api/review/session/route.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 4
+        }
+      ],
+      "working_tree_sha256": "ccee02264c1ec975edbd4f9f3e91397708fc1998dbf9ec4083f9a75aa0eba252",
+      "symbols": [
+        "Reviewer session handlers"
+      ],
+      "purpose": "Uses existing signed-cookie session and access password verification.",
+      "previous_behavior": "Korea had no reviewer unlock/logout session.",
+      "new_behavior": "Uses existing signed-cookie session and access password verification.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/app/review-access/page.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 22
+        }
+      ],
+      "working_tree_sha256": "49e7cc67e64a0cdfef0a365a5cebb77452accab29b2053c155cb5649ba01fa83",
+      "symbols": [
+        "ReviewAccessPage"
+      ],
+      "purpose": "Reuses the existing unlock form with safe same-site return URLs and noindex metadata.",
+      "previous_behavior": "No Korea reviewer unlock page existed.",
+      "new_behavior": "Reuses the existing unlock form with safe same-site return URLs and noindex metadata.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/lib/review-presentation.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 7
+        }
+      ],
+      "working_tree_sha256": "65d5e07fd9d43a8669319d0a53bf744ba8f43478d48417a65f2f73b81a3ae4dd",
+      "symbols": [
+        "addReviewEntry"
+      ],
+      "purpose": "Adds entry assets only when review env is configured, with an escaped return destination.",
+      "previous_behavior": "No optional reviewer injection existed for raw HTML.",
+      "new_behavior": "Adds entry assets only when review env is configured, with an escaped return destination.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/review/client.tsx",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 5
+        }
+      ],
+      "working_tree_sha256": "516fba1752bbd3544f70ac6e13775d9598838bf86d0a2b3f02f2c2e6510865bd",
+      "symbols": [
+        "Standalone React entry"
+      ],
+      "purpose": "Mounts the existing element inspector in the current document with an isolated style scope.",
+      "previous_behavior": "Reviewer tools mounted only in Next page trees.",
+      "new_behavior": "Mounts the existing element inspector in the current document with an isolated style scope.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/src/review/navigation.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 4
+        }
+      ],
+      "working_tree_sha256": "ab995af5a8b664df5d7b94fcef2f7331c949ff044c7929e502d7f55f47710d5f",
+      "symbols": [
+        "usePathname, useRouter standalone adapter"
+      ],
+      "purpose": "Adapts pathname observation and same-origin full navigation for raw HTML pages; normal Next apps keep their original hooks.",
+      "previous_behavior": "Reviewer UI expected Next navigation contexts.",
+      "new_behavior": "Adapts pathname observation and same-origin full navigation for raw HTML pages; normal Next apps keep their original hooks.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/tests/review.e2e.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 9
+        }
+      ],
+      "working_tree_sha256": "7b55fd133f2e7ccf623f5488318f8cd2350d87252aeba30c4c3184ff72eecda5",
+      "symbols": [
+        "Review UI regression"
+      ],
+      "purpose": "Checks unlock, selection, review save, reload/list persistence and mobile layout in isolated QA.",
+      "previous_behavior": "No Korea element-selection review workflow was tested.",
+      "new_behavior": "Checks unlock, selection, review save, reload/list persistence and mobile layout in isolated QA.",
+      "data_impact": "Only synthetic QA review records and in-memory fixtures are created; no production review or intake test records are inserted.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "apps/korea/tests/review.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "d2da01badaf3306b544d516df46dca6611d964b5587c87e1c261493160b5410a",
+      "symbols": [
+        "Review API regression"
+      ],
+      "purpose": "Checks anonymous/cross-origin rejection, save, author edits, stale updates, replies, status transition, intake boundary and logout on guarded local QA.",
+      "previous_behavior": "No Korea API regression covered reviewer storage.",
+      "new_behavior": "Checks anonymous/cross-origin rejection, save, author edits, stale updates, replies, status transition, intake boundary and logout on guarded local QA.",
+      "data_impact": "Only synthetic QA review records and in-memory fixtures are created; no production review or intake test records are inserted.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "deploy/ec2/backup-korea-reviews.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "0394c660b8fb47f208fac831d3ff4222feabe5ef76a2749f613f0b7aaa2b8108",
+      "symbols": [
+        "Review backup job"
+      ],
+      "purpose": "Creates private verified dumps for owned review/preview DBs and retains 14 days; never targets the operational database.",
+      "previous_behavior": "New isolated reviewer databases were outside the existing operational dump.",
+      "new_behavior": "Creates private verified dumps for owned review/preview DBs and retains 14 days; never targets the operational database.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "deploy/ec2/deploy-korea-preview.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 7,
+          "new_end": 7
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 144,
+          "new_end": 144
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 151,
+          "new_end": 151
+        }
+      ],
+      "working_tree_sha256": "c74114de7bebfbe638b3eea656b7d7ca1bf22f0c4dc5a12272b4f63c929416ec",
+      "symbols": [
+        "Reviewer env provisioning"
+      ],
+      "purpose": "Provisions a separate review-only writer while preserving read-only Page/SiteSetting and intake blocking.",
+      "previous_behavior": "Preview had only read-only content storage.",
+      "new_behavior": "Provisions a separate review-only writer while preserving read-only Page/SiteSetting and intake blocking.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "deploy/ec2/deploy-korea.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 7,
+          "new_end": 7
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 42,
+          "new_end": 42
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 44,
+          "new_end": 45
+        },
+        {
+          "old_start": 44,
+          "old_end": 44,
+          "new_start": 48,
+          "new_end": 48
+        },
+        {
+          "old_start": 71,
+          "old_end": 71,
+          "new_start": 75,
+          "new_end": 75
+        },
+        {
+          "old_start": 80,
+          "old_end": 80,
+          "new_start": 84,
+          "new_end": 84
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 122,
+          "new_end": 122
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 129,
+          "new_end": 129
+        },
+        {
+          "old_start": 147,
+          "old_end": 147,
+          "new_start": 153,
+          "new_end": 153
+        },
+        {
+          "old_start": 161,
+          "old_end": 161,
+          "new_start": 167,
+          "new_end": 167
+        },
+        {
+          "old_start": 165,
+          "old_end": 165,
+          "new_start": 171,
+          "new_end": 171
+        },
+        {
+          "old_start": 192,
+          "old_end": 192,
+          "new_start": 198,
+          "new_end": 198
+        }
+      ],
+      "working_tree_sha256": "9101e38d2dff2d310c860b37f1caea0e992d547c36fcc40d254d284220ef3032",
+      "symbols": [
+        "Korea-only deployment mode"
+      ],
+      "purpose": "Adds Korea-only mode with retained approved assets, isolated review storage and preserved admin/brand/academy containers.",
+      "previous_behavior": "Releases replaced both Korea and admin unless admin-only was selected.",
+      "new_behavior": "Adds Korea-only mode with retained approved assets, isolated review storage and preserved admin/brand/academy containers.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "deploy/ec2/korea_review_storage.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 60
+        }
+      ],
+      "working_tree_sha256": "8e6cfb5c17e52cf06d62ce6db37b16d879612d887bcdf171d952bdd9306d3a89",
+      "symbols": [
+        "ensure_review_storage"
+      ],
+      "purpose": "Creates guarded review schema/roles, reuses the existing review password with a new scope secret, verifies isolation and installs private daily backups.",
+      "previous_behavior": "There was no owned review-only database provisioning.",
+      "new_behavior": "Creates guarded review schema/roles, reuses the existing review password with a new scope secret, verifies isolation and installs private daily backups.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "deploy/ec2/review-schema.sql",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 20
+        }
+      ],
+      "working_tree_sha256": "4e669dbeb76b2e322096c3773370fdd614dbfd817a0113fd56b51739463ff3b3",
+      "symbols": [
+        "ReviewFeedback and ReviewFeedbackReply"
+      ],
+      "purpose": "Creates only the existing feedback/reply models and enums, preserving existing records across deployments.",
+      "previous_behavior": "Isolated databases had no review tables.",
+      "new_behavior": "Creates only the existing feedback/reply models and enums, preserving existing records across deployments.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "deploy/ec2/test_preview.py",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 31,
+          "new_end": 38
+        }
+      ],
+      "working_tree_sha256": "9ed183c7cda6ea0c1d178f163f0952a4329d42811bd353ce07388b787d536518",
+      "symbols": [
+        "PreviewSafety reviewer storage checks"
+      ],
+      "purpose": "Adds checks that reject operational DB targets and constrain review DDL to two tables.",
+      "previous_behavior": "Preview safety tests did not cover reviewer provisioning.",
+      "new_behavior": "Adds checks that reject operational DB targets and constrain review DDL to two tables.",
+      "data_impact": "Only synthetic QA review records and in-memory fixtures are created; no production review or intake test records are inserted.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "packages/review-ui/package.json",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 8,
+          "old_end": 8,
+          "new_start": 8,
+          "new_end": 9
+        }
+      ],
+      "working_tree_sha256": "54ced5c232c44e88fac339edc6b0bdd75ede902cd5f4616cc5ce2465659d5ab2",
+      "symbols": [
+        "Review tools export"
+      ],
+      "purpose": "Exports the existing tool component for the standalone Korea bundle without changing Next users.",
+      "previous_behavior": "Tools were available only behind the gate entry.",
+      "new_behavior": "Exports the existing tool component for the standalone Korea bundle without changing Next users.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "packages/review/src/db.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 7
+        }
+      ],
+      "working_tree_sha256": "cdb54244fd68f1b0a6baa6ac7eb4b4a829beaa76d0beadb28723b2f9efcc6f09",
+      "symbols": [
+        "reviewDb"
+      ],
+      "purpose": "Uses a separately configured cached Prisma client when REVIEW_DATABASE_URL exists; otherwise retains the original client.",
+      "previous_behavior": "Shared review handlers always used the operational Prisma client.",
+      "new_behavior": "Uses a separately configured cached Prisma client when REVIEW_DATABASE_URL exists; otherwise retains the original client.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    },
+    {
+      "path": "packages/review/src/server.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 7,
+          "old_end": 7,
+          "new_start": 7,
+          "new_end": 8
+        }
+      ],
+      "working_tree_sha256": "8169aff93c18d11e94a73e6a0424b135bfebcdbf5c59af1677e5ef0ae7796cdc",
+      "symbols": [
+        "Review API Prisma adapter"
+      ],
+      "purpose": "Routes existing handlers through the optional isolated review client while retaining access, origin, validation and revision checks.",
+      "previous_behavior": "All review queries used the shared operational connection.",
+      "new_behavior": "Routes existing handlers through the optional isolated review client while retaining access, origin, validation and revision checks.",
+      "data_impact": "Review writes target the dedicated Korea or branch review store. Content and normal intake paths retain their existing data connection. No operational data migration.",
+      "access_control_impact": "Review access retains password, signed cookies, same-origin checks and author edit tokens; isolated writer cannot read/write CMS or operational tables.",
+      "risks": [
+        "Reviewer identity is a supplied name behind a shared review password, matching the existing review tool."
+      ],
+      "rollback": "Restore the previous app image and saved Caddy config, preserving the new review DB and backups. Optional review DB env can be removed to restore the original shared handler connection."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No existing operational rows migrated or changed by provisioning. Normal main CMS/intake connection is preserved; reviewer writes go to isolated stores. Functional writes during verification use isolated QA.",
+    "schema_migration": "Idempotent review-only DDL is applied only to bayada_korea_reviews or a validated bayada_preview_<hash> DB, never bayada.",
+    "external_side_effects": [
+      "Deploy Korea main and its renewal preview separately on existing AWS, preserving other app containers. Reuse existing reviewer password without logging it. Add daily private review DB dumps with 14-day retention. No external messages or paid resources."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter korea build; pnpm --filter korea typecheck; pnpm --filter admin typecheck",
+      "result": "passed",
+      "evidence": "Next routes and standalone assets build successfully; output/korea-review-build.log."
+    },
+    {
+      "command": "apps/korea/tests/review.integration.mts",
+      "result": "passed",
+      "evidence": "9 API workflow checks pass on guarded local QA; output/korea-review-integration.json."
+    },
+    {
+      "command": "python apps/korea/tests/review.e2e.py",
+      "result": "passed",
+      "evidence": "Unlock, element selection/save, refreshed list and mobile layout pass; reviewed screenshots in output/korea-review-qa-*.png."
+    },
+    {
+      "command": "python -m unittest discover -s deploy/ec2 -p test_preview.py; py_compile",
+      "result": "passed",
+      "evidence": "7 deployment/DDL safety checks pass and deployment helpers compile."
+    }
+  ],
+  "residual_risks": [
+    "Korea and renewal reviews are intentionally separate from brand/academy and from each other; their front-end review lists show their own records.",
+    "Review schema retains the existing API soft-delete and status-transition behavior; it does not create a new enterprise audit system.",
+    "Shared-password reviewers can view the comments for that site. Access remains separate across hosts and signing secrets."
+  ],
+  "commit": "same-as-metadata-file",
+  "configuration_changes": [
+    {
+      "path": ".gitignore",
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 26,
+          "new_end": 28
+        }
+      ],
+      "working_tree_sha256": "213fd2fe143397714515bb5e73b72a4552f20cfcd9b2367e3789732fcda21015",
+      "purpose": "Ignore reproducible reviewer bundles and copied fonts; authored entry/build sources and licenses stay in the repository.",
+      "data_impact": "Generated build assets only; no operational data.",
+      "rollback": "Restore the baseline ignore entry with the source rollback."
+    }
+  ]
+}

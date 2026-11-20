@@ -4,7 +4,8 @@
 // 모든 요청은 리뷰 모드 쿠키가 있어야 하고(원본은 사이트 전체 비밀번호 프록시가 대신 막았다), 모든 쿼리는 site 로 범위를 나눈다.
 import { randomBytes } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
-import { prisma, Prisma } from "@bayada/db";
+import { Prisma } from "@bayada/db";
+import { reviewDb as prisma } from "./db";
 import {
   FEEDBACK_BODY_MAX,
   FEEDBACK_LIST_PAGE_SIZE,

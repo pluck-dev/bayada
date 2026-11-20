@@ -28,4 +28,12 @@ class PreviewSafety(unittest.TestCase):
    self.assertEqual(count,1);self.assertIn('korea/post/bayadab_01/1',statement);self.assertIn("title''s",statement)
    post['board']='korea/inquiry/private';file.write_text(json.dumps([post]))
    with self.assertRaises(ValueError):preview.fixture_sql(root)
+ def test_reviewer_storage_refuses_operational_database(self):
+  from korea_review_storage import ensure_review_storage
+  with self.assertRaises(ValueError):ensure_review_storage('bayada',Path('unused'),{})
+ def test_review_schema_has_only_feedback_tables(self):
+  import re
+  schema=Path(__file__).with_name('review-schema.sql').read_text(encoding='utf-8-sig')
+  self.assertEqual(re.findall(r'CREATE TABLE IF NOT EXISTS "([^"]+)"',schema),['ReviewFeedback','ReviewFeedbackReply'])
+  self.assertNotIn('DROP TABLE',schema)
 if __name__=='__main__':unittest.main()

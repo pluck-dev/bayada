@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {writeFileSync} from 'node:fs';
+const qa=new URL(process.env.DATABASE_URL||'http://invalid');if(qa.hostname!=='127.0.0.1'||qa.port!=='55433'||qa.pathname!=='/bayada_functional_qa')throw Error('Only isolated QA is allowed');
+const base='http://localhost:3300';const cookies=new Map<string,string>();
+async function request(path:string,method='GET',body?:unknown,origin=base){const r=await fetch(base+path,{method,headers:{Cookie:[...cookies].map(([k,v])=>`${k}=${v}`).join('; '),Origin:origin,'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});for(const c of r.headers.getSetCookie()){const [k,...rest]=c.split(';')[0]!.split('=');cookies.set(k!,rest.join('='));}return r;}
+const checks:string[]=[];let r=await request('/api/review/feedback?path=/');assert.equal(r.status,401);checks.push('Anonymous review reads are blocked');
+r=await request('/api/review/session','POST',{password:'wrong'});assert.equal(r.status,401);r=await request('/api/review/session','POST',{password:'qa-review-only'});assert.equal(r.status,200);checks.push('Existing password session and signed cookie flow works');
+const path='/?qa-review='+Date.now(),context={selector:'h1',tag:'h1',text:'QA heading',component:'',typography:'',font:'16px',color:'#111',classes:'',width:1440,height:950,x:10,y:10};
+const data={kind:'design',department:'agency',assignee:'Synthetic QA',tags:[],body:'Review adapter regression',page_path:path,context};
+r=await request('/api/review/feedback','POST',data,'https://evil.test');assert.equal(r.status,403);checks.push('Cross-origin reviewer writes are rejected');
+r=await request('/api/review/feedback','POST',data);assert.equal(r.status,201);const saved=await r.json();assert.ok(saved.id&&saved.editToken);checks.push('Feedback with selected element is persisted');
+r=await request('/api/review/feedback?path='+encodeURIComponent(path));assert.equal(r.status,200);assert.equal((await r.json()).items[0].id,saved.id);
+r=await request('/api/review/feedback','PUT',{...data,id:saved.id,editVersion:0,editToken:saved.editToken,body:'Edited QA review'});assert.equal(r.status,200);
+r=await request('/api/review/feedback','PUT',{...data,id:saved.id,editVersion:0,editToken:saved.editToken});assert.equal(r.status,409);checks.push('Author token edit works and stale edit is rejected');
+r=await request('/api/review/replies','POST',{feedback_id:saved.id,body:'Reply persists',assignee:'Synthetic QA',department:'agency'});assert.equal(r.status,201);
+r=await request('/api/review/replies?feedback_id='+saved.id);assert.equal(r.status,200);assert.equal((await r.json()).items[0].body,'Reply persists');checks.push('Reply thread persists');
+r=await request('/api/review/feedback','PATCH',{id:saved.id,page_path:path,status:'discussion',expectedStatus:'open'});assert.equal(r.status,200);checks.push('Status transition uses existing workflow');
+r=await request('/api/inquiries','POST',{});const previewMode=(await (await fetch(base+'/')).text()).includes('korea-preview-notice');assert.equal(r.status,previewMode?409:400);checks.push('Intake keeps its normal or preview validation boundary');
+await request('/api/review/session','DELETE');r=await request('/api/review/feedback?path=/');assert.equal(r.status,401);checks.push('Logout revokes reviewer access');
+writeFileSync('output/korea-review-integration.json',JSON.stringify({passed:true,checks,environment:'isolated QA',fixtureId:saved.id},null,2));console.log(JSON.stringify({passed:true,checks:checks.length}));

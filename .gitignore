@@ -23,3 +23,6 @@ apps/korea/public/wp-includes/
 __pycache__/
 
 apps/korea/public/assets/
+
+# Generated standalone reviewer bundle and licensed font copies.
+apps/korea/public/review/

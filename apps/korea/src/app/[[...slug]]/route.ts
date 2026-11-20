@@ -1,6 +1,7 @@
 import { escapeHtml, normalizeAssetPaths } from "@bayada/korea";
 import { pageByPath, pages, renderPage, incrementBoardView } from "@bayada/korea/server";
 import { renewalPresentation } from "@/lib/renewal";
+import { addReviewEntry } from "@/lib/review-presentation";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
@@ -29,5 +30,5 @@ export async function GET(request: Request) {
       catch(error) { console.error('[korea view counter]', error instanceof Error ? error.name : 'failed'); }
     }
   }
-  return new Response(html, { headers });
+  return new Response(addReviewEntry(html, url), { headers });
 }

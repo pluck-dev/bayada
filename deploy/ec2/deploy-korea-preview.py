@@ -4,6 +4,7 @@
 Run from an extracted commit on EC2. Preview DBs contain public source fixtures only.
 This is an explicit deployment command, not a GitHub push listener.
 """
+from korea_review_storage import ensure_review_storage
 import argparse
 import hashlib
 import json
@@ -140,12 +141,14 @@ GRANT USAGE ON SCHEMA public TO ''' + role + '; GRANT SELECT ON "Page","SiteSett
         permission = sql(database, f"SELECT has_table_privilege('{role}','public.\"Page\"','SELECT') AND NOT has_table_privilege('{role}','public.\"Page\"','INSERT,UPDATE,DELETE') AND NOT has_table_privilege('{role}','public.\"SiteSetting\"','INSERT,UPDATE,DELETE');")
         if permission != 't' or sql('bayada', f"SELECT has_table_privilege('{role}','public.\"Page\"','SELECT');") != 'f':
             raise RuntimeError('Preview role is not isolated and read-only')
+        review_env = ensure_review_storage(database, root, live)
         run('docker', 'build', '--build-arg', 'APP=korea', '-t', tag, '.')
         assets = Path('/srv/bayada/korea-static/assets').resolve(strict=True)
         if '/srv/bayada/releases/' not in str(assets):
             raise RuntimeError('Approved public asset mount was not found')
         env = {'DATABASE_URL': runtime['databaseUrl'], 'DIRECT_URL': runtime['databaseUrl'],
                'KOREA_PREVIEW_BRANCH': args.branch, 'PORT': '3000', 'HOSTNAME': '0.0.0.0'}
+        env.update(review_env)
         command = ['docker','run','-d','--name',name,'--restart','unless-stopped','--network','bayada_default',
                    '--memory','384m','--cpus','0.75','--pids-limit','128','-v',str(assets)+':/app/apps/korea/public/assets:ro']
         for k in env:
