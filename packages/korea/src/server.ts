@@ -91,7 +91,14 @@ function boardHtml(board: string, posts: (BoardPost & { viewCount?: number })[],
   }
   return `<div class="mb-board">${searchForm}${pager}</div>`;
 }
-export async function renderPage(page: KoreaPage, query: URLSearchParams, origin: string): Promise<string | null> {
+export type PagePresentation = {
+  header?: (html: string, items: MenuItem[], path: string) => string;
+  footer?: (html: string) => string;
+  content?: (html: string, values: Record<string, string>) => string;
+  head?: string;
+  bodyClass?: string;
+};
+export async function renderPage(page: KoreaPage, query: URLSearchParams, origin: string, presentation: PagePresentation = {}): Promise<string | null> {
   const [current, header, footer, boardPosts, menu] = await Promise.all([getEdits(page.key), getEdits("header"), getEdits("footer"), page.board ? listPosts(page.board, true) : Promise.resolve([]), getMenu()]);
   if (current.edits?.published === false) return null;
   const values = { ...current.edits?.values };
@@ -102,8 +109,11 @@ export async function renderPage(page: KoreaPage, query: URLSearchParams, origin
     if (source?.values[field.source.field] !== undefined) values[field.key] = source.values[field.source.field]!;
   }
   let body = renderTemplate(page, values);
+  if (presentation.content) body = presentation.content(body, values);
   for (const key of page.origins ?? []) if (originEdits.get(documentSlug(key))?.published === false) body = body.replace(new RegExp('<article\\b(?=[^>]*data-korea-origin="' + key + '")[\\s\\S]*?</article>', 'g'), '');
-  body = body.replace("{{KOREA_HEADER}}", renderTemplate(templates.fragments.header, header.edits?.values)).replace("{{KOREA_FOOTER}}", renderTemplate(templates.fragments.footer, footer.edits?.values));
+  const headerHtml = renderTemplate(templates.fragments.header, header.edits?.values);
+  const footerHtml = renderTemplate(templates.fragments.footer, footer.edits?.values);
+  body = body.replace("{{KOREA_HEADER}}", presentation.header?.(headerHtml, menu.items, page.path) ?? headerHtml).replace("{{KOREA_FOOTER}}", presentation.footer?.(footerHtml) ?? footerHtml);
   body = body.replaceAll("{{KOREA_MENU}}", renderMenu(menu.items, page.path));
   if (body.includes('{{KOREA_PARTNERS}}')) {
     const partners = await getPartners();
@@ -118,7 +128,7 @@ export async function renderPage(page: KoreaPage, query: URLSearchParams, origin
   const title = current.edits?.title || page.title;
   body = body.replaceAll(encodeURIComponent('https://www.bayadakorea.com'), encodeURIComponent(origin)).replaceAll(encodeURIComponent('http://www.bayadakorea.com'), encodeURIComponent(origin));
   const head = page.head.replace(/<title>[\s\S]*?<\/title>/i, `<title>${e(title)}</title>`);
-  return `<!doctype html><html lang="ko-KR"><head>${head}<link rel="canonical" href="${e(origin + page.path)}"><link rel="stylesheet" href="/korea-runtime.css?v=inquiry-20261119"></head><body class="${e(page.bodyClass)}">${body}<script src="/korea-runtime.js?v=inquiry-20261119" defer></script></body></html>`;
+  return `<!doctype html><html lang="ko-KR"><head>${head}<link rel="canonical" href="${e(origin + page.path)}"><link rel="stylesheet" href="/korea-runtime.css?v=inquiry-20261119">${presentation.head ?? ""}</head><body class="${e(page.bodyClass + (presentation.bodyClass ? " " + presentation.bodyClass : ""))}">${body}<script src="/korea-runtime.js?v=inquiry-20261119" defer></script></body></html>`;
 }
 export function pageByPath(path: string) {
   const normalized = decodeURIComponent(path).replace(/\/+$/, "") || "/";

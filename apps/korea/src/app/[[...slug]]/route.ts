@@ -1,5 +1,6 @@
 import { normalizeAssetPaths } from "@bayada/korea";
 import { pageByPath, pages, renderPage, incrementBoardView } from "@bayada/korea/server";
+import { renewalPresentation } from "@/lib/renewal";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
@@ -11,7 +12,7 @@ export async function GET(request: Request) {
   const legacyId = url.searchParams.get("page_id") || url.searchParams.get("p");
   try { page = legacyId && ["/", "/index.php"].includes(url.pathname) ? pages.find(p => p.legacyId > 0 && String(p.legacyId) === legacyId) : pageByPath(url.pathname); } catch { return new Response("Not found", { status: 404 }); }
   if (!page) return new Response("Not found", { status: 404 });
-  const html = await renderPage(page, url.searchParams, origin);
+  const html = await renderPage(page, url.searchParams, origin, renewalPresentation(page));
   if (html === null) return new Response("Not found", { status: 404 });
   const headers = new Headers({ "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff", "referrer-policy": "strict-origin-when-cross-origin" });
   const postId = url.searchParams.get('vid') || url.searchParams.get('board_pid');

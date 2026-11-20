@@ -1,0 +1,307 @@
+{
+  "schema_version": "1.0",
+  "change_id": "20261120-125852-apply-academy-design-foundation-to-korea-renewal",
+  "created_at": "2026-11-20T12:58:52+09:00",
+  "repository": "bayada",
+  "branch": "feat/renewal",
+  "baseline_commit": "b71772748cf9033f527351eba8749bc167a50bc9",
+  "request": "Create feat/renewal and apply academy design system and feel to Korea",
+  "title": "Apply academy design foundation to Korea renewal preview",
+  "purpose": "Explore a consistent academy-like website presentation while retaining Korea CMS and intake behavior",
+  "files": [
+    {
+      "path": "apps/korea/public/renewal.css",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 136
+        }
+      ],
+      "working_tree_sha256": "93a23e1e1db61ddc846a12056914c49a9670340632ac8be12bad4ee0fbc1ba99",
+      "symbols": [
+        "Renewal tokens and responsive styles"
+      ],
+      "purpose": "Applies academy-derived local fonts, semantic neutrals, red primary actions, 8px controls, 16px panels and responsive layouts; removes legacy entrance hiding only within renewal content.",
+      "previous_behavior": "Korea used captured legacy type, controls, sections and footer styling.",
+      "new_behavior": "Applies academy-derived local fonts, semantic neutrals, red primary actions, 8px controls, 16px panels and responsive layouts; removes legacy entrance hiding only within renewal content.",
+      "data_impact": "Uses existing namespaced CMS reads and inquiry endpoints. No schema change, migration or production content mutation.",
+      "access_control_impact": "No permission, admin role or authentication changes. Authored CMS text and URLs still use escaping and existing URL validation.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    },
+    {
+      "path": "apps/korea/public/renewal.js",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 11
+        }
+      ],
+      "working_tree_sha256": "0549cb4f4c76dac8e69c1f6e31a9fd9ddd9093b7ec273f86dd85750fecda800c",
+      "symbols": [
+        "Header navigation events"
+      ],
+      "purpose": "Adds a native-details dropdown and mobile toggle behavior with outside-click and Escape closure; existing intake JS is retained.",
+      "previous_behavior": "The original header relied on captured Elementor navigation.",
+      "new_behavior": "Adds a native-details dropdown and mobile toggle behavior with outside-click and Escape closure; existing intake JS is retained.",
+      "data_impact": "Uses existing namespaced CMS reads and inquiry endpoints. No schema change, migration or production content mutation.",
+      "access_control_impact": "No permission, admin role or authentication changes. Authored CMS text and URLs still use escaping and existing URL validation.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    },
+    {
+      "path": "apps/korea/src/app/[[...slug]]/route.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 3,
+          "new_end": 3
+        },
+        {
+          "old_start": 14,
+          "old_end": 14,
+          "new_start": 15,
+          "new_end": 15
+        }
+      ],
+      "working_tree_sha256": "2c6c09248f03b455fec1ce1fb37c193be1e39bc0da003bb2e888f63e72c7da57",
+      "symbols": [
+        "GET"
+      ],
+      "purpose": "Passes the Korea-only presentation adapter into the existing renderer while preserving route resolution, view cookies and response headers.",
+      "previous_behavior": "All public routes used the default captured presentation.",
+      "new_behavior": "Passes the Korea-only presentation adapter into the existing renderer while preserving route resolution, view cookies and response headers.",
+      "data_impact": "Uses existing namespaced CMS reads and inquiry endpoints. No schema change, migration or production content mutation.",
+      "access_control_impact": "No permission, admin role or authentication changes. Authored CMS text and URLs still use escaping and existing URL validation.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    },
+    {
+      "path": "apps/korea/src/lib/renewal.ts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 37
+        }
+      ],
+      "working_tree_sha256": "d5512220e5ce536625ed9fa1bfbec24889bc9f6926935aab6b43bbdb5fb6d455",
+      "symbols": [
+        "renewalPresentation, navigation"
+      ],
+      "purpose": "Builds the CMS-bound home, accessible header and wrapped original footer; preserves inner CMS content and uses non-autoplay approved video embeds.",
+      "previous_behavior": "No academy-like Korea presentation existed.",
+      "new_behavior": "Builds the CMS-bound home, accessible header and wrapped original footer; preserves inner CMS content and uses non-autoplay approved video embeds.",
+      "data_impact": "Uses existing namespaced CMS reads and inquiry endpoints. No schema change, migration or production content mutation.",
+      "access_control_impact": "No permission, admin role or authentication changes. Authored CMS text and URLs still use escaping and existing URL validation.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    },
+    {
+      "path": "apps/korea/tests/renewal.e2e.py",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 19
+        }
+      ],
+      "working_tree_sha256": "2ac10b889919e4cf6979de23603052681c24d0a00915d8ca7e9d941c6cbffba3",
+      "symbols": [
+        "Local headless UI suite"
+      ],
+      "purpose": "Verifies local fonts, loaded hero, safe telephone link, partner count, desktop/mobile navigation, page overflow and mock intake success/retry without real POST writes.",
+      "previous_behavior": "No regression checked the renewal presentation.",
+      "new_behavior": "Verifies local fonts, loaded hero, safe telephone link, partner count, desktop/mobile navigation, page overflow and mock intake success/retry without real POST writes.",
+      "data_impact": "Integration mutations are guarded to localhost:55433/bayada_functional_qa and restore the synthetic fixture. UI inquiry POST is mocked; no production receipt or notification is created.",
+      "access_control_impact": "Tests do not change roles, permissions or production accounts.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    },
+    {
+      "path": "apps/korea/tests/renewal.integration.mts",
+      "change_type": "added",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 1,
+          "new_end": 24
+        }
+      ],
+      "working_tree_sha256": "f2b419de33139a21c30d453957d93f547cb4425f83de22a46dfc63b988d653d0",
+      "symbols": [
+        "Isolated presentation and CMS suite"
+      ],
+      "purpose": "Verifies default renderer compatibility, escaped text, image/action bindings, publication control and 74 rendered routes; restores the synthetic home fixture in finally.",
+      "previous_behavior": "Presentation compatibility and existing CMS bindings were not covered together.",
+      "new_behavior": "Verifies default renderer compatibility, escaped text, image/action bindings, publication control and 74 rendered routes; restores the synthetic home fixture in finally.",
+      "data_impact": "Integration mutations are guarded to localhost:55433/bayada_functional_qa and restore the synthetic fixture. UI inquiry POST is mocked; no production receipt or notification is created.",
+      "access_control_impact": "Tests do not change roles, permissions or production accounts.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    },
+    {
+      "path": "packages/korea/src/server.ts",
+      "change_type": "modified",
+      "previous_path": null,
+      "line_ranges": [
+        {
+          "old_start": 94,
+          "old_end": 94,
+          "new_start": 94,
+          "new_end": 101
+        },
+        {
+          "old_start": null,
+          "old_end": null,
+          "new_start": 112,
+          "new_end": 112
+        },
+        {
+          "old_start": 106,
+          "old_end": 106,
+          "new_start": 114,
+          "new_end": 116
+        },
+        {
+          "old_start": 121,
+          "old_end": 121,
+          "new_start": 131,
+          "new_end": 131
+        }
+      ],
+      "working_tree_sha256": "8cca7cc7e5e91b23627eafd5a36d6091338472e08d1ece8d43164bc77f7cf1fb",
+      "symbols": [
+        "PagePresentation, renderPage"
+      ],
+      "purpose": "Adds opt-in header/footer/content/head/body-class hooks after existing CMS reads, retaining default output and existing board/partner assembly.",
+      "previous_behavior": "Rendering always emitted the captured markup and runtime assets.",
+      "new_behavior": "Adds opt-in header/footer/content/head/body-class hooks after existing CMS reads, retaining default output and existing board/partner assembly.",
+      "data_impact": "Uses existing namespaced CMS reads and inquiry endpoints. No schema change, migration or production content mutation.",
+      "access_control_impact": "No permission, admin role or authentication changes. Authored CMS text and URLs still use escaping and existing URL validation.",
+      "risks": [
+        "Legacy inner layouts retain some captured markup; future template changes can need scoped style adjustments."
+      ],
+      "rollback": "Switch back to main or revert this branch commit. The default renderer and existing JSON/media remain compatible; no data rollback is needed."
+    }
+  ],
+  "production_safety": {
+    "operational_data": "No production operational data read, created, updated or deleted. Existing isolated QA container is used; three synthetic presentation fixtures were reset to defaults for visual review.",
+    "schema_migration": "None; the CMS schema and document keys remain unchanged.",
+    "external_side_effects": [
+      "Local preview and existing isolated QA container/tunnel only. Branch is pushed to Git; AWS production routing and applications are not deployed or switched. No external messages or paid resources created."
+    ]
+  },
+  "verification": [
+    {
+      "command": "pnpm --filter korea build",
+      "result": "passed",
+      "evidence": "Final Next production build completed; output/korea-renewal-build.log."
+    },
+    {
+      "command": "pnpm --filter @bayada/korea test",
+      "result": "passed",
+      "evidence": "All 10 existing URL/CMS/inquiry/model regressions pass."
+    },
+    {
+      "command": "renewal.integration.mts on isolated QA",
+      "result": "passed",
+      "evidence": "6 groups pass, including default presentation compatibility, CMS binding/escaping and all 74 public routes; output/korea-renewal-integration.json."
+    },
+    {
+      "command": "python apps/korea/tests/renewal.e2e.py",
+      "result": "passed",
+      "evidence": "5 workflow groups pass at 1440px and 390px, including menus and mocked intake success/retry. Screenshots reviewed for home, about, contact and boards; output/korea-renewal-ui.json."
+    },
+    {
+      "command": "pnpm --filter admin typecheck; git diff --check",
+      "result": "passed",
+      "evidence": "Shared optional presentation signature remains compatible with the admin and whitespace check passes."
+    }
+  ],
+  "residual_risks": [
+    "This is an isolated visual exploration on feat/renewal; it has not been deployed to AWS production.",
+    "Home structure is redesigned; inner pages retain CMS-authored legacy layout with a scoped foundation skin. Legacy decorative service icons are replaced with consistent vector icons.",
+    "Vimeo and outbound institution destinations depend on external availability; video remains lazy-loaded and does not autoplay.",
+    "Preview inherits public template copy. Added explanatory marketing text belongs to this branch and can be revised during review."
+  ],
+  "commit": "same-as-metadata-file",
+  "font_assets": [
+    {
+      "path": "apps/korea/public/fonts/Figtree-LICENSE.txt",
+      "sha256": "140d37233e7f3ce7313798befa9600893bcceaf41a55fa0fa5ad52f7f657a268",
+      "bytes": 4388,
+      "origin": "apps/academy/public/fonts/Figtree-LICENSE.txt",
+      "purpose": "Serve the same licensed Figtree/Pretendard foundation locally in Korea; license texts are included.",
+      "data_impact": "Static font/license files only; no operational data.",
+      "rollback": "Remove the branch copies and return to main presentation."
+    },
+    {
+      "path": "apps/korea/public/fonts/FigtreeItalicVariable.woff2",
+      "sha256": "39f35c315561c6120b59fbff4bb79e68ccf05073180803e5dd294a8615086886",
+      "bytes": 28440,
+      "origin": "apps/academy/public/fonts/FigtreeItalicVariable.woff2",
+      "purpose": "Serve the same licensed Figtree/Pretendard foundation locally in Korea; license texts are included.",
+      "data_impact": "Static font/license files only; no operational data.",
+      "rollback": "Remove the branch copies and return to main presentation."
+    },
+    {
+      "path": "apps/korea/public/fonts/FigtreeVariable.woff2",
+      "sha256": "cd08aa2c534f84c36e1c46b347567b000bdd8fb9fee3042f20fe33519b25672b",
+      "bytes": 27708,
+      "origin": "apps/academy/public/fonts/FigtreeVariable.woff2",
+      "purpose": "Serve the same licensed Figtree/Pretendard foundation locally in Korea; license texts are included.",
+      "data_impact": "Static font/license files only; no operational data.",
+      "rollback": "Remove the branch copies and return to main presentation."
+    },
+    {
+      "path": "apps/korea/public/fonts/Pretendard-LICENSE.txt",
+      "sha256": "d31ddd9f2bed32fd7e302a205cf2380ba0de6529152d239ef99cfb6f261bfc04",
+      "bytes": 4418,
+      "origin": "apps/academy/public/fonts/Pretendard-LICENSE.txt",
+      "purpose": "Serve the same licensed Figtree/Pretendard foundation locally in Korea; license texts are included.",
+      "data_impact": "Static font/license files only; no operational data.",
+      "rollback": "Remove the branch copies and return to main presentation."
+    },
+    {
+      "path": "apps/korea/public/fonts/PretendardVariable.woff2",
+      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "bytes": 2057688,
+      "origin": "apps/academy/public/fonts/PretendardVariable.woff2",
+      "purpose": "Serve the same licensed Figtree/Pretendard foundation locally in Korea; license texts are included.",
+      "data_impact": "Static font/license files only; no operational data.",
+      "rollback": "Remove the branch copies and return to main presentation."
+    }
+  ]
+}
