@@ -1,0 +1,25 @@
+{
+  "mainCommit": "857ee02df24501bd3a33655177e54a514ee900aa",
+  "previewCommit": "8650e10ee5d03170b1b4c35b27bdd5d0034dbaef",
+  "mainUrl": "https://korea.54-116-157-4.sslip.io",
+  "previewUrl": "https://renewal.korea.54-116-157-4.sslip.io",
+  "mainReviewAccess": "https://korea.54-116-157-4.sslip.io/review-access",
+  "previewReviewAccess": "https://renewal.korea.54-116-157-4.sslip.io/review-access",
+  "otherApps": {
+    "web": "bayada-live-3263a5f-web",
+    "academy": "bayada-live-3263a5f-academy",
+    "admin": "bayada-live-b83010e6-admin"
+  },
+  "reviewStoresSeparated": true,
+  "existingReviewPasswordReused": true,
+  "authenticationAndListsVerified": true,
+  "qaApiChecksPerMode": 9,
+  "qaUiWorkflowsPassedBothModes": true,
+  "backupFiles": [
+    "bayada_korea_reviews-20261120T065425Z.dump",
+    "bayada_preview_09050fee00f4-20261120T065553Z.dump",
+    "bayada_korea_reviews-20261120T065553Z.dump"
+  ],
+  "backupRetentionDays": 14,
+  "productionTestCommentsCreated": false
+}
