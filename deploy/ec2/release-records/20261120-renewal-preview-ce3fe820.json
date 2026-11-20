@@ -1,0 +1,31 @@
+{
+  "branch": "feat/renewal",
+  "commit": "ce3fe820ef06bc444271dd820e3974c7910257ec",
+  "host": "renewal.korea.54-116-157-4.sslip.io",
+  "container": "bayada-preview-09050fee00f4-ce3fe820",
+  "database": "bayada_preview_09050fee00f4",
+  "role": "bayada_pr_09050fee00f4",
+  "publicPosts": 152,
+  "status": "active",
+  "url": "https://renewal.korea.54-116-157-4.sslip.io",
+  "health": {
+    "https://korea.54-116-157-4.sslip.io/": 200,
+    "https://admin.54-116-157-4.sslip.io/ko/auth/login": 200,
+    "https://54-116-157-4.sslip.io/ko": 200,
+    "https://academy.54-116-157-4.sslip.io/ko": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/aboutus/": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/%EC%84%9C%EB%B9%84%EC%8A%A4%EC%83%81%EB%8B%B4/": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD2/": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/renewal.css": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/fonts/FigtreeVariable.woff2": 200,
+    "https://renewal.korea.54-116-157-4.sslip.io/api/inquiries": 409
+  },
+  "productionCommitUnchanged": "b83010e6dc4c78ca511796b95fdbf2146b3aac78",
+  "inquiryPostBlocked": true,
+  "noindexVerified": true,
+  "readOnlyPermissionsVerified": true,
+  "pushAutoDeploy": false,
+  "productionRowsCopied": false,
+  "rollback": "/tmp/preview-09050fee00f4-ce3fe820-previous"
+}
